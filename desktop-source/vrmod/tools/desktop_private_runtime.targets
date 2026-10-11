@@ -1,0 +1,19 @@
+<Project>
+  <ItemGroup Condition="'$(GF2VRDesktopNotices)' != ''">
+    <EmbeddedResource Include="$(GF2VRDesktopNotices)" LogicalName="GF2VR.Deployment.DOTNET-NOTICES.txt" />
+  </ItemGroup>
+  <!-- Deployment-only profile. Keep the real application DLL/deps/config next
+       to the host so the existing five-file Configurator ownership contract is
+       unchanged. The executable bundles only the private platform runtime. -->
+  <Target Name="GF2VRKeepDesktopContractFiles" BeforeTargets="_ComputeFilesToBundle">
+    <ItemGroup>
+      <ResolvedFileToPublish Update="@(ResolvedFileToPublish)"
+        Condition="'%(ResolvedFileToPublish.Filename)%(ResolvedFileToPublish.Extension)' == '$(AssemblyName).dll' Or
+                   '%(ResolvedFileToPublish.Filename)%(ResolvedFileToPublish.Extension)' == '$(AssemblyName).deps.json' Or
+                   '%(ResolvedFileToPublish.Filename)%(ResolvedFileToPublish.Extension)' == '$(AssemblyName).runtimeconfig.json' Or
+                   '%(ResolvedFileToPublish.Filename)%(ResolvedFileToPublish.Extension)' == 'runtime-contract.json'">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+</Project>

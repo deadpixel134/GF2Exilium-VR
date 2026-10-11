@@ -1,0 +1,326 @@
+using System.Diagnostics;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+namespace GF2VR.Configurator;
+
+internal sealed class SettingsError(string key, params object[] arguments) : Exception(key)
+{
+    internal string Key { get; } = key;
+    internal object[] Arguments { get; } = arguments;
+}
+
+internal sealed class SettingsStore
+{
+    internal string Root { get; }
+    private string Config => Path.Combine(Root, "vrmod", "config");
+    private readonly Dictionary<string, byte[]?> originals = [];
+    private readonly bool fixture;
+    internal Dictionary<string, JsonObject> Documents { get; private set; } = Fields.Defaults();
+    private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
+    internal static Func<bool> GameRunning = () =>
+    {
+        var processes = Process.GetProcessesByName("GF2_Exilium");
+        try { return processes.Length != 0; }
+        finally { foreach (var p in processes) p.Dispose(); }
+    };
+
+    internal SettingsStore(string root, bool testFixture = false)
+    {
+        Root = Path.GetFullPath(root);
+        fixture = testFixture;
+        EnsureRoot();
+    }
+
+    internal static string FindRoot()
+    {
+        foreach (string start in new[] { AppContext.BaseDirectory, Environment.CurrentDirectory })
+        {
+            DirectoryInfo? dir = new(start);
+            for (int i = 0; i < 8 && dir != null; i++, dir = dir.Parent)
+                if (File.Exists(Path.Combine(dir.FullName, "GF2 Game", "GF2_Exilium.exe"))) return dir.FullName;
+        }
+        return Environment.CurrentDirectory;
+    }
+
+    private void EnsureRoot()
+    {
+        if (!File.Exists(Path.Combine(Root, "GF2 Game", "GF2_Exilium.exe")))
+            throw new SettingsError("rootError");
+        CheckPath(Config);
+        if (!fixture)
+        {
+            // Existing mod embeds absolute paths. A moved/unknown build must never appear configured successfully.
+            string manifest = Path.Combine(AppContext.BaseDirectory, "runtime-contract.json");
+            using var j = JsonDocument.Parse(File.ReadAllBytes(manifest));
+            var c = j.RootElement;
+            string dll = Path.Combine(Root, "GF2 Game", "version.dll");
+            if (c.GetProperty("schemaVersion").GetInt32() != 1 ||
+                !Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!).Equals(Config, StringComparison.OrdinalIgnoreCase) ||
+                !File.Exists(dll) ||
+                !Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(dll))).Equals(c.GetProperty("dllSha256").GetString(), StringComparison.OrdinalIgnoreCase) ||
+                !Fields.Files.ToHashSet(StringComparer.Ordinal).SetEquals(c.GetProperty("files").EnumerateArray().Select(e => e.GetString()!)))
+                throw new SettingsError("runtimeError");
+        }
+    }
+
+    // Reject reparse points on the exact write path; never enumerate the installation.
+    private void CheckPath(string path)
+    {
+        var full = Path.GetFullPath(path);
+        if (!full.StartsWith(Root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            throw new SettingsError("pathError");
+        for (string? part = full; part != null; part = Path.GetDirectoryName(part))
+        {
+            if ((File.Exists(part) || Directory.Exists(part)) &&
+                (File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0)
+                throw new SettingsError("pathError");
+        }
+    }
+
+    internal void Load()
+    {
+        var next = Fields.Defaults();
+        var bytes = new Dictionary<string, byte[]?>();
+        foreach (string file in Fields.Files)
+        {
+            string path = Path.Combine(Config, file); CheckPath(path);
+            byte[]? raw = ReadBounded(path);
+            bytes[file] = raw;
+            if (raw != null) next[file] = Parse(raw, file);
+        }
+        Validate(next);
+        Documents = next; originals.Clear();
+        foreach (var p in bytes) originals.Add(p.Key, p.Value);
+    }
+
+    private static byte[]? ReadBounded(string path)
+    {
+        if (!File.Exists(path)) return null;
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        if (stream.Length is < 1 or > 4096) throw new SettingsError("sizeError", Path.GetFileName(path));
+        byte[] result = new byte[stream.Length]; stream.ReadExactly(result); return result;
+    }
+
+    internal static JsonObject Parse(byte[] bytes, string name)
+    {
+        if (bytes.Length is < 1 or > 4096) throw new SettingsError("sizeError", name);
+        var span = bytes.AsSpan();
+        if (span.StartsWith(new byte[] { 239, 187, 191 })) span = span[3..];
+        try
+        {
+            using var json = JsonDocument.Parse(span.ToArray(), new JsonDocumentOptions { MaxDepth = 16 });
+            CheckDuplicates(json.RootElement);
+            var doc = JsonNode.Parse(json.RootElement.GetRawText()) as JsonObject
+                ?? throw new SettingsError("formatError", name);
+            if (doc["schemaVersion"] is not JsonValue v || !v.TryGetValue<int>(out int version) || version != 1)
+                throw new SettingsError("schemaError", name);
+            if (name == "render_quality.json" && (doc.Count != 2 || doc["eyeRenderScale"] == null))
+                throw new SettingsError("formatError", name); // Native reader rejects unknown keys.
+            return doc;
+        }
+        catch (JsonException) { throw new SettingsError("formatError", name); }
+    }
+
+    private static void CheckDuplicates(JsonElement e)
+    {
+        if (e.ValueKind == JsonValueKind.Object)
+        {
+            var keys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var p in e.EnumerateObject())
+            {
+                if (!keys.Add(p.Name)) throw new SettingsError("duplicateError", p.Name);
+                CheckDuplicates(p.Value);
+            }
+        }
+        else if (e.ValueKind == JsonValueKind.Array) foreach (var v in e.EnumerateArray()) CheckDuplicates(v);
+    }
+
+    internal static double Number(string raw, string key)
+    {
+        // Native numbers are nonnegative, locale-independent JSON numbers, not NaN/Infinity/-0.
+        if (raw.TrimStart().StartsWith('-') || !double.TryParse(raw, NumberStyles.Float,
+            CultureInfo.InvariantCulture, out double number) || !double.IsFinite(number) || number < 0)
+            throw new SettingsError("numberError", Texts.Get(key));
+        if (number == 0 && raw.Any(c => c is >= '1' and <= '9') &&
+            raw.Split('e', 'E')[0].Any(c => c is >= '1' and <= '9'))
+            throw new SettingsError("numberError", Texts.Get(key)); // Underflow isn't a requested zero.
+        return number;
+    }
+
+    internal static void Validate(Dictionary<string, JsonObject> docs)
+    {
+        var defaults = Fields.Defaults();
+        foreach (string name in Fields.Files)
+        {
+            if (!docs.TryGetValue(name, out var doc)) throw new SettingsError("formatError", name);
+            _ = Parse(Encode(doc), name);
+            if ((name == "navigation.json" && doc["navigation"] is not JsonObject) ||
+                (doc.ContainsKey("worldDrag") && doc["worldDrag"] is not JsonObject))
+                throw new SettingsError("formatError", name);
+        }
+        foreach (Field f in Fields.All)
+        {
+            JsonNode? value = Fields.Get(docs, f);
+            if (value == null)
+            {
+                // Runtime optional members use their actual policy defaults, without rewriting the file on load.
+                if (f.Key is "eyeRenderScale" or "stereoDepthScale") throw new SettingsError("formatError", f.File);
+                continue;
+            }
+            if (value is not JsonValue val) throw new SettingsError("formatError", f.File);
+            if (f.Kind == "bool" && !val.TryGetValue<bool>(out _)) throw new SettingsError("formatError", f.File);
+            if (f.Kind == "choice" && (!val.TryGetValue<string>(out var c) || !f.Choices!.Contains(c)))
+                throw new SettingsError("formatError", f.File);
+            if (f.Kind == "number")
+            {
+                double d = Number(val.ToJsonString(), f.Key);
+                if ((f.Key == "eyeRenderScale" && d <= 0) || (f.Key == "stickDeadzone" && d >= 1))
+                    throw new SettingsError("numberError", Texts.Get(f.Key)); // Semantic/backend constraints, not advice.
+            }
+        }
+        bool Flag(string key) { var f = Fields.All.Single(f => f.Key == key); return (Fields.Get(docs, f) ?? Fields.Get(defaults, f))!.GetValue<bool>(); }
+        if (Flag("enabled") && (!(Flag("leftGripActivation") || Flag("leftTriggerActivation") ||
+            Flag("rightGripActivation") || Flag("rightTriggerActivation")) || !(Flag("trackLeftHand") || Flag("trackRightHand"))))
+            throw new SettingsError("dragError");
+        double Num(string key) { var f = Fields.All.Single(f => f.Key == key); return Number((Fields.Get(docs, f) ?? Fields.Get(defaults, f))!.ToJsonString(), key); }
+        if (!double.IsFinite(Num("movementSpeed") * Num("locomotionScale"))) throw new SettingsError("speedError");
+    }
+
+    internal static byte[] Encode(JsonObject doc) => Encoding.UTF8.GetBytes(doc.ToJsonString(Json) + "\n");
+    private static bool Same(byte[]? a, byte[]? b) => a == null ? b == null : b != null && a.AsSpan().SequenceEqual(b);
+
+    internal void Save(Dictionary<string, JsonObject> requested)
+    {
+        Validate(requested); EnsureRoot();
+        if (GameRunning()) throw new SettingsError("runningError");
+        if (originals.Count != Fields.Files.Length) throw new SettingsError("reloadError");
+        string mutexName = "Local\\GF2VR.Settings." + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Root.ToUpperInvariant())));
+        using var mutex = new Mutex(false, mutexName);
+        bool held; try { held = mutex.WaitOne(0); } catch (AbandonedMutexException) { held = true; }
+        if (!held) throw new SettingsError("conflictError");
+        var committed = new List<string>();
+        var output = requested.ToDictionary(p => p.Key, p => Encode(p.Value));
+        var staged = new Dictionary<string, string>();
+        string transaction = Guid.NewGuid().ToString("N");
+        try
+        {
+            Directory.CreateDirectory(Config);
+            // Preflight ALL files before any replacement. No overwrite after external changes or future schemas.
+            foreach (string file in Fields.Files)
+            {
+                string path = Path.Combine(Config, file); CheckPath(path);
+                if (!Same(ReadBounded(path), originals[file])) throw new SettingsError("conflictError");
+                if (JsonNode.DeepEquals(requested[file], Documents[file]) && originals[file] != null) continue;
+                string temp = Path.Combine(Config, "." + file + "." + transaction + ".tmp");
+                WriteNew(temp, output[file]); staged.Add(file, temp);
+            }
+            if (GameRunning()) throw new SettingsError("runningError");
+            foreach (var p in staged)
+            {
+                string dest = Path.Combine(Config, p.Key);
+                if (!Same(ReadBounded(dest), originals[p.Key])) throw new SettingsError("conflictError");
+                if (originals[p.Key] != null) File.Replace(p.Value, dest, dest + "." + transaction + ".bak");
+                else File.Move(p.Value, dest);
+                committed.Add(p.Key);
+            }
+            Load(); // Publish GUI state only after the entire transaction completes.
+        }
+        catch
+        {
+            // Restore only files still equal to OUR transaction. Never erase an external writer's change.
+            var unresolved = new List<string>();
+            foreach (string file in committed.AsEnumerable().Reverse())
+            {
+                string dest = Path.Combine(Config, file), backup = dest + "." + transaction + ".bak";
+                try
+                {
+                    if (!Same(ReadBounded(dest), output[file])) { unresolved.Add(backup); continue; }
+                    if (originals[file] == null) File.Delete(dest);
+                    else if (File.Exists(backup)) File.Replace(backup, dest, null);
+                }
+                catch { unresolved.Add(backup); }
+            }
+            if (unresolved.Count != 0) throw new SettingsError("rollbackError", string.Join("\n", unresolved));
+            throw;
+        }
+        finally
+        {
+            try { foreach (string temp in staged.Values) { try { if (File.Exists(temp)) File.Delete(temp); } catch (IOException) { } } }
+            finally { mutex.ReleaseMutex(); }
+        }
+    }
+
+    internal static void WriteNew(string path, byte[] bytes)
+    {
+        using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        stream.Write(bytes); stream.Flush(true);
+    }
+
+    internal static void Export(string path, Dictionary<string, JsonObject> docs, string? installedRoot = null)
+    {
+        Validate(docs);
+        // Export is a separate profile, never a disguised overwrite of a live runtime settings file.
+        if ((installedRoot != null && Path.GetFullPath(path).StartsWith(Path.Combine(Path.GetFullPath(installedRoot), "vrmod", "config") + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) ||
+            Fields.Files.Contains(Path.GetFileName(path), StringComparer.OrdinalIgnoreCase) ||
+            Path.GetFileName(path).Equals("configurator.json", StringComparison.OrdinalIgnoreCase))
+            throw new SettingsError("exportError");
+        var profile = new JsonObject { ["schemaVersion"] = 1, ["product"] = "GF2VR.Configurator" };
+        var config = new JsonObject(); profile["configurations"] = config;
+        foreach (var p in docs) config[p.Key] = p.Value.DeepClone();
+        AtomicStandalone(path, Encode(profile));
+    }
+
+    internal static Dictionary<string, JsonObject> Import(string path)
+    {
+        using var stream = File.OpenRead(path);
+        if (stream.Length > 32768) throw new SettingsError("profileError");
+        using var doc = JsonDocument.Parse(stream, new JsonDocumentOptions { MaxDepth = 20 }); CheckDuplicates(doc.RootElement);
+        var profile = JsonNode.Parse(doc.RootElement.GetRawText())!.AsObject();
+        if (profile["schemaVersion"]?.ToJsonString() != "1" || profile["product"]?.GetValue<string>() != "GF2VR.Configurator" ||
+            profile["configurations"] is not JsonObject config || config.Count != Fields.Files.Length)
+            throw new SettingsError("profileError");
+        var result = new Dictionary<string, JsonObject>();
+        foreach (string file in Fields.Files) result[file] = config[file] as JsonObject ?? throw new SettingsError("profileError");
+        Validate(result); return Fields.Clone(result);
+    }
+
+    internal static void AtomicStandalone(string path, byte[] bytes)
+    {
+        string full = Path.GetFullPath(path), temp = full + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            WriteNew(temp, bytes);
+            if (File.Exists(full)) File.Replace(temp, full, null); else File.Move(temp, full);
+        }
+        finally { if (File.Exists(temp)) File.Delete(temp); }
+    }
+
+    internal string LoadLanguage()
+    {
+        string file = Path.Combine(Config, "configurator.json"); CheckPath(file);
+        if (!File.Exists(file)) return Texts.Normalize(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+        using var doc = JsonDocument.Parse(ReadBounded(file)!); CheckDuplicates(doc.RootElement);
+        return doc.RootElement.TryGetProperty("language", out var l) && l.ValueKind == JsonValueKind.String
+            ? Texts.Normalize(l.GetString()) : "ko";
+    }
+
+    internal void SaveLanguage(string language)
+    {
+        string file = Path.Combine(Config, "configurator.json"); CheckPath(file);
+        Directory.CreateDirectory(Config);
+        byte[]? raw = ReadBounded(file);
+        JsonObject doc = raw == null ? new() : JsonNode.Parse(raw)!.AsObject();
+        if (raw != null) { using var j = JsonDocument.Parse(raw); CheckDuplicates(j.RootElement); }
+        if (doc.ContainsKey("schemaVersion") && doc["schemaVersion"]?.ToJsonString() != "1")
+            throw new SettingsError("schemaError", "configurator.json");
+        doc["schemaVersion"] = 1; doc["language"] = Texts.Normalize(language);
+        byte[] bytes = Encode(doc);
+        if (bytes.Length > 4096) throw new SettingsError("sizeError", "configurator.json");
+        if (!Same(raw, ReadBounded(file))) throw new SettingsError("conflictError");
+        AtomicStandalone(file, bytes);
+    }
+}
