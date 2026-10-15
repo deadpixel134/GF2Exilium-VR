@@ -1,5 +1,9 @@
 # GF2 VR
 
+제작자: [@TBluebox12](https://x.com/TBluebox12)  
+아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)  
+후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드 프로젝트입니다. 지원되는 3D 장면은 입체 화면으로 보여 주고, 게임 메뉴와 일반 화면은 컨트롤러로 조작할 수 있는 패널로 표시합니다.
 
 **현재 이 저장소에는 설정 프로그램과 인스톨러의 소스 및 안내 문서를 제공하고 있습니다. 최신 전체 설치 파일은 아직 배포하지 않습니다.** GitHub의 코드 다운로드 ZIP은 설치 파일이 아닙니다. [다운로드와 지원 안내](docs/ko/RELEASE_READINESS.md)를 먼저 확인하세요.

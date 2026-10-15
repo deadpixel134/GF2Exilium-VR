@@ -292,9 +292,9 @@
     {
       "path": "README.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "397F71E7D2928E8438702364B51B8AA4E2C0BA9C994C5C738B3160AAF533A016",
-      "bytes": 2792,
-      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
+      "sha256": "33C9DD1222A1A904DC905924FFB6CE6266647B857AC7BF8E310FE905AEE69665",
+      "bytes": 3005,
+      "origin": "Current player guide with creator/community/support block explicitly retained by user"
     },
     {
       "path": "SOURCE_BOUNDARY.md",
@@ -387,7 +387,24 @@
   "documentationReference": {
     "url": "https://github.com/deadpixel134/gakumas-vr/blob/main/README.md",
     "gitBlobSha": "e16661168f817e468103db2208cbc164f6c829b7",
-    "scope": "README organization/style only; no reference project facts or source copied"
+    "scope": "README organization plus explicitly user-approved creator/community/support links; GF2VR game/version/license/support-status facts remain project-owned"
   },
-  "documentationAudience": "GENERAL_PLAYERS"
+  "documentationAudience": "GENERAL_PLAYERS",
+  "readmeIdentity": {
+    "preserveUnlessUserChanges": true,
+    "placement": "Immediately below # GF2 VR",
+    "creator": {
+      "label": "@TBluebox12",
+      "url": "https://x.com/TBluebox12"
+    },
+    "community": {
+      "label": "아카라이브 가상현실 채널",
+      "url": "https://arca.live/b/vrshits"
+    },
+    "support": {
+      "label": "후원",
+      "url": "https://buymeacoffee.com/vrshits"
+    },
+    "authority": "Explicit user request2026-10-15 to retain selected heading section"
+  }
 }
