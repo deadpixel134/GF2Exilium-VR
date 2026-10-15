@@ -1,5 +1,7 @@
 # 소스 구성과 이용 조건
 
+[한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
+
 설치하려면 [1.0.0 릴리스](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)의 **GF2VR-Native-SelfContained-1.0.0.zip**을 사용하세요. GitHub의 **Source code** ZIP에는 빌드 전 소스가 들어 있으며, 압축을 풀어 게임 폴더에 복사하는 것만으로 설치되지 않습니다.
 
 ## 저장소에 포함된 자료

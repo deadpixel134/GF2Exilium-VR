@@ -1,0 +1,36 @@
+# Recent changes
+
+[한국어](../ko/RELEASE_NOTES.md) · [English](../en/RELEASE_NOTES.md) · [日本語](../ja/RELEASE_NOTES.md) · [简体中文](../zh-CN/RELEASE_NOTES.md)
+
+## 1.0.0 · October 15, 2026
+
+The first official version is released based on confirmation that practical testing of the current implementation is complete. Start with the [installation ZIP and download guide](RELEASE_READINESS.md).
+
+### VR display and controls
+
+- Includes stereoscopic rendering, head tracking, front and auxiliary panels, and controller controls in supported 3D scenes.
+- Provides world-scale-linked stereo depth and movement speed, left-stick-click viewpoint return, and right-stick-click camera following.
+- Fixes repeated camera-stack warning calls identified during the investigation of periodic Activity-scene stuttering.
+- Organizes distribution paths so that configuration and runtime files are located relative to the game installation folder.
+
+### Configurator
+
+- Aligns button heights and spacing, and fixes buttons being partially clipped in small windows.
+- Aligns the vertical positions of the game-folder field and Browse button.
+- Removes the separate feature-support tab and places the necessary descriptions beside each setting.
+- Adds automatic linking of stereo depth and movement speed to world scale, along with startup camera-following settings.
+- Organizes settings into six tabs: Quality and stereo depth, Movement and turning, World grip, Activity UI, Buttons, and World scale.
+
+### Installer
+
+- Provides the native VR module, configurator and required .NET runtime in one installation package.
+- Checks supported game and package files, preserving user settings and unrelated files.
+- Distinguishes installation, update, reinstallation and previous-version restoration according to installation status.
+- Improves configurator launching, progress display and operation logs.
+- Fixes Browse button alignment for the game-folder and package-folder fields.
+
+### Guides
+
+The guides have been revised to explain folder selection, applying settings and using profiles, two-handed controller controls, updates and recovery. See [Troubleshooting](TROUBLESHOOTING.md) for common situations.
+
+See [Verified behavior and limitations](VERIFICATION.md) for device compatibility and the distinction between distribution-binary checks and practical testing. Close the game before updating, removing or recovering the installation.

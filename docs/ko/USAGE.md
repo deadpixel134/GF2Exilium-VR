@@ -1,5 +1,7 @@
 # 게임 실행과 컨트롤러 조작
 
+[한국어](../ko/USAGE.md) | [English](../en/USAGE.md) | [日本語](../ja/USAGE.md) | [简体中文](../zh-CN/USAGE.md)
+
 ## 실행 순서
 
 1. 헤드셋과 컨트롤러가 연결되어 있는지 확인하고 SteamVR를 실행합니다.

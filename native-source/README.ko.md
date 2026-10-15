@@ -1,0 +1,21 @@
+# 네이티브 런타임 소스
+
+[한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
+GF2VR 1.0.0에 포함된 네이티브 런타임 `BOOTSTRAP-STABLE-001`을 빌드하는 데 필요한 소스 묶음입니다. DLL의 SHA-256은 다음과 같습니다.
+
+```text
+F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D
+```
+
+Windows x64에서 PowerShell 7, Zig 0.16.0과 Windows 10 SDK 10.0.26100.0의 x64 `kernel32.lib`를 사용해 빌드합니다.
+
+```powershell
+./build-native.ps1 -Zig 'C:/Tools/zig/zig.exe' -Kernel32Library 'C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64/kernel32.lib' -Output './build'
+```
+
+빌더는 출력 디렉터리를 Zig 캐시에 사용하고 작업 후 호출자의 캐시 설정을 복원합니다. 런타임 지원 코드 11개와 MinHook 코드 4개를 컴파일하고 런타임을 링크한 뒤, 릴리즈와 해시가 다른 DLL은 거부합니다. `build-result.json`에는 객체 파일 해시, 컴파일러 해시, 최종 인수와 DLL 비교 결과가 기록됩니다. 이 빌드는 DLL을 설치하거나 로드하지 않으며 게임이나 XR 런타임을 실행하지 않습니다.
+
+`native-build.json`에는 정확한 빌드 플래그와 소스 해시가 기록되어 있습니다. `src/`에는 현재 프로젝트 소유의 네이티브 코드와 빌드에서 사용하는 생성 패키지 헤더가 있습니다. `managed/ActivityProducerEngineBridge.cs`는 내장된 관리 코드 패키지에 대응하는 프로젝트 소유의 관리 브리지 소스이며 검토와 개발을 위해 제공합니다. 이 네이티브 DLL을 다시 빌드할 때는 저장소의 생성 패키지를 사용하므로 게임 어셈블리가 필요하지 않습니다. 관리 코드 패키지의 재생성은 별도의 개발 작업으로, 합법적으로 확보한 일치하는 게임 어셈블리가 필요합니다. 해당 어셈블리와 게임 에셋은 배포하지 않습니다.
+
+OpenXR와 MinHook 소스 일부의 라이선스는 `third_party/` 아래에 유지되어 있습니다. 게임 실행 파일, Unity·GameAssembly 바이너리, 게임 메타데이터·에셋, 사용자 설정·로그·복구 파일은 이 소스 배포본에 포함되지 않습니다.

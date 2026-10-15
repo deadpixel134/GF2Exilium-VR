@@ -1,5 +1,7 @@
 # 최근 변경 사항
 
+[한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
+
 ## 1.0.0 · 2026년 10월 15일
 
 현재 구현의 실기 테스트 완료 확인을 기준으로 첫 정식 버전을 배포합니다. [설치 ZIP과 다운로드 안내](RELEASE_READINESS.md)에서 시작하세요.

@@ -1,5 +1,7 @@
 # 다운로드와 지원 안내
 
+[한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
+
 ## 정식 버전 1.0.0
 
 [GitHub 릴리스 페이지](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)에서 **GF2VR-Native-SelfContained-1.0.0.zip**을 내려받으세요. 공개 다운로드에는 GitHub 로그인이나 별도의 토큰이 필요하지 않습니다.

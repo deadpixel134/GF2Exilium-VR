@@ -1,0 +1,78 @@
+# Troubleshooting
+
+[한국어](../ko/TROUBLESHOOTING.md) · [English](../en/TROUBLESHOOTING.md) · [日本語](../ja/TROUBLESHOOTING.md) · [简体中文](../zh-CN/TROUBLESHOOTING.md)
+
+First identify where the problem occurs. Settings saving, installation or updates, and the actual VR display or input each require different checks.
+
+## The game folder cannot be found
+
+In the installer, select the **parent folder containing the GF2 Game folder**. Check that GF2_Exilium.exe is inside GF2 Game. Also make sure you have not selected the extracted package folder as the game folder, or vice versa.
+
+## Package files are missing or installation is unavailable
+
+- Check that you have extracted the entire ZIP first.
+- Make sure you have not moved only the executable elsewhere.
+- Check that you are not using GitHub's source code ZIP as the installation package.
+- Confirm that it is the installation ZIP from the [release page](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0). The supported game build is 2.0.3936, and its actual file fingerprints must also match.
+
+If files are missing or damaged, download the release ZIP again and fully extract it into a new folder. Do not modify files rejected by the installer to try to bypass its checks.
+
+## Another version.dll stops installation
+
+Another mod or program is using the same filename. The installer does not overwrite DLLs it does not own. Check the other mod's installation and removal instructions, and back up its files. Renaming the file alone does not make two loaders work together.
+
+## The headset view is missing or stutters periodically
+
+Check SteamVR/OpenXR and your headset connection, then fully close the game and restart it in your usual way. Checking whether the PC game view freezes at the same time can help narrow down the cause.
+
+If this began after increasing the quality scale, return to the last value that worked. Version 1.0.0 includes a fix for repeated camera-warning calls that caused periodic stuttering in Activity scenes. If it continues, report the scene, the interval between stutters, and whether the PC view, HMD or both are affected. A fixed frame rate is not guaranteed across devices.
+
+## The Open settings button is disabled
+
+A configurator matching the current game installation could not be found. Check the game folder and click **Refresh**. Copying only the configurator or installer separately may leave required companion files missing.
+
+If a launch path is provided, try opening it from that location. If the issue persists, check the error guidance rather than mixing program and package files.
+
+## Settings cannot be saved, or installation fails
+
+First make sure the game has fully closed. It may still be running even after its window has closed.
+
+For a numeric error, check that you have not entered units or other characters in the field. Use a period for decimals. If a value is too large or cannot be handled by the device, return to the previous value or default.
+
+For a file-access error, check that the displayed folder is correct and that another program is not using the file. If the operation stopped to protect modified files, back them up first and identify what changed.
+
+## Saved settings do not change the game
+
+Make sure you closed and restarted the game after saving. You must also click **Save** after importing a profile or selecting defaults.
+
+Camera following toggled with right stick click applies only to the current game session. Save it in the configurator to change the startup state for the next launch.
+
+## Auxiliary panel, clicking or stick controls behave unexpectedly
+
+1. Check that your controllers are connected correctly.
+2. Select the game window on your PC.
+3. Check whether you changed the movement/turning hands or panel/pointer hands in settings.
+4. If you are holding Trigger on the auxiliary-panel hand, release it. Holding it activates WASD game control mode.
+5. For snap turning, return the stick to the center before tilting it again.
+
+Use Grip on the panel hand to open and close the auxiliary panel in 3D scenes. This does not hide the front panel on normal 2D screens. See [Controls](USAGE.md).
+
+## World grip does not move the view
+
+The feature is off by default. Check that you enabled it, selected at least one activation button and at least one tracked hand, saved and restarted the game.
+
+If your combination gives priority to another panel or UI action, try the default right Grip and right-hand tracking. Release any button you were holding and press it again.
+
+## Updates cannot be checked
+
+Check your internet connection, GitHub CLI installation and login state, and whether a new official version actually exists. You can also download the ZIP directly from the public [releases page](https://github.com/deadpixel134/GF2Exilium-VR/releases) to update. The existing installation is retained if update checking fails. See [Updating](UPDATE.md).
+
+## Installation was interrupted, or the new version has problems
+
+Close the game and reopen the installer with the same folder. Use **Recover interrupted operation** if an operation is pending. If problems appear after an update completes, check the instructions for restoring the previous version. See [Removal and recovery](INSTALLATION.md).
+
+## Reporting a problem
+
+Include the button you pressed, the sequence that caused the problem, the error message, your headset and connection method. For installation problems, the last entries in the operation log can help.
+
+Before sharing screenshots or files, check that they contain no account information or credentials. You do not need to send complete original game files.

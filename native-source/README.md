@@ -1,5 +1,7 @@
 # Native runtime source
 
+[한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 This is the source closure for `BOOTSTRAP-STABLE-001`, the native runtime included in GF2VR 1.0.0. Its SHA-256 is:
 
 ```text

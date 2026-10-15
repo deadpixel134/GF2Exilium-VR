@@ -1,5 +1,7 @@
 # 설정 프로그램 사용하기
 
+[한국어](../ko/SETTINGS.md) | [English](../en/SETTINGS.md) | [日本語](../ja/SETTINGS.md) | [简体中文](../zh-CN/SETTINGS.md)
+
 인스톨러의 **설정 열기**로 설정 프로그램을 엽니다. 설치된 게임 폴더의 `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe`로 직접 열 수도 있습니다. 실행 파일과 함께 설치된 파일은 같은 폴더에 유지하세요. 표시 언어는 아래쪽의 **한국어 / English / 日本語** 버튼으로 바꿀 수 있으며 선택은 기억됩니다.
 
 ## 바꾼 설정 적용하기

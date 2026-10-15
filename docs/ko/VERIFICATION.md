@@ -1,5 +1,7 @@
 # 확인된 동작과 제한 사항
 
+[한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
+
 정식 버전 1.0.0의 지원 대상과 확인 범위를 안내합니다. 현재 구현에 대한 사용자의 실기 확인, 배포 파일의 로컬 검증, 다른 PC에서의 확인은 구분합니다.
 
 ## 지원 대상

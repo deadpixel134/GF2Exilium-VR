@@ -1,5 +1,7 @@
 # 설치·제거·복구
 
+[한국어](../ko/INSTALLATION.md) | [English](../en/INSTALLATION.md) | [日本語](../ja/INSTALLATION.md) | [简体中文](../zh-CN/INSTALLATION.md)
+
 [정식 버전 1.0.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)에서 **GF2VR-Native-SelfContained-1.0.0.zip**을 받으세요. GitHub의 **Source code** ZIP은 설치 파일이 아닙니다.
 
 ## 설치 전 준비

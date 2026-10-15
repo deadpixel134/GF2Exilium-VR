@@ -4,6 +4,8 @@
 아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)  
 후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
+[한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다. 지원되는 3D 장면은 입체 화면으로 보여 주고, 게임 메뉴와 일반 화면은 컨트롤러로 조작할 수 있는 패널로 표시합니다.
 
 **[정식 버전 1.0.0 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)** · [설치 안내](docs/ko/INSTALLATION.md) · [기본 조작법](docs/ko/USAGE.md)

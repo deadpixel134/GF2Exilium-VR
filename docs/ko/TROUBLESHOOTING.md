@@ -1,5 +1,7 @@
 # 문제가 생겼을 때
 
+[한국어](../ko/TROUBLESHOOTING.md) | [English](../en/TROUBLESHOOTING.md) | [日本語](../ja/TROUBLESHOOTING.md) | [简体中文](../zh-CN/TROUBLESHOOTING.md)
+
 먼저 어느 작업에서 문제가 생겼는지 확인하세요. 설정 저장 문제인지, 설치·업데이트 문제인지, 실제 VR 화면·입력 문제인지에 따라 확인할 부분이 다릅니다.
 
 ## 게임 폴더를 찾을 수 없다고 나옵니다
