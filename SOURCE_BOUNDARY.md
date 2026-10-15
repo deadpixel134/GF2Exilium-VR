@@ -1,20 +1,24 @@
-# 소스·배포 경계
+# 이 저장소에 포함된 파일
 
-기존 비공개 저장소의 데스크톱 도구 소스만 갱신합니다. 명시적 파일 목록은 source-manifest.json에 있습니다. 게임 설치 폴더 자체를 Git 저장소로 취급하지 않습니다.
+이 저장소는 GF2 VR의 설정 프로그램과 인스톨러 소스, 그리고 사용 안내 문서를 모아 둔 곳입니다. **일반 사용자가 바로 실행할 수 있는 전체 설치 파일은 현재 포함되어 있지 않습니다.**
 
-포함: 두WinForms프로젝트의 C#/프로젝트/구조화된 ko/en/ja 자원, 세 desktop 빌드 도구, 비작동 runtime-contract template, 사용자 문서, 공식.NET고지. 제외: 게임/네이티브/참조 프로젝트 소스·바이너리·encoded리소스·SDK/cache·개인 설정·로그·rollback·agent/Manager자료·자격 증명. 제품 코드의 기존 로컬 경로 호환 상수는 사용자 설정 파일과 별개입니다.
+## 설치하려는 경우
 
-## Windows 개발 빌드
+GitHub의 Code 메뉴에서 내려받은 ZIP은 프로그램 설치 파일이 아닙니다. 압축을 풀거나 게임 폴더에 복사하는 것만으로 VR 모드가 설치되지 않습니다.
 
-.NET10 SDK가 있는 Windows에서 저장소 루트 기준으로 다음을 실행합니다.
+사용하려면 게임과 맞는 별도 설치 파일이 필요합니다. 현재 제공 여부는 [다운로드와 지원 안내](docs/ko/RELEASE_READINESS.md)에서 확인하세요. 설치 파일을 전달받았다면 [설치 안내](docs/ko/INSTALLATION.md)를 따라 진행하면 됩니다.
 
-```powershell
-dotnet build desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj -c Release
-dotnet build desktop-source/vrmod/src/GF2VR.Installer/GF2VR.Installer.csproj -c Release
-```
+## 포함된 자료
 
-PowerShell7의 desktop-source/vrmod/tools/build_desktop_private_runtime.ps1은 -Application Configurator 또는 Installer와 별도 -BuildId로 공식.NET10.0.12 Windows x64 runtime을 포함한 desktop publish를 준비합니다. 첫 실행에는 공식 NuGet 접근이 필요할 수 있습니다. 현재 테스트한 설치본과 스냅샷의 소스 빌드 결과는 별도로 검증합니다.
+- 설정 프로그램과 인스톨러의 소스 파일
+- 한국어·영어·일본어 화면 문구
+- 설치, 조작, 설정, 업데이트와 문제 해결 안내
+- 프로그램 구성에 사용되는 외부 소프트웨어의 고지
 
-runtime-contract.json은 INSTALL_ROOT 경로와0으로 채운hash의 비작동 template입니다. 실제 사용에는 검증된 네이티브 DLL과 정확한 설치 계약 생성이 필요합니다. template을 실제 게임 설정 계약으로 복사하지 마세요. 이 소스만으로 전체 네이티브 VR 패키지를 재생성할 수 없습니다.
+원본 게임, 개인 설정, 사용 중 생긴 로그와 복구 파일, 계정 인증 정보는 포함하지 않습니다. 프로그램 관련 파일을 임의로 골라 게임 폴더에 복사하지 마세요.
 
-Microsoft고지는 runtime pack의 고지이며 프로젝트 전체의 라이선스가 아닙니다. 저장소 공개 전환·프로젝트 라이선스·다른 사용자의 private배포 접근·최신 네이티브 배포는 미결정입니다. 재사용 가능한 인증 비밀을 앱/소스/릴리스에 넣지 않습니다.
+## 이용 조건
+
+프로젝트 소스의 배포 라이선스는 아직 정하지 않았습니다. 저장소를 열람할 수 있다는 것만으로 자유로운 재배포를 허용하는 것은 아닙니다.
+
+[Microsoft .NET 고지](DOTNET-NOTICES.txt)는 해당 외부 소프트웨어에 관한 문서이며, GF2 VR 전체의 이용 조건을 대신하지 않습니다.

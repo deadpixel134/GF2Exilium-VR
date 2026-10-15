@@ -292,72 +292,72 @@
     {
       "path": "README.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "D59D61A313949A1F49C4739DF84FF33B2BAD7F866F9E0901C24E3EFF33AF5105",
-      "bytes": 5126,
-      "origin": "Current GF2VR facts; selected gakumas-vr README organization only"
+      "sha256": "397F71E7D2928E8438702364B51B8AA4E2C0BA9C994C5C738B3160AAF533A016",
+      "bytes": 2792,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "SOURCE_BOUNDARY.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "EBB0BB0DB79C67B0AA58B4ECACD8655F044613852D1AFA01EEEAFA15D5231ED3",
-      "bytes": 2093,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "8DE19C36CEDFA2C9260768029FD3C33AD2B322ED6B56D9347B0A46F7A9193743",
+      "bytes": 1643,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/INSTALLATION.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "BCA48AC43AA1D59FD508EDE94F536935C740CC3DE20AB817F85CD42718369B0A",
-      "bytes": 1172,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "251AD5B3651DE4D423E3044FC4384BE41E5BF8F93E4B9C54162F2367C617A8A6",
+      "bytes": 3897,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/SETTINGS.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "E16364BF997FFB487CB6E37813903EEC477C38FBBD987183229C68553AC5BC2B",
-      "bytes": 1965,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "28B17DBB55CC8B6C8602BF45472E54B7A6CECAF383B8B57F50D68DCDA938F39C",
+      "bytes": 7508,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/UPDATE.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "A410C274A061F9486EE0576F039C7912071D32B19FA207E27985B7A61254F9C6",
-      "bytes": 1226,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "18C7362A5C577F0496CE4D0B93F400A44BACDBBD404D0D1BEED3A1BE5A0277EC",
+      "bytes": 2548,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/USAGE.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "96F39E6A253947465D4E86F2BE7FC231B612C07F2C9E3EBFF93CB0A9A31C472D",
-      "bytes": 1142,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "8EE594717DAC70311D2B7293486F7811FCD30CB43DEA35278F4E6A78A9067257",
+      "bytes": 4711,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/TROUBLESHOOTING.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "F2A010E9BA035F65B9B347EECCD50D7F1CAA94872CE756D68FB617FDBA132A0E",
-      "bytes": 1070,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "3DEC4F4355ABF1BFB5E4803D1CBE8A677B6FC0C93C60E6C35DEFDFFB450C436B",
+      "bytes": 5268,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "0CFBFD7C9AC974EEE2F6E97B2708287E85DED0D87FC7556737414087C4B1F9F7",
-      "bytes": 913,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "E5A17E8EE5A97E6C41E1A5A513F3D7ACD082BE5A140B9771CA3CB9A584081DEE",
+      "bytes": 1499,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/VERIFICATION.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "35DF291F7BF3D760CAF3C47D18BC17489BDA49BBB40D53F7B11B68BF14CC7622",
-      "bytes": 1441,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "203724E5AB297AC05A8B9B327B744F591B8AF85C73C8BB90D86B0C6C01C4C387",
+      "bytes": 2396,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": "docs/ko/RELEASE_READINESS.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "FF5DDF19241AE8FFD72568BCD48A104D9494F6F31BE2161D695ACD5A1F0229CA",
-      "bytes": 682,
-      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+      "sha256": "1CAB41F23B5AEE58A8A48FDE44298A71A2D17CCE97C7793819C3A8D163CA6D3C",
+      "bytes": 2181,
+      "origin": "Current GF2VR player instructions; rewritten for ordinary users without development records"
     },
     {
       "path": ".gitignore",
@@ -388,5 +388,6 @@
     "url": "https://github.com/deadpixel134/gakumas-vr/blob/main/README.md",
     "gitBlobSha": "e16661168f817e468103db2208cbc164f6c829b7",
     "scope": "README organization/style only; no reference project facts or source copied"
-  }
+  },
+  "documentationAudience": "GENERAL_PLAYERS"
 }
