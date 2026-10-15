@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
+using GF2VR.Installer;
 
 namespace GF2VR.Configurator;
 
@@ -7,74 +8,149 @@ internal sealed class MainForm : Form
 {
     private SettingsStore? store;
     private Dictionary<string, JsonObject> editing = Fields.Defaults();
-    private readonly TextBox rootBox = new() { Dock = DockStyle.Fill, ReadOnly = true };
-    private readonly ComboBox language = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 140 };
+    private readonly TextBox rootBox = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right, ReadOnly = true };
+    private readonly FlowLayoutPanel languages = new() { Dock = DockStyle.Fill, Margin = Padding.Empty, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
+    private readonly FlowLayoutPanel actions = new() { Dock = DockStyle.Fill, Margin = Padding.Empty, FlowDirection = FlowDirection.RightToLeft, WrapContents = true };
     private readonly TabControl tabs = new() { Dock = DockStyle.Fill };
     private readonly Label status = new() { Dock = DockStyle.Fill, AutoSize = false, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft, Tag = "loaded" };
     private readonly Label restart = new() { Dock = DockStyle.Fill, AutoSize = false, ForeColor = Color.FromArgb(71, 87, 110) };
     private readonly Label effectiveSpeed = new() { AutoSize = true, ForeColor = Color.FromArgb(33, 78, 110), MaximumSize = new Size(860, 0), Margin = new Padding(4, 12, 4, 8) };
-    private readonly Button save = new() { AutoSize = true, MinimumSize = new Size(115, 34), Tag = "save" };
+    private readonly Label effectiveSpatial = new() { AutoSize = true, ForeColor = Color.FromArgb(33, 78, 110), MaximumSize = new Size(860, 0), Margin = new Padding(4, 12, 4, 8) };
+    private string manualDepthText = "1";
+    private bool depthWasLinked;
+    private readonly Button save = new() { AutoSize = true, MinimumSize = new Size(115, 34), Margin = new Padding(4), Tag = "save" };
     private readonly Dictionary<string, Control> inputs = [];
     private readonly List<Control> localized = [];
     private readonly string? smokeFolder;
     private bool loading;
     private bool dirty;
+    private readonly Label updateStatus = new() { Dock = DockStyle.Fill, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.FromArgb(71, 87, 110) };
+    private readonly CancellationTokenSource updateCancel = new();
+    private string updateKey = "updateIdle";
+    private readonly Button updateButton = new() { AutoSize = true, MinimumSize = new Size(110, 34), Margin = new Padding(4), Text = "" };
+    private (ReleaseCandidate Release, UpdateDescriptor Descriptor, byte[] Bytes, string Root)? readyUpdate;
+    private string? updateVersion;
 
     internal MainForm(string root, string? smoke = null)
     {
         smokeFolder = smoke;
-        Font = new Font("Segoe UI", 10); MinimumSize = new Size(860, 700); Size = new Size(1080, 840);
+        Font = new Font("Segoe UI", 10); MinimumSize = new Size(900, 760); ClientSize = new Size(1080, 900); AutoScaleMode = AutoScaleMode.Dpi;
         StartPosition = FormStartPosition.CenterScreen; BackColor = Color.FromArgb(244, 247, 251);
         Icon = SystemIcons.Application;
         if (smoke != null) { StartPosition = FormStartPosition.Manual; Location = new Point(-20000, -20000); ShowInTaskbar = false; }
         rootBox.Text = root;
-        var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5, Padding = new Padding(18) };
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
+        var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5, Padding = new Padding(12) };
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 62));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
         Controls.Add(layout);
-        var banner = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(30, 58, 92), Padding = new Padding(15, 5, 15, 5) };
-        var title = Label("title"); title.Font = new Font(Font.FontFamily, 19, FontStyle.Bold); title.ForeColor = Color.White; title.Dock = DockStyle.Fill; title.AutoSize = false; title.TextAlign = ContentAlignment.MiddleLeft;
-        banner.Controls.Add(title); layout.Controls.Add(banner, 0, 0);
-        var row = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 4, Padding = new Padding(0, 8, 0, 4) };
+        updateButton.Visible = false; updateButton.Click += async (_, _) => await ApplyUpdate();
+        var row = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 3, Padding = new Padding(0, 0, 0, 8), Margin = Padding.Empty };
         row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        row.Controls.Add(Label("folder"), 0, 0); row.Controls.Add(rootBox, 1, 0);
-        row.Controls.Add(Button("browse", Browse), 2, 0); row.Controls.Add(language, 3, 0);
-        layout.Controls.Add(row, 0, 1);
-        language.Items.AddRange(["한국어", "English", "日本語"]);
-        language.SelectedIndexChanged += (_, _) =>
+        row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        var folderLabel = Label("folder"); folderLabel.Anchor = AnchorStyles.Left;
+        var browse = Button("browse", Browse); browse.Anchor = AnchorStyles.Right;
+        row.Controls.Add(folderLabel, 0, 0); row.Controls.Add(rootBox, 1, 0);
+        row.Controls.Add(browse, 2, 0);
+        layout.Controls.Add(row, 0, 0);
+        foreach (var item in new[] { ("한국어", "ko"), ("English", "en"), ("日本語", "ja") })
         {
-            if (loading || language.SelectedIndex < 0) return;
-            Texts.Language = Texts.Languages[language.SelectedIndex]; Translate();
-            Run(() => { store?.SaveLanguage(Texts.Language); SetStatus("languageSaved"); });
-        };
-        layout.Controls.Add(tabs, 0, 2);
-        BuildPage("renderTab", Fields.All.Where(f => f.File is "render_quality.json" or "stereo_depth.json"), "renderSummary");
+            var button = new Button { Text = item.Item1, AutoSize = true, MinimumSize = new Size(75, 34), Margin = new Padding(4), AccessibleName = "language-" + item.Item2 };
+            string code = item.Item2; button.Click += (_, _) => SwitchLanguage(code); languages.Controls.Add(button);
+        }
+        layout.Controls.Add(tabs, 0, 1);
+        BuildPage("renderTab", Fields.All.Where(f => f.File == "render_quality.json"), "renderSummary");
         BuildPage("navigationTab", Fields.All.Where(f => f.File == "navigation.json"), "navigationSummary");
         BuildPage("dragTab", Fields.All.Where(f => f.File == "world_drag.json"), "conflictHelp");
-        BuildPage("availabilityTab", [], "availabilityHelp");
-        localized.Add(restart); restart.Tag = "restart"; layout.Controls.Add(restart, 0, 3);
-        var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 6 };
-        footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        for (int i = 0; i < 5; ++i) footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        footer.Controls.Add(status, 0, 0);
-        footer.Controls.Add(Button("reload", (_, _) => { if (Discard()) LoadRoot(rootBox.Text); }), 1, 0);
-        footer.Controls.Add(Button("reset", (_, _) => { if (Confirm("resetQuestion")) ApplyDefaults(); }), 2, 0);
-        footer.Controls.Add(Button("import", Import), 3, 0);
-        footer.Controls.Add(Button("export", Export), 4, 0);
+        BuildPage("activityUiTab", Fields.All.Where(f => f.File == "activity_ui.json"), "activityUiSummary");
+        BuildPage("controllerTab", Fields.All.Where(f => f.File == "controller_input.json"), "controllerSummary");
+        BuildPage("worldScaleTab", new[] { "worldScale", "linkStereoDepthToWorldScale", "stereoDepthScale", "linkMovementSpeedToWorldScale" }.Select(k => Fields.All.Single(f => f.Key == k)), "worldScaleSummary");
+        localized.Add(restart); restart.Tag = "restart"; restart.Margin = new Padding(3, 8, 3, 4); layout.Controls.Add(restart, 0, 2);
+        var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
+        footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        footer.Controls.Add(languages, 0, 0); footer.Controls.Add(actions, 1, 0);
         localized.Add(save); save.Click += (_, _) => Run(() =>
         {
             if (store == null) throw new SettingsError("rootError");
             var requested = ReadControls(); store.Save(requested); editing = Fields.Clone(store.Documents);
             dirty = false; SetStatus("saved"); UpdateSave();
         });
-        footer.Controls.Add(save, 5, 0); layout.Controls.Add(footer, 0, 4);
+        actions.Controls.Add(save);
+        actions.Controls.Add(Button("reload", (_, _) => { if (Discard()) LoadRoot(rootBox.Text); }));
+        actions.Controls.Add(Button("reset", (_, _) => { if (Confirm("resetQuestion")) ApplyDefaults(); }));
+        actions.Controls.Add(Button("export", Export)); actions.Controls.Add(Button("import", Import)); actions.Controls.Add(updateButton);
+        // Measure against the available width, including margins and wrapped rows.
+        // Unconstrained AutoSize on a wrapping FlowLayoutPanel reserves excess height.
+        languages.MinimumSize = languages.GetPreferredSize(Size.Empty);
+        void FitFooter()
+        {
+            if (actions.ClientSize.Width <= 0) return;
+            int height = footer.Padding.Vertical + Math.Max(
+                languages.GetPreferredSize(new Size(languages.ClientSize.Width, 0)).Height,
+                actions.GetPreferredSize(new Size(actions.ClientSize.Width, 0)).Height);
+            if (layout.RowStyles[3].Height != height) layout.RowStyles[3].Height = height;
+        }
+        footer.Layout += (_, _) => FitFooter();
+        actions.Layout += (_, _) => FitFooter();
+        layout.Controls.Add(footer, 0, 3);
+        var statusRow = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
+        statusRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45)); statusRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55));
+        status.Height = updateStatus.Height = 24; statusRow.Controls.Add(status, 0, 0); statusRow.Controls.Add(updateStatus, 1, 0);
+        layout.Controls.Add(statusRow, 0, 4);
         FormClosing += (_, e) => { if (smokeFolder == null && !Discard()) e.Cancel = true; };
         LoadRoot(root); Translate();
         if (smoke != null) Shown += (_, _) => Smoke();
+        else Shown += async (_, _) => await CheckUpdates();
+        FormClosed += (_, _) => updateCancel.Cancel();
+    }
+
+    private void SwitchLanguage(string locale)
+    {
+        if (loading) return;
+        Texts.Language = Texts.Normalize(locale); Translate();
+        Run(() => { store?.SaveLanguage(Texts.Language); SetStatus("languageSaved"); });
+    }
+
+    private void UpdateState(string key)
+    {
+        updateKey = key; updateStatus.Text = key == "updateAvailable" && updateVersion != null ? Texts.Format("updateAvailableVersion", updateVersion) : Texts.Get(key);
+        updateButton.Text = Texts.Get("updateAction");
+    }
+    private async Task CheckUpdates()
+    {
+        if (store == null) { UpdateState("updateUnmanaged"); return; }
+        string root = store.Root;
+        try
+        {
+            UpdateState("updateChecking"); var service = new UpdateService();
+            var check = await service.Check(root, updateCancel.Token);
+            if (IsDisposed || store?.Root != root || updateCancel.IsCancellationRequested) return;
+            UpdateState(check.State);
+            if (check.Release == null || check.Descriptor == null || check.Bytes == null) return;
+            readyUpdate = (check.Release, check.Descriptor, check.Bytes, root); updateVersion = check.Release.Version;
+            UpdateState("updateAvailable"); updateButton.Visible = true;
+        }
+        catch (OperationCanceledException) { }
+        catch { if (!IsDisposed) UpdateState("updateFailed"); }
+    }
+    private async Task ApplyUpdate()
+    {
+        if (readyUpdate is not { } ready || store?.Root != ready.Root) return;
+        try
+        {
+            if (MessageBox.Show(this, Texts.Format("updateQuestion", ready.Release.Version), Texts.Get("title"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            if (!Discard()) return;
+            Enabled = false; UpdateState("updateDownloading");
+            var staged = await new UpdateService().Stage(ready.Root, ready.Release, ready.Descriptor, ready.Bytes, updateCancel.Token);
+            if (IsDisposed || updateCancel.IsCancellationRequested) return;
+            UpdateStaging.Handoff(staged); dirty = false; Close();
+        }
+        catch (OperationCanceledException) { }
+        catch { if (!IsDisposed) UpdateState("updateFailed"); } // No raw auth/transport stderr in UI/log.
+        finally { if (!IsDisposed) Enabled = true; }
     }
 
     private Label Label(string key)
@@ -84,7 +160,7 @@ internal sealed class MainForm : Form
     }
     private Button Button(string key, EventHandler handler)
     {
-        var b = new Button { Tag = key, AutoSize = true, MinimumSize = new Size(75, 34), Margin = new Padding(4, 0, 0, 0) };
+        var b = new Button { Tag = key, AutoSize = true, MinimumSize = new Size(75, 34), Margin = new Padding(4) };
         b.Click += handler; localized.Add(b); return b;
     }
 
@@ -92,13 +168,13 @@ internal sealed class MainForm : Form
     {
         var page = new TabPage { Tag = key, BackColor = Color.White, AutoScroll = true, Padding = new Padding(12) };
         localized.Add(page); tabs.TabPages.Add(page);
-        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 3, Padding = new Padding(6) };
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 238));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 177));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, GrowStyle = TableLayoutPanelGrowStyle.AddRows, ColumnCount = 2, Padding = new Padding(16) };
+        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42));
+        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58));
         page.Controls.Add(table);
         var description = Label(summary); description.MaximumSize = new Size(870, 0); description.Margin = new Padding(2, 8, 2, 20);
-        table.Controls.Add(description, 0, 0); table.SetColumnSpan(description, 3);
+        table.SizeChanged += (_, _) => description.MaximumSize = new Size(Math.Max(120, table.ClientSize.Width - table.Padding.Horizontal - 8), 0);
+        table.Controls.Add(description, 0, 0); table.SetColumnSpan(description, 2);
         int row = 1;
         foreach (Field f in fields)
         {
@@ -119,20 +195,25 @@ internal sealed class MainForm : Form
                 var text = new TextBox { Width = 160, Margin = new Padding(4, 5, 10, 9) };
                 text.TextChanged += (_, _) => Changed(); input = text;
             }
-            input.AccessibleName = f.Key; inputs.Add(f.Key, input); table.Controls.Add(input, 1, row);
+            input.AccessibleName = f.Key; inputs.Add(f.Key, input);
+            var editor = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, FlowDirection = FlowDirection.TopDown, WrapContents = false, Margin = new Padding(3, 4, 3, 4) };
+            editor.Controls.Add(input); table.Controls.Add(editor, 1, row);
             if (f.Help.Length > 0)
             {
                 var help = Label(f.Help); help.ForeColor = Color.FromArgb(86, 101, 123); help.MaximumSize = new Size(495, 0);
-                table.Controls.Add(help, 2, row);
+                editor.SizeChanged += (_, _) => help.MaximumSize = new Size(Math.Max(120, editor.ClientSize.Width - 8), 0);
+                help.Margin = new Padding(4, 0, 4, 8); editor.Controls.Add(help);
             }
             row++;
         }
-        if (key == "navigationTab") { table.Controls.Add(effectiveSpeed, 0, row); table.SetColumnSpan(effectiveSpeed, 3); }
+        if (key == "navigationTab") { table.Controls.Add(effectiveSpeed, 0, row); table.SetColumnSpan(effectiveSpeed, 2); }
+        if (key == "worldScaleTab") { table.Controls.Add(effectiveSpatial, 0, row); table.SetColumnSpan(effectiveSpatial, 2); }
     }
 
     private void Translate()
     {
         Text = Texts.Get("title");
+        UpdateState(updateKey);
         if (status.Tag is string state) status.Text = Texts.Get(state);
         foreach (Control c in localized) if (c.Tag is string key) c.Text = Texts.Get(key);
         foreach (Field f in Fields.All.Where(f => f.Kind == "choice"))
@@ -148,6 +229,8 @@ internal sealed class MainForm : Form
 
     private void LoadRoot(string root)
     {
+        readyUpdate = null; updateVersion = null; updateButton.Visible = false;
+        UpdateState("updateIdle");
         Run(() =>
         {
             var candidate = new SettingsStore(root, smokeFolder != null); candidate.Load();
@@ -155,7 +238,7 @@ internal sealed class MainForm : Form
             string locale;
             try { locale = candidate.LoadLanguage(); } catch { locale = "ko"; }
             store = candidate; rootBox.Text = candidate.Root; editing = Fields.Clone(candidate.Documents);
-            loading = true; Texts.Language = locale; language.SelectedIndex = Array.IndexOf(Texts.Languages, locale); loading = false;
+            Texts.Language = locale;
             Translate(); ApplyControls(); dirty = false; SetStatus("loaded"); UpdateSave();
         }, failedLoad: true);
     }
@@ -174,6 +257,8 @@ internal sealed class MainForm : Form
                 else c.Text = value.ToJsonString();
                 c.Enabled = store != null;
             }
+            manualDepthText = inputs["stereoDepthScale"].Text;
+            depthWasLinked = ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked;
         }
         finally { loading = false; UpdateEffectiveSpeed(); }
     }
@@ -186,7 +271,7 @@ internal sealed class MainForm : Form
             Control c = inputs[f.Key]; JsonNode val;
             if (c is CheckBox cb) val = JsonValue.Create(cb.Checked)!;
             else if (c is ComboBox combo) val = JsonValue.Create(f.Choices![combo.SelectedIndex])!;
-            else val = JsonValue.Create(SettingsStore.Number(c.Text, f.Key))!;
+            else val = JsonValue.Create(SettingsStore.Number(f.Key == "stereoDepthScale" && ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked ? manualDepthText : c.Text, f.Key))!;
             Fields.Set(result, f, val);
         }
         SettingsStore.Validate(result); return result;
@@ -199,10 +284,25 @@ internal sealed class MainForm : Form
     }
     private void UpdateEffectiveSpeed()
     {
-        if (!inputs.TryGetValue("movementSpeed", out var speed) || !inputs.TryGetValue("locomotionScale", out var multiplier)) return;
+        if (!inputs.TryGetValue("movementSpeed", out var speed) || !inputs.TryGetValue("locomotionScale", out var multiplier) || !inputs.ContainsKey("worldScale")) return;
+        bool linked = ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked;
+        var depth = inputs["stereoDepthScale"];
+        bool wasLoading = loading; loading = true;
+        try
+        {
+            if (depthWasLinked && !linked) manualDepthText = depth.Text;
+            else if (!depthWasLinked) manualDepthText = depth.Text;
+            bool worldValid = double.TryParse(inputs["worldScale"].Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double w) && w > 0 && double.IsFinite(w) && double.IsFinite(1 / w) && 1 / w > 0;
+            depth.Text = linked ? (worldValid ? (1 / w).ToString("G17", CultureInfo.InvariantCulture) : "") : manualDepthText;
+            depth.Enabled = store != null && !linked;
+            effectiveSpatial.Text = worldValid ? Texts.Format("effectiveSpatial", w.ToString("G6", CultureInfo.InvariantCulture), (1 / w).ToString("G6", CultureInfo.InvariantCulture), ((CheckBox)inputs["linkMovementSpeedToWorldScale"]).Checked ? w.ToString("G6", CultureInfo.InvariantCulture) : "1") : Texts.Get("invalidSpeed");
+            depthWasLinked = linked;
+        }
+        finally { loading = wasLoading; }
+        double worldMultiplier = ((CheckBox)inputs["linkMovementSpeedToWorldScale"]).Checked ? (double.TryParse(inputs["worldScale"].Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double world) ? world : double.NaN) : 1;
         bool valid = double.TryParse(speed.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double s) && s >= 0 &&
-            double.TryParse(multiplier.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double m) && m >= 0 && double.IsFinite(s * m);
-        effectiveSpeed.Text = valid ? Texts.Format("effectiveSpeed", (s * double.Parse(multiplier.Text, CultureInfo.InvariantCulture)).ToString("G6", CultureInfo.InvariantCulture)) : Texts.Get("invalidSpeed");
+            double.TryParse(multiplier.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double m) && m >= 0 && worldMultiplier > 0 && double.IsFinite(s * m * worldMultiplier);
+        effectiveSpeed.Text = valid ? Texts.Format("effectiveSpeed", (s * double.Parse(multiplier.Text, CultureInfo.InvariantCulture) * worldMultiplier).ToString("G6", CultureInfo.InvariantCulture)) : Texts.Get("invalidSpeed");
     }
     private void SetStatus(string key) { status.Tag = key; status.Text = Texts.Get(key); }
     private void UpdateSave() => save.Enabled = store != null;
@@ -229,7 +329,7 @@ internal sealed class MainForm : Form
         if (dialog.ShowDialog(this) != DialogResult.OK) return;
         Run(() =>
         {
-            var imported = SettingsStore.Import(dialog.FileName);
+            var imported = SettingsStore.Import(dialog.FileName, editing);
             // Apply known settings; preserve installed unknown fields independently of imported unknown metadata.
             foreach (var f in Fields.All) Fields.Set(editing, f, (Fields.Get(imported, f) ?? Fields.JsonSerializerNode(f.Default)).DeepClone());
             ApplyControls(); dirty = true; SetStatus("importPending");
@@ -260,19 +360,110 @@ internal sealed class MainForm : Form
         }
     }
 
+    private void VerifyButtonGeometry()
+    {
+        PerformLayout();
+        foreach (var button in languages.Controls.Cast<Control>().Concat(actions.Controls.Cast<Control>()))
+        {
+            if (!button.Visible) continue;
+            for (Control? parent = button.Parent; parent != null; parent = parent.Parent)
+            {
+                var bounds = parent.RectangleToClient(button.Parent!.RectangleToScreen(button.Bounds));
+                if (!parent.ClientRectangle.Contains(bounds))
+                    throw new InvalidDataException($"Clipped button {button.Text}: {bounds} outside {parent.GetType().Name} {parent.ClientRectangle}");
+            }
+        }
+        var browse = localized.OfType<Button>().Single(b => Equals(b.Tag, "browse"));
+        var pathBounds = rootBox.RectangleToScreen(rootBox.ClientRectangle);
+        var browseBounds = browse.RectangleToScreen(browse.ClientRectangle);
+        if (Math.Abs((pathBounds.Top + pathBounds.Bottom) - (browseBounds.Top + browseBounds.Bottom)) > 2)
+            throw new InvalidDataException("Folder path and Browse are not vertically centered");
+        if (!browse.Parent!.ClientRectangle.Contains(browse.Bounds))
+            throw new InvalidDataException("Browse button is clipped");
+        var buttons = languages.Controls.Cast<Control>().Concat(actions.Controls.Cast<Control>()).Where(b => b.Visible).ToArray();
+        if (buttons.Select(b => b.Height).Distinct().Count() != 1)
+            throw new InvalidDataException("Footer buttons have inconsistent heights");
+    }
+
     private void Smoke()
     {
         try
         {
             Texts.Verify(); Directory.CreateDirectory(smokeFolder!);
+            // Simulated availability only for rendering the new notification;
+            // no release, download, consent or installation is synthesized.
+            updateVersion = "0.6.0"; UpdateState("updateAvailable"); updateButton.Visible = true;
             // Real forms/resources, no runtime writes. Exercise language, all field creation, initial config and persistence mapping.
             var initial = ReadControls(); SettingsStore.Validate(initial);
             for (int i = 0; i < Texts.Languages.Length; i++)
             {
-                Texts.Language = Texts.Languages[i]; loading = true; language.SelectedIndex = i; loading = false; Translate();
+                ((Button)languages.Controls[i]).PerformClick();
+                if (Texts.Language != Texts.Languages[i] || store?.LoadLanguage() != Texts.Languages[i])
+                    throw new InvalidDataException("Language button did not select and persist its locale");
+                VerifyButtonGeometry();
+                tabs.SelectedIndex = 1; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                var follow = (CheckBox)inputs["cameraFollowEnabled"]; bool oldFollow = follow.Checked;
+                foreach (bool enabled in new[] { false, true })
+                {
+                    follow.Checked = enabled;
+                    if (ReadControls()["navigation.json"]["navigation"]!["cameraFollowEnabled"]!.GetValue<bool>() != enabled)
+                        throw new InvalidDataException("Camera follow startup selection did not map to persistence");
+                    using var followBitmap = new Bitmap(Width, Height); DrawToBitmap(followBitmap, new Rectangle(0, 0, Width, Height));
+                    followBitmap.Save(Path.Combine(smokeFolder!, "camera-follow-" + (enabled ? "on-" : "off-") + Texts.Language + ".png"));
+                }
+                follow.Checked = oldFollow;
                 tabs.SelectedIndex = i; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                if (!save.Enabled || !updateButton.Visible || !Enabled) throw new InvalidDataException("Notification blocked settings");
                 using var bitmap = new Bitmap(Width, Height); DrawToBitmap(bitmap, new Rectangle(0, 0, Width, Height));
                 bitmap.Save(Path.Combine(smokeFolder!, Texts.Language + ".png"));
+                tabs.SelectedIndex = 3; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                var primaryUi = (CheckBox)inputs["activityPrimaryUiEnabled"];
+                bool before = primaryUi.Checked; primaryUi.Checked = false;
+                if (ReadControls()["activity_ui.json"]["activityPrimaryUiEnabled"]!.GetValue<bool>())
+                    throw new InvalidDataException("Activity UI OFF did not map to persistence");
+                using var uiBitmap = new Bitmap(Width, Height); DrawToBitmap(uiBitmap, new Rectangle(0, 0, Width, Height));
+                uiBitmap.Save(Path.Combine(smokeFolder!, "activity-ui-" + Texts.Language + ".png"));
+                primaryUi.Checked = true;
+                if (!ReadControls()["activity_ui.json"]["activityPrimaryUiEnabled"]!.GetValue<bool>())
+                    throw new InvalidDataException("Activity UI ON did not map to persistence");
+                primaryUi.Checked = before;
+                tabs.SelectedIndex = 4; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                var faceSwap = (CheckBox)inputs["swapFaceButtons"]; bool oldSwap = faceSwap.Checked;
+                foreach (bool swap in new[] { true, false })
+                {
+                    faceSwap.Checked = swap;
+                    if (ReadControls()["controller_input.json"]["controllerInput"]!["swapFaceButtons"]!.GetValue<bool>() != swap)
+                        throw new InvalidDataException("Face checkbox did not map to persistence");
+                }
+                faceSwap.Checked = oldSwap;
+                var handRoles = (CheckBox)inputs["swapPanelPointerHands"]; bool oldRoles = handRoles.Checked;
+                foreach (bool value in new[] { true, false })
+                {
+                    handRoles.Checked = value;
+                    if (ReadControls()["controller_input.json"]["controllerInput"]!["swapPanelPointerHands"]!.GetValue<bool>() != value)
+                        throw new InvalidDataException("Hand-role checkbox did not map to persistence");
+                }
+                handRoles.Checked = oldRoles;
+                using var faceBitmap = new Bitmap(Width, Height); DrawToBitmap(faceBitmap, new Rectangle(0, 0, Width, Height));
+                faceBitmap.Save(Path.Combine(smokeFolder!, "controller-" + Texts.Language + ".png"));
+                tabs.SelectedIndex = 5;
+                var world = (TextBox)inputs["worldScale"]; var linkDepth = (CheckBox)inputs["linkStereoDepthToWorldScale"]; var linkSpeed = (CheckBox)inputs["linkMovementSpeedToWorldScale"];
+                linkSpeed.Checked = true; world.Text = "invalid";
+                if (effectiveSpeed.Text != Texts.Get("invalidSpeed")) throw new InvalidDataException("Malformed world must not show a neutral valid speed");
+                linkDepth.Checked = true; linkSpeed.Checked = true; world.Text = "2";
+                if (inputs["stereoDepthScale"].Enabled || SettingsStore.Number(inputs["stereoDepthScale"].Text, "stereoDepthScale") != .5 || !effectiveSpeed.Text.Contains("2")) throw new InvalidDataException("Linked world preview mismatch");
+                PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                using var worldBitmap = new Bitmap(Width, Height); DrawToBitmap(worldBitmap, new Rectangle(0, 0, Width, Height)); worldBitmap.Save(Path.Combine(smokeFolder!, "world-on-" + Texts.Language + ".png"));
+                linkDepth.Checked = false;
+                if (!inputs["stereoDepthScale"].Enabled || ReadControls()["stereo_depth.json"]["stereoDepthScale"]!.GetValue<double>() != .5) throw new InvalidDataException("Depth OFF did not retain effective value");
+                world.Text = ".5";
+                if (ReadControls()["stereo_depth.json"]["stereoDepthScale"]!.GetValue<double>() != .5 || !effectiveSpeed.Text.Contains("0.5")) throw new InvalidDataException("Unlinked depth changed or proportional speed wrong");
+                linkDepth.Checked = true;
+                if (inputs["stereoDepthScale"].Enabled || SettingsStore.Number(inputs["stereoDepthScale"].Text, "stereoDepthScale") != 2) throw new InvalidDataException("Depth relink did not recompute");
+                linkDepth.Checked = false; linkSpeed.Checked = false; world.Text = "2";
+                if (ReadControls()["stereo_depth.json"]["stereoDepthScale"]!.GetValue<double>() != 2 || !effectiveSpeed.Text.Contains("1")) throw new InvalidDataException("Unlinked settings changed with world");
+                using var offBitmap = new Bitmap(Width, Height); DrawToBitmap(offBitmap, new Rectangle(0, 0, Width, Height)); offBitmap.Save(Path.Combine(smokeFolder!, "world-off-" + Texts.Language + ".png"));
+                editing = Fields.Clone(initial); ApplyControls();
             }
             ((TextBox)inputs["eyeRenderScale"]).Text = "2.5";
             ((ComboBox)inputs["locomotionHand"]).SelectedIndex = 1;
@@ -280,7 +471,21 @@ internal sealed class MainForm : Form
             if (Fields.Get(edited, Fields.All[0])!.GetValue<double>() != 2.5 ||
                 edited["navigation.json"]["navigation"]!["locomotionHand"]!.GetValue<string>() != "right")
                 throw new InvalidDataException("GUI controls did not map to persistence");
-            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), "{\"passed\":true,\"locales\":[\"ko\",\"en\",\"ja\"],\"fields\":18,\"liveSaves\":0,\"gameLaunches\":0}");
+            Size fullSize = Size; Size = MinimumSize;
+            foreach (string locale in Texts.Languages)
+            {
+                SwitchLanguage(locale); VerifyButtonGeometry();
+                using var compact = new Bitmap(Width, Height); DrawToBitmap(compact, new Rectangle(0, 0, Width, Height)); compact.Save(Path.Combine(smokeFolder!, "minimum-" + locale + ".png"));
+            }
+            Size = fullSize;
+            // Layout stress, not a claim about a physical monitor's DPI configuration.
+            Scale(new SizeF(1.5f, 1.5f)); Size = MinimumSize;
+            foreach (string locale in Texts.Languages)
+            {
+                SwitchLanguage(locale); VerifyButtonGeometry();
+                using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smokeFolder!, "scaled150-" + locale + ".png"));
+            }
+            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), "{\"passed\":true,\"locales\":[\"ko\",\"en\",\"ja\"],\"fields\":25,\"referenceButtonLayout\":true,\"languageButtons\":3,\"buttonBoundsAndPathAlignment\":true,\"layoutScaleStress\":1.5,\"cameraFollowStartupOnOff\":true,\"activityUiOnOff\":true,\"faceExchange\":true,\"pairedHandRoles\":true,\"worldScaleLinks\":true,\"liveSaves\":0,\"gameLaunches\":0}");
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smokeFolder!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

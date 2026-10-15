@@ -22,6 +22,11 @@ internal sealed class InstallationEngine
         return bytes == null ? null : ReadReceipt(root, bytes);
     }
     internal bool HasPending(string root) => File.Exists(Paths.Contained(Paths.Root(root), Contract.PendingPath));
+    internal bool HasPreviousVersion(string root)
+    {
+        root = Paths.Root(root); byte[]? state = StateBytes(root);
+        return state != null && InstallationJournal(root, ReadReceipt(root, state), state).Changes[^1].BeforeHash != null;
+    }
 
     private static void ValidateFiles(PayloadFile[] files)
     {

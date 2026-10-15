@@ -6,9 +6,43 @@ internal static class Program
     private static int Main(string[] args)
     {
         ApplicationConfiguration.Initialize();
+        bool updateFixture = false;
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-installer-ux")) return InstallerUxChecks.Run();
+            if (args.Contains("--check-settings-launch"))
+            {
+                var target = SettingsLaunch.Resolve(Value(args, "--root") ?? FindRoot(), new InstallationEngine()) ?? throw new InstallError("settingsUnavailable");
+                File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "settings-launch-validation.json"), Contract.Encode(new { passed = true, target.Executable, target.Root, launchedProcesses = 0, installationWrites = 0 })); return 0;
+            }
+            if (args.Contains("--self-test-updates")) return UpdateChecks.Run(Value(args, "--package")!, Value(args, "--previous")!);
+            if (args.Contains("--update-parent-fixture")) { Thread.Sleep(1500); return 0; }
+            if (args.Contains("--check-update-source"))
+            {
+                var client = new GithubOwnerClient();
+                byte[] json = client.Releases(CancellationToken.None).GetAwaiter().GetResult();
+                var release = UpdatePolicy.Select(json, "0.5.0");
+                File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "update-source-validation.json"), Contract.Encode(new { passed = true, repository = UpdatePolicy.Repository, newerStableRelease = release?.Version, credentialsLogged = false, writesToGame = 0 }));
+                return 0;
+            }
+            if (args.Contains("--apply-confirmed-update"))
+            {
+                string folder = Value(args, "--stage") ?? throw new InstallError("updateInvalid");
+                if (args.Contains("--fixture-no-reopen"))
+                {
+                    var f = Contract.Read<UpdateHandoff>(File.ReadAllBytes(Paths.Contained(Path.GetFullPath(folder), "handoff.json")));
+                    if (!f.Root.Contains("updater-validation-fixture", StringComparison.Ordinal) || File.ReadAllText(Paths.Contained(f.Root, "GF2 Game/GF2_Exilium.exe")) != SelfTest.Inert) throw new InstallError("path", f.Root);
+                    updateFixture = true;
+                }
+                int result = UpdateStaging.Apply(folder);
+                if (updateFixture) return result;
+                var handoff = Contract.Read<UpdateHandoff>(File.ReadAllBytes(Paths.Contained(Path.GetFullPath(folder), "handoff.json")));
+                var start = new System.Diagnostics.ProcessStartInfo(Paths.Contained(handoff.Root, NativeLayout.ToolRoot + "GF2VR.Configurator.exe")) { UseShellExecute = false };
+                start.ArgumentList.Add("--root"); start.ArgumentList.Add(handoff.Root);
+                using var reopened = System.Diagnostics.Process.Start(start);
+                return result;
+            }
             if (args.Contains("--self-test-desktop")) return DesktopDeploymentChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-portable")) return PortablePackageChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-native")) return NativePackageChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
@@ -35,12 +69,18 @@ internal static class Program
                     Contract.Encode(new { passed = true, plan.ManifestHash, plan.Package.Version, files = plan.Package.Files.Length, installWrites = 0 }));
                 return 0;
             }
-            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"));
+            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"), args.Contains("--smoke-install-workflow"));
             Application.Run(form); return 0;
         }
         catch (Exception ex)
         {
-            if (args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--apply-confirmed-update"))
+            {
+                if (updateFixture) return 1;
+                MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 1;
+            }
+            if (args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;

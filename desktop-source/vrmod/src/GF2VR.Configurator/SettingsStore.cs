@@ -116,7 +116,10 @@ internal sealed class SettingsStore
             CheckDuplicates(json.RootElement);
             var doc = JsonNode.Parse(json.RootElement.GetRawText()) as JsonObject
                 ?? throw new SettingsError("formatError", name);
-            if (doc["schemaVersion"] is not JsonValue v || !v.TryGetValue<int>(out int version) || version != 1)
+            // Deployed Activity UI files predate the GUI and have no schema member.
+            // Accept that exact legacy contract without changing the file during load.
+            bool legacyOptional = (name is "activity_ui.json" or "controller_input.json") && !doc.ContainsKey("schemaVersion");
+            if (!legacyOptional && (doc["schemaVersion"] is not JsonValue v || !v.TryGetValue<int>(out int version) || version != 1))
                 throw new SettingsError("schemaError", name);
             if (name == "render_quality.json" && (doc.Count != 2 || doc["eyeRenderScale"] == null))
                 throw new SettingsError("formatError", name); // Native reader rejects unknown keys.
@@ -159,7 +162,8 @@ internal sealed class SettingsStore
             if (!docs.TryGetValue(name, out var doc)) throw new SettingsError("formatError", name);
             _ = Parse(Encode(doc), name);
             if ((name == "navigation.json" && doc["navigation"] is not JsonObject) ||
-                (doc.ContainsKey("worldDrag") && doc["worldDrag"] is not JsonObject))
+                (doc.ContainsKey("worldDrag") && doc["worldDrag"] is not JsonObject) ||
+                (name == "controller_input.json" && doc.ContainsKey("controllerInput") && doc["controllerInput"] is not JsonObject))
                 throw new SettingsError("formatError", name);
         }
         foreach (Field f in Fields.All)
@@ -168,7 +172,14 @@ internal sealed class SettingsStore
             if (value == null)
             {
                 // Runtime optional members use their actual policy defaults, without rewriting the file on load.
-                if (f.Key is "eyeRenderScale" or "stereoDepthScale") throw new SettingsError("formatError", f.File);
+                if (f.Key is "eyeRenderScale" or "stereoDepthScale" or "worldScale") throw new SettingsError("formatError", f.File);
+                if (f.File == "world_scale.json" && docs[f.File].ContainsKey(f.Key)) throw new SettingsError("formatError", f.File);
+                if (f.Key == "activityPrimaryUiEnabled" && docs[f.File].ContainsKey(f.Key))
+                    throw new SettingsError("formatError", f.File); // Explicit null is not the native missing-key default.
+                if ((f.Key is "swapFaceButtons" or "swapPanelPointerHands") && (docs[f.File][f.Group!] as JsonObject)?.ContainsKey(f.Key) == true)
+                    throw new SettingsError("formatError", f.File);
+                if (f.Key == "cameraFollowEnabled" && (docs[f.File][f.Group!] as JsonObject)?.ContainsKey(f.Key) == true)
+                    throw new SettingsError("formatError", f.File);
                 continue;
             }
             if (value is not JsonValue val) throw new SettingsError("formatError", f.File);
@@ -178,7 +189,7 @@ internal sealed class SettingsStore
             if (f.Kind == "number")
             {
                 double d = Number(val.ToJsonString(), f.Key);
-                if ((f.Key == "eyeRenderScale" && d <= 0) || (f.Key == "stickDeadzone" && d >= 1))
+                if ((f.Key is "eyeRenderScale" or "worldScale" && d <= 0) || (f.Key == "stickDeadzone" && d >= 1))
                     throw new SettingsError("numberError", Texts.Get(f.Key)); // Semantic/backend constraints, not advice.
             }
         }
@@ -187,7 +198,10 @@ internal sealed class SettingsStore
             Flag("rightGripActivation") || Flag("rightTriggerActivation")) || !(Flag("trackLeftHand") || Flag("trackRightHand"))))
             throw new SettingsError("dragError");
         double Num(string key) { var f = Fields.All.Single(f => f.Key == key); return Number((Fields.Get(docs, f) ?? Fields.Get(defaults, f))!.ToJsonString(), key); }
-        if (!double.IsFinite(Num("movementSpeed") * Num("locomotionScale"))) throw new SettingsError("speedError");
+        double world = Num("worldScale"), inverse = 1 / world;
+        if (!double.IsFinite(inverse) || inverse <= 0) throw new SettingsError("numberError", Texts.Get("worldScale"));
+        double speed = Num("movementSpeed") * Num("locomotionScale") * (Flag("linkMovementSpeedToWorldScale") ? world : 1);
+        if (!double.IsFinite(speed) || (Num("movementSpeed") > 0 && Num("locomotionScale") > 0 && speed == 0)) throw new SettingsError("speedError");
     }
 
     internal static byte[] Encode(JsonObject doc) => Encoding.UTF8.GetBytes(doc.ToJsonString(Json) + "\n");
@@ -274,17 +288,33 @@ internal sealed class SettingsStore
         AtomicStandalone(path, Encode(profile));
     }
 
-    internal static Dictionary<string, JsonObject> Import(string path)
+    internal static Dictionary<string, JsonObject> Import(string path, Dictionary<string, JsonObject>? current = null)
     {
         using var stream = File.OpenRead(path);
         if (stream.Length > 32768) throw new SettingsError("profileError");
         using var doc = JsonDocument.Parse(stream, new JsonDocumentOptions { MaxDepth = 20 }); CheckDuplicates(doc.RootElement);
         var profile = JsonNode.Parse(doc.RootElement.GetRawText())!.AsObject();
         if (profile["schemaVersion"]?.ToJsonString() != "1" || profile["product"]?.GetValue<string>() != "GF2VR.Configurator" ||
-            profile["configurations"] is not JsonObject config || config.Count != Fields.Files.Length)
+            profile["configurations"] is not JsonObject config)
             throw new SettingsError("profileError");
+        // Older four/five-document profiles cannot reset a newer UI/face choice.
+        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json" }.Where(f => !config.ContainsKey(f)).ToHashSet(StringComparer.Ordinal);
+        var expected = Fields.Files.Where(f => !missing.Contains(f)).ToHashSet(StringComparer.Ordinal);
+        if (!expected.SetEquals(config.Select(p => p.Key))) throw new SettingsError("profileError");
         var result = new Dictionary<string, JsonObject>();
-        foreach (string file in Fields.Files) result[file] = config[file] as JsonObject ?? throw new SettingsError("profileError");
+        foreach (string file in Fields.Files)
+            result[file] = missing.Contains(file)
+                ? (JsonObject)(current ?? Fields.Defaults())[file].DeepClone()
+                : config[file] as JsonObject ?? throw new SettingsError("profileError");
+        // Profiles from the face-only GUI share this document but lack the
+        // newer role field. Import must not silently reset the current hands.
+        Validate(result);
+        var roleField = Fields.All.Single(f => f.Key == "swapPanelPointerHands");
+        if (Fields.Get(result, roleField) == null)
+            Fields.Set(result, roleField, (Fields.Get(current ?? Fields.Defaults(), roleField) ?? Fields.JsonSerializerNode(false)).DeepClone());
+        var followField = Fields.All.Single(f => f.Key == "cameraFollowEnabled");
+        if (Fields.Get(result, followField) == null)
+            Fields.Set(result, followField, (Fields.Get(current ?? Fields.Defaults(), followField) ?? Fields.JsonSerializerNode(true)).DeepClone());
         Validate(result); return Fields.Clone(result);
     }
 

@@ -1,10 +1,98 @@
 {
   "schema": 1,
   "scope": "DESKTOP_SOURCE_AND_DOCS_ONLY",
+  "snapshot": "2026-10-15",
   "publication": "PRIVATE_GITHUB_DESKTOP_SOURCE_DOCS",
+  "repository": "deadpixel134/GF2Exilium-VR",
   "nativeRebuildComplete": false,
   "currentRuntimeContractCopied": false,
+  "shippedApplications": {
+    "settings": "SETTINGS-HELP-001",
+    "installer": "INSTALLER-ALIGNMENT-001"
+  },
+  "desktopAudit": {
+    "checks": 647,
+    "uiOperations": 6,
+    "gameHmdLaunches": 0
+  },
   "files": [
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Directory.Build.props",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "66EC97D1A0CDA700083FF09AAAE8BCE96EAC360AA94545D83D799E9B81764085",
+      "bytes": 236,
+      "origin": "vrmod/src/GF2VR.Configurator/Directory.Build.props"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Fields.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "A3BA8CBEE7423F42BA0F18D1BAA3A74D440AD40CF7C6E6DAAD537AE7C5F2DAAE",
+      "bytes": 3879,
+      "origin": "vrmod/src/GF2VR.Configurator/Fields.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "7293F2A8398202C55EB07762EC9CA91768D341C4C3122250A6398212F719FBA2",
+      "bytes": 1296,
+      "origin": "vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/MainForm.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "61DF1B84EE8AB08D256EF3AF0A34C0494E76C04AD41E823A8F6709846DAE9572",
+      "bytes": 32559,
+      "origin": "vrmod/src/GF2VR.Configurator/MainForm.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Program.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "1115DE1AEB3193AC4D0FE82B16AA979E263082B3CA2447C66995A25D7C2ED3FC",
+      "bytes": 1718,
+      "origin": "vrmod/src/GF2VR.Configurator/Program.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/SelfTest.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "482096F0FC64054CEFCDFAC9A9A2326F237BCFF39DDCE6DC352E1452063038AD",
+      "bytes": 28308,
+      "origin": "vrmod/src/GF2VR.Configurator/SelfTest.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/SettingsStore.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "E54ED088F9EA399EBB09ED3C7CA37EFE33FDD37F13A0967621CDF2C47E96D34C",
+      "bytes": 19658,
+      "origin": "vrmod/src/GF2VR.Configurator/SettingsStore.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Texts.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "EF7E5760DDB690BD9DA0BCE81810D3B39E15A91DAE256C2829395280EFF630FC",
+      "bytes": 2315,
+      "origin": "vrmod/src/GF2VR.Configurator/Texts.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ko.json",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "431BE3F318F84742E84D6F15A97B6C53AAC24B6F1261EA2C9D7A627CA6721102",
+      "bytes": 10926,
+      "origin": "vrmod/src/GF2VR.Configurator/Locales/ko.json"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/en.json",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "2BC0AE6F3A7AD047DB30BA8748E6BE1B3E4C5B0E77EF1377F3EFE35BDFD5E78B",
+      "bytes": 9067,
+      "origin": "vrmod/src/GF2VR.Configurator/Locales/en.json"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ja.json",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "01993B10F1B43EDE222CAEA6821A605D03EFB6CA07C261D744DA45810675D06B",
+      "bytes": 11123,
+      "origin": "vrmod/src/GF2VR.Configurator/Locales/ja.json"
+    },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Contracts.cs",
       "kind": "OWNED_DESKTOP_SOURCE",
@@ -34,17 +122,24 @@
       "origin": "vrmod/src/GF2VR.Installer/GF2VR.Installer.csproj"
     },
     {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/GithubOwnerClient.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "9F2E46EA1E97F25450DF11A200423E5CD21509DB9795854991F93A61C2D95BBB",
+      "bytes": 3722,
+      "origin": "vrmod/src/GF2VR.Installer/GithubOwnerClient.cs"
+    },
+    {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallationEngine.cs",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "E08B55ADC271283B099AE672E12EB069C96A2948EBD061DC14951E85FBDA6F06",
-      "bytes": 17233,
+      "sha256": "4B0047EB0BE2CD615E8603D63B7D2EA8835D2FF70C50BB255584D2F8C7445A95",
+      "bytes": 17485,
       "origin": "vrmod/src/GF2VR.Installer/InstallationEngine.cs"
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallerForm.cs",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "E361B6F53FA5BC089B2E9C36DA340E29FD34D1190F6B62CC7F59171D952F4226",
-      "bytes": 12108,
+      "sha256": "4C3CF1A2CFC685CF649CF340A01B50E42E20CCD0529D97F246551F0560113FB8",
+      "bytes": 18743,
       "origin": "vrmod/src/GF2VR.Installer/InstallerForm.cs"
     },
     {
@@ -53,6 +148,13 @@
       "sha256": "5B8604A8C3A53759A807B9808592BC4C451AA173EC6E674EC19B269F428B549A",
       "bytes": 3664,
       "origin": "vrmod/src/GF2VR.Installer/InstallerText.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallerUxChecks.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "8982B5FDB96449F3561BAD3225A57669CA2F8B1978F5634EA1E45A9E675F7035",
+      "bytes": 8035,
+      "origin": "vrmod/src/GF2VR.Installer/InstallerUxChecks.cs"
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/NativeLayout.cs",
@@ -85,8 +187,8 @@
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Program.cs",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "95CB784749FBB0632C1998DA0555D6051054A13E445E9DEF7A3F71613B9CBE3A",
-      "bytes": 3768,
+      "sha256": "091DEBBA2909015389380E90AAECFC6120B107F3507EABE1E14D92DA3F2FDCC8",
+      "bytes": 7024,
       "origin": "vrmod/src/GF2VR.Installer/Program.cs"
     },
     {
@@ -97,200 +199,189 @@
       "origin": "vrmod/src/GF2VR.Installer/SelfTest.cs"
     },
     {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/SettingsLaunch.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "92B54691E213AFF70C2C7E436F96A64F12E1062C00AB12B36A205922F763CA73",
+      "bytes": 4500,
+      "origin": "vrmod/src/GF2VR.Installer/SettingsLaunch.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateChecks.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "48B92A127A476B5F0564E935E70984FDEE3F82F6574606A3F7E08EA1D9A9ACC3",
+      "bytes": 10585,
+      "origin": "vrmod/src/GF2VR.Installer/UpdateChecks.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdatePolicy.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "CA50AF01812581FDB92CF405BAD9268832CD6F03EE6F9116A5A3B75903082DE6",
+      "bytes": 5695,
+      "origin": "vrmod/src/GF2VR.Installer/UpdatePolicy.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateService.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "D671595914CE31A0C9FCAD8990FA6FE2B02845AEC5C3B9AE6359761AE237FC63",
+      "bytes": 1777,
+      "origin": "vrmod/src/GF2VR.Installer/UpdateService.cs"
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateStaging.cs",
+      "kind": "OWNED_DESKTOP_SOURCE",
+      "sha256": "D32A7DEDC7497DB076F723FC4057983AACAD03C6EA5E764C620665620C3AD255",
+      "bytes": 7359,
+      "origin": "vrmod/src/GF2VR.Installer/UpdateStaging.cs"
+    },
+    {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Locales/ko.json",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "451548E470C113123C994E1C0F91FEF3B9FDCA2DE44C134FB0BEC3930DC91731",
-      "bytes": 6406,
+      "sha256": "21DC19A088C9C6B180CEFEC4744D555CC073B674E4FCFE494AA5695F50DEED2F",
+      "bytes": 7905,
       "origin": "vrmod/src/GF2VR.Installer/Locales/ko.json"
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Locales/en.json",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "1D840400CC61DD1483212BE386FDA6D8817D7391F2290A1F5DAB2518EBF7EFC5",
-      "bytes": 5351,
+      "sha256": "53B83734B98668B319A5C47D030B80A7281BCADB219A2574EBF8B9428EEA0BAC",
+      "bytes": 6589,
       "origin": "vrmod/src/GF2VR.Installer/Locales/en.json"
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Locales/ja.json",
       "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "8404076BDAF349EEC2CD225FEF084B1AC0E7C731764A787707222E63FF6EF57D",
-      "bytes": 6904,
+      "sha256": "DDB462EBD872AF8060A8FC7E86C11C4A94039F53D21BD47D148D3895C217CA3D",
+      "bytes": 8351,
       "origin": "vrmod/src/GF2VR.Installer/Locales/ja.json"
     },
     {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "6F06A9A0554190793C72487D3288B673FEE32AACA482238D4C78238495D8C45E",
-      "bytes": 752,
-      "origin": "vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Directory.Build.props",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "66EC97D1A0CDA700083FF09AAAE8BCE96EAC360AA94545D83D799E9B81764085",
-      "bytes": 236,
-      "origin": "vrmod/src/GF2VR.Configurator/Directory.Build.props"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Program.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "1115DE1AEB3193AC4D0FE82B16AA979E263082B3CA2447C66995A25D7C2ED3FC",
-      "bytes": 1718,
-      "origin": "vrmod/src/GF2VR.Configurator/Program.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Fields.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "20A86D94E70EC001622DF2F90AF595A8A5147301DF62AC01A174313F90AA0C7D",
-      "bytes": 3167,
-      "origin": "vrmod/src/GF2VR.Configurator/Fields.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/SettingsStore.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "434FA806EC72633E9DF67D5334F0B72BE60D13589206DE3D84CC69B763C28AFC",
-      "bytes": 16736,
-      "origin": "vrmod/src/GF2VR.Configurator/SettingsStore.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/MainForm.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "7A265466B0B24712F004B9C32A193F98F518E734368E74192D063A8B910FB537",
-      "bytes": 15970,
-      "origin": "vrmod/src/GF2VR.Configurator/MainForm.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Texts.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "EF7E5760DDB690BD9DA0BCE81810D3B39E15A91DAE256C2829395280EFF630FC",
-      "bytes": 2315,
-      "origin": "vrmod/src/GF2VR.Configurator/Texts.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/SelfTest.cs",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "3AE3D30904620132AE61A25F6BD0CA1E02BB78618B80546DD4B1560136FF6972",
-      "bytes": 9408,
-      "origin": "vrmod/src/GF2VR.Configurator/SelfTest.cs"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ko.json",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "7E859378AF0DAB58A471729DF1C78FDDB953A7E8EDAB6B585F51BCA8CBA13140",
-      "bytes": 7915,
-      "origin": "vrmod/src/GF2VR.Configurator/Locales/ko.json"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/en.json",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "0CEBE4D7156307A8FD973AEA985F904AC118A6889E4BC1C3A23D674DABAD3C33",
-      "bytes": 6594,
-      "origin": "vrmod/src/GF2VR.Configurator/Locales/en.json"
-    },
-    {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ja.json",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "264E852CDF40B9E4E1917E9971A9049DD6AB40C942442E90AB734B30A5644C4F",
-      "bytes": 7985,
-      "origin": "vrmod/src/GF2VR.Configurator/Locales/ja.json"
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/runtime-contract.json",
+      "kind": "NON_OPERATIONAL_CONTRACT_TEMPLATE",
+      "sha256": "1FD64377B785F03E3C81875666DA865334B954E076767248F0D3633D4C9FDC2E",
+      "bytes": 424,
+      "origin": "Schema/7file names only; no developer root/hash/current installation contract"
     },
     {
       "path": "desktop-source/vrmod/tools/build_desktop_private_runtime.ps1",
-      "kind": "OWNED_DESKTOP_SOURCE",
-      "sha256": "B675B538A8A4F475BD9B3189F1AB3F19046293073215BECE934E4A4034878ADD",
-      "bytes": 5290,
+      "kind": "OWNED_BUILD_HELPER",
+      "sha256": "07FB429100C5AE02C8A9CB3A1E10C2A0A3825E86EFFC784EB2E33E8FC75A2E84",
+      "bytes": 5604,
       "origin": "vrmod/tools/build_desktop_private_runtime.ps1"
     },
     {
       "path": "desktop-source/vrmod/tools/desktop_private_runtime.targets",
-      "kind": "OWNED_DESKTOP_SOURCE",
+      "kind": "OWNED_BUILD_HELPER",
       "sha256": "DE2995234D244A131BC3498F4DF855E31375664607AAF3638D024412548D8D39",
       "bytes": 1215,
       "origin": "vrmod/tools/desktop_private_runtime.targets"
     },
     {
       "path": "desktop-source/vrmod/tools/desktop_runtime_nuget.config",
-      "kind": "OWNED_DESKTOP_SOURCE",
+      "kind": "OWNED_BUILD_HELPER",
       "sha256": "F545A7E2EA14AC53CDFB91217CAE67B8FF14275313F6298F9A3331D205B6C948",
       "bytes": 217,
       "origin": "vrmod/tools/desktop_runtime_nuget.config"
     },
     {
-      "path": "desktop-source/vrmod/src/GF2VR.Configurator/runtime-contract.json",
-      "kind": "PRODUCT_CONTRACT_TEMPLATE",
-      "sha256": "B73AFCC2FBC38EAD2E3DEB72F14785D426D5F9A24D5350A5D3D4D31273FE1F71",
-      "bytes": 352,
-      "origin": "Verified0.4.0 portable install-root template, not current source runtime contract"
+      "path": "DOTNET-NOTICES.txt",
+      "kind": "PACKAGE_SUPPLIED_NOTICES",
+      "sha256": "8B0E59D2D7B072344EE7023FFE5A171CCAD7A9D7A6B1DED8A60934742CA4AD9C",
+      "bytes": 79141,
+      "origin": "Official.NET10.0.12runtime-pack notices; not project license"
     },
     {
       "path": "README.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "1CDEA49C1BF37BEDE5225D192494888DB2052D492512E06F15A38A651A091856",
-      "bytes": 2047,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "FC6633DA6B0FF89F38CB73AE3BDCB1726DB4EE225AC107E184EA04ED21A2DCF4",
+      "bytes": 1673,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "SOURCE_BOUNDARY.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "B8C5B082AB9A179910B25065F2FFA93B39CBF68140E0A5114D04D29ED30B9CAD",
-      "bytes": 3644,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "EBB0BB0DB79C67B0AA58B4ECACD8655F044613852D1AFA01EEEAFA15D5231ED3",
+      "bytes": 2093,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "docs/ko/INSTALLATION.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "94E440182B2106F7E7ADBB462EB87EBF5E95EFEDFFF64F3E8181318B1D1ED809",
-      "bytes": 3949,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "BCA48AC43AA1D59FD508EDE94F536935C740CC3DE20AB817F85CD42718369B0A",
+      "bytes": 1172,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "docs/ko/SETTINGS.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "73172DD74B25B0252ED4EEDA55E0F25D5601167AA5B8833D8011C1323E48F79D",
-      "bytes": 3074,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "E16364BF997FFB487CB6E37813903EEC477C38FBBD987183229C68553AC5BC2B",
+      "bytes": 1965,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+    },
+    {
+      "path": "docs/ko/UPDATE.md",
+      "kind": "PROJECT_DOCUMENTATION",
+      "sha256": "A410C274A061F9486EE0576F039C7912071D32B19FA207E27985B7A61254F9C6",
+      "bytes": 1226,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "docs/ko/USAGE.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "509F55A85A66F2E4D1DE2F86421AE28490123A84AC182EDCF17FBA9E47FFAEEA",
-      "bytes": 2995,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "96F39E6A253947465D4E86F2BE7FC231B612C07F2C9E3EBFF93CB0A9A31C472D",
+      "bytes": 1142,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "docs/ko/TROUBLESHOOTING.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "120D611F13471934ADAB5F64317190B1F0B6303F1C2B2162CCC358392B22313B",
-      "bytes": 2355,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "F2A010E9BA035F65B9B347EECCD50D7F1CAA94872CE756D68FB617FDBA132A0E",
+      "bytes": 1070,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
       "kind": "PROJECT_DOCUMENTATION",
-      "sha256": "FF88C54CEEC1EBB407E426A7E9A8CE5C0266C768603240AD19790007C0B81BD3",
-      "bytes": 1881,
-      "origin": "Current project0.4.0 facts; configured reference headings only"
+      "sha256": "0CFBFD7C9AC974EEE2F6E97B2708287E85DED0D87FC7556737414087C4B1F9F7",
+      "bytes": 913,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     },
     {
-      "path": "DOTNET-NOTICES.txt",
-      "kind": "PACKAGE_SUPPLIED_NOTICES",
-      "sha256": "AA53E1F03CCAF0907C8A9ECC51BC6B465A5220A3833A247EA99E6C1243E6F9EA",
-      "bytes": 80604,
-      "origin": "Official .NET runtime pack notices, no project license invented"
+      "path": "docs/ko/VERIFICATION.md",
+      "kind": "PROJECT_DOCUMENTATION",
+      "sha256": "35DF291F7BF3D760CAF3C47D18BC17489BDA49BBB40D53F7B11B68BF14CC7622",
+      "bytes": 1441,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+    },
+    {
+      "path": "docs/ko/RELEASE_READINESS.md",
+      "kind": "PROJECT_DOCUMENTATION",
+      "sha256": "FF5DDF19241AE8FFD72568BCD48A104D9494F6F31BE2161D695ACD5A1F0229CA",
+      "bytes": 682,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+    },
+    {
+      "path": ".gitignore",
+      "kind": "GENERATED_OUTPUT_EXCLUSION",
+      "sha256": "DFF1AEEA674FEE76B27182547A6E3522755D5014B02545AED3C3E51BB8809513",
+      "bytes": 62,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
+    },
+    {
+      "path": ".gitattributes",
+      "kind": "PROJECT_DOCUMENTATION",
+      "sha256": "D60F352D0DB1404C70AFB4BB8B2CA3FD1C610572AA40720E8A0B7BAA7885418C",
+      "bytes": 19,
+      "origin": "Current project authority and647check desktop audit; no raw agent/runtime data"
     }
   ],
   "excluded": [
-    "game executables/assets/metadata/cache",
-    "native build/source graph not selected",
-    "reference sources",
-    "logs/screenshots",
-    "user runtime/UI settings",
-    "backup/rollback/transactions",
-    "SDK/NuGet cache",
-    "agent/Manager records",
-    "credentials/secrets"
-  ],
-  "desktopSnapshotRebuilt": false,
-  "repository": "deadpixel134/GF2Exilium-VR",
-  "projectSourceLicense": "UNDECIDED"
+    "game/assets/metadata",
+    "native sources/binaries/encoded resources",
+    "configured references",
+    "user settings",
+    "logs/screenshots/rollback",
+    "credentials/secrets",
+    "SDK/cache",
+    "agent/Manager records"
+  ]
 }

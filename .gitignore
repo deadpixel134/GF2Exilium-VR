@@ -1,0 +1,6 @@
+**/bin/
+**/obj/
+desktop-source/vrmod/build/
+*.user
+*.suo
+.vs/
