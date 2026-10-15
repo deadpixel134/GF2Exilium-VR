@@ -1,8 +1,8 @@
 #requires -Version 7.0
 [CmdletBinding()]
 param([ValidateSet('Configurator','Installer')][string]$Application='Configurator',
-    [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='INSTALLER-UPDATE-NOTIFY-007',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='0.5.0')
+    [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='STABLE-DESKTOP-001',
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.0')
 $ErrorActionPreference='Stop'
 $taskRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $evidence=Join-Path $taskRoot ('vrmod/build/offline/'+$BuildId)
@@ -56,7 +56,7 @@ try {
         ('-p:CustomAfterMicrosoftCommonTargets='+$targets),'-p:RestoreIgnoreFailedSources=false',
         ('-p:GF2VRDesktopNotices='+$notices),
         '--configfile',(Join-Path $taskRoot 'vrmod/tools/desktop_runtime_nuget.config'),'--nologo','-v','minimal')
-    if($Application -eq 'Installer') { $args+=('-p:Version='+$ProductVersion) }
+    $args+=('-p:Version='+$ProductVersion)
     & $dotnet @args 2>&1 | Out-File -LiteralPath (Join-Path $evidence ($Application+'-publish.log')) -Encoding UTF8
     if($LASTEXITCODE -ne 0) { throw ('Private desktop publish failed. See '+$Application+'-publish.log') }
     $names=@('.exe','.dll','.deps.json','.runtimeconfig.json') | ForEach-Object {'GF2VR.'+$Application+$_}

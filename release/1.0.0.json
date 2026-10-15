@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.0.0",
+  "tag": "v1.0.0",
+  "channel": "stable",
+  "repository": "deadpixel134/GF2Exilium-VR",
+  "nativeBuild": "BOOTSTRAP-STABLE-001",
+  "nativeSha256": "F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D",
+  "nativeSourceReproduction": "EXACT",
+  "supportObjectsReproduced": 15,
+  "nativeSourceFiles": 225,
+  "userAcceptedImplementation": "PERF-STACK-GETTERS-001",
+  "userAcceptedNativeSha256": "8E989B177A91DF3189B7196E22D7D0A3486C7A950767A98CC5A7FAAEC2C89F9D",
+  "packagingDelta": "Module-relative bootstrap and system API forwarding; render/pose/input implementations and default settings preserved",
+  "exactReleaseBinaryHmdRun": "NOT_RUN",
+  "cleanWindowsWithoutDotnetRun": "NOT_RUN",
+  "desktopPrivateRuntime": "10.0.12",
+  "configurationDocuments": 7,
+  "settingsFields": 25,
+  "locales": [
+    "ko",
+    "en",
+    "ja"
+  ],
+  "offlineChecks": {
+    "settings": 475,
+    "installerTransactions": 85,
+    "installerUx": 19,
+    "portablePackage": 113,
+    "desktopDeployment": 45,
+    "updater": 54,
+    "stableNativeProfiles": 60
+  },
+  "archive": {
+    "name": "GF2VR-Native-SelfContained-1.0.0.zip",
+    "bytes": 93655245,
+    "sha256": "591185F5D96D3B5A740EB8C5125D8C6FD26478B8FA28385B6B920117AA54ED8B"
+  },
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialsIncluded": false
+}

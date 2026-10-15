@@ -24,7 +24,7 @@ internal static class PortablePackageChecks
             Paths.WriteNew(Paths.Contained(root, path), Encoding.UTF8.GetBytes("INERT PREREQUISITE " + path));
         return root;
     }
-    private static void Installed(InstallationEngine engine, string root)
+    private static void Installed(InstallationEngine engine, string root, Package source)
     {
         var receipt = engine.Inspect(root)!;
         Assert(receipt.Files.Length == 9, "receipt files");
@@ -35,7 +35,8 @@ internal static class PortablePackageChecks
         }
         var contract = JsonNode.Parse(File.ReadAllBytes(Paths.Contained(root, GuiContract)))!.AsObject();
         Assert(contract["configurationRoot"]!.GetValue<string>() == Path.Combine(root, "vrmod", "config"), "actual config root");
-        Assert(contract["dllSha256"]!.GetValue<string>() == NativeLayout.PortableDllHash, "actual DLL contract");
+        Assert(Paths.Equal(contract["dllSha256"]!.GetValue<string>(), source.Native!.DllSha256), "actual DLL contract");
+        Assert(receipt.Version == source.Version, "actual receipt version");
     }
     private static void Configurator(string root, bool expectedSuccess)
     {
@@ -54,6 +55,9 @@ internal static class PortablePackageChecks
         string pkg = Path.Combine(fixture, "package");
         var source = Contract.Read<Package>(Paths.Bytes(Paths.Contained(actualPackage, "package-manifest.json"), 262144)!);
         Assert(NativeLayout.IsPortable(source) && source.BoundGameRoot == null, "portable source profile");
+        string expectedDll = source.Native!.BuildId == NativeLayout.StablePortableBuild
+            ? NativeLayout.StablePortableDllHash : NativeLayout.PortableDllHash;
+        Assert(Paths.Equal(source.Native.DllSha256, expectedDll), "recognized portable provider hash");
         foreach (var f in source.Files)
         {
             byte[] bytes = File.ReadAllBytes(Paths.Contained(actualPackage, "payload/" + f.Path));
@@ -110,7 +114,7 @@ internal static class PortablePackageChecks
         var journalFile = Directory.GetFiles(Path.Combine(rootA, "vrmod", "installer", "transactions"), "journal.json", SearchOption.AllDirectories).Single();
         var recovered = Contract.Read<Journal>(File.ReadAllBytes(journalFile));
         Assert(recovered.State == "recovered" && Paths.Equal(recovered.Changes.Single(c => c.Path == GuiContract).AfterHash, Paths.Hash(checkedA.Payload[GuiContract])), "journal records bound bytes");
-        engine.Install(engine.Preview(rootA, pkg)); Installed(engine, rootA);
+        engine.Install(engine.Preview(rootA, pkg)); Installed(engine, rootA, manifest);
         Assert(File.ReadAllBytes(configA).SequenceEqual(userConfig) && File.ReadAllBytes(vendorA).SequenceEqual(vendor), "settings/vendor preservation");
         Configurator(rootA, true);
         string configContractA = Paths.Contained(rootA, GuiContract); byte[] boundA = File.ReadAllBytes(configContractA);
@@ -121,15 +125,17 @@ internal static class PortablePackageChecks
         File.WriteAllBytes(configContractA, boundA);
         string update = Path.Combine(fixture, "update");
         foreach (var f in manifest.Files) Paths.WriteNew(Paths.Contained(update, "payload/" + f.Path), File.ReadAllBytes(Paths.Contained(pkg, "payload/" + f.Path)));
-        Manifest(update, manifest with { Version = "0.3.1" }); engine.Install(engine.Preview(rootA, update)); Installed(engine, rootA);
+        var version = UpdatePolicy.VersionOf(manifest.Version);
+        var next = manifest with { Version = new Version(version.Major, version.Minor, checked(version.Build + 1)).ToString(3) };
+        Manifest(update, next); engine.Install(engine.Preview(rootA, update)); Installed(engine, rootA, next);
         var removal = engine.Remove(rootA, engine.ReceiptHash(rootA));
-        Assert(removal.RestoredPrevious && engine.Inspect(rootA)!.Version == "0.3.0", "restore prior bound receipt");
+        Assert(removal.RestoredPrevious && engine.Inspect(rootA)!.Version == manifest.Version, "restore prior bound receipt");
         Assert(File.ReadAllBytes(configContractA).SequenceEqual(boundA), "restore exact prior bound bytes"); Configurator(rootA, true);
         engine.Remove(rootA, engine.ReceiptHash(rootA));
         foreach (var f in manifest.Files) Assert(!File.Exists(Paths.Contained(rootA, f.Path)), "first-install owned remove " + f.Path);
         Assert(File.ReadAllBytes(configA).SequenceEqual(userConfig) && File.ReadAllBytes(vendorA).SequenceEqual(vendor), "remove preserved settings/vendor");
         // Same unmodified package at a second Unicode root, no root substitution.
-        engine.Install(engine.Preview(rootB, pkg)); Installed(engine, rootB); Configurator(rootB, true);
+        engine.Install(engine.Preview(rootB, pkg)); Installed(engine, rootB, manifest); Configurator(rootB, true);
         Assert(!File.ReadAllBytes(Paths.Contained(rootB, GuiContract)).SequenceEqual(boundA), "root B received root A contract");
         foreach (var f in manifest.Native!.GameFiles)
             Assert(Paths.Equal(Paths.FileHash(Paths.Contained(rootB, f.Path)), f.Sha256), "read-only game preserved " + f.Path);
@@ -138,7 +144,8 @@ internal static class PortablePackageChecks
         Assert(File.Exists(Path.Combine(AppContext.BaseDirectory, "portable-gui", "gui-validation.json")), "portable GUI missing");
         File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "portable-package-validation.json"), Contract.Encode(new {
             passed = true, checks, fixture, rootA, rootB, package = pkg, payloadFiles = 9, readOnlyGameFiles = 10,
-            sourceDll = NativeLayout.PortableDllHash, fixtureRuntimeRootSubstitution = false,
+            sourceVersion = manifest.Version, sourceBuild = manifest.Native!.BuildId,
+            sourceDll = manifest.Native.DllSha256, fixtureRuntimeRootSubstitution = false,
             nativeDllsLoaded = 0, actualInstallationWrites = 0, gameLaunches = 0, actualConfiguratorReadOnlyRuns = 4,
             guiLocales = InstallerText.Languages, templateUnchanged = File.ReadAllBytes(Paths.Contained(pkg, "payload/" + GuiContract)).SequenceEqual(template) }));
         return 0;

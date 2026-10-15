@@ -11,11 +11,15 @@ internal static class NativeLayout
     internal const string LoaderHash = "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF";
     internal const string PortableBuild = "BOOTSTRAP-PORTABLE-001";
     internal const string PortableDllHash = "B4EC288F021FEE970E2C2E6F7CB46918FF4D5DE3312F82AD438783799B36A2A7";
+    internal const string StablePortableBuild = "BOOTSTRAP-STABLE-001";
+    internal const string StablePortableDllHash = "F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D";
     internal const string PortableBinding = "MODULE_RELATIVE_V1";
     internal const string ContractTemplateRoot = "INSTALL_ROOT/vrmod/config";
     internal static string BoundRuntimeRoot = "G:/GF2Exilium"; // Only isolated fixture verification temporarily substitutes this.
     internal const string ToolRoot = "vrmod/bin/GF2VR.Configurator/";
     internal static readonly string[] ConfigFiles = ["render_quality.json", "stereo_depth.json", "navigation.json", "world_drag.json"];
+    internal static readonly string[] StableConfigFiles =
+        [.. ConfigFiles, "activity_ui.json", "controller_input.json", "world_scale.json"];
     internal static readonly string[] Files =
         ["GF2 Game/version.dll", "vrmod/runtime/openxr_loader.dll", "vrmod/runtime/openxr-LICENSE.txt", "vrmod/runtime/minhook-LICENSE.txt",
          .. Paths.ToolFiles.Select(n => ToolRoot + n)];
@@ -33,10 +37,11 @@ internal static class NativeLayout
         bool portable = IsPortable(package);
         if (portable)
         {
+            string expectedHash = native.BuildId == StablePortableBuild ? StablePortableDllHash : PortableDllHash;
             if (package.BoundGameRoot != null || native.ResourceBinding != PortableBinding ||
-                !Paths.Equal(native.DllSha256, PortableDllHash)) throw new InstallError("nativeBuild");
+                !Paths.Equal(native.DllSha256, expectedHash)) throw new InstallError("nativeBuild");
             // Provider's bounded UTF-16 path buffers; do not claim support for truncation.
-            if (Paths.Contained(root, "vrmod/logs/bootstrap/BOOTSTRAP-PORTABLE-001.jsonl").Length >= 1024)
+            if (Paths.Contained(root, "vrmod/logs/bootstrap/" + native.BuildId + ".jsonl").Length >= 1024)
                 throw new InstallError("path", root);
         }
         else
@@ -70,7 +75,7 @@ internal static class NativeLayout
         if (!File.Exists(Path.Combine(actual, "version.dll"))) throw new InstallError("systemVersionMissing");
         if (!portable && !actual.Equals(expected, StringComparison.OrdinalIgnoreCase)) throw new InstallError("systemBinding");
     }
-    internal static bool IsPortable(Package package) => package.Native?.BuildId == PortableBuild;
+    internal static bool IsPortable(Package package) => package.Native?.BuildId is PortableBuild or StablePortableBuild;
     internal static void ConfiguratorContract(string root, Package package, Dictionary<string, byte[]> payload)
     {
         try
@@ -79,6 +84,13 @@ internal static class NativeLayout
             using var doc = JsonDocument.Parse(bytes); Contract.Duplicates(doc.RootElement);
             var c = doc.RootElement;
             bool portable = IsPortable(package);
+            bool stable = package.Native?.BuildId == StablePortableBuild;
+            string[] configFiles = stable ? StableConfigFiles : ConfigFiles;
+            string expectedHash = portable ? (stable ? StablePortableDllHash : PortableDllHash) : DllHash;
+            if (package.Native == null || !Paths.Equal(package.Native.DllSha256, expectedHash) ||
+                (!portable && package.Native.BuildId != BuildId) ||
+                (portable && (package.BoundGameRoot != null || package.Native.ResourceBinding != PortableBinding)))
+                throw new InstallError("configContract");
             string expectedRoot = Path.Combine(root, "vrmod", "config");
             if (c.GetProperty("schemaVersion").GetInt32() != 1 || c.GetProperty("buildId").GetString() != package.Native!.BuildId ||
                 !Paths.Equal(c.GetProperty("dllSha256").GetString(), package.Native!.DllSha256) ||
@@ -86,8 +98,8 @@ internal static class NativeLayout
                     Path.TrimEndingDirectorySeparator(Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!))
                     .Equals(expectedRoot, StringComparison.OrdinalIgnoreCase)) ||
                 c.GetProperty("apply").GetString() != "GAME_RESTART" ||
-                c.GetProperty("files").GetArrayLength() != ConfigFiles.Length ||
-                !c.GetProperty("files").EnumerateArray().Select(v => v.GetString()).ToHashSet(StringComparer.Ordinal).SetEquals(ConfigFiles))
+                c.GetProperty("files").GetArrayLength() != configFiles.Length ||
+                !c.GetProperty("files").EnumerateArray().Select(v => v.GetString()).ToHashSet(StringComparer.Ordinal).SetEquals(configFiles))
                 throw new InstallError("configContract");
             if (portable)
             {

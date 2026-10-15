@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "buildId": "INSTALLER-GENERATED-TEMPLATE",
-  "dllSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "buildId": "BOOTSTRAP-STABLE-001",
+  "dllSha256": "F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D",
   "configurationRoot": "INSTALL_ROOT/vrmod/config",
   "files": [
     "render_quality.json",
     "stereo_depth.json",
-    "activity_ui.json",
-    "controller_input.json",
     "navigation.json",
     "world_drag.json",
+    "activity_ui.json",
+    "controller_input.json",
     "world_scale.json"
   ],
   "apply": "GAME_RESTART"
