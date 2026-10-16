@@ -6,20 +6,20 @@ First identify where the problem occurs. Settings saving, installation or update
 
 ## The game folder cannot be found
 
-Select the **folder containing GF2_Exilium.exe** or an installation folder containing it. The installer finds the executable through different folder names and nested layouts. If it finds several matches, select a narrower folder for the intended game. If the selected tree is too broad to search completely, choose a folder closer to the executable. Keep the game folder separate from the extracted package folder.
+Select the **folder containing GF2_Exilium.exe** or an installation folder containing it. The installer finds the executable through different folder names and nested layouts. If it finds several matches, select a narrower folder for the intended game. If the selected tree is too broad to search completely, choose a folder closer to the executable. Select only the game location in the installer. The extracted installation files are located automatically.
 
 ## Package files are missing or installation is unavailable
 
 - Check that you have extracted the entire ZIP first.
 - Make sure you have not moved only the executable elsewhere.
 - Check that you are not using GitHub's source code ZIP as the installation package.
-- Use the installation ZIP from the [1.0.1 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1). Original-game SHA-256, size or cache differences are nonblocking; corruption or hash mismatches in the product package still block installation.
+- Use the installation ZIP from the [1.0.2 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2). Original-game SHA-256, size or cache differences are nonblocking; corruption or hash mismatches in the product package still block installation.
 
 If files are missing or damaged, download the release ZIP again and fully extract it into a new folder. Do not modify files rejected by the installer to try to bypass its checks.
 
-## Another version.dll stops installation
+## A file was modified or has no ownership record
 
-Another mod or program is using the same filename. The installer does not overwrite DLLs it does not own. Check the other mod's installation and removal instructions, and back up its files. Renaming the file alone does not make two loaders work together.
+This is not an original-game version or SHA-256 error. The existing `version.dll` differs from its installation record, or has no record after a manual copy or lost receipt, so it was preserved. In 1.0.2, a file without a receipt can be installed over only when it exactly matches the current package's final installed file. It is backed up first and restored on removal. Different DLLs and modified files remain protected. Keep installation records and backups, and follow the existing mod's removal instructions. Receiptless files copied from an older release are not automatically adopted when their contents differ from the current package.
 
 ## The headset view is missing or stutters periodically
 
@@ -67,7 +67,7 @@ If your combination gives priority to another panel or UI action, try the defaul
 
 Check your internet connection, GitHub CLI installation and login state, and whether a new official version actually exists. You can also download the ZIP directly from the public [releases page](https://github.com/deadpixel134/GF2Exilium-VR/releases) to update. The existing installation is retained if update checking fails. See [Updating](UPDATE.md).
 
-To upgrade from 1.0.0, download the 1.0.1 ZIP and use its included installer. If the old configurator rejects the package, this manual route preserves settings and installation records.
+To upgrade from 1.0.0, download the 1.0.2 ZIP and use its included installer. If the old configurator rejects the package, this manual route preserves settings and installation records.
 
 ## Installation was interrupted, or the new version has problems
 

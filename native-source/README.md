@@ -2,7 +2,7 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-This is the source closure for `BOOTSTRAP-FLEX-001`, the native runtime included in GF2VR 1.0.1. Its SHA-256 is:
+This is the source closure for `BOOTSTRAP-FLEX-001`, the native runtime included in GF2VR 1.0.2. Its SHA-256 is:
 
 ```text
 6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771
@@ -20,4 +20,4 @@ The builder uses its output directory for Zig caches and restores the caller's c
 
 The OpenXR and MinHook source subsets retain their licenses under `third_party/`. The game executable, Unity/GameAssembly binaries, game metadata, game assets, user configuration, logs and rollback files are not part of this source distribution.
 
-The 1.0.1 path changes locate the loader beside the executable and the matching `vrmod` directory. The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing parent folder. Other layouts use `vrmod` in the located executable's folder. `version.dll` is always installed beside that executable.
+The 1.0.2 path changes locate the loader beside the executable and the matching `vrmod` directory. The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing parent folder. Other layouts use `vrmod` in the located executable's folder. `version.dll` is always installed beside that executable.

@@ -2,6 +2,15 @@
 
 [한국어](../ko/RELEASE_NOTES.md) · [English](../en/RELEASE_NOTES.md) · [日本語](../ja/RELEASE_NOTES.md) · [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.0.2 · October 16, 2026
+
+- Removes package-folder selection. Fully extract the ZIP and select only the game folder; installation files are found beside the installer automatically.
+- Allows receiptless files that exactly match the current package to be backed up and installed. Removal restores the files that existed beforehand.
+- Preserves modified files and different DLLs, with separate actionable messages for missing ownership and changed files.
+- VR rendering and headset behavior are unchanged. Local automated and GUI checks cover this change; no new reporter-PC or actual game/HMD run is claimed.
+
+For an existing installation, fully extract the 1.0.2 ZIP into a new folder and use its installer with the existing game location. Settings and intact installation records are preserved.
+
 ## 1.0.1 · October 16, 2026
 
 - Finds `GF2_Exilium.exe` across renamed and nested folders. Select the executable's folder or a containing installation folder; narrow the selection if several copies are found.

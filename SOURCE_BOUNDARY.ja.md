@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-インストールには、[1.0.1 リリース](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)の **GF2VR-Native-SelfContained-1.0.1.zip** を使用してください。GitHub の **Source code** ZIP にはビルド前のソースが含まれています。展開してゲームフォルダーにコピーするだけではインストールできません。
+インストールには、[1.0.2 リリース](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)の **GF2VR-Native-SelfContained-1.0.2.zip** を使用してください。GitHub の **Source code** ZIP にはビルド前のソースが含まれています。展開してゲームフォルダーにコピーするだけではインストールできません。
 
 ## リポジトリに含まれるもの
 

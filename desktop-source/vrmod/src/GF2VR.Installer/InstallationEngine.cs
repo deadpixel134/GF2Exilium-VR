@@ -100,14 +100,24 @@ internal sealed class InstallationEngine
             if (Version.Parse(package.Version) < Version.Parse(prior.Version)) throw new InstallError("downgrade");
             _ = InstallationJournal(root, prior, priorBytes!);
         }
+        var beforeHashes = new Dictionary<string, string?>(StringComparer.Ordinal);
         foreach (var f in package.Files)
         {
             string? hash = Paths.FileHash(Paths.Target(root, f.Path, gameDirectory));
             var owned = prior?.Files.SingleOrDefault(p => p.Path == f.Path);
-            if (owned == null ? hash != null : !Paths.Equal(hash, owned.Sha256)) throw new InstallError("modified", f.Path);
+            if (prior == null)
+            {
+                // A missing receipt grants no authority over unknown files.
+                // Only exact, verified final installation bytes may be retained;
+                // the Configurator contract has already been bound by CheckPayload.
+                if (hash != null && !Paths.Equal(hash, Paths.Hash(checkedPackage.Payload[f.Path])))
+                    throw new InstallError("unowned", f.Path);
+            }
+            else if (owned == null || !Paths.Equal(hash, owned.Sha256)) throw new InstallError("modified", f.Path);
+            beforeHashes.Add(f.Path, hash);
         }
         return new Plan(root, checkedPackage.PackageRoot, package, checkedPackage.ManifestHash, prior,
-            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload, gameDirectory);
+            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload, gameDirectory, beforeHashes);
     }
 
     internal OperationResult Install(Plan shown, Action<string>? progress = null)
@@ -116,7 +126,9 @@ internal sealed class InstallationEngine
         // The selected immutable preview is revalidated at the actual write boundary.
         Plan plan = Preview(shown.Root, shown.PackageRoot);
         if (!string.Equals(plan.Root, shown.Root, StringComparison.OrdinalIgnoreCase) || plan.GameDirectory != shown.GameDirectory ||
-            !Paths.Equal(plan.ManifestHash, shown.ManifestHash) || !Paths.Equal(plan.PriorHash, shown.PriorHash)) throw new InstallError("previewChanged");
+            !Paths.Equal(plan.ManifestHash, shown.ManifestHash) || !Paths.Equal(plan.PriorHash, shown.PriorHash) ||
+            plan.BeforeHashes.Count != shown.BeforeHashes.Count || plan.BeforeHashes.Any(f =>
+                !shown.BeforeHashes.TryGetValue(f.Key, out string? hash) || !Paths.Equal(f.Value, hash))) throw new InstallError("previewChanged");
         string id = Guid.NewGuid().ToString("N");
         // The verified package may contain an install-root contract template.
         // Receipts/journals must bind the actual materialized bytes, not its template hash.
@@ -127,7 +139,7 @@ internal sealed class InstallationEngine
         foreach (var f in plan.Package.Files)
         {
             byte[]? before = Paths.Bytes(Paths.Target(plan.Root, f.Path, plan.GameDirectory));
-            if (!Paths.Equal(before == null ? null : Paths.Hash(before), plan.Prior?.Files.Single(p => p.Path == f.Path).Sha256))
+            if (!Paths.Equal(before == null ? null : Paths.Hash(before), plan.BeforeHashes[f.Path]))
                 throw new InstallError("previewChanged");
             changes.Add((f.Path, before, plan.Payload[f.Path]));
         }

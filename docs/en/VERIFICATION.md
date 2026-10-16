@@ -2,7 +2,7 @@
 
 [한국어](../ko/VERIFICATION.md) · [English](../en/VERIFICATION.md) · [日本語](../ja/VERIFICATION.md) · [简体中文](../zh-CN/VERIFICATION.md)
 
-This page describes the supported target and verification scope for official version 1.0.1. Practical user testing of the current implementation, local checks of distribution files, and verification on other PCs are distinct levels of evidence.
+This page describes the supported target and verification scope for official version 1.0.2. Practical user testing of the current implementation, local checks of distribution files, and verification on other PCs are distinct levels of evidence.
 
 ## Supported target
 
@@ -21,11 +21,11 @@ The following were checked in separate test folders:
 
 These checks did not change actual game files or user settings.
 
-For 1.0.1, 988 managed checks, 214 native boundary checks, and inert-host, export, rebuild and ZIP preflight checks passed. These cover renamed, nested and Unicode paths, refusal of ambiguous targets, changed original-game files and corrupt product payloads. No post-change run on the reporter's PC or in the actual game/HMD has been recorded.
+Version 1.0.2 passed 1,570 managed checks, actual GUI checks in three languages and automatic-package preflight from the release ZIP. Inert folders cover backup/restoration of identical receiptless files, modified-file protection, settings preservation and installation/restoration from 1.0.0 and 1.0.1. The native DLL is unchanged from 1.0.1; its existing 214 boundary checks and exact rebuild evidence are reused. No new reporter-PC or actual game/HMD run is claimed.
 
 ## Practical testing of the current implementation
 
-The practical observations below describe the 1.0.0 baseline implementation. Version 1.0.1 changes installation discovery and path handling; post-change reporter-PC and game/HMD testing is not yet recorded.
+The practical observations below describe the 1.0.0 baseline implementation. Version 1.0.2 changes installation discovery and path handling; post-change reporter-PC and game/HMD testing is not yet recorded.
 
 Practical testing has covered stereoscopic rendering in supported scenes, auxiliary panels and UI controls, stick movement and turning, world grip, Activity UI visibility settings, and WASD/F/Escape input in game control mode. The implementation, including world-scale linking, left-stick-click viewpoint return, right-stick-click camera following, and the current configurator and installer screens, was frozen for the official release based on the user's confirmation that testing was complete.
 
@@ -39,6 +39,6 @@ The required .NET runtime is included, but the complete process from installatio
 
 ## Updates and distribution
 
-Updates from 1.0.0 to 1.0.1, previous-version restoration and interrupted-operation recovery were checked in inert folders using the **new 1.0.1 installer**. Automatic replacement through the old 1.0.0 configurator and completion on an actual user's PC have not been verified.
+Updates from 1.0.0 to 1.0.2, previous-version restoration and interrupted-operation recovery were checked in inert folders using the **new 1.0.2 installer**. Automatic replacement through the old 1.0.0 configurator and completion on an actual user's PC have not been verified.
 
 If problems occur, record the scene, controls, device environment and error message using the [troubleshooting guide](TROUBLESHOOTING.md). See the [release guide](RELEASE_READINESS.md) for downloads.

@@ -4,7 +4,8 @@ internal sealed class InstallerForm : Form
 {
     private readonly InstallationEngine engine = new();
     private readonly TextBox root = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right, ReadOnly = true };
-    private readonly TextBox package = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right, ReadOnly = true };
+    private readonly string packageRoot;
+    private readonly Label bundleNotice = new() { Dock = DockStyle.Fill, AutoSize = false, TextAlign = ContentAlignment.MiddleLeft };
     private readonly FlowLayoutPanel languages = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
     private readonly Label summary = new() { Dock = DockStyle.Fill, AutoSize = false };
     private readonly Label status = new() { Dock = DockStyle.Fill, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft };
@@ -23,7 +24,7 @@ internal sealed class InstallerForm : Form
     private Receipt? receipt;
     private SettingsTarget? settings;
     private string? receiptHash;
-    private bool pending, busy, hasPrevious;
+    private bool pending, busy, hasPrevious, packageIncomplete;
     private int progressTotal, progressCurrent, operationSerial;
     private string statusKey = "ready";
 
@@ -34,12 +35,13 @@ internal sealed class InstallerForm : Form
         Font = new Font("Segoe UI", 10); ClientSize = new Size(1080, 860); MinimumSize = new Size(1000, 780);
         AutoScaleMode = AutoScaleMode.Dpi; StartPosition = FormStartPosition.CenterScreen; BackColor = Color.FromArgb(244, 247, 251); Icon = SystemIcons.Application;
         if (smoke != null) { StartPosition = FormStartPosition.Manual; Location = new Point(-20000, -20000); ShowInTaskbar = false; }
-        root.Text = gameRoot; package.Text = packageRoot ?? "";
+        root.Text = gameRoot; this.packageRoot = PackageLocation.Resolve(packageRoot);
+        packageIncomplete = !PackageLocation.IsAvailable(this.packageRoot);
         InstallerText.Language = InstallerText.LoadPreference(gameRoot);
         var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(16), ColumnCount = 1, RowCount = 9 };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        foreach (int height in new[] { 50, 44, 44, 88, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
-        layout.RowStyles[1].SizeType = layout.RowStyles[2].SizeType = SizeType.AutoSize;
+        foreach (int height in new[] { 50, 44, 64, 88, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
+        layout.RowStyles[1].SizeType = SizeType.AutoSize;
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         foreach (int height in new[] { 96, 52, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
         Controls.Add(layout);
@@ -52,7 +54,8 @@ internal sealed class InstallerForm : Form
             string code = item.Item2; button.Click += (_, _) => ChangeLanguage(code); languages.Controls.Add(button);
         }
         heading.Controls.Add(languages, 1, 0); layout.Controls.Add(heading, 0, 0);
-        layout.Controls.Add(Row("folder", root), 0, 1); layout.Controls.Add(Row("packageFolder", package), 0, 2);
+        layout.Controls.Add(GameFolderRow(), 0, 1);
+        bundleNotice.Font = new Font(Font.FontFamily, 9); bundleNotice.Margin = new Padding(4, 3, 4, 3); layout.Controls.Add(bundleNotice, 0, 2);
         summary.Font = new Font(Font.FontFamily, 9); summary.Padding = new Padding(4, 8, 4, 4); layout.Controls.Add(summary, 0, 3);
         layout.Controls.Add(progress, 0, 4);
         var details = new TabControl { Dock = DockStyle.Fill };
@@ -100,13 +103,13 @@ internal sealed class InstallerForm : Form
         var button = new Button { AutoSize = true, MinimumSize = new Size(80, 36), Tag = key };
         texts.Add(button); operations.Add(button); button.Click += action; return button;
     }
-    private TableLayoutPanel Row(string key, TextBox value)
+    private TableLayoutPanel GameFolderRow()
     {
         var row = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 3, Padding = new Padding(0, 0, 0, 6), Margin = Padding.Empty };
         row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 154)); row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        var label = Label(key); label.Anchor = AnchorStyles.Left; label.Margin = new Padding(4, 3, 8, 3);
-        var browse = Button("browse", (_, _) => Browse(value)); browse.Anchor = AnchorStyles.Right;
-        row.Controls.Add(label, 0, 0); row.Controls.Add(value, 1, 0); row.Controls.Add(browse, 2, 0); return row;
+        var label = Label("folder"); label.Anchor = AnchorStyles.Left; label.Margin = new Padding(4, 3, 8, 3);
+        var browse = Button("browse", (_, _) => Browse()); browse.Anchor = AnchorStyles.Right;
+        row.Controls.Add(label, 0, 0); row.Controls.Add(root, 1, 0); row.Controls.Add(browse, 2, 0); return row;
     }
     private void ChangeLanguage(string locale)
     {
@@ -130,6 +133,7 @@ internal sealed class InstallerForm : Form
     }
     private void RefreshDisplay()
     {
+        bundleNotice.Text = InstallerText.Get(packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
         summary.Text = InstallerText.Format("summary", plan?.Package.Version ?? InstallerText.Get("unavailable"), receipt?.Version ?? InstallerText.Get("noReceipt"),
             (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
         files.Items.Clear(); foreach (var file in plan?.Package.Files ?? receipt?.Files ?? [])
@@ -143,25 +147,31 @@ internal sealed class InstallerForm : Form
     private void Inspect(bool setReady = true)
     {
         plan = null; receipt = null; receiptHash = null; settings = null; pending = false; hasPrevious = false;
+        packageIncomplete = !PackageLocation.IsAvailable(packageRoot);
         try
         {
             root.Text = Paths.Root(root.Text);
             pending = engine.HasPending(root.Text); receipt = engine.Inspect(root.Text);
             if (receipt != null && !pending) { hasPrevious = engine.HasPreviousVersion(root.Text); receiptHash = engine.ReceiptHash(root.Text); }
             try { settings = SettingsLaunch.Resolve(root.Text, engine); } catch (Exception ex) { AppendLog(InstallerText.Error(ex)); }
-            if (!pending && package.Text.Length > 0) plan = engine.Preview(root.Text, package.Text);
-            if (setReady) SetStatus(pending ? "pendingStatus" : "ready");
+            bool available = !packageIncomplete;
+            if (!pending && available) plan = engine.Preview(root.Text, packageRoot);
+            if (setReady) SetStatus(pending ? "pendingStatus" : available ? "ready" : "bundledPackageMissing");
         }
-        catch (Exception ex) { DisplayError(ex, false); }
+        catch (Exception ex)
+        {
+            if (ex is InstallError { Key: "manifestMissing" or "payloadMissing" or "incompletePackage" }) packageIncomplete = true;
+            DisplayError(ex, false);
+        }
         finally { RefreshDisplay(); }
     }
-    private void Browse(TextBox target)
+    private void Browse()
     {
         if (busy) return;
-        using var dialog = new FolderBrowserDialog { Description = InstallerText.Get(target == root ? "folderHelp" : "packageHelp"), UseDescriptionForTitle = true };
+        using var dialog = new FolderBrowserDialog { Description = InstallerText.Get("folderHelp"), UseDescriptionForTitle = true };
         if (dialog.ShowDialog(this) != DialogResult.OK) return;
-        target.Text = dialog.SelectedPath;
-        if (target == root) { InstallerText.Language = InstallerText.LoadPreference(root.Text); Translate(); }
+        root.Text = dialog.SelectedPath;
+        InstallerText.Language = InstallerText.LoadPreference(root.Text); Translate();
         Inspect();
     }
     private bool Confirm(string message) => MessageBox.Show(this, message, InstallerText.Get("title"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
@@ -194,7 +204,14 @@ internal sealed class InstallerForm : Form
     private void VerifyPathRows()
     {
         PerformLayout();
-        foreach (TextBox value in new[] { root, package })
+        if (texts.Count(control => control is Button && control.Tag as string == "browse") != 1 ||
+            texts.Any(control => control.Tag as string == "packageFolder"))
+            throw new InvalidDataException("Installer must have exactly one game Browse and no package selection");
+        var noticeSize = TextRenderer.MeasureText(bundleNotice.Text, bundleNotice.Font,
+            new Size(bundleNotice.ClientSize.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
+        if (noticeSize.Height > bundleNotice.ClientSize.Height)
+            throw new InvalidDataException("Bundled-package guidance is clipped");
+        foreach (TextBox value in new[] { root })
         {
             var browse = value.Parent!.Controls.OfType<Button>().Single();
             var pathBounds = value.Parent.RectangleToScreen(value.Bounds);
@@ -212,21 +229,25 @@ internal sealed class InstallerForm : Form
     {
         try
         {
-            if (plan == null) throw new InvalidDataException("Fixture package preview missing");
-            if (File.ReadAllText(Paths.Contained(root.Text, "GF2 Game/GF2_Exilium.exe")) != SelfTest.Inert) throw new InvalidDataException("Only inert GUI fixtures are supported");
+            bool bundleAvailable = !packageIncomplete;
+            if ((plan == null && bundleAvailable) || (smokeWorkflow && !bundleAvailable))
+                throw new InvalidDataException("Fixture package preview missing");
+            if (File.ReadAllText(Paths.GameExecutable(root.Text)) != SelfTest.Inert) throw new InvalidDataException("Only inert GUI fixtures are supported");
             Directory.CreateDirectory(smoke!);
             for (int i = 0; i < InstallerText.Languages.Length; i++)
             {
                 ((Button)languages.Controls[i]).PerformClick(); PerformLayout();
                 VerifyPathRows();
-                if (InstallerText.LoadPreference(root.Text) != InstallerText.Languages[i] || !install.Enabled || remove.Enabled != (receipt != null) || plan.Package.Files.Length != files.Items.Count)
+                if (InstallerText.LoadPreference(root.Text) != InstallerText.Languages[i] || install.Enabled != (plan != null && !pending) ||
+                    remove.Enabled != (receiptHash != null && !pending) || (plan?.Package.Files.Length ?? receipt?.Files.Length ?? 0) != files.Items.Count ||
+                    bundleNotice.Text != InstallerText.Get(bundleAvailable ? "bundledPackageHelp" : "bundledPackageMissing"))
                     throw new InvalidDataException("GUI state/locale mismatch");
                 details.SelectedIndex = 0; using (var image = new Bitmap(Width, Height)) { DrawToBitmap(image, new Rectangle(0, 0, Width, Height)); image.Save(Path.Combine(smoke!, InstallerText.Language + ".png")); }
                 details.SelectedIndex = 1; using var logImage = new Bitmap(Width, Height); DrawToBitmap(logImage, new Rectangle(0, 0, Width, Height)); logImage.Save(Path.Combine(smoke!, "log-" + InstallerText.Language + ".png"));
             }
             if (smokeWorkflow)
             {
-                var chosen = plan; await Run(() => engine.Install(chosen, Progress), "installed", chosen.Package.Files.Length + 1);
+                var chosen = plan!; await Run(() => engine.Install(chosen, Progress), "installed", chosen.Package.Files.Length + 1);
                 if (progress.Value != 100 || receipt == null || busy) throw new InvalidDataException("Install progress/operation state mismatch");
                 string hash = engine.ReceiptHash(root.Text); await Run(() => engine.Remove(root.Text, hash, Progress), "removed", receipt.Files.Length + 1);
                 if (progress.Value != 100 || busy || !log.Text.Contains(InstallerText.Get("operationStarted"))) throw new InvalidDataException("Remove progress/log mismatch");
@@ -246,7 +267,7 @@ internal sealed class InstallerForm : Form
                 ChangeLanguage(locale); VerifyPathRows();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smoke!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllBytes(Path.Combine(smoke!, "gui-validation.json"), Contract.Encode(new { passed = true, locales = InstallerText.Languages, previewFiles = files.Items.Count, pathRowsCenteredAndUnclipped = 2, layoutScaleStress = 1.5, referenceActions = true, settingsAvailable = openSettings.Enabled, progressBar = true, retainedLog = true, installAction = install.Tag as string, removeAction = remove.Tag as string, fixtureOperations = smokeWorkflow ? 2 : 0, realInstallWrites = 0, gameLaunches = 0 }));
+            File.WriteAllBytes(Path.Combine(smoke!, "gui-validation.json"), Contract.Encode(new { passed = true, locales = InstallerText.Languages, previewFiles = files.Items.Count, pathRowsCenteredAndUnclipped = 1, gameBrowseButtons = 1, packageSelectorVisible = false, bundledPackageFound = bundleAvailable, incompleteExtractionGuidance = !bundleAvailable, layoutScaleStress = 1.5, referenceActions = true, settingsAvailable = openSettings.Enabled, removeAvailable = remove.Enabled, recoveryAvailable = recover.Enabled, progressBar = true, retainedLog = true, installAction = install.Tag as string, removeAction = remove.Tag as string, fixtureOperations = smokeWorkflow ? 2 : 0, realInstallWrites = 0, gameLaunches = 0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smoke!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

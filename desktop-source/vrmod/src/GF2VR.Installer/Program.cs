@@ -10,6 +10,8 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-package-location")) return PackageLocationChecks.Run();
+            if (args.Contains("--self-test-ownership")) return OwnershipChecks.Run(Value(args, "--package") ?? PackageLocation.Resolve());
             if (args.Contains("--self-test-flexible")) return FlexibleLayoutChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-installer-ux")) return InstallerUxChecks.Run();
             if (args.Contains("--check-settings-launch"))
@@ -50,22 +52,21 @@ internal static class Program
             if (args.Contains("--self-test")) return SelfTest.Run(Value(args, "--package"));
             if (args.Contains("--verify-localization")) return 0;
             string root = Value(args, "--root") ?? FindRoot();
-            string? package = Value(args, "--package") ??
-                (File.Exists(Path.Combine(AppContext.BaseDirectory, "package-manifest.json")) ? AppContext.BaseDirectory : null);
+            string package = PackageLocation.Resolve(Value(args, "--package"));
             if (args.Contains("--interrupt-fixture"))
             {
-                SelfTest.InterruptFixture(root, package ?? throw new InstallError("manifestMissing")); return 81;
+                SelfTest.InterruptFixture(root, PackageLocation.Require(package)); return 81;
             }
             if (args.Contains("--check-payload"))
             {
-                var checkedPackage = new InstallationEngine().CheckPayload(root, package ?? throw new InstallError("manifestMissing"));
+                var checkedPackage = new InstallationEngine().CheckPayload(root, PackageLocation.Require(package));
                 File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "native-payload-validation.json"),
                     Contract.Encode(new { passed = true, checkedPackage.ManifestHash, checkedPackage.Package.Version, files = checkedPackage.Package.Files.Length, installationWrites = 0, ownershipChecked = false }));
                 return 0;
             }
             if (args.Contains("--check-package"))
             {
-                var plan = new InstallationEngine().Preview(root, package ?? throw new InstallError("manifestMissing"));
+                var plan = new InstallationEngine().Preview(root, PackageLocation.Require(package));
                 File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "package-validation.json"),
                     Contract.Encode(new { passed = true, plan.ManifestHash, plan.Package.Version, files = plan.Package.Files.Length, installWrites = 0 }));
                 return 0;
@@ -81,7 +82,7 @@ internal static class Program
                 MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
-            if (args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;

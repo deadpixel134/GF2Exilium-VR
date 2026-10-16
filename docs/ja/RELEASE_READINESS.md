@@ -2,11 +2,11 @@
 
 [한국어](../ko/RELEASE_READINESS.md) · [English](../en/RELEASE_READINESS.md) · [日本語](RELEASE_READINESS.md) · [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-## 正式版 1.0.1
+## 正式版 1.0.2
 
-[GitHub リリースページ](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)から **GF2VR-Native-SelfContained-1.0.1.zip** をダウンロードしてください。公開ダウンロードに GitHub へのログインや別途のトークンは必要ありません。
+[GitHub リリースページ](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)から **GF2VR-Native-SelfContained-1.0.2.zip** をダウンロードしてください。公開ダウンロードに GitHub へのログインや別途のトークンは必要ありません。
 
-- [インストール ZIP を直接ダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.1/GF2VR-Native-SelfContained-1.0.1.zip)
+- [インストール ZIP を直接ダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.2/GF2VR-Native-SelfContained-1.0.2.zip)
 - [インストール・削除・復元ガイド](INSTALLATION.md)
 - [現在のリリース一覧](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 
@@ -30,8 +30,8 @@ Windows x64 PC に正規のゲームと VR 環境が必要です。**2.0.3936** 
 
 問題が発生した場合は、[トラブルシューティング](TROUBLESHOOTING.md)に従ってエラーメッセージと発生までの手順をまとめてください。コミュニティは、[Arca Live バーチャルリアリティチャンネル](https://arca.live/b/vrshits)にあります。
 
-インストール ZIP のサイズ：**93,661,818 バイト**。SHA-256：
+インストール ZIP のサイズ：**93,673,090 バイト**。SHA-256：
 
 ```text
-07E4365C7EA15047BAD95833318864EA30BC1A8AE4E9413C44FE0084F6CABB73
+9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9
 ```

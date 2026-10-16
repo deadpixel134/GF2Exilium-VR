@@ -10,14 +10,14 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다. 지원되는 3D
 
 **테스트 완료 환경:** Meta Quest 2 · 4K 모니터 · Virtual Desktop.
 
-**[정식 버전 1.0.1 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [설치 안내](docs/ko/INSTALLATION.md) · [기본 조작법](docs/ko/USAGE.md)
+**[정식 버전 1.0.2 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)** · [설치 안내](docs/ko/INSTALLATION.md) · [기본 조작법](docs/ko/USAGE.md)
 
-릴리스의 **GF2VR-Native-SelfContained-1.0.1.zip**을 받으세요. 게임은 포함되어 있지 않습니다. **2.0.3936**은 실기 확인 기준이며, 원본 게임 파일의 SHA-256·크기·캐시 차이만으로 설치를 막지 않습니다. 다른 버전의 VR 호환성을 보장하는 것은 아닙니다. [지원 환경과 확인 범위](docs/ko/VERIFICATION.md)를 함께 확인하세요.
+릴리스의 **GF2VR-Native-SelfContained-1.0.2.zip**을 받으세요. 게임은 포함되어 있지 않습니다. **2.0.3936**은 실기 확인 기준이며, 원본 게임 파일의 SHA-256·크기·캐시 차이만으로 설치를 막지 않습니다. 다른 버전의 VR 호환성을 보장하는 것은 아닙니다. [지원 환경과 확인 범위](docs/ko/VERIFICATION.md)를 함께 확인하세요.
 
 ## 처음 사용하는 분께
 
 1. 릴리스 ZIP을 새 폴더에 전부 풉니다. GitHub의 **Source code** ZIP은 설치 파일이 아닙니다.
-2. **GF2VR.Installer.exe**를 열고, **GF2_Exilium.exe가 있는 폴더** 또는 이를 포함하는 설치 폴더를 선택해 설치합니다.
+2. **GF2VR.Installer.exe**를 열고, **GF2_Exilium.exe가 있는 폴더** 또는 이를 포함하는 설치 폴더만 선택해 설치합니다. 설치 파일은 자동으로 찾습니다.
 3. **설정 열기**에서 원하는 옵션을 저장한 뒤 SteamVR와 게임을 직접 실행합니다.
 4. [기본 조작법](docs/ko/USAGE.md)을 확인하고, 불편한 설정은 게임을 종료한 뒤 조정합니다.
 
@@ -31,7 +31,7 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다. 지원되는 3D
 - 한국어·영어·일본어 설정 프로그램과 인스톨러
 - 설정 프로필 저장·불러오기, 설치·업데이트·제거·이전 버전 복원
 
-1.0.0의 VR 구현은 사용자의 실기 테스트 완료 확인을 기준으로 고정했습니다. 1.0.1의 설치 경로 개선은 로컬에서 검증했으며 변경 후 실제 게임/HMD 실행은 새로 기록하지 않았습니다. [확인된 동작과 제한 사항](docs/ko/VERIFICATION.md)에서 지원 범위를 안내합니다.
+1.0.0의 VR 구현은 사용자의 실기 테스트 완료 확인을 기준으로 고정했습니다. 1.0.2의 설치 경로 개선은 로컬에서 검증했으며 변경 후 실제 게임/HMD 실행은 새로 기록하지 않았습니다. [확인된 동작과 제한 사항](docs/ko/VERIFICATION.md)에서 지원 범위를 안내합니다.
 
 ## 사용 안내
 

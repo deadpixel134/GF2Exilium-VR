@@ -93,8 +93,10 @@ internal static class NativePackageChecks
             File.WriteAllBytes(contractPath, contractBytes); Manifest(pkg, manifest);
             string dllPath = Paths.Contained(root, "GF2 Game/version.dll");
             byte[] dllBytes = File.ReadAllBytes(Paths.Contained(pkg, "payload/GF2 Game/version.dll"));
-            Paths.WriteNew(dllPath, dllBytes); Reject(() => engine.Preview(root, pkg), "existing loader has no installer receipt even when identical");
-            Assert(File.ReadAllBytes(dllPath).SequenceEqual(dllBytes), "unowned loader overwritten"); File.Delete(dllPath);
+            Paths.WriteNew(dllPath, dllBytes);
+            Assert(Paths.Equal(engine.Preview(root, pkg).BeforeHashes["GF2 Game/version.dll"], Paths.Hash(dllBytes)),
+                "exact verified loader without receipt is frozen in preview");
+            Assert(File.ReadAllBytes(dllPath).SequenceEqual(dllBytes), "matching loader changed by preview"); File.Delete(dllPath);
             string xrPath = Paths.Contained(root, "vrmod/runtime/openxr_loader.dll");
             Paths.WriteNew(xrPath, Encoding.UTF8.GetBytes("FOREIGN OPENXR LOADER"));
             Reject(() => engine.Preview(root, pkg), "unowned external loader");

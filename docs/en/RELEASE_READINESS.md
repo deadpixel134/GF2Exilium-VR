@@ -2,11 +2,11 @@
 
 [한국어](../ko/RELEASE_READINESS.md) · [English](../en/RELEASE_READINESS.md) · [日本語](../ja/RELEASE_READINESS.md) · [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-## Official version 1.0.1
+## Official version 1.0.2
 
-Download **GF2VR-Native-SelfContained-1.0.1.zip** from the [GitHub release page](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1). Public downloads do not require a GitHub login or a separate token.
+Download **GF2VR-Native-SelfContained-1.0.2.zip** from the [GitHub release page](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2). Public downloads do not require a GitHub login or a separate token.
 
-- [Download the installation ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.1/GF2VR-Native-SelfContained-1.0.1.zip)
+- [Download the installation ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.2/GF2VR-Native-SelfContained-1.0.2.zip)
 - [Installation, removal and recovery guide](INSTALLATION.md)
 - [Current releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 
@@ -30,8 +30,8 @@ The original game is not included. A distribution license for the project source
 
 If a problem occurs, follow [Troubleshooting](TROUBLESHOOTING.md) to record the error message and steps that led to it. You can find the community at the [Arca.live Virtual Reality channel](https://arca.live/b/vrshits).
 
-Installation ZIP size: **93,661,818 bytes**. SHA-256:
+Installation ZIP size: **93,673,090 bytes**. SHA-256:
 
 ```text
-07E4365C7EA15047BAD95833318864EA30BC1A8AE4E9413C44FE0084F6CABB73
+9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9
 ```

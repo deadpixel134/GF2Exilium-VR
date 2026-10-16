@@ -10,14 +10,14 @@ An unofficial mod for playing GF2 Exilium in VR. Supported 3D scenes appear in s
 
 **Tested setup:** Meta Quest 2 · 4K monitor · Virtual Desktop.
 
-**[Download official version 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [Installation guide](docs/en/INSTALLATION.md) · [Basic controls](docs/en/USAGE.md)
+**[Download official version 1.0.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)** · [Installation guide](docs/en/INSTALLATION.md) · [Basic controls](docs/en/USAGE.md)
 
-Download **GF2VR-Native-SelfContained-1.0.1.zip** from the release. The game is not included. **2.0.3936** remains the practically tested baseline; original-game SHA-256, size or cache differences do not block installation. This does not guarantee VR compatibility with other versions. See [Supported environment and verification scope](docs/en/VERIFICATION.md).
+Download **GF2VR-Native-SelfContained-1.0.2.zip** from the release. The game is not included. **2.0.3936** remains the practically tested baseline; original-game SHA-256, size or cache differences do not block installation. This does not guarantee VR compatibility with other versions. See [Supported environment and verification scope](docs/en/VERIFICATION.md).
 
 ## Getting started
 
 1. Extract the entire release ZIP into a new folder. GitHub's **Source code** ZIP is not an installation package.
-2. Open **GF2VR.Installer.exe** and select the **folder containing GF2_Exilium.exe** or an installation folder containing it.
+2. Open **GF2VR.Installer.exe** and select the **folder containing GF2_Exilium.exe** or an installation folder containing it. Installation files are found automatically; select only the game location.
 3. Use **Open settings** to save your preferred options, then start SteamVR and the game yourself.
 4. Read the [basic controls](docs/en/USAGE.md). Close the game before adjusting any settings you find uncomfortable.
 
@@ -31,7 +31,7 @@ Download **GF2VR-Native-SelfContained-1.0.1.zip** from the release. The game is 
 - A configurator and installer in Korean, English and Japanese
 - Settings profile import/export, installation, updates, removal and previous-version restoration
 
-The VR implementation in 1.0.0 was frozen based on the user's confirmation of practical testing. The installation-path improvements in 1.0.1 were checked locally; no new post-change game/HMD run is recorded. See [Verified behavior and limitations](docs/en/VERIFICATION.md).
+The VR implementation in 1.0.0 was frozen based on the user's confirmation of practical testing. The installation-path improvements in 1.0.2 were checked locally; no new post-change game/HMD run is recorded. See [Verified behavior and limitations](docs/en/VERIFICATION.md).
 
 ## Guides
 

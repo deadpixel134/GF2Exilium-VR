@@ -2,11 +2,11 @@
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-## 정식 버전 1.0.1
+## 정식 버전 1.0.2
 
-[GitHub 릴리스 페이지](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)에서 **GF2VR-Native-SelfContained-1.0.1.zip**을 내려받으세요. 공개 다운로드에는 GitHub 로그인이나 별도의 토큰이 필요하지 않습니다.
+[GitHub 릴리스 페이지](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)에서 **GF2VR-Native-SelfContained-1.0.2.zip**을 내려받으세요. 공개 다운로드에는 GitHub 로그인이나 별도의 토큰이 필요하지 않습니다.
 
-- [설치 ZIP 바로 받기](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.1/GF2VR-Native-SelfContained-1.0.1.zip)
+- [설치 ZIP 바로 받기](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.2/GF2VR-Native-SelfContained-1.0.2.zip)
 - [설치·제거·복구 안내](INSTALLATION.md)
 - [현재 릴리스 목록](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 
@@ -30,8 +30,8 @@ Windows x64 PC에서 정식 설치한 게임과 VR 환경이 필요합니다. **
 
 문제가 생기면 [문제 해결 안내](TROUBLESHOOTING.md)에 따라 오류 메시지와 발생 순서를 정리해 주세요. 커뮤니티는 [아카라이브 가상현실 채널](https://arca.live/b/vrshits)에서 찾을 수 있습니다.
 
-설치 ZIP 크기: **93,661,818바이트**. SHA-256:
+설치 ZIP 크기: **93,673,090바이트**. SHA-256:
 
 ```text
-07E4365C7EA15047BAD95833318864EA30BC1A8AE4E9413C44FE0084F6CABB73
+9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9
 ```

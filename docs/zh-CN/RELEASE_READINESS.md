@@ -2,11 +2,11 @@
 
 [한국어](../ko/RELEASE_READINESS.md) · [English](../en/RELEASE_READINESS.md) · [日本語](../ja/RELEASE_READINESS.md) · [简体中文](RELEASE_READINESS.md)
 
-## 正式版 1.0.1
+## 正式版 1.0.2
 
-请从 [GitHub 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)下载 **GF2VR-Native-SelfContained-1.0.1.zip**。公开下载无须登录 GitHub，也不需要额外令牌。
+请从 [GitHub 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)下载 **GF2VR-Native-SelfContained-1.0.2.zip**。公开下载无须登录 GitHub，也不需要额外令牌。
 
-- [直接下载安装 ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.1/GF2VR-Native-SelfContained-1.0.1.zip)
+- [直接下载安装 ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.2/GF2VR-Native-SelfContained-1.0.2.zip)
 - [安装、卸载与恢复指南](INSTALLATION.md)
 - [当前发布列表](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 
@@ -30,8 +30,8 @@ GitHub 单独提供的 **Source code** ZIP 不是安装包。请将发布 ZIP �
 
 遇到问题时，请按照[故障排查指南](TROUBLESHOOTING.md)整理错误信息和发生步骤。社区位于 [Arca Live 虚拟现实频道](https://arca.live/b/vrshits)。
 
-安装 ZIP 大小：**93,661,818 字节**。SHA-256：
+安装 ZIP 大小：**93,673,090 字节**。SHA-256：
 
 ```text
-07E4365C7EA15047BAD95833318864EA30BC1A8AE4E9413C44FE0084F6CABB73
+9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9
 ```

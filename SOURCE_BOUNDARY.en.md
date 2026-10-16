@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-To install, use **GF2VR-Native-SelfContained-1.0.1.zip** from the [1.0.1 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
+To install, use **GF2VR-Native-SelfContained-1.0.2.zip** from the [1.0.2 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
 
 ## Contents of this repository
 

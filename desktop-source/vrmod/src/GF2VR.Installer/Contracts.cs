@@ -23,7 +23,8 @@ internal sealed record Journal(int SchemaVersion, string Product, string Root, s
     string State, Change[] Changes, string? GameDirectory = null);
 internal sealed record Pending(int SchemaVersion, string TransactionId);
 internal sealed record Plan(string Root, string PackageRoot, Package Package, string ManifestHash,
-    Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload, string GameDirectory);
+    Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload, string GameDirectory,
+    IReadOnlyDictionary<string, string?> BeforeHashes);
 internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId);
 
 internal static class Contract

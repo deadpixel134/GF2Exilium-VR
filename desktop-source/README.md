@@ -5,8 +5,8 @@
 The Configurator and Installer use Windows Forms, .NET SDK 10.0.112 and the official .NET 10.0.12 Windows x64 runtime packs. PowerShell 7 and Windows x64 are required. From this directory:
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.0.1 -ProductVersion 1.0.1
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.0.1 -ProductVersion 1.0.1
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.0.2 -ProductVersion 1.0.2
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.0.2 -ProductVersion 1.0.2
 ```
 
 The first build restores the official runtime packs from NuGet using the checked-in source configuration. It creates a project-local cache, build output and the required .NET license notices under `vrmod/build/`. No game files or shared system .NET installation are changed. Both hosts include a private runtime; keep their app DLL, deps and runtimeconfig files alongside the EXE.
@@ -15,4 +15,4 @@ The first build restores the official runtime packs from NuGet using the checked
 
 The app sources include local validation entry points (`--self-test`, `--verify-localization`). Installer package, portable-path and update fixtures require a complete package and an explicit previous-version package; they use inert game prerequisites and do not load the VR DLL. The release records distinguish these checks from real game/HMD acceptance.
 
-Version 1.0.1 discovers the game executable across folder layouts and makes original-game fingerprint differences nonblocking. The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing parent folder. Other layouts use `vrmod` in the located executable's folder. `version.dll` is always installed beside that executable. Product-package integrity and existing-file ownership checks remain enforced. `--self-test-flexible` exercises these installation paths with inert files.
+Version 1.0.2 discovers the game executable across folder layouts and makes original-game fingerprint differences nonblocking. The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing parent folder. Other layouts use `vrmod` in the located executable's folder. `version.dll` is always installed beside that executable. Product-package integrity and existing-file ownership checks remain enforced. `--self-test-flexible` exercises these installation paths with inert files.

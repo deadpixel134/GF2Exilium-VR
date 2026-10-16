@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.0.2",
+  "tag": "v1.0.2",
+  "channel": "stable",
+  "repository": "deadpixel134/GF2Exilium-VR",
+  "baseRelease": "1.0.1",
+  "nativeBuild": "BOOTSTRAP-FLEX-001",
+  "nativeSha256": "6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771",
+  "nativeSourceReproduction": "EXACT",
+  "nativeSourceFiles": 225,
+  "supportObjectsReproduced": 15,
+  "changes": [
+    "Automatically resolve the bundled package beside Installer; game location is the only path selection",
+    "Back up and adopt receiptless files only when identical to verified final installation bytes",
+    "Separate actionable modified-file and unowned-file guidance; preserve unknown DLLs and restoration"
+  ],
+  "exactReleaseBinaryHmdRun": "NOT_RUN",
+  "reporterPcInstallation": "NOT_RUN",
+  "cleanWindowsWithoutDotnetRun": "NOT_RUN",
+  "desktopPrivateRuntime": "10.0.12",
+  "configurationDocuments": 7,
+  "settingsFields": 25,
+  "locales": [
+    "ko",
+    "en",
+    "ja"
+  ],
+  "offlineChecks": {
+    "settings": 497,
+    "flexibleLayouts": 175,
+    "installerTransactions": 85,
+    "installerUx": 19,
+    "portablePackage": 113,
+    "desktopDeployment": 45,
+    "updater": 54,
+    "nativePathBoundaries": 214,
+    "exactReceiptlessOwnership": 525,
+    "automaticPackageLocation": 12,
+    "desktopUpgradeFrom100": 45,
+    "nativeEvidenceReusedFrom": "1.0.1_UNCHANGED_DLL_AND_SOURCE"
+  },
+  "archive": {
+    "name": "GF2VR-Native-SelfContained-1.0.2.zip",
+    "bytes": 93673090,
+    "sha256": "9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9"
+  },
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialsIncluded": false,
+  "upgradeFrom100": "DOWNLOAD_COMPLETE_ZIP_AND_USE_INCLUDED_NEW_INSTALLER",
+  "oldSettingsAutomaticHandoff": "OLD_PROVIDER_WHITELIST_REFUSES_FLEX_PROFILE"
+}

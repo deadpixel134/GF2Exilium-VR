@@ -10,14 +10,14 @@ Arca Live 虚拟现实社区：[虚拟现实频道](https://arca.live/b/vrshits)
 
 **已完成测试的环境：** Meta Quest 2 · 4K 显示器 · Virtual Desktop。
 
-**[下载正式版 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [安装指南](docs/zh-CN/INSTALLATION.md) · [基本操作](docs/zh-CN/USAGE.md)
+**[下载正式版 1.0.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)** · [安装指南](docs/zh-CN/INSTALLATION.md) · [基本操作](docs/zh-CN/USAGE.md)
 
-请下载发布页中的 **GF2VR-Native-SelfContained-1.0.1.zip**。安装包不包含游戏。**2.0.3936** 仍是实机验证的基准；原始游戏的 SHA-256、大小或缓存差异不会阻止安装。这并不保证其他版本的 VR 兼容性。请阅读[支持环境与验证范围](docs/zh-CN/VERIFICATION.md)。
+请下载发布页中的 **GF2VR-Native-SelfContained-1.0.2.zip**。安装包不包含游戏。**2.0.3936** 仍是实机验证的基准；原始游戏的 SHA-256、大小或缓存差异不会阻止安装。这并不保证其他版本的 VR 兼容性。请阅读[支持环境与验证范围](docs/zh-CN/VERIFICATION.md)。
 
 ## 初次使用
 
 1. 将发布 ZIP 中的全部内容解压到一个新文件夹。GitHub 的 **Source code** ZIP 不是安装包。
-2. 打开 **GF2VR.Installer.exe**，选择**包含 GF2_Exilium.exe 的文件夹**或包含它的安装目录。
+2. 打开 **GF2VR.Installer.exe**，选择**包含 GF2_Exilium.exe 的文件夹**或包含它的安装目录。只需选择游戏位置，安装文件会自动读取。
 3. 通过**打开设置**保存所需选项，然后自行启动 SteamVR 和游戏。
 4. 阅读[基本操作](docs/zh-CN/USAGE.md)；如果某项设置不合适，请退出游戏后再调整。
 
@@ -31,7 +31,7 @@ Arca Live 虚拟现实社区：[虚拟现实频道](https://arca.live/b/vrshits)
 - 支持韩语、英语和日语的设置程序与安装程序；程序界面目前不支持中文
 - 设置配置文件的导出与导入、安装、更新、卸载及恢复上一版本
 
-1.0.0 的 VR 实现以用户确认完成实机测试为依据固定。1.0.1 的安装路径改进已进行本地验证，尚未新记录修改后的游戏/HMD 运行。具体范围见[已验证的行为与限制](docs/zh-CN/VERIFICATION.md)。
+1.0.0 的 VR 实现以用户确认完成实机测试为依据固定。1.0.2 的安装路径改进已进行本地验证，尚未新记录修改后的游戏/HMD 运行。具体范围见[已验证的行为与限制](docs/zh-CN/VERIFICATION.md)。
 
 ## 使用指南
 

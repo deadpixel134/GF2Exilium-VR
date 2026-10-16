@@ -2,7 +2,7 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
-这里是 GF2VR 1.0.1 中原生运行时 `BOOTSTRAP-FLEX-001` 的完整构建源码集。其 SHA-256 为：
+这里是 GF2VR 1.0.2 中原生运行时 `BOOTSTRAP-FLEX-001` 的完整构建源码集。其 SHA-256 为：
 
 ```text
 6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771
@@ -20,4 +20,4 @@
 
 OpenXR 与 MinHook 的源码子集在 `third_party/` 中保留其许可证。游戏可执行文件、Unity/GameAssembly 二进制文件、游戏元数据、游戏资源、用户配置、日志和回滚文件不属于此次源码分发的内容。
 
-1.0.1 的路径修改用于查找可执行文件旁的加载器及对应的 `vrmod` 目录。标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。
+1.0.2 的路径修改用于查找可执行文件旁的加载器及对应的 `vrmod` 目录。标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。

@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-安装时请使用 [1.0.1 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)中的 **GF2VR-Native-SelfContained-1.0.1.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
+安装时请使用 [1.0.2 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)中的 **GF2VR-Native-SelfContained-1.0.2.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
 
 ## 仓库包含的资料
 

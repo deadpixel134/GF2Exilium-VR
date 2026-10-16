@@ -5,8 +5,8 @@
 设置程序与安装程序使用 Windows Forms、.NET SDK 10.0.112，以及官方 .NET 10.0.12 Windows x64 运行时包。需要 PowerShell 7 与 Windows x64。从本目录运行：
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.0.1 -ProductVersion 1.0.1
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.0.1 -ProductVersion 1.0.1
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.0.2 -ProductVersion 1.0.2
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.0.2 -ProductVersion 1.0.2
 ```
 
 首次构建会使用仓库中的源配置，从 NuGet 还原官方运行时包，并在项目本地的 `vrmod/build/` 下创建缓存、构建输出及所需的 .NET 许可证声明。不会修改游戏文件或系统共享的 .NET 安装。两个宿主程序均包含私有运行时；请将应用 DLL、deps 与 runtimeconfig 文件保留在 EXE 旁。
@@ -17,4 +17,4 @@
 
 应用界面目前仅支持韩语、英语和日语，不支持中文。本文件的简体中文翻译不表示已经添加中文界面资源。
 
-1.0.1 跨文件夹结构查找游戏可执行文件，原始游戏指纹差异不再阻止安装。标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。 继续执行产品软件包完整性及已有文件所有权检查。`--self-test-flexible` 使用不执行的模拟文件验证这些安装路径。
+1.0.2 跨文件夹结构查找游戏可执行文件，原始游戏指纹差异不再阻止安装。标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。 继续执行产品软件包完整性及已有文件所有权检查。`--self-test-flexible` 使用不执行的模拟文件验证这些安装路径。
