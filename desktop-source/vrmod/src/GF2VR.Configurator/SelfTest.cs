@@ -17,6 +17,44 @@ internal static class SelfTest
         try { act(); } catch (SettingsError) { return; }
         throw new InvalidDataException("Expected rejection: " + message);
     }
+
+    private static void RootLayoutChecks(string fixtureRoot)
+    {
+        string standardExe = Path.Combine(fixtureRoot, "GF2 Game", "GF2_Exilium.exe");
+        Assert(new SettingsStore(standardExe, true).Root == fixtureRoot, "standard executable selection changed configuration root");
+        Assert(new SettingsStore(Path.GetDirectoryName(standardExe)!, true).Root == fixtureRoot,
+            "standard executable directory selection changed configuration root");
+        Assert(SettingsStore.FindRoot([Path.GetDirectoryName(standardExe)!]) == fixtureRoot,
+            "standard ancestor detection changed configuration root");
+
+        string direct = Path.Combine(fixtureRoot, "layout-fixtures", "임의 이름 日本語", "client");
+        string tools = Path.Combine(direct, "vrmod", "tools", "GF2VR.Configurator");
+        Directory.CreateDirectory(tools);
+        string executable = Path.Combine(direct, "GF2_Exilium.exe");
+        File.WriteAllText(executable, "INERT DIRECT SETTINGS TEST FIXTURE; NEVER EXECUTE");
+        var docs = Fields.Defaults(); docs["render_quality.json"]["eyeRenderScale"] = .73;
+        string config = Path.Combine(direct, "vrmod", "config"); Directory.CreateDirectory(config);
+        foreach (string file in Fields.Files) File.WriteAllBytes(Path.Combine(config, file), SettingsStore.Encode(docs[file]));
+        var before = Fields.Files.ToDictionary(file => file, file => File.ReadAllBytes(Path.Combine(config, file)));
+        foreach (string selected in new[] { direct, direct + Path.DirectorySeparatorChar, executable })
+        {
+            var store = new SettingsStore(selected, true); store.Load();
+            Assert(store.Root == direct, "direct executable selection changed configuration root");
+            Assert(store.Documents["render_quality.json"]["eyeRenderScale"]!.GetValue<double>() == .73,
+                "direct layout loaded another configuration root");
+        }
+        Assert(SettingsStore.FindRoot([tools]) == direct, "direct layout ancestor detection failed");
+        foreach (var p in before) Assert(p.Value.SequenceEqual(File.ReadAllBytes(Path.Combine(config, p.Key))),
+            "direct layout readonly load changed " + p.Key);
+        Assert(!Directory.Exists(Path.Combine(direct, "GF2 Game")), "direct layout created a standard game directory");
+        Reject(() => new SettingsStore(Path.Combine(direct, "missing"), true), "missing direct executable");
+        Reject(() => new SettingsStore(Path.Combine(config, Fields.Files[0]), true), "non-game executable selection");
+        string ambiguous = Path.Combine(direct, "GF2 Game"); Directory.CreateDirectory(ambiguous);
+        File.WriteAllText(Path.Combine(ambiguous, "GF2_Exilium.exe"), "INERT AMBIGUOUS SETTINGS TEST FIXTURE; NEVER EXECUTE");
+        Reject(() => new SettingsStore(direct, true), "simultaneous direct and standard executable layouts");
+        Reject(() => SettingsStore.FindRoot([tools]), "ambiguous ancestor layout");
+    }
+
     internal static int Run()
     {
         Texts.Verify();
@@ -25,6 +63,7 @@ internal static class SelfTest
         if (Directory.Exists(root)) throw new InvalidOperationException("Use a fresh validation-fixture directory.");
         Directory.CreateDirectory(Path.Combine(root, "GF2 Game"));
         File.WriteAllText(Path.Combine(root, "GF2 Game", "GF2_Exilium.exe"), "INERT SETTINGS TEST FIXTURE; NEVER EXECUTE");
+        RootLayoutChecks(root);
         var store = new SettingsStore(root, testFixture: true); store.Load();
         Reject(() => new SettingsStore(root), "unknown deployed runtime cannot expose active configuration");
         Assert(!Directory.Exists(Path.Combine(root, "vrmod", "config")), "load created configuration");

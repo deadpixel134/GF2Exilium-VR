@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "build": "BOOTSTRAP-STABLE-001",
-  "expectedDllSha256": "F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D",
+  "build": "BOOTSTRAP-FLEX-001",
+  "expectedDllSha256": "6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771",
   "compiler": "zig0.16.0",
   "sdk": "Windows10SDK10.0.26100.0",
   "units": {
@@ -207,7 +207,7 @@
     "native-source/src/bootstrap/callback_observer.c": "FADF40501E067DDCBA07DD6E9BE86E79ACFFDDE2D2FA73455C60F3D4AA012F92",
     "native-source/src/bootstrap/native_probe.c": "6F7FD508511318C3AD178EC39540088BF8842D9B92007C1CCFC2E21E1598ECB0",
     "native-source/src/bootstrap/portable_binding.h": "76FFA7F9A1BF3238D6C88C982FDC1164B9D1D7C462BB3048635222D5E6D17B15",
-    "native-source/src/bootstrap/portable_paths.h": "B544C870D316BA7FE9F7A4B4418343ABC1CEEED35A5F2725F52D6FBBD7061AFA",
+    "native-source/src/bootstrap/portable_paths.h": "1368F2AD1E124C472F7F025335FC3162975363518BA782749391F83F88DBB23D",
     "native-source/src/bootstrap/xr_bootstrap_state.h": "F22115C35FBC17B4420B9CA8525F3D6B07F35C0815C18C34802DC1704E047BAA",
     "native-source/src/panel/panel_capture.h": "F930CDC827B92196C5DDDED0A742C2ABEC494D02320E5146B32B4695C9BB30D8",
     "native-source/src/stereo/controller_cursor_gpu.h": "DE1C6E4218305A20AA1CF6AAD2D183BD84DDC6E1476D745BACB9E0D16F38DABA",
@@ -424,7 +424,7 @@
     "native-source/third_party/minhook/src/hde/pstdint.h": "604D1CDF45C5A95BC9CF1BBF39CA05EF83013541101D34971C5CD7577E3D5247",
     "native-source/third_party/minhook/src/hde/table64.h": "B774446D2F110CE954FB0A710F4693C5562DDBD8D56FE84106F2EE80DB8B50A2",
     "native-source/third_party/minhook/LICENSE.txt": "D5C2224982B0B95A16B098A561335FA93F3EAF4D0AA964B7843EDB986DF78DC8",
-    "native-source/build-config/probe_config.h": "944556745E284D0E2AB668FEDDE3AA417F2866827E3E1889AC7186A7E69D8B06",
+    "native-source/build-config/probe_config.h": "D9C7DD8A78DAF009FBFA9D97AEEDB4600E20FAAAD8CD6947D9A77757FC32739E",
     "native-source/build-config/version.def": "3118509640549265ADCF2634FBD5F00DB741BDE3A056374F198123FC2EA93D95"
   },
   "scope": "Owned current runtime and generated owned IL; OpenXR/MinHook licensed source. No game/reference assembly/assets, original game prerequisites are not distributed."

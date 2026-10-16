@@ -8,14 +8,14 @@ Arca Live 虚拟现实社区：[虚拟现实频道](https://arca.live/b/vrshits)
 
 这是一个让 GF2 Exilium 支持 VR 游玩的非官方模组。支持的 3D 场景以立体画面呈现；游戏菜单及普通画面则显示在可用控制器操作的面板上。
 
-**[下载正式版 1.0.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)** · [安装指南](docs/zh-CN/INSTALLATION.md) · [基本操作](docs/zh-CN/USAGE.md)
+**[下载正式版 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [安装指南](docs/zh-CN/INSTALLATION.md) · [基本操作](docs/zh-CN/USAGE.md)
 
-请下载发布页中的 **GF2VR-Native-SelfContained-1.0.0.zip**。安装包不包含游戏，支持的游戏版本为 **2.0.3936**。安装程序会核对实际游戏文件是否匹配。请同时阅读[支持环境与验证范围](docs/zh-CN/VERIFICATION.md)。
+请下载发布页中的 **GF2VR-Native-SelfContained-1.0.1.zip**。安装包不包含游戏。**2.0.3936** 仍是实机验证的基准；原始游戏的 SHA-256、大小或缓存差异不会阻止安装。这并不保证其他版本的 VR 兼容性。请阅读[支持环境与验证范围](docs/zh-CN/VERIFICATION.md)。
 
 ## 初次使用
 
 1. 将发布 ZIP 中的全部内容解压到一个新文件夹。GitHub 的 **Source code** ZIP 不是安装包。
-2. 打开 **GF2VR.Installer.exe**，选择**包含 GF2 Game 文件夹的上级文件夹**并安装。
+2. 打开 **GF2VR.Installer.exe**，选择**包含 GF2_Exilium.exe 的文件夹**或包含它的安装目录。
 3. 通过**打开设置**保存所需选项，然后自行启动 SteamVR 和游戏。
 4. 阅读[基本操作](docs/zh-CN/USAGE.md)；如果某项设置不合适，请退出游戏后再调整。
 
@@ -29,7 +29,7 @@ Arca Live 虚拟现实社区：[虚拟现实频道](https://arca.live/b/vrshits)
 - 支持韩语、英语和日语的设置程序与安装程序；程序界面目前不支持中文
 - 设置配置文件的导出与导入、安装、更新、卸载及恢复上一版本
 
-当前实现以用户确认已完成实机测试为依据，固定为正式版本。这并不保证所有设备兼容，也不保证所有场景都正常。具体支持范围见[已验证的行为与限制](docs/zh-CN/VERIFICATION.md)。
+1.0.0 的 VR 实现以用户确认完成实机测试为依据固定。1.0.1 的安装路径改进已进行本地验证，尚未新记录修改后的游戏/HMD 运行。具体范围见[已验证的行为与限制](docs/zh-CN/VERIFICATION.md)。
 
 ## 使用指南
 

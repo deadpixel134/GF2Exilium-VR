@@ -1,7 +1,8 @@
 #ifndef GF2VR_PORTABLE_PATHS_H
 #define GF2VR_PORTABLE_PATHS_H
-/* Immutable, bounded Windows UTF-16 paths. The target adapter owns the nested
-   GF2 Game layout; no working-directory, environment or developer-root lookup. */
+/* Immutable, bounded Windows UTF-16 paths. The conventional GF2 Game directory
+   keeps its parent root; other layouts bind resources beside the executable.
+   No working-directory, environment or developer-root lookup. */
 #define GF2VR_PATH_CAPACITY 1024u
 typedef struct {
     unsigned ready;
@@ -83,14 +84,25 @@ static int gf2vr_paths_build(Gf2vrPaths *p,const unsigned short *module,
     if(!md || !ed || !gf2vr_path_equal(module+md,mn-md,L"version.dll",11) ||
        !gf2vr_path_equal(exe+ed,en-ed,L"GF2_Exilium.exe",15) ||
        !gf2vr_path_equal(module,md,exe,ed)) return 0;
-    unsigned parent=md-1,begin=parent;
-    while(begin && module[begin-1]!='\\') --begin;
-    if(!begin || !gf2vr_path_equal(module+begin,parent-begin,L"GF2 Game",8)) return 0;
-    unsigned rn=begin-1;
+    unsigned directory=ed-1,begin=directory;
+    while(begin && exe[begin-1]!='\\') --begin;
+    unsigned share_begin=0;
+    if(exe[0]=='\\' && exe[1]=='\\' &&
+       (exe[2]!='?' || gf2vr_path_equal(exe+4,3,L"UNC",3))) {
+        share_begin=exe[2]=='?'?8:2;
+        while(share_begin<directory && exe[share_begin]!='\\') ++share_begin;
+        ++share_begin;
+    }
+    /* Only the conventional directory is a nested game layout. Choosing the
+       parent of every renamed directory would put vrmod in a shared library. */
+    unsigned rn=directory;
+    /* A UNC share named GF2 Game has no filesystem parent: stay in that share. */
+    if(begin && begin!=share_begin &&
+       gf2vr_path_equal(exe+begin,directory-begin,L"GF2 Game",8)) rn=begin-1;
     /* Keep the separator in X:\ and extended drive roots. */
-    if(rn && module[rn-1]==':') ++rn;
+    if(rn && exe[rn-1]==':') ++rn;
     if(!rn) return 0;
-    for(unsigned i=0;i<rn;++i) p->root[i]=module[i]; p->root[rn]=0;
+    for(unsigned i=0;i<rn;++i) p->root[i]=exe[i]; p->root[rn]=0;
     for(unsigned i=0;i<=en;++i) p->game[i]=exe[i];
     if(!gf2vr_path_join(p->loader,p->root,rn,L"vrmod\\runtime\\openxr_loader.dll") ||
        !gf2vr_path_join(p->log,p->root,rn,log_name) ||

@@ -145,6 +145,7 @@ internal sealed class InstallerForm : Form
         plan = null; receipt = null; receiptHash = null; settings = null; pending = false; hasPrevious = false;
         try
         {
+            root.Text = Paths.Root(root.Text);
             pending = engine.HasPending(root.Text); receipt = engine.Inspect(root.Text);
             if (receipt != null && !pending) { hasPrevious = engine.HasPreviousVersion(root.Text); receiptHash = engine.ReceiptHash(root.Text); }
             try { settings = SettingsLaunch.Resolve(root.Text, engine); } catch (Exception ex) { AppendLog(InstallerText.Error(ex)); }

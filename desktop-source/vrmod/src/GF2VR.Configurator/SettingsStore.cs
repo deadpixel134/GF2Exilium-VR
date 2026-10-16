@@ -30,25 +30,57 @@ internal sealed class SettingsStore
 
     internal SettingsStore(string root, bool testFixture = false)
     {
-        Root = Path.GetFullPath(root);
+        Root = NormalizeRoot(root);
         fixture = testFixture;
         EnsureRoot();
     }
 
-    internal static string FindRoot()
+    private static string NormalizeRoot(string input)
     {
-        foreach (string start in new[] { AppContext.BaseDirectory, Environment.CurrentDirectory })
+        string full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(input));
+        if (File.Exists(full))
+        {
+            if (!Path.GetFileName(full).Equals("GF2_Exilium.exe", StringComparison.OrdinalIgnoreCase))
+                throw new SettingsError("rootError");
+            full = Path.GetDirectoryName(full)!;
+        }
+        // Preserve the established parent/vrmod layout when given its executable directory.
+        if (File.Exists(Path.Combine(full, "GF2_Exilium.exe")) &&
+            Path.GetFileName(full).Equals("GF2 Game", StringComparison.OrdinalIgnoreCase) &&
+            !full.Equals(Path.TrimEndingDirectorySeparator(Path.GetPathRoot(full)!), StringComparison.OrdinalIgnoreCase))
+            return Directory.GetParent(full)?.FullName ?? full;
+        return full;
+    }
+
+    private static string GameExecutable(string root)
+    {
+        string direct = Path.Combine(root, "GF2_Exilium.exe");
+        string standard = Path.Combine(root, "GF2 Game", "GF2_Exilium.exe");
+        bool hasDirect = File.Exists(direct), hasStandard = File.Exists(standard);
+        if (hasDirect == hasStandard) throw new SettingsError("rootError");
+        return hasDirect ? direct : standard;
+    }
+
+    internal static string FindRoot(string[]? starts = null)
+    {
+        foreach (string start in starts ?? new[] { AppContext.BaseDirectory, Environment.CurrentDirectory })
         {
             DirectoryInfo? dir = new(start);
             for (int i = 0; i < 8 && dir != null; i++, dir = dir.Parent)
-                if (File.Exists(Path.Combine(dir.FullName, "GF2 Game", "GF2_Exilium.exe"))) return dir.FullName;
+                if (File.Exists(Path.Combine(dir.FullName, "GF2_Exilium.exe")) ||
+                    File.Exists(Path.Combine(dir.FullName, "GF2 Game", "GF2_Exilium.exe")))
+                {
+                    string root = NormalizeRoot(dir.FullName);
+                    _ = GameExecutable(root); return root;
+                }
         }
         return Environment.CurrentDirectory;
     }
 
     private void EnsureRoot()
     {
-        if (!File.Exists(Path.Combine(Root, "GF2 Game", "GF2_Exilium.exe")))
+        string executable = GameExecutable(Root);
+        if (!File.Exists(executable))
             throw new SettingsError("rootError");
         CheckPath(Config);
         if (!fixture)
@@ -57,7 +89,7 @@ internal sealed class SettingsStore
             string manifest = Path.Combine(AppContext.BaseDirectory, "runtime-contract.json");
             using var j = JsonDocument.Parse(File.ReadAllBytes(manifest));
             var c = j.RootElement;
-            string dll = Path.Combine(Root, "GF2 Game", "version.dll");
+            string dll = Path.Combine(Path.GetDirectoryName(executable)!, "version.dll");
             if (c.GetProperty("schemaVersion").GetInt32() != 1 ||
                 !Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!).Equals(Config, StringComparison.OrdinalIgnoreCase) ||
                 !File.Exists(dll) ||
@@ -71,7 +103,8 @@ internal sealed class SettingsStore
     private void CheckPath(string path)
     {
         var full = Path.GetFullPath(path);
-        if (!full.StartsWith(Root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+        string prefix = Path.EndsInDirectorySeparator(Root) ? Root : Root + Path.DirectorySeparatorChar;
+        if (!full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             throw new SettingsError("pathError");
         for (string? part = full; part != null; part = Path.GetDirectoryName(part))
         {

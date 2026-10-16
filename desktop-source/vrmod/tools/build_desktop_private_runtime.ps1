@@ -1,8 +1,8 @@
 #requires -Version 7.0
 [CmdletBinding()]
 param([ValidateSet('Configurator','Installer')][string]$Application='Configurator',
-    [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='STABLE-DESKTOP-001',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.0')
+    [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='FLEX-DESKTOP-001',
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.1')
 $ErrorActionPreference='Stop'
 $taskRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $evidence=Join-Path $taskRoot ('vrmod/build/offline/'+$BuildId)

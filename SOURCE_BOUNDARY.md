@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-설치하려면 [1.0.0 릴리스](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)의 **GF2VR-Native-SelfContained-1.0.0.zip**을 사용하세요. GitHub의 **Source code** ZIP에는 빌드 전 소스가 들어 있으며, 압축을 풀어 게임 폴더에 복사하는 것만으로 설치되지 않습니다.
+설치하려면 [1.0.1 릴리스](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)의 **GF2VR-Native-SelfContained-1.0.1.zip**을 사용하세요. GitHub의 **Source code** ZIP에는 빌드 전 소스가 들어 있으며, 압축을 풀어 게임 폴더에 복사하는 것만으로 설치되지 않습니다.
 
 ## 저장소에 포함된 자료
 
@@ -21,7 +21,7 @@
 
 런타임·설정 프로그램·설치 메타데이터는 한 버전의 묶음으로 사용하세요. 일부 파일을 다른 버전의 파일과 섞으면 파일 검사나 실행이 실패할 수 있습니다. 원본 게임 파일은 사용자가 정식 설치한 게임에서 확인하며 설치 ZIP에 넣지 않습니다.
 
-네이티브 배포 빌드는 이동 가능한 게임 설치 경로를 사용하도록 구성했습니다. 현재 게임 구현에 대한 실기 확인과 배포용 바이너리의 로컬 빌드·경로·무결성 검증은 [확인 범위](docs/ko/VERIFICATION.md)에 구분해 기록합니다.
+`GF2 Game/GF2_Exilium.exe` 구조에서는 기존 상위 폴더의 `vrmod`를 유지합니다. 그 외 구조에서는 찾은 실행 파일 폴더의 `vrmod`를 사용합니다. `version.dll`은 항상 해당 실행 파일 옆에 설치됩니다. 원본 게임 파일은 읽기만 하며 지문 차이는 설치 차단 조건이 아닙니다. 제품 패키지 해시, 파일 소유권, 실행 중인 게임 차단과 이전 버전 복원·중단 복구 검사는 유지합니다. 실기 확인과 배포용 바이너리의 로컬 검증은 [확인 범위](docs/ko/VERIFICATION.md)에 구분해 기록합니다.
 
 ## 이용 조건
 

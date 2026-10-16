@@ -17,9 +17,8 @@ internal static class DesktopDeploymentChecks
         Paths.WriteNew(Paths.Contained(root, "GF2 Game/GF2_Exilium.exe"), Encoding.UTF8.GetBytes(SelfTest.Inert));
         var original = Contract.Read<Package>(File.ReadAllBytes(Paths.Contained(packageRoot, "package-manifest.json")));
         Check(NativeLayout.IsPortable(original) && original.BoundGameRoot == null, "recognized portable native provider");
-        string expectedDll = original.Native!.BuildId == NativeLayout.StablePortableBuild
-            ? NativeLayout.StablePortableDllHash : NativeLayout.PortableDllHash;
-        Check(Paths.Equal(original.Native.DllSha256, expectedDll), "exact native provider hash");
+        string expectedDll = NativeLayout.ExpectedHash(original);
+        Check(Paths.Equal(original.Native!.DllSha256, expectedDll), "exact native provider hash");
         foreach (var f in original.Files)
         {
             byte[] bytes = File.ReadAllBytes(Paths.Contained(packageRoot, "payload/" + f.Path));

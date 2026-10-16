@@ -2,11 +2,11 @@
 
 [한국어](../ko/INSTALLATION.md) · [English](../en/INSTALLATION.md) · [日本語](../ja/INSTALLATION.md) · [简体中文](INSTALLATION.md)
 
-请从[正式版 1.0.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)下载 **GF2VR-Native-SelfContained-1.0.0.zip**。GitHub 的 **Source code** ZIP 不是安装包。
+请从[正式版 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)下载 **GF2VR-Native-SelfContained-1.0.1.zip**。GitHub 的 **Source code** ZIP 不是安装包。
 
 ## 安装前准备
 
-- 在 Windows x64 PC 上准备受支持的游戏版本 **2.0.3936** 及所用的 VR 环境。如果实际文件不匹配，安装程序会中止安装。
+- 需要 Windows x64 PC 上合法安装的游戏及 VR 环境。**2.0.3936** 是实机验证的基准版本。原始游戏的 SHA-256、文件大小或缓存差异不会阻止安装，但这并不保证其他游戏版本的 VR 兼容性。
 - 完全退出游戏。
 - 将下载的压缩包全部解压到一个新文件夹。不要直接在 ZIP 内运行。
 - 不要只移动安装程序的可执行文件；请保留随包提供的文件与文件夹。
@@ -16,7 +16,7 @@
 ## 安装步骤
 
 1. 在解压后的文件夹中运行 **GF2VR.Installer.exe**。
-2. 点击**游戏文件夹**右侧的**浏览…**。选择**包含 GF2 Game 文件夹的上级文件夹**，而不是进入 GF2 Game 后再选择。
+2. 点击**游戏文件夹**右侧的**浏览…**。选择**包含 GF2_Exilium.exe 的文件夹**，或包含它的安装目录。安装程序会在不同名称及嵌套结构中查找可执行文件。若找到多个，请选择更靠近目标游戏的文件夹。
 3. 如果**软件包文件夹**为空，请选择 ZIP 的解压目录。确认安装程序、package-manifest.json 文件和 payload 文件夹位于同一位置，无须手动修改文件。
 4. 检查画面中显示的版本及将处理的文件列表。如果提示**仅安装设置程序**，说明这不是完整 VR 模组安装包。
 5. 点击**安装**，并在确认显示的位置无误后继续。根据已有安装状态，按钮可能显示为**更新**或**重新安装**。
@@ -24,7 +24,9 @@
 
 操作过程中请勿关闭安装程序或移动安装文件。完成后需要自行启动游戏和 SteamVR。若想先检查设置，请阅读[设置指南](SETTINGS.md)。
 
-如果已有其他程序的 version.dll，或游戏文件不属于支持范围，安装可能被拒绝。请勿通过覆盖或删除已有文件来绕过检查，先阅读[故障排查指南](TROUBLESHOOTING.md)。
+若已有其他程序的 version.dll，或产品软件包哈希、所有权检查失败，安装可能被拒绝。原始游戏的哈希差异本身不会导致拒绝。请勿覆盖或删除已有文件来绕过保护，先阅读[故障排查指南](TROUBLESHOOTING.md)。
+
+标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。
 
 ## 界面按钮说明
 

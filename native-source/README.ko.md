@@ -2,10 +2,10 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-GF2VR 1.0.0에 포함된 네이티브 런타임 `BOOTSTRAP-STABLE-001`을 빌드하는 데 필요한 소스 묶음입니다. DLL의 SHA-256은 다음과 같습니다.
+GF2VR 1.0.1에 포함된 네이티브 런타임 `BOOTSTRAP-FLEX-001`을 빌드하는 데 필요한 소스 묶음입니다. DLL의 SHA-256은 다음과 같습니다.
 
 ```text
-F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D
+6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771
 ```
 
 Windows x64에서 PowerShell 7, Zig 0.16.0과 Windows 10 SDK 10.0.26100.0의 x64 `kernel32.lib`를 사용해 빌드합니다.
@@ -19,3 +19,5 @@ Windows x64에서 PowerShell 7, Zig 0.16.0과 Windows 10 SDK 10.0.26100.0의 x64
 `native-build.json`에는 정확한 빌드 플래그와 소스 해시가 기록되어 있습니다. `src/`에는 현재 프로젝트 소유의 네이티브 코드와 빌드에서 사용하는 생성 패키지 헤더가 있습니다. `managed/ActivityProducerEngineBridge.cs`는 내장된 관리 코드 패키지에 대응하는 프로젝트 소유의 관리 브리지 소스이며 검토와 개발을 위해 제공합니다. 이 네이티브 DLL을 다시 빌드할 때는 저장소의 생성 패키지를 사용하므로 게임 어셈블리가 필요하지 않습니다. 관리 코드 패키지의 재생성은 별도의 개발 작업으로, 합법적으로 확보한 일치하는 게임 어셈블리가 필요합니다. 해당 어셈블리와 게임 에셋은 배포하지 않습니다.
 
 OpenXR와 MinHook 소스 일부의 라이선스는 `third_party/` 아래에 유지되어 있습니다. 게임 실행 파일, Unity·GameAssembly 바이너리, 게임 메타데이터·에셋, 사용자 설정·로그·복구 파일은 이 소스 배포본에 포함되지 않습니다.
+
+1.0.1의 경로 변경은 실행 파일 옆의 로더와 위 구성의 `vrmod`를 찾는 부분에 한정합니다. `GF2 Game/GF2_Exilium.exe` 구조에서는 기존 상위 폴더의 `vrmod`를 유지합니다. 그 외 구조에서는 찾은 실행 파일 폴더의 `vrmod`를 사용합니다. `version.dll`은 항상 해당 실행 파일 옆에 설치됩니다.

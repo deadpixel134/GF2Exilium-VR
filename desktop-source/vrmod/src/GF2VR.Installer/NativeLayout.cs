@@ -13,6 +13,8 @@ internal static class NativeLayout
     internal const string PortableDllHash = "B4EC288F021FEE970E2C2E6F7CB46918FF4D5DE3312F82AD438783799B36A2A7";
     internal const string StablePortableBuild = "BOOTSTRAP-STABLE-001";
     internal const string StablePortableDllHash = "F5281E05D0BEA0D83A0B895B2D02558B37C500FCE384739DDE643C182E1A695D";
+    internal const string FlexibleBuild = "BOOTSTRAP-FLEX-001";
+    internal const string FlexibleDllHash = "6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771";
     internal const string PortableBinding = "MODULE_RELATIVE_V1";
     internal const string ContractTemplateRoot = "INSTALL_ROOT/vrmod/config";
     internal static string BoundRuntimeRoot = "G:/GF2Exilium"; // Only isolated fixture verification temporarily substitutes this.
@@ -37,7 +39,7 @@ internal static class NativeLayout
         bool portable = IsPortable(package);
         if (portable)
         {
-            string expectedHash = native.BuildId == StablePortableBuild ? StablePortableDllHash : PortableDllHash;
+            string expectedHash = ExpectedHash(package);
             if (package.BoundGameRoot != null || native.ResourceBinding != PortableBinding ||
                 !Paths.Equal(native.DllSha256, expectedHash)) throw new InstallError("nativeBuild");
             // Provider's bounded UTF-16 path buffers; do not claim support for truncation.
@@ -52,6 +54,8 @@ internal static class NativeLayout
             if (native.BuildId != BuildId || native.ResourceBinding != null || !Paths.Equal(native.DllSha256, DllHash))
                 throw new InstallError("nativeBuild");
         }
+        if (native.BuildId != FlexibleBuild && File.Exists(Paths.Contained(root, "GF2_Exilium.exe")))
+            throw new InstallError("nativeBuild");
         if (!Paths.Equal(native.LoaderSha256, LoaderHash) ||
             package.RequiresInstalledDllSha256 != null) throw new InstallError("nativeBuild");
         if (!Paths.Equal(package.Files.Single(f => f.Path == "GF2 Game/version.dll").Sha256, native.DllSha256) ||
@@ -65,9 +69,8 @@ internal static class NativeLayout
         {
             if (f == null || f.Bytes < 1) throw new InstallError("badPackage");
             Paths.HashText(f.Sha256);
-            string path = Paths.Contained(root, f.Path);
-            if (!File.Exists(path) || new FileInfo(path).Length != f.Bytes || !Paths.Equal(Paths.FileHash(path), f.Sha256))
-                throw new InstallError("gameFile", f.Path);
+            // Read-only reference metadata may describe a different game patch
+            // or cache directory. It never grants installation ownership.
         }
         // Legacy PE export forwarders still name this System32 directory. Never infer portability from a ZIP.
         string expected = Path.GetFullPath("C:/Windows/System32");
@@ -75,7 +78,14 @@ internal static class NativeLayout
         if (!File.Exists(Path.Combine(actual, "version.dll"))) throw new InstallError("systemVersionMissing");
         if (!portable && !actual.Equals(expected, StringComparison.OrdinalIgnoreCase)) throw new InstallError("systemBinding");
     }
-    internal static bool IsPortable(Package package) => package.Native?.BuildId is PortableBuild or StablePortableBuild;
+    internal static bool IsPortable(Package package) => package.Native?.BuildId is PortableBuild or StablePortableBuild or FlexibleBuild;
+    internal static string ExpectedHash(Package package) => package.Native?.BuildId switch
+    {
+        FlexibleBuild => FlexibleDllHash,
+        StablePortableBuild => StablePortableDllHash,
+        PortableBuild => PortableDllHash,
+        _ => DllHash
+    };
     internal static void ConfiguratorContract(string root, Package package, Dictionary<string, byte[]> payload)
     {
         try
@@ -84,9 +94,9 @@ internal static class NativeLayout
             using var doc = JsonDocument.Parse(bytes); Contract.Duplicates(doc.RootElement);
             var c = doc.RootElement;
             bool portable = IsPortable(package);
-            bool stable = package.Native?.BuildId == StablePortableBuild;
+            bool stable = package.Native?.BuildId is StablePortableBuild or FlexibleBuild;
             string[] configFiles = stable ? StableConfigFiles : ConfigFiles;
-            string expectedHash = portable ? (stable ? StablePortableDllHash : PortableDllHash) : DllHash;
+            string expectedHash = ExpectedHash(package);
             if (package.Native == null || !Paths.Equal(package.Native.DllSha256, expectedHash) ||
                 (!portable && package.Native.BuildId != BuildId) ||
                 (portable && (package.BoundGameRoot != null || package.Native.ResourceBinding != PortableBinding)))

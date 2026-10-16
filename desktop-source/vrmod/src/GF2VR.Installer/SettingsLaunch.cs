@@ -40,7 +40,7 @@ internal static class SettingsLaunch
         using var ready = JsonDocument.Parse(Paths.Bytes(Paths.Contained(root, prefix + "gui-ready.json"), 262144) ?? throw new InstallError("badState"));
         Contract.Duplicates(owner.RootElement); Contract.Duplicates(ready.RootElement);
         var o = owner.RootElement; var g = ready.RootElement;
-        string? native = Paths.FileHash(Paths.Contained(root, "GF2 Game/version.dll")); Paths.HashText(native);
+        string? native = Paths.FileHash(Paths.Target(root, "GF2 Game/version.dll")); Paths.HashText(native);
         if (o.GetProperty("state").GetString() != "INSTALLED" || o.GetProperty("build").GetString() != match.Groups["build"].Value ||
             !Paths.Equal(o.GetProperty("launcher").GetString(), Paths.Hash(raw)) ||
             !Paths.Equal(g.GetProperty("launcher").GetString(), Paths.Hash(raw)) ||
@@ -60,7 +60,7 @@ internal static class SettingsLaunch
         Paths.HashText(c.GetProperty("dllSha256").GetString());
         if (c.GetProperty("schemaVersion").GetInt32() != 1 ||
             !Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!).Equals(Path.Combine(root, "vrmod", "config"), StringComparison.OrdinalIgnoreCase) ||
-            !Paths.Equal(c.GetProperty("dllSha256").GetString(), Paths.FileHash(Paths.Contained(root, "GF2 Game/version.dll")))) return null;
+            !Paths.Equal(c.GetProperty("dllSha256").GetString(), Paths.FileHash(Paths.Target(root, "GF2 Game/version.dll")))) return null;
         return new(Paths.Contained(root, folder + "GF2VR.Configurator.exe"), root);
     }
 

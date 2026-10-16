@@ -55,9 +55,8 @@ internal static class PortablePackageChecks
         string pkg = Path.Combine(fixture, "package");
         var source = Contract.Read<Package>(Paths.Bytes(Paths.Contained(actualPackage, "package-manifest.json"), 262144)!);
         Assert(NativeLayout.IsPortable(source) && source.BoundGameRoot == null, "portable source profile");
-        string expectedDll = source.Native!.BuildId == NativeLayout.StablePortableBuild
-            ? NativeLayout.StablePortableDllHash : NativeLayout.PortableDllHash;
-        Assert(Paths.Equal(source.Native.DllSha256, expectedDll), "recognized portable provider hash");
+        string expectedDll = NativeLayout.ExpectedHash(source);
+        Assert(Paths.Equal(source.Native!.DllSha256, expectedDll), "recognized portable provider hash");
         foreach (var f in source.Files)
         {
             byte[] bytes = File.ReadAllBytes(Paths.Contained(actualPackage, "payload/" + f.Path));

@@ -2,11 +2,11 @@
 
 [한국어](../ko/RELEASE_READINESS.md) · [English](../en/RELEASE_READINESS.md) · [日本語](../ja/RELEASE_READINESS.md) · [简体中文](RELEASE_READINESS.md)
 
-## 正式版 1.0.0
+## 正式版 1.0.1
 
-请从 [GitHub 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)下载 **GF2VR-Native-SelfContained-1.0.0.zip**。公开下载无须登录 GitHub，也不需要额外令牌。
+请从 [GitHub 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)下载 **GF2VR-Native-SelfContained-1.0.1.zip**。公开下载无须登录 GitHub，也不需要额外令牌。
 
-- [直接下载安装 ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.0/GF2VR-Native-SelfContained-1.0.0.zip)
+- [直接下载安装 ZIP](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.1/GF2VR-Native-SelfContained-1.0.1.zip)
 - [安装、卸载与恢复指南](INSTALLATION.md)
 - [当前发布列表](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 
@@ -14,7 +14,9 @@ GitHub 单独提供的 **Source code** ZIP 不是安装包。请将发布 ZIP �
 
 ## 支持环境
 
-面向 Windows x64 PC 上的 GF2 Exilium **2.0.3936**。需要合法安装的游戏、头显与控制器，以及 SteamVR/OpenXR 运行环境。安装程序会核对支持游戏文件的指纹，因此即使显示的版本相同，实际文件不匹配时也可能拒绝安装。
+需要 Windows x64 PC 上合法安装的游戏及 VR 环境。**2.0.3936** 是实机验证的基准版本。原始游戏的 SHA-256、文件大小或缓存差异不会阻止安装，但这并不保证其他游戏版本的 VR 兼容性。 头显、控制器软件及 SteamVR/OpenXR 需要自行准备。
+
+标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。
 
 设置程序和安装程序支持韩语、英语和日语，随包提供所需的 .NET 运行时；程序界面目前不支持中文。游戏和 SteamVR 需要自行启动。已验证的行为与尚未验证的环境见[验证范围](VERIFICATION.md)。
 
@@ -27,3 +29,9 @@ GitHub 单独提供的 **Source code** ZIP 不是安装包。请将发布 ZIP �
 不包含原始游戏。项目源码的分发许可证尚未确定，第三方组件分别适用其自身许可证。请阅读[源码构成与使用条件](../../SOURCE_BOUNDARY.zh-CN.md)。
 
 遇到问题时，请按照[故障排查指南](TROUBLESHOOTING.md)整理错误信息和发生步骤。社区位于 [Arca Live 虚拟现实频道](https://arca.live/b/vrshits)。
+
+安装 ZIP 大小：**93,661,818 字节**。SHA-256：
+
+```text
+07E4365C7EA15047BAD95833318864EA30BC1A8AE4E9413C44FE0084F6CABB73
+```

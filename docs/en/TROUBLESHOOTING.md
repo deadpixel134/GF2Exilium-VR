@@ -6,14 +6,14 @@ First identify where the problem occurs. Settings saving, installation or update
 
 ## The game folder cannot be found
 
-In the installer, select the **parent folder containing the GF2 Game folder**. Check that GF2_Exilium.exe is inside GF2 Game. Also make sure you have not selected the extracted package folder as the game folder, or vice versa.
+Select the **folder containing GF2_Exilium.exe** or an installation folder containing it. The installer finds the executable through different folder names and nested layouts. If it finds several matches, select a narrower folder for the intended game. If the selected tree is too broad to search completely, choose a folder closer to the executable. Keep the game folder separate from the extracted package folder.
 
 ## Package files are missing or installation is unavailable
 
 - Check that you have extracted the entire ZIP first.
 - Make sure you have not moved only the executable elsewhere.
 - Check that you are not using GitHub's source code ZIP as the installation package.
-- Confirm that it is the installation ZIP from the [release page](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0). The supported game build is 2.0.3936, and its actual file fingerprints must also match.
+- Use the installation ZIP from the [1.0.1 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1). Original-game SHA-256, size or cache differences are nonblocking; corruption or hash mismatches in the product package still block installation.
 
 If files are missing or damaged, download the release ZIP again and fully extract it into a new folder. Do not modify files rejected by the installer to try to bypass its checks.
 
@@ -66,6 +66,8 @@ If your combination gives priority to another panel or UI action, try the defaul
 ## Updates cannot be checked
 
 Check your internet connection, GitHub CLI installation and login state, and whether a new official version actually exists. You can also download the ZIP directly from the public [releases page](https://github.com/deadpixel134/GF2Exilium-VR/releases) to update. The existing installation is retained if update checking fails. See [Updating](UPDATE.md).
+
+To upgrade from 1.0.0, download the 1.0.1 ZIP and use its included installer. If the old configurator rejects the package, this manual route preserves settings and installation records.
 
 ## Installation was interrupted, or the new version has problems
 

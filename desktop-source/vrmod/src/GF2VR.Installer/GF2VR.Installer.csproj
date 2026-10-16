@@ -8,7 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NuGetAudit>false</NuGetAudit>
     <AssemblyName>GF2VR.Installer</AssemblyName>
-    <Version>0.3.0</Version>
+    <Version>1.0.1</Version>
     <OutputPath>../../build/installer/bin/</OutputPath>
   </PropertyGroup>
   <ItemGroup><EmbeddedResource Include="Locales/*.json" /></ItemGroup>

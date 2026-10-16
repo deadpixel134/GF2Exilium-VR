@@ -80,8 +80,9 @@ internal static class NativePackageChecks
             var checkedPackage = engine.CheckPayload(root, pkg);
             Assert(checkedPackage.Payload.Count == 9, "payload inventory");
             string gameDependency = Paths.Contained(root, gameFiles[0].Path); byte[] dependencyBytes = File.ReadAllBytes(gameDependency);
-            File.AppendAllText(gameDependency, "NEW GAME BUILD"); Reject(() => engine.Install(plan), "game changed after preview");
-            Assert(!File.Exists(Paths.Contained(root, "GF2 Game/version.dll")), "game mismatch wrote loader");
+            File.AppendAllText(gameDependency, "NEW GAME BUILD");
+            Assert(engine.Preview(root, pkg).Root == root, "changed original game prerequisite is nonblocking");
+            Assert(!File.Exists(Paths.Contained(root, "GF2 Game/version.dll")), "read-only compatibility preview wrote loader");
             File.WriteAllBytes(gameDependency, dependencyBytes);
             string contractPath = Paths.Contained(pkg, "payload/" + NativeLayout.ToolRoot + "runtime-contract.json");
             byte[] contractBytes = File.ReadAllBytes(contractPath);

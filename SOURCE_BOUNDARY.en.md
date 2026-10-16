@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-To install, use **GF2VR-Native-SelfContained-1.0.0.zip** from the [1.0.0 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
+To install, use **GF2VR-Native-SelfContained-1.0.1.zip** from the [1.0.1 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
 
 ## Contents of this repository
 
@@ -21,7 +21,7 @@ The installation ZIP contains the native module, OpenXR loader, configurator, in
 
 Use the runtime, configurator and installation metadata together as one versioned package. Mixing files from different versions can cause file checks or startup to fail. Original game files are checked in the user's legitimate game installation and are not included in the installation ZIP.
 
-The native distribution build is configured to support different game installation paths. [Verification scope](docs/en/VERIFICATION.md) distinguishes practical testing of the current game implementation from local build, path and integrity checks of the distribution binary.
+The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing parent folder. Other layouts use `vrmod` in the located executable's folder. `version.dll` is always installed beside that executable. Original game files are read-only and fingerprint differences do not block installation. Product-package hashes, file ownership, running-game guards, previous-version restoration and interrupted-operation recovery checks remain enforced. [Verification scope](docs/en/VERIFICATION.md) separates practical testing from local distribution checks.
 
 ## Terms of use
 

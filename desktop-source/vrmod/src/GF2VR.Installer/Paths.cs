@@ -7,16 +7,90 @@ internal static class Paths
     internal static string Root(string root)
     {
         string full = System.IO.Path.TrimEndingDirectorySeparator(System.IO.Path.GetFullPath(root));
-        string exe = Contained(full, "GF2 Game/GF2_Exilium.exe");
-        if (!File.Exists(exe)) throw new InstallError("gameMissing");
-        return full;
+        if (File.Exists(full))
+        {
+            if (!System.IO.Path.GetFileName(full).Equals("GF2_Exilium.exe", StringComparison.OrdinalIgnoreCase))
+                throw new InstallError("gameMissing");
+            return FromExecutable(full);
+        }
+        if (!Directory.Exists(full)) throw new InstallError("gameMissing");
+        string direct = Contained(full, "GF2_Exilium.exe");
+        string standard = Contained(full, "GF2 Game/GF2_Exilium.exe");
+        if (File.Exists(direct) && File.Exists(standard)) throw new InstallError("gameAmbiguous");
+        if (File.Exists(direct)) return FromExecutable(direct);
+        if (File.Exists(standard)) return FromExecutable(standard);
+
+        // Search only the user's selected tree. Normalize once; subsequent
+        // transaction operations use the exact direct/standard root above.
+        var pending = new Queue<(string Directory, int Depth)>();
+        pending.Enqueue((full, 0));
+        string? found = null; int visited = 0;
+        while (pending.Count != 0)
+        {
+            var current = pending.Dequeue();
+            if (++visited > 10000) throw new InstallError("searchLimit");
+            try
+            {
+                foreach (string directory in Directory.EnumerateDirectories(current.Directory))
+                {
+                    if ((File.GetAttributes(directory) & FileAttributes.ReparsePoint) != 0 ||
+                        System.IO.Path.GetFileName(directory).Equals("vrmod", StringComparison.OrdinalIgnoreCase)) continue;
+                    string exe = Contained(directory, "GF2_Exilium.exe");
+                    if (File.Exists(exe))
+                    {
+                        if (found != null) throw new InstallError("gameAmbiguous");
+                        found = exe;
+                    }
+                    if (current.Depth >= 31) throw new InstallError("searchLimit");
+                    pending.Enqueue((directory, current.Depth + 1));
+                }
+            }
+            catch (UnauthorizedAccessException) { throw new InstallError("searchLimit"); }
+            catch (DirectoryNotFoundException) { throw new InstallError("previewChanged"); }
+        }
+        return found == null ? throw new InstallError("gameMissing") : FromExecutable(found);
+    }
+    private static string FromExecutable(string exe)
+    {
+        string game = System.IO.Path.GetDirectoryName(exe)!;
+        bool filesystemRoot = game.Equals(System.IO.Path.TrimEndingDirectorySeparator(System.IO.Path.GetPathRoot(game)!), StringComparison.OrdinalIgnoreCase);
+        string root = !filesystemRoot && System.IO.Path.GetFileName(game).Equals("GF2 Game", StringComparison.OrdinalIgnoreCase)
+            ? System.IO.Path.GetDirectoryName(game)! : game;
+        _ = Contained(root, System.IO.Path.GetRelativePath(root, exe).Replace('\\', '/'));
+        return root;
+    }
+    internal static string GameDirectory(string root)
+    {
+        bool direct = File.Exists(Contained(root, "GF2_Exilium.exe"));
+        bool standard = File.Exists(Contained(root, "GF2 Game/GF2_Exilium.exe"));
+        if (direct && standard) throw new InstallError("gameAmbiguous");
+        if (!direct && !standard) throw new InstallError("gameMissing");
+        return direct ? "" : "GF2 Game";
+    }
+    internal static void Layout(string root, string expected)
+    {
+        if (expected is not ("" or "GF2 Game") || GameDirectory(root) != expected)
+            throw new InstallError("previewChanged");
+    }
+    internal static string GameExecutable(string root) =>
+        Contained(root, GameDirectory(root) == "" ? "GF2_Exilium.exe" : "GF2 Game/GF2_Exilium.exe");
+
+    // Manifest/receipt names are logical product paths. Package sources and
+    // transaction backup files always use literal Contained(), never this map.
+    internal static string Target(string root, string relative, string? expectedDirectory = null)
+    {
+        string directory = GameDirectory(root);
+        if (expectedDirectory != null && (expectedDirectory is not ("" or "GF2 Game") || directory != expectedDirectory))
+            throw new InstallError("previewChanged");
+        return Contained(root, relative.StartsWith("GF2 Game/", StringComparison.Ordinal) && directory == "" ? relative[9..] : relative);
     }
     internal static string Contained(string root, string relative)
     {
         ValidRelative(relative);
         string fullRoot = System.IO.Path.TrimEndingDirectorySeparator(System.IO.Path.GetFullPath(root));
         string full = System.IO.Path.GetFullPath(System.IO.Path.Combine(fullRoot, relative.Replace('/', System.IO.Path.DirectorySeparatorChar)));
-        if (!full.StartsWith(fullRoot + System.IO.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+        string prefix = System.IO.Path.EndsInDirectorySeparator(fullRoot) ? fullRoot : fullRoot + System.IO.Path.DirectorySeparatorChar;
+        if (!full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             throw new InstallError("path", relative);
         for (string? part = full; part != null; part = System.IO.Path.GetDirectoryName(part))
             if ((File.Exists(part) || Directory.Exists(part)) && (File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0)

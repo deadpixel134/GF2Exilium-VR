@@ -1,3 +1,3 @@
 #define GF2VR_UNITY_TIMESTAMP 1654722592u
 #define GF2VR_UNITY_IMAGE_SIZE 27131904u
-#define GF2VR_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\BOOTSTRAP-STABLE-001.jsonl"
+#define GF2VR_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\BOOTSTRAP-FLEX-001.jsonl"

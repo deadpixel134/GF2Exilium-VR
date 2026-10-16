@@ -49,6 +49,7 @@ internal sealed class InstallationEngine
     {
         var receipt = Contract.Read<Receipt>(bytes); Identity(receipt.SchemaVersion, receipt.Product, receipt.Version, receipt.Scope);
         if (!string.Equals(root, receipt.Root, StringComparison.OrdinalIgnoreCase)) throw new InstallError("badState");
+        Paths.Layout(root, receipt.GameDirectory ?? "GF2 Game");
         _ = Paths.Transaction(root, receipt.TransactionId); Paths.HashText(receipt.PackageSha256); ValidateFiles(receipt.Files);
         return receipt;
     }
@@ -59,14 +60,14 @@ internal sealed class InstallationEngine
         byte[] bytes = Paths.Bytes(Paths.Contained(packageRoot, "package-manifest.json"), 262144) ?? throw new InstallError("manifestMissing");
         var package = Contract.Read<Package>(bytes); Identity(package.SchemaVersion, package.Product, package.Version, package.Scope);
         ValidateFiles(package.Files); Paths.HashText(package.GameExecutableSha256);
-        if (!Paths.Equal(Paths.FileHash(Paths.Contained(root, "GF2 Game/GF2_Exilium.exe")), package.GameExecutableSha256))
-            throw new InstallError("gameVersion");
+        // Original game fingerprints describe the packaging baseline. They do
+        // not authorize writes and are deliberately not installation gates.
         if (package.BoundGameRoot != null && !Path.TrimEndingDirectorySeparator(Path.GetFullPath(package.BoundGameRoot)).Equals(root, StringComparison.OrdinalIgnoreCase))
             throw new InstallError("boundRoot");
         if (package.RequiresInstalledDllSha256 != null)
         {
             Paths.HashText(package.RequiresInstalledDllSha256);
-            if (!Paths.Equal(Paths.FileHash(Paths.Contained(root, "GF2 Game/version.dll")), package.RequiresInstalledDllSha256))
+            if (!Paths.Equal(Paths.FileHash(Paths.Target(root, "GF2 Game/version.dll")), package.RequiresInstalledDllSha256))
                 throw new InstallError("runtimeRequired");
         }
         var set = package.Files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal);
@@ -88,7 +89,7 @@ internal sealed class InstallationEngine
     }
     internal Plan Preview(string root, string packageRoot)
     {
-        root = Paths.Root(root); NoPending(root);
+        root = Paths.Root(root); NoPending(root); string gameDirectory = Paths.GameDirectory(root);
         var checkedPackage = CheckPayload(root, packageRoot);
         var package = checkedPackage.Package;
         var set = package.Files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal);
@@ -101,12 +102,12 @@ internal sealed class InstallationEngine
         }
         foreach (var f in package.Files)
         {
-            string? hash = Paths.FileHash(Paths.Contained(root, f.Path));
+            string? hash = Paths.FileHash(Paths.Target(root, f.Path, gameDirectory));
             var owned = prior?.Files.SingleOrDefault(p => p.Path == f.Path);
             if (owned == null ? hash != null : !Paths.Equal(hash, owned.Sha256)) throw new InstallError("modified", f.Path);
         }
         return new Plan(root, checkedPackage.PackageRoot, package, checkedPackage.ManifestHash, prior,
-            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload);
+            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload, gameDirectory);
     }
 
     internal OperationResult Install(Plan shown, Action<string>? progress = null)
@@ -114,17 +115,18 @@ internal sealed class InstallationEngine
         using var guard = new OperationLock(shown.Root); Stopped(); NoPending(shown.Root);
         // The selected immutable preview is revalidated at the actual write boundary.
         Plan plan = Preview(shown.Root, shown.PackageRoot);
-        if (!Paths.Equal(plan.ManifestHash, shown.ManifestHash) || !Paths.Equal(plan.PriorHash, shown.PriorHash)) throw new InstallError("previewChanged");
+        if (!string.Equals(plan.Root, shown.Root, StringComparison.OrdinalIgnoreCase) || plan.GameDirectory != shown.GameDirectory ||
+            !Paths.Equal(plan.ManifestHash, shown.ManifestHash) || !Paths.Equal(plan.PriorHash, shown.PriorHash)) throw new InstallError("previewChanged");
         string id = Guid.NewGuid().ToString("N");
         // The verified package may contain an install-root contract template.
         // Receipts/journals must bind the actual materialized bytes, not its template hash.
         var installedFiles = plan.Package.Files.Select(f => new PayloadFile(f.Path,
             Paths.Hash(plan.Payload[f.Path]), plan.Payload[f.Path].Length)).ToArray();
-        var receipt = new Receipt(1, Contract.Product, plan.Package.Version, plan.Package.Scope, plan.Root, id, plan.ManifestHash, installedFiles);
+        var receipt = new Receipt(1, Contract.Product, plan.Package.Version, plan.Package.Scope, plan.Root, id, plan.ManifestHash, installedFiles, plan.GameDirectory);
         var changes = new List<(string Path, byte[]? Before, byte[]? After)>();
         foreach (var f in plan.Package.Files)
         {
-            byte[]? before = Paths.Bytes(Paths.Contained(plan.Root, f.Path));
+            byte[]? before = Paths.Bytes(Paths.Target(plan.Root, f.Path, plan.GameDirectory));
             if (!Paths.Equal(before == null ? null : Paths.Hash(before), plan.Prior?.Files.Single(p => p.Path == f.Path).Sha256))
                 throw new InstallError("previewChanged");
             changes.Add((f.Path, before, plan.Payload[f.Path]));
@@ -132,7 +134,7 @@ internal sealed class InstallationEngine
         byte[]? priorState = StateBytes(plan.Root);
         if (!Paths.Equal(priorState == null ? null : Paths.Hash(priorState), plan.PriorHash)) throw new InstallError("previewChanged");
         changes.Add((Contract.StatePath, priorState, Contract.Encode(receipt)));
-        Execute(plan.Root, id, changes, progress);
+        Execute(plan.Root, id, changes, progress, plan.GameDirectory);
         return new OperationResult(receipt.Version, false, id);
     }
 
@@ -140,6 +142,7 @@ internal sealed class InstallationEngine
     {
         string folder = Paths.Transaction(root, id);
         var j = Contract.Read<Journal>(Paths.Bytes(Paths.Contained(folder, "journal.json"), 262144) ?? throw new InstallError("badState"));
+        Paths.Layout(root, j.GameDirectory ?? "GF2 Game");
         if (j.SchemaVersion != 1 || j.Product != Contract.Product || j.Root != root || j.TransactionId != id ||
             j.State is not ("prepared" or "committed" or "recovered") || j.Changes == null || j.Changes.Length is < 2 or > 129)
             throw new InstallError("badState");
@@ -181,7 +184,7 @@ internal sealed class InstallationEngine
         var changes = new List<(string Path, byte[]? Before, byte[]? After)>();
         foreach (var c in original.Changes)
         {
-            byte[]? current = Paths.Bytes(Paths.Contained(root, c.Path));
+            byte[]? current = Paths.Bytes(Paths.Target(root, c.Path, original.GameDirectory ?? "GF2 Game"));
             if (!Paths.Equal(current == null ? null : Paths.Hash(current), c.AfterHash)) throw new InstallError("modified", c.Path);
             byte[]? restore = c.BeforeFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.BeforeFile));
             changes.Add((c.Path, current, restore));
@@ -191,11 +194,11 @@ internal sealed class InstallationEngine
         {
             var previous = ReadReceipt(root, priorState); _ = InstallationJournal(root, previous, priorState);
         }
-        string id = Guid.NewGuid().ToString("N"); Execute(root, id, changes, progress);
+        string id = Guid.NewGuid().ToString("N"); Execute(root, id, changes, progress, original.GameDirectory ?? "GF2 Game");
         return new OperationResult(receipt.Version, priorState != null, id);
     }
 
-    private static void Execute(string root, string id, List<(string Path, byte[]? Before, byte[]? After)> requested, Action<string>? progress)
+    private static void Execute(string root, string id, List<(string Path, byte[]? Before, byte[]? After)> requested, Action<string>? progress, string gameDirectory)
     {
         string folder = Paths.Transaction(root, id); var changes = new List<Change>();
         for (int i = 0; i < requested.Count; i++)
@@ -208,11 +211,11 @@ internal sealed class InstallationEngine
             changes.Add(new Change(item.Path, item.Before == null ? null : Paths.Hash(item.Before),
                 item.After == null ? null : Paths.Hash(item.After), beforeFile, afterFile));
         }
-        var journal = new Journal(1, Contract.Product, root, id, "prepared", changes.ToArray());
+        var journal = new Journal(1, Contract.Product, root, id, "prepared", changes.ToArray(), gameDirectory);
         string journalFile = Paths.Contained(folder, "journal.json"); Paths.WriteNew(journalFile, Contract.Encode(journal));
         _ = ReadJournal(root, id); // Check durable backup and stage integrity before creating pending/write authority.
         foreach (var c in changes)
-            if (!Paths.Equal(Paths.FileHash(Paths.Contained(root, c.Path)), c.BeforeHash)) throw new InstallError("previewChanged");
+            if (!Paths.Equal(Paths.FileHash(Paths.Target(root, c.Path, gameDirectory)), c.BeforeHash)) throw new InstallError("previewChanged");
         Stopped();
         string pending = Paths.Contained(root, Contract.PendingPath);
         Paths.WriteNew(pending, Contract.Encode(new Pending(1, id)));
@@ -221,7 +224,7 @@ internal sealed class InstallationEngine
             foreach (var c in changes)
             {
                 Stopped(); progress?.Invoke(c.Path);
-                string dest = Paths.Contained(root, c.Path);
+                string dest = Paths.Target(root, c.Path, gameDirectory);
                 if (!Paths.Equal(Paths.FileHash(dest), c.BeforeHash)) throw new InstallError("modified", c.Path);
                 SetFile(dest, c.AfterFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.AfterFile)), c.AfterHash);
             }
@@ -249,12 +252,12 @@ internal sealed class InstallationEngine
         // Preflight every current file before rollback touches even one file.
         foreach (var c in journal.Changes)
         {
-            string? hash = Paths.FileHash(Paths.Contained(root, c.Path));
+            string? hash = Paths.FileHash(Paths.Target(root, c.Path, journal.GameDirectory ?? "GF2 Game"));
             if (!Paths.Equal(hash, c.BeforeHash) && !Paths.Equal(hash, c.AfterHash)) throw new InstallError("modified", c.Path);
         }
         foreach (var c in journal.Changes.Reverse())
         {
-            Stopped(); string dest = Paths.Contained(root, c.Path);
+            Stopped(); string dest = Paths.Target(root, c.Path, journal.GameDirectory ?? "GF2 Game");
             if (Paths.Equal(Paths.FileHash(dest), c.BeforeHash)) continue;
             if (!Paths.Equal(Paths.FileHash(dest), c.AfterHash)) throw new InstallError("modified", c.Path);
             SetFile(dest, c.BeforeFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.BeforeFile)), c.BeforeHash);
@@ -271,7 +274,7 @@ internal sealed class InstallationEngine
         if (journal.State is "committed" or "recovered")
         {
             foreach (var c in journal.Changes)
-                if (!Paths.Equal(Paths.FileHash(Paths.Contained(root, c.Path)), journal.State == "committed" ? c.AfterHash : c.BeforeHash))
+                if (!Paths.Equal(Paths.FileHash(Paths.Target(root, c.Path, journal.GameDirectory ?? "GF2 Game")), journal.State == "committed" ? c.AfterHash : c.BeforeHash))
                     throw new InstallError("modified", c.Path);
             File.Delete(Paths.Contained(root, Contract.PendingPath)); return;
         }

@@ -2,11 +2,11 @@
 
 [한국어](../ko/VERIFICATION.md) · [English](../en/VERIFICATION.md) · [日本語](../ja/VERIFICATION.md) · [简体中文](../zh-CN/VERIFICATION.md)
 
-This page describes the supported target and verification scope for official version 1.0.0. Practical user testing of the current implementation, local checks of distribution files, and verification on other PCs are distinct levels of evidence.
+This page describes the supported target and verification scope for official version 1.0.1. Practical user testing of the current implementation, local checks of distribution files, and verification on other PCs are distinct levels of evidence.
 
 ## Supported target
 
-Targets GF2 Exilium **2.0.3936** for Windows x64 PCs. The installer checks original game-file fingerprints. If a game update changes those files, a new compatible release may be required. There is no compatibility list covering every HMD, controller or connection method.
+A legitimate game installation and VR environment on Windows x64 are required. **2.0.3936** is the practically tested baseline. Original-game SHA-256, file-size or cache differences do not block installation; this does not guarantee VR compatibility with other game versions.
 
 ## Configurator and installer
 
@@ -21,7 +21,11 @@ The following were checked in separate test folders:
 
 These checks did not change actual game files or user settings.
 
+For 1.0.1, 988 managed checks, 214 native boundary checks, and inert-host, export, rebuild and ZIP preflight checks passed. These cover renamed, nested and Unicode paths, refusal of ambiguous targets, changed original-game files and corrupt product payloads. No post-change run on the reporter's PC or in the actual game/HMD has been recorded.
+
 ## Practical testing of the current implementation
+
+The practical observations below describe the 1.0.0 baseline implementation. Version 1.0.1 changes installation discovery and path handling; post-change reporter-PC and game/HMD testing is not yet recorded.
 
 Practical testing has covered stereoscopic rendering in supported scenes, auxiliary panels and UI controls, stick movement and turning, world grip, Activity UI visibility settings, and WASD/F/Escape input in game control mode. The implementation, including world-scale linking, left-stick-click viewpoint return, right-stick-click camera following, and the current configurator and installer screens, was frozen for the official release based on the user's confirmation that testing was complete.
 
@@ -35,6 +39,6 @@ The required .NET runtime is included, but the complete process from installatio
 
 ## Updates and distribution
 
-Package checks, installation, updates and previous-version restoration were checked in test folders. As 1.0.0 is the first official release, there is no completed real-user update history to a later official version yet. Existing-installation checks and recovery procedures are also used when downloading and applying a new version.
+Updates from 1.0.0 to 1.0.1, previous-version restoration and interrupted-operation recovery were checked in inert folders using the **new 1.0.1 installer**. Automatic replacement through the old 1.0.0 configurator and completion on an actual user's PC have not been verified.
 
 If problems occur, record the scene, controls, device environment and error message using the [troubleshooting guide](TROUBLESHOOTING.md). See the [release guide](RELEASE_READINESS.md) for downloads.

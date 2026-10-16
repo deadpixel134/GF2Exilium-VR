@@ -103,7 +103,8 @@ internal static class SelfTest
         }
         ReplaceManifest(one, manifest with { Files = [manifest.Files[0], manifest.Files[0]] }); Reject(() => engine.Preview(root, one), "duplicate target");
         ReplaceManifest(one, manifest with { Files = manifest.Files[..^1] }); Reject(() => engine.Preview(root, one), "incomplete tool package");
-        ReplaceManifest(one, manifest with { GameExecutableSha256 = new string('0', 64) }); Reject(() => engine.Preview(root, one), "wrong game target");
+        ReplaceManifest(one, manifest with { GameExecutableSha256 = new string('0', 64) });
+        Assert(engine.Preview(root, one).Root == root, "reference game fingerprint is nonblocking");
         ReplaceManifest(one, manifest with { BoundGameRoot = fixture }); Reject(() => engine.Preview(root, one), "wrong absolute binding");
         ReplaceManifest(one, manifest with { RequiresInstalledDllSha256 = new string('0', 64) }); Reject(() => engine.Preview(root, one), "required native build missing");
         ReplaceManifest(one, manifest);

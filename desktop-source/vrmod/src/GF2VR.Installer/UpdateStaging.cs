@@ -7,11 +7,13 @@ internal static class UpdateStaging
 {
     internal static string? ManagedVersion(string root)
     {
+        root = Paths.Root(root);
         var engine = new InstallationEngine();
         if (engine.HasPending(root)) return null;
         var receipt = engine.Inspect(root);
         if (receipt?.Scope != "vrmod" || !receipt.Files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal).SetEquals(NativeLayout.Files)) return null;
-        foreach (var f in receipt.Files) if (!Paths.Equal(Paths.FileHash(Paths.Contained(root, f.Path)), f.Sha256)) return null;
+        foreach (var f in receipt.Files)
+            if (!Paths.Equal(Paths.FileHash(Paths.Target(root, f.Path, receipt.GameDirectory ?? "GF2 Game")), f.Sha256)) return null;
         _ = UpdatePolicy.VersionOf(receipt.Version); return receipt.Version;
     }
     internal static PreparedUpdate Extract(string root, string folder, string archive, byte[] descriptorBytes, UpdateDescriptor descriptor)

@@ -2,7 +2,9 @@
 
 [한국어](../ko/UPDATE.md) · [English](../en/UPDATE.md) · [日本語](../ja/UPDATE.md) · [简体中文](../zh-CN/UPDATE.md)
 
-The current official version is **1.0.0**. When a new official version is released, you can download its release ZIP and update with the installer. Changes to source code or documentation do not automatically update your installed programs.
+The current official version is **1.0.1**. It improves installation when folder layouts or original-game fingerprints differ. Download the release ZIP and update with its installer. Changes to source code or documentation do not automatically update installed programs.
+
+**To upgrade from 1.0.0, download the 1.0.1 ZIP and run the installer from its freshly extracted folder.** Select the existing game folder to update while preserving settings and installation records. The old configurator may reject the new package profile; use this manual route if it does. Automatic replacement by the old configurator for this release has not been verified.
 
 ## Updating with a release ZIP
 
@@ -32,7 +34,7 @@ The update button appears when an available new version has been confirmed. If t
 
 There may be no new version, your current installation method may not support automatic updates, or repository access or the internet connection may be unavailable. The absence of an update button alone does not mean your installation is broken.
 
-Version 1.0.0 is the first official version, so it is normal for no new-version notification to appear yet. Drafts and prereleases are not selected as official updates.
+Version 1.0.0 can update to 1.0.1. If you already have 1.0.1 and no newer official release exists, no notification is expected. Drafts and prereleases are not selected as official updates.
 
 If update checking or file verification fails, the existing installation is retained. If the problem continues, check the messages using the [troubleshooting guide](TROUBLESHOOTING.md).
 

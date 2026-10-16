@@ -17,13 +17,13 @@ internal sealed record NativePackage(string BuildId, string DllSha256, string Lo
     string? ResourceBinding = null);
 internal sealed record CheckedPackage(string Root, string PackageRoot, Package Package, string ManifestHash, IReadOnlyDictionary<string, byte[]> Payload);
 internal sealed record Receipt(int SchemaVersion, string Product, string Version, string Scope,
-    string Root, string TransactionId, string PackageSha256, PayloadFile[] Files);
+    string Root, string TransactionId, string PackageSha256, PayloadFile[] Files, string? GameDirectory = null);
 internal sealed record Change(string Path, string? BeforeHash, string? AfterHash, string? BeforeFile, string? AfterFile);
 internal sealed record Journal(int SchemaVersion, string Product, string Root, string TransactionId,
-    string State, Change[] Changes);
+    string State, Change[] Changes, string? GameDirectory = null);
 internal sealed record Pending(int SchemaVersion, string TransactionId);
 internal sealed record Plan(string Root, string PackageRoot, Package Package, string ManifestHash,
-    Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload);
+    Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload, string GameDirectory);
 internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId);
 
 internal static class Contract

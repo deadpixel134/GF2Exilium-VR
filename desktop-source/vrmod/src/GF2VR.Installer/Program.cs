@@ -10,6 +10,7 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-flexible")) return FlexibleLayoutChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-installer-ux")) return InstallerUxChecks.Run();
             if (args.Contains("--check-settings-launch"))
             {
@@ -80,7 +81,7 @@ internal static class Program
                 MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
-            if (args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
@@ -96,7 +97,11 @@ internal static class Program
         {
             DirectoryInfo? dir = new(start);
             for (int i = 0; i < 8 && dir != null; ++i, dir = dir.Parent)
-                if (File.Exists(Path.Combine(dir.FullName, "GF2 Game", "GF2_Exilium.exe"))) return dir.FullName;
+                // Auto-detection checks only exact ancestor locations. An explicit folder
+                // selection may use Paths.Root's bounded search without scanning a drive here.
+                if (File.Exists(Path.Combine(dir.FullName, "GF2_Exilium.exe")) ||
+                    File.Exists(Path.Combine(dir.FullName, "GF2 Game", "GF2_Exilium.exe")))
+                    return Paths.Root(dir.FullName);
         }
         return Environment.CurrentDirectory;
     }

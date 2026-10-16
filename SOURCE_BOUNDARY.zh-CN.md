@@ -2,7 +2,7 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-安装时请使用 [1.0.0 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.0)中的 **GF2VR-Native-SelfContained-1.0.0.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
+安装时请使用 [1.0.1 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)中的 **GF2VR-Native-SelfContained-1.0.1.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
 
 ## 仓库包含的资料
 
@@ -21,7 +21,7 @@
 
 运行时、设置程序及安装元数据应作为同一版本的一整套文件使用。混用不同版本的部分文件可能导致文件检查或运行失败。原始游戏文件从用户合法安装的游戏中核对，不放入安装 ZIP。
 
-原生发布构建采用可随游戏安装位置变化的路径配置。当前游戏实现的实机确认，与发布二进制文件的本地构建、路径及完整性验证，分别记录于[验证范围](docs/zh-CN/VERIFICATION.md)。
+标准的 `GF2 Game/GF2_Exilium.exe` 结构保留原上级文件夹中的 `vrmod`。其他结构使用找到的可执行文件所在文件夹中的 `vrmod`。`version.dll` 始终安装在该可执行文件旁。 原始游戏文件仅被读取，指纹差异不会阻止安装。继续执行产品软件包哈希、文件所有权、游戏运行时阻止操作、恢复上一版本及中断恢复检查。 [验证范围](docs/zh-CN/VERIFICATION.md)区分了实机测试与发布文件的本地检查。
 
 ## 使用条件
 
