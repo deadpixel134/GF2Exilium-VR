@@ -8,6 +8,8 @@
 
 GF2 Exilium を VR で楽しむための非公式 MOD です。対応する 3D シーンを立体映像で表示し、ゲームメニューや通常の画面をコントローラーで操作できるパネルとして表示します。
 
+**動作確認済みの環境:** Meta Quest 2 · 4K モニター · Virtual Desktop。
+
 **[正式版 1.0.1 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [インストールガイド](docs/ja/INSTALLATION.md) · [基本操作](docs/ja/USAGE.md)
 
 リリースの **GF2VR-Native-SelfContained-1.0.1.zip** をダウンロードしてください。ゲーム本体は含まれていません。**2.0.3936** は実機確認の基準であり、元ゲームファイルの SHA-256・サイズ・キャッシュの違いだけでインストールを止めません。他のバージョンでの VR 互換性を保証するものではありません。[対応環境と確認範囲](docs/ja/VERIFICATION.md)もご確認ください。

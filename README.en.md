@@ -8,6 +8,8 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium in VR. Supported 3D scenes appear in stereoscopic VR, while game menus and other screens appear on a panel you can operate with your controllers.
 
+**Tested setup:** Meta Quest 2 · 4K monitor · Virtual Desktop.
+
 **[Download official version 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [Installation guide](docs/en/INSTALLATION.md) · [Basic controls](docs/en/USAGE.md)
 
 Download **GF2VR-Native-SelfContained-1.0.1.zip** from the release. The game is not included. **2.0.3936** remains the practically tested baseline; original-game SHA-256, size or cache differences do not block installation. This does not guarantee VR compatibility with other versions. See [Supported environment and verification scope](docs/en/VERIFICATION.md).

@@ -8,6 +8,8 @@
 
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다. 지원되는 3D 장면은 입체 화면으로 보여 주고, 게임 메뉴와 일반 화면은 컨트롤러로 조작할 수 있는 패널로 표시합니다.
 
+**테스트 완료 환경:** Meta Quest 2 · 4K 모니터 · Virtual Desktop.
+
 **[정식 버전 1.0.1 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [설치 안내](docs/ko/INSTALLATION.md) · [기본 조작법](docs/ko/USAGE.md)
 
 릴리스의 **GF2VR-Native-SelfContained-1.0.1.zip**을 받으세요. 게임은 포함되어 있지 않습니다. **2.0.3936**은 실기 확인 기준이며, 원본 게임 파일의 SHA-256·크기·캐시 차이만으로 설치를 막지 않습니다. 다른 버전의 VR 호환성을 보장하는 것은 아닙니다. [지원 환경과 확인 범위](docs/ko/VERIFICATION.md)를 함께 확인하세요.

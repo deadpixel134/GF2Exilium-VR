@@ -8,6 +8,8 @@ Arca Live 虚拟现实社区：[虚拟现实频道](https://arca.live/b/vrshits)
 
 这是一个让 GF2 Exilium 支持 VR 游玩的非官方模组。支持的 3D 场景以立体画面呈现；游戏菜单及普通画面则显示在可用控制器操作的面板上。
 
+**已完成测试的环境：** Meta Quest 2 · 4K 显示器 · Virtual Desktop。
+
 **[下载正式版 1.0.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.1)** · [安装指南](docs/zh-CN/INSTALLATION.md) · [基本操作](docs/zh-CN/USAGE.md)
 
 请下载发布页中的 **GF2VR-Native-SelfContained-1.0.1.zip**。安装包不包含游戏。**2.0.3936** 仍是实机验证的基准；原始游戏的 SHA-256、大小或缓存差异不会阻止安装。这并不保证其他版本的 VR 兼容性。请阅读[支持环境与验证范围](docs/zh-CN/VERIFICATION.md)。
