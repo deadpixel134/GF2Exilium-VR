@@ -11,8 +11,10 @@ static U64 eye_dispatch_hook(U64 a,U64 b,U64 c,U64 d) {
     U64 caller=(U64)__builtin_return_address(0);
     U64 result=eye_dispatch_original(a,b,c,d);DWORD saved=GetLastError();
     if(caller==(U64)unity+0x4589a9 && GetCurrentThreadId()==eye_dispatch_thread &&
-       a==eye_dispatch_child && b==eye_dispatch_context) {
-        if(!eye_target_hooks_refresh((void *)b)) {
+       a==eye_dispatch_child && panel_same_device((void *)b,(void *)eye_dispatch_context)) {
+        /* Unity may pass a context wrapper. Match COM identity, then refresh
+           the retained native context whose driver dispatch we observe. */
+        if(!eye_target_hooks_refresh((void *)eye_dispatch_context)) {
             static unsigned reported;
             if(!reported){reported=1;event("eye_dispatch_refresh_failed",0,GetCurrentThreadId());}
         }

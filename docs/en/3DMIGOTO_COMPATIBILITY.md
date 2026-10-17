@@ -23,6 +23,8 @@ remain separate issues.
   and immediate context for VR. Preserve the game's device/context wrappers.
 - Apply the same identity rule to panel captures, destination textures, and
   controller cursor textures.
+- At the pre-draw boundary, compare wrapper/native context COM identity and
+  refresh the retained native context's hooks when its dispatch targets change.
 - Reject known wrapper interfaces on the supposed native device/context;
   installation failure reasons 11/12 indicate remaining function hooks.
 - The `native_graphics_isolated` diagnostic value is 1 when the Unity and native
@@ -37,8 +39,10 @@ installation checks valid.
 
 ## Evidence and limits
 
-Before preparing this PR, the user confirmed simultaneous VR and skin rendering
-with the local Dirty 1.1.2 compatibility build. Earlier standalone D3D11 checks
+The user confirmed simultaneous VR and skin rendering across three consecutive
+game launches with the latest Dirty 1.1.2 compatibility build. Live inspection
+also confirmed that changed graphics dispatch targets were covered after the
+fix. Earlier standalone D3D11 checks
 covered wrapper command execution and native copy/query/readback. Configurator's
 real installation check passed after matching metadata was installed. These
 are historical local observations, not a claim that every injector fork, skin,

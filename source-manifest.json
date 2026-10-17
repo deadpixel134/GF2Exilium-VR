@@ -283,8 +283,8 @@
     },
     {
       "path": "docs/en/3DMIGOTO_COMPATIBILITY.md",
-      "sha256": "FFA267122E3B7872A4B15989C896D849DD1C99A2616BF146934F3E8BF9FCACE8",
-      "bytes": 2355
+      "sha256": "40367979175BA58C9040FDCB5F2F331ECD5170D2E300466A988F1151F784C87A",
+      "bytes": 2623
     },
     {
       "path": "docs/en/BUILD_VARIANT_METADATA.md",
@@ -373,8 +373,8 @@
     },
     {
       "path": "docs/ko/3DMIGOTO_COMPATIBILITY.md",
-      "sha256": "68DFB3B555E87A1F150635830EEAB861BA6CF5308D56FDC9B341DAB58173D225",
-      "bytes": 2710
+      "sha256": "D7318483D7C33A6092D77BE9099E9D4A3769E9206F554D57BA535C53EB22D35A",
+      "bytes": 2995
     },
     {
       "path": "docs/ko/INSTALLATION.md",
@@ -2053,8 +2053,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/eye_dispatch_bridge.h",
-      "sha256": "CF9D3B3992E2FE2AD278D5DAED17FDDC5DA890649A51301E9E2554B22D98070C",
-      "bytes": 3030
+      "sha256": "D4E4779B215D3607337EE450B64C4430497C9161327534290A797ECBF2862B1E",
+      "bytes": 3237
     },
     {
       "path": "native-source/variants/common/src/stereo/eye_event_copy.c",
