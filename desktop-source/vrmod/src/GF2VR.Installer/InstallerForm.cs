@@ -40,7 +40,7 @@ internal sealed class InstallerForm : Form
         InstallerText.Language = InstallerText.LoadPreference(gameRoot);
         var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(16), ColumnCount = 1, RowCount = 9 };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        foreach (int height in new[] { 50, 44, 64, 88, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
+        foreach (int height in new[] { 50, 44, 112, 88, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
         layout.RowStyles[1].SizeType = SizeType.AutoSize;
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         foreach (int height in new[] { 96, 52, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
@@ -55,7 +55,8 @@ internal sealed class InstallerForm : Form
         }
         heading.Controls.Add(languages, 1, 0); layout.Controls.Add(heading, 0, 0);
         layout.Controls.Add(GameFolderRow(), 0, 1);
-        bundleNotice.Font = new Font(Font.FontFamily, 9); bundleNotice.Margin = new Padding(4, 3, 4, 3); layout.Controls.Add(bundleNotice, 0, 2);
+        bundleNotice.Font = new Font(Font.FontFamily, 9, FontStyle.Bold); bundleNotice.ForeColor = Color.FromArgb(125, 59, 15);
+        bundleNotice.Margin = new Padding(4, 3, 4, 3); layout.Controls.Add(bundleNotice, 0, 2);
         summary.Font = new Font(Font.FontFamily, 9); summary.Padding = new Padding(4, 8, 4, 4); layout.Controls.Add(summary, 0, 3);
         layout.Controls.Add(progress, 0, 4);
         var details = new TabControl { Dock = DockStyle.Fill };
@@ -133,7 +134,8 @@ internal sealed class InstallerForm : Form
     }
     private void RefreshDisplay()
     {
-        bundleNotice.Text = InstallerText.Get(packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
+        bundleNotice.Text = InstallerText.Get("antiAliasingRequired") + Environment.NewLine +
+            InstallerText.Get(packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
         summary.Text = InstallerText.Format("summary", plan == null ? InstallerText.Get("unavailable") : VariantVersion(plan.Package.Version, plan.Package.Native?.BuildFlavor), receipt == null ? InstallerText.Get("noReceipt") : VariantVersion(receipt.Version, receipt.BuildFlavor),
             (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
         files.Items.Clear(); foreach (var file in plan?.Package.Files ?? receipt?.Files ?? [])
@@ -241,7 +243,8 @@ internal sealed class InstallerForm : Form
                 VerifyPathRows();
                 if (InstallerText.LoadPreference(root.Text) != InstallerText.Languages[i] || install.Enabled != (plan != null && !pending) ||
                     remove.Enabled != (receiptHash != null && !pending) || (plan?.Package.Files.Length ?? receipt?.Files.Length ?? 0) != files.Items.Count ||
-                    bundleNotice.Text != InstallerText.Get(bundleAvailable ? "bundledPackageHelp" : "bundledPackageMissing"))
+                    bundleNotice.Text != InstallerText.Get("antiAliasingRequired") + Environment.NewLine +
+                        InstallerText.Get(bundleAvailable ? "bundledPackageHelp" : "bundledPackageMissing"))
                     throw new InvalidDataException("GUI state/locale mismatch");
                 details.SelectedIndex = 0; using (var image = new Bitmap(Width, Height)) { DrawToBitmap(image, new Rectangle(0, 0, Width, Height)); image.Save(Path.Combine(smoke!, InstallerText.Language + ".png")); }
                 details.SelectedIndex = 1; using var logImage = new Bitmap(Width, Height); DrawToBitmap(logImage, new Rectangle(0, 0, Width, Height)); logImage.Save(Path.Combine(smoke!, "log-" + InstallerText.Language + ".png"));

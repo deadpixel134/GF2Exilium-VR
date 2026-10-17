@@ -2,8 +2,13 @@
 
 [한국어](../ko/INSTALLATION.md) | [English](../en/INSTALLATION.md) | [日本語](../ja/INSTALLATION.md) | [简体中文](../zh-CN/INSTALLATION.md)
 
-- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
-- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+> **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
+
+The VR DLLs and shared Configurator payload are identical to 1.1.1. This version updates Installer guidance only.
+
+
+- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
 
 | Feature | Clean | Dirty |
 |---|---|---|
@@ -20,4 +25,4 @@ Install one variant at a time. Both use the same single version.dll beside the g
 
 Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
 
-Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
+Binocular misalignment reported on Quest 3 and Galaxy XR remains unresolved. Galaxy XR reports cover both VDXR and SteamVR. Version 1.1.2 updates Installer/documentation guidance; its VR DLLs and Configurator are unchanged from 1.1.1. Adding the instruction to disable anti-aliasing does not establish that either headset report is fixed.

@@ -1,6 +1,11 @@
 # 遇到问题时
 
 [한국어](../ko/TROUBLESHOOTING.md) · [English](../en/TROUBLESHOOTING.md) · [日本語](../ja/TROUBLESHOOTING.md) · [简体中文](TROUBLESHOOTING.md)
+
+> **使用 VR 前必须在游戏设置中关闭抗锯齿。**
+
+VR DLL 与公共设置程序 payload 和 1.1.1 完全相同。此版本仅更新安装程序提示。
+
 ## 1.1.1 — Clean / Dirty
 
 | 功能 | Clean | Dirty |
@@ -13,7 +18,7 @@
 
 安装、切换和移除均保留用户设置。可选 touch_interaction.json 仅由 Dirty 使用。移除时如有记录的上一安装则恢复，否则仅删除本工具拥有的文件。已修改或归属不明的 DLL 会被保留并拒绝覆盖。不要单独复制 version.dll，也不要混用不同安装包的文件。
 
-Galaxy XR 在 VDXR 和 SteamVR 下均有左右画面错位报告，目前尚未确认解决。1.1.1 的公共投影修正适用条件改进已通过离线检查，但不代表修复了该报告，也不保证所有头显兼容。接触功能曾在此前用户实机测试中确认；此次发行二进制本身未重新进行游戏/HMD 实测。
+Quest 3 与 Galaxy XR 的左右画面错位报告仍未确认解决。Galaxy XR 在 VDXR 和 SteamVR 下均有报告。1.1.2 更新安装程序及文档提示，VR DLL 与设置程序和 1.1.1 相同。增加关闭抗锯齿的说明并不代表已经确认解决任一头显的问题。
 
 以下保留此前版本的详细说明。当前下载和验证范围以上方 1.1.1 说明为准。
 

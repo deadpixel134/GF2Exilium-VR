@@ -2,6 +2,9 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+VR DLL과 공통 설정 프로그램 payload는 1.1.1과 동일합니다. 이 버전은 인스톨러 안내만 갱신합니다.
+
+
 두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
 
 설치·전환·제거는 사용자 설정을 보존합니다. Dirty의 touch_interaction.json은 선택 사항이며 Clean은 읽지 않습니다. 제거는 기록된 직전 설치가 있으면 복원하고, 최초 설치에서는 소유 파일만 제거합니다. 수정되거나 소유권을 확인할 수 없는 DLL은 보존하며 덮어쓰지 않습니다. version.dll만 따로 복사하거나 서로 다른 패키지의 파일을 섞지 마세요.
@@ -11,7 +14,7 @@
 
 ```powershell
 ./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.1.1 -ProductVersion 1.1.1
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.1.1 -ProductVersion 1.1.1
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.1.2 -ProductVersion 1.1.2
 ```
 
 첫 빌드는 저장소에 포함된 패키지 소스 설정으로 NuGet의 공식 런타임 팩을 복원합니다. 프로젝트 내부 캐시, 빌드 출력과 필요한 .NET 라이선스 고지를 `vrmod/build/` 아래에 만듭니다. 게임 파일이나 공용 시스템 .NET 설치는 변경하지 않습니다. 두 실행 프로그램 모두 전용 런타임을 포함하므로 앱 DLL, deps, runtimeconfig 파일을 EXE 옆에 함께 유지하세요.

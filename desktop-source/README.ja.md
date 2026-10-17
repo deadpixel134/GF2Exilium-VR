@@ -2,6 +2,9 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+VR DLL と共通設定アプリの payload は 1.1.1 と同一です。この版はインストーラーの案内のみ更新します。
+
+
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
 インストール・切替・削除ではユーザー設定を保持します。任意の touch_interaction.json は Dirty のみ使用します。削除時は記録された直前のインストールがあれば復元し、それ以外は所有ファイルだけを削除します。変更済み・所有権不明の DLL は上書きせず保持します。version.dll だけをコピーしたり、別パッケージのファイルを混ぜたりしないでください。
@@ -11,7 +14,7 @@
 
 ```powershell
 ./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-1.1.1 -ProductVersion 1.1.1
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.1.1 -ProductVersion 1.1.1
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-1.1.2 -ProductVersion 1.1.2
 ```
 
 最初のビルドでは、リポジトリ内のソース設定を使い、NuGet から公式のランタイムパックを復元します。プロジェクト内のキャッシュ、ビルド出力、必要な .NET のライセンス告知を `vrmod/build/` に作成します。ゲームファイルやシステム共通の .NET インストールは変更しません。両方のアプリに専用ランタイムを含みます。アプリの DLL、deps、runtimeconfig ファイルは EXE と同じ場所に維持してください。

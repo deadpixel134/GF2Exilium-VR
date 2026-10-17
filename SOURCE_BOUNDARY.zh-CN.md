@@ -5,7 +5,7 @@
 1.1.1 公开 Clean/Dirty 产品源码及独立安装包。native-source/variants/common 为公共原生代码，Clean/Dirty overlay 为接触功能差异生成的头文件，managed 为自有手部显示及接触代码。native-source 根目录其余部分保留此前 1.0.2 的源码与重建脚本。
 
 
-安装时请使用 [1.1.1 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)中的 **GF2VR-Native-SelfContained-Clean-1.1.1.zip / GF2VR-Native-SelfContained-Dirty-1.1.1.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
+安装时请使用 [1.1.1 发布页](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)中的 **GF2VR-Native-SelfContained-Clean-1.1.2.zip / GF2VR-Native-SelfContained-Dirty-1.1.2.zip**。GitHub 的 **Source code** ZIP 包含尚未构建的源码，仅解压并复制到游戏文件夹并不能完成安装。
 
 ## 仓库包含的资料
 

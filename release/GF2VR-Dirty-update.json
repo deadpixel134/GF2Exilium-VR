@@ -2,31 +2,31 @@
   "schemaVersion": 1,
   "product": "GF2VR",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "channel": "stable",
-  "archiveName": "GF2VR-Native-SelfContained-Dirty-1.1.1.zip",
-  "archiveSha256": "1872CBC48EF6A4E44FDCA0C9C5A35AC8D92ACD4883EB1EFD90108BE75E019044",
-  "packageManifestSha256": "66C970706547CF77ED808F91918A64DB4CE19BDF7678A59994EE21C8BD593C87",
+  "archiveName": "GF2VR-Native-SelfContained-Dirty-1.1.2.zip",
+  "archiveSha256": "16E4ECE3CFBE4F353D3DE57A458740CE7F86EAFFFAC6062E08FC6143EE072532",
+  "packageManifestSha256": "0752A1045C408579ECCF2981891DD76B8ECEDEA7ED7915E2D4A4EF452405F046",
   "installerFiles": [
     {
-      "path": "GF2VR.Installer.exe",
-      "sha256": "6822856487E98A546183CB9C8B09E563D9ED8C5D54151DE8E87A2463422E1088",
-      "bytes": 51597583
+      "bytes": 51597583,
+      "sha256": "B2E64BF947C023CC6F297B1D4385358E649E474276C1A2878BE374099DCD9E39",
+      "path": "GF2VR.Installer.exe"
     },
     {
-      "path": "GF2VR.Installer.dll",
-      "sha256": "36FB4F7B7E964276F51331D12F24BEB0D9C1A76719A644A7132DA5C971A63A52",
-      "bytes": 367616
+      "bytes": 368128,
+      "sha256": "5BFBA6D80ADE22FCE7AB7DDF8E5B3F78FAB2F4AA5D4567E06ED0508ED8E657AA",
+      "path": "GF2VR.Installer.dll"
     },
     {
-      "path": "GF2VR.Installer.deps.json",
-      "sha256": "5E90ABAB6B6EB4A8A3341FE33E6561CE10E4ED2D864906581EC31F66C603996E",
-      "bytes": 31144
+      "bytes": 31144,
+      "sha256": "66A8F47C0E268208CCDEB7D222DB21DCC79158D7E0A6D6C995C746278904BF84",
+      "path": "GF2VR.Installer.deps.json"
     },
     {
-      "path": "GF2VR.Installer.runtimeconfig.json",
+      "bytes": 529,
       "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3",
-      "bytes": 529
+      "path": "GF2VR.Installer.runtimeconfig.json"
     }
   ],
   "buildFlavor": "Dirty",

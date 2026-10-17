@@ -1,9 +1,14 @@
-# 정식 버전 1.1.1 다운로드
+$11.1.2 다운로드
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
-- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+> **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
+
+VR DLL과 공통 설정 프로그램 payload는 1.1.1과 동일합니다. 이 버전은 인스톨러 안내만 갱신합니다.
+
+
+- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
 
 | 기능 | Clean | Dirty |
 |---|---|---|
@@ -19,6 +24,6 @@
 
 Clean/Dirty 전환·실패 복원 160개, 소유권 보호 525개, 폴더 배치 175개 검사를 새 Installer에서 통과했습니다. 공통 투영 보정은 183,984개 오프라인 검사와 기존 경로 회귀를 통과했습니다. 공개 소스에서 다시 빌드한 두 native DLL은 각각 배포 DLL과 바이트가 일치합니다. 설정 프로그램과 인스톨러는 필요한 .NET 10.0.12 런타임을 포함합니다. 오프라인·설치 검증과 실제 게임/HMD 수용은 별개입니다.
 
-Galaxy XR에서 VDXR와 SteamVR 모두 좌우 영상이 어긋난다는 제보는 아직 해결 확인 전입니다. 1.1.1의 공통 투영 보정 적용 범위 개선은 오프라인 검증을 통과했지만, 이 증상의 해결이나 전체 헤드셋 호환성을 보장하지 않습니다. 접촉 기능은 이전 사용자 실기에서 확인했으며, 이 배포 바이너리 자체의 새 게임/HMD 실기는 진행하지 않았습니다.
+Quest 3와 Galaxy XR의 양안 영상 어긋남 제보는 아직 해결 확인 전입니다. Galaxy XR에서는 VDXR와 SteamVR 모두 제보됐습니다. 1.1.2는 인스톨러·문서 안내를 추가한 버전이며, VR DLL과 설정 프로그램은 1.1.1과 같습니다. 안티앨리어싱 해제 안내를 추가한 것이 두 기기의 해결 확인을 뜻하지는 않습니다.
 
 CHECKSUMS.sha256 · GF2VR-Clean-update.json · GF2VR-Dirty-update.json

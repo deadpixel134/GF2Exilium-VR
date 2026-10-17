@@ -5,7 +5,7 @@
 1.1.1 は Clean/Dirty の製品ソースと別パッケージを公開します。native-source/variants/common は共通ネイティブコード、Clean/Dirty overlay は接触の有無による生成ヘッダー、managed は自作の手表示・接触コードです。それ以外の native-source 直下には従来の 1.0.2 ソースと再構築手順を保持します。
 
 
-インストールには、[1.1.1 リリース](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)の **GF2VR-Native-SelfContained-Clean-1.1.1.zip / GF2VR-Native-SelfContained-Dirty-1.1.1.zip** を使用してください。GitHub の **Source code** ZIP にはビルド前のソースが含まれています。展開してゲームフォルダーにコピーするだけではインストールできません。
+インストールには、[1.1.1 リリース](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)の **GF2VR-Native-SelfContained-Clean-1.1.2.zip / GF2VR-Native-SelfContained-Dirty-1.1.2.zip** を使用してください。GitHub の **Source code** ZIP にはビルド前のソースが含まれています。展開してゲームフォルダーにコピーするだけではインストールできません。
 
 ## リポジトリに含まれるもの
 

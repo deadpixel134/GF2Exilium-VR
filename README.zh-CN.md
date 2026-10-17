@@ -6,7 +6,9 @@
 
 用于以 VR 游玩 GF2 Exilium 的非官方模组。
 
-**[下载正式版 1.1.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)**
+**[下载正式版 1.1.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)**
+
+> **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 ## 选择 Clean 或 Dirty
 
@@ -18,8 +20,8 @@
 
 两个版本的常规 VR 源码、版本和更新保持一致。只有 Dirty 包含接触变形代码；Clean 在构建时排除该实现，而不是仅将其关闭。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
-- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
 
 一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
 
@@ -36,7 +38,7 @@
 
 此前实际测试环境：Meta Quest 2 · 4K 显示器 · Virtual Desktop。
 
-Galaxy XR 在 VDXR 和 SteamVR 下均有左右画面错位报告，目前尚未确认解决。1.1.1 的公共投影修正适用条件改进已通过离线检查，但不代表修复了该报告，也不保证所有头显兼容。接触功能曾在此前用户实机测试中确认；此次发行二进制本身未重新进行游戏/HMD 实测。
+Quest 3 与 Galaxy XR 的左右画面错位报告仍未确认解决。Galaxy XR 在 VDXR 和 SteamVR 下均有报告。1.1.2 更新安装程序及文档提示，VR DLL 与设置程序和 1.1.1 相同。增加关闭抗锯齿的说明并不代表已经确认解决任一头显的问题。
 
 ## 使用指南
 

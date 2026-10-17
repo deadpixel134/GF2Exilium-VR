@@ -13,6 +13,7 @@
   "noRuntimeRelease": "Installation files are unavailable. Existing settings, removal and recovery remain available.",
   "bundledPackageMissing": "Installation files beside this Installer are missing or incomplete. Extract the entire release ZIP into a new folder and run the included Installer. Existing settings, removal and recovery remain available.",
   "bundledPackageHelp": "Installation files are loaded automatically from beside this Installer.",
+  "antiAliasingRequired": "Required before using VR: Turn OFF anti-aliasing in the game's settings.",
   "unavailable": "Absent / unavailable",
   "notInstalled": "No installation receipt from this tool. Nothing is removed by guess.",
   "fileColumn": "Managed file",

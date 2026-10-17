@@ -6,7 +6,9 @@
 
 GF2 Exilium を VR で楽しむための非公式 MOD です。
 
-**[正式版 1.1.1 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)**
+**[正式版 1.1.2 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)**
+
+> **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
 
 ## Clean と Dirty の違い
 
@@ -18,8 +20,8 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
-- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
 
 同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 
@@ -36,7 +38,7 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 従来の実機確認環境: Meta Quest 2 · 4K モニター · Virtual Desktop。
 
-Galaxy XR の VDXR・SteamVR 両方で報告された左右映像のずれは、解決を確認していません。1.1.1 の共通投影補正の適用条件改善はオフライン検証済みですが、この問題の解決や全ヘッドセットへの対応を保証しません。接触機能は以前のユーザー実機テストで確認されましたが、今回の配布バイナリ自体では新たなゲーム/HMD 実行を行っていません。
+Quest 3 と Galaxy XR の左右映像のずれは、解決を確認していません。Galaxy XR では VDXR・SteamVR の両方で報告されています。1.1.2 はインストーラーと文書の案内を更新し、VR DLL と設定アプリは 1.1.1 と同じです。アンチエイリアスをオフにする案内の追加は、両機種の問題解決を確認したという意味ではありません。
 
 ## ガイド
 

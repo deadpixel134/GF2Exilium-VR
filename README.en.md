@@ -6,7 +6,9 @@
 
 An unofficial mod for playing GF2 Exilium in VR.
 
-**[Download release 1.1.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)**
+**[Download release 1.1.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)**
+
+> **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 ## Choose Clean or Dirty
 
@@ -18,8 +20,8 @@ An unofficial mod for playing GF2 Exilium in VR.
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
-- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
 
 Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 
@@ -36,7 +38,7 @@ Installation, switching and removal preserve user settings. Optional touch_inter
 
 Previously tested setup: Meta Quest 2 · 4K monitor · Virtual Desktop.
 
-Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
+Binocular misalignment reported on Quest 3 and Galaxy XR remains unresolved. Galaxy XR reports cover both VDXR and SteamVR. Version 1.1.2 updates Installer/documentation guidance; its VR DLLs and Configurator are unchanged from 1.1.1. Adding the instruction to disable anti-aliasing does not establish that either headset report is fixed.
 
 ## Guides
 

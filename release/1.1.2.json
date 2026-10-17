@@ -1,0 +1,35 @@
+{
+  "guiLocaleCount": 3,
+  "version": "1.1.2",
+  "baseRelease": "1.1.1",
+  "product": "GF2VR",
+  "guiLayoutStates": 27,
+  "autoGraphicsWrites": 0,
+  "schemaVersion": 1,
+  "archives": [
+    {
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.2.zip",
+      "flavor": "Clean",
+      "sha256": "1E3CB80F01C42AE065A6189EFBA5DB6674B178B250A85A85FB25F65466873942",
+      "nativeSha256": "4F927C131C5E7288219C4805672D7B71C37E9024D33279AA9B5F7987E01A6C0D",
+      "entries": 16,
+      "bytes": 93704018
+    },
+    {
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.2.zip",
+      "flavor": "Dirty",
+      "sha256": "16E4ECE3CFBE4F353D3DE57A458740CE7F86EAFFFAC6062E08FC6143EE072532",
+      "nativeSha256": "F4066EB15F2E8574B7696FBE89F697B91866ED0E7F07C103BA3072CF6C0757ED",
+      "entries": 16,
+      "bytes": 93724970
+    }
+  ],
+  "tag": "v1.1.2",
+  "actualHeadsetFixConfirmed": false,
+  "configuratorPayloadUnchanged": true,
+  "changes": [
+    "Require anti-aliasing OFF in game settings; README and initial Installer screen",
+    "Localized notice in ko/en/ja Installer and ko/en/ja/zh-CN documentation"
+  ],
+  "runtimeProvidersUnchangedFrom": "1.1.1"
+}
