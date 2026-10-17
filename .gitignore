@@ -2,6 +2,7 @@
 **/obj/
 desktop-source/vrmod/build/
 native-source/build/
+native-source/variants/build/
 *.user
 *.suo
 .vs/

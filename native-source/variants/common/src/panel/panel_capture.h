@@ -9,8 +9,8 @@ static const PanelGuid panel_mt_iid={0x9b7e4e00,0x342c,0x4106,{0xa1,0x9f,0x4f,0x
 static const PanelGuid panel_dxgi_iid={0x54ec77fa,0x1377,0x44e6,{0x8c,0x32,0x88,0xfd,0x5f,0x44,0xc8,0x4c}};
 static void **panel_vt(void *p) { return *(void ***)p; }
 static void panel_release(void *p) { if(p)((unsigned (*)(void *))panel_vt(p)[2])(p); }
-static void panel_addref(void *p) { ((unsigned (*)(void *))panel_vt(p)[1])(p); }
 static long panel_qi(void *p,const PanelGuid *id,void **out) { return ((long (*)(void *,const PanelGuid *,void **))panel_vt(p)[0])(p,id,out); }
+#include "panel_device_identity.h"
 static unsigned panel_format(unsigned source) { return source==28||source==29 ? 29 : source==87||source==91 ? 91 : 0; }
 static BOOL panel_destination_format(unsigned actual,unsigned requested) {
     return requested==29 ? (actual==27 || actual==28 || actual==29) :
@@ -113,7 +113,7 @@ static void panel_capture(void *chain) {
     PanelTextureDesc desc; bs_zero(&desc,sizeof(desc));
     ((void (*)(void *,PanelTextureDesc *))panel_vt(buffer)[10])(buffer,&desc);
     ((void (*)(void *,void **))panel_vt(buffer)[3])(buffer,&device);
-    if(device!=panel_device) {
+    if(!panel_same_device(device,panel_device)) {
         __atomic_store_n(&panel_device_changed,1,__ATOMIC_RELEASE);
         panel_release(device); panel_release(buffer); return;
     }
@@ -135,7 +135,7 @@ static void panel_capture(void *chain) {
         ((void (*)(void *,PanelTextureDesc *))panel_vt(panel_destination)[10])(panel_destination,&destination);
         void *destination_device=NULL;
         ((void (*)(void *,void **))panel_vt(panel_destination)[3])(panel_destination,&destination_device);
-        BOOL device_match=destination_device==panel_device; panel_release(destination_device);
+        BOOL device_match=panel_same_device(destination_device,panel_device); panel_release(destination_device);
         if(desc.width!=panel_request_width || desc.height!=panel_request_height ||
            panel_format(desc.format)!=panel_request_format || desc.samples!=1 || desc.mips!=1 || desc.array!=1 ||
            destination.width!=desc.width || destination.height!=desc.height || destination.samples!=1 ||
@@ -243,31 +243,56 @@ static long panel_present(void *chain,unsigned interval,unsigned flags) {
 }
 static BOOL panel_install(void *chain,void *device) {
     if(__atomic_load_n(&panel_device_ready,__ATOMIC_ACQUIRE)) {
-        if(device!=panel_device || &panel_vt(chain)[8]!=panel_hook_slot) {
+        if(!panel_same_device(device,panel_device) || &panel_vt(chain)[8]!=panel_hook_slot) {
             __atomic_store_n(&panel_device_changed,1,__ATOMIC_RELEASE); return panel_install_fail(8);
         }
         __atomic_store_n(&panel_selected_chain,chain,__ATOMIC_RELEASE); return 1;
     }
-    if(((unsigned (*)(void *))panel_vt(device)[38])(device)&1) return panel_install_fail(1);
+    /* Unity may retain 3DMigoto's device wrapper while the swapchain owns the
+       native device. Keep game rendering on that wrapper, but give XR and our
+       private copy work the native device/context. Use the default wrapper-only
+       mode: native objects with function hooks still dispatch through 3DMigoto. */
+    void *native_device=NULL;
+    long hr=((long (*)(void *,const PanelGuid *,void **))panel_vt(chain)[7])(chain,&panel_device_iid,&native_device);
+    if(hr<0 || !native_device) {
+        panel_release(native_device);native_device=NULL;
+        void *buffer=NULL;
+        hr=((long (*)(void *,unsigned,const PanelGuid *,void **))panel_vt(chain)[9])(chain,0,&panel_texture_iid,&buffer);
+        if(hr>=0 && buffer)
+            ((void (*)(void *,void **))panel_vt(buffer)[3])(buffer,&native_device);
+        panel_release(buffer);
+    }
+    if(!native_device) return panel_install_fail(9);
+    if(!panel_same_device(native_device,device)) {panel_release(native_device);return panel_install_fail(10);}
+    if(panel_has_migoto_interface(native_device,&panel_migoto_device_iid)) {
+        event("migoto_native_device_requires_hook_0",0,GetCurrentThreadId());
+        panel_release(native_device);return panel_install_fail(11);
+    }
+    if(((unsigned (*)(void *))panel_vt(native_device)[38])(native_device)&1) {panel_release(native_device);return panel_install_fail(1);}
     void *context=NULL,*mt=NULL;
-    ((void (*)(void *,void **))panel_vt(device)[40])(device,&context);
-    if(!context || panel_qi(context,&panel_mt_iid,&mt)<0 || !mt) { panel_release(context); return panel_install_fail(2); }
+    ((void (*)(void *,void **))panel_vt(native_device)[40])(native_device,&context);
+    if(context && panel_has_migoto_interface(context,&panel_migoto_context_iid)) {
+        event("migoto_native_context_requires_hook_0",0,GetCurrentThreadId());
+        panel_release(context);panel_release(native_device);return panel_install_fail(12);
+    }
+    if(!context || panel_qi(context,&panel_mt_iid,&mt)<0 || !mt) {panel_release(mt);panel_release(context);panel_release(native_device);return panel_install_fail(2);}
     ((BOOL (*)(void *,BOOL))panel_vt(mt)[5])(mt,TRUE);
     BOOL protected=((BOOL (*)(void *))panel_vt(mt)[6])(mt); panel_release(mt);
-    if(!protected) { panel_release(context); return panel_install_fail(3); }
+    if(!protected) {panel_release(context);panel_release(native_device);return panel_install_fail(3);}
     void **slot=&panel_vt(chain)[8]; DWORD protection,ignored;
-    if(!VirtualProtect(slot,sizeof(void *),4,&protection)) { panel_release(context); return panel_install_fail(4); }
+    if(!VirtualProtect(slot,sizeof(void *),4,&protection)) {panel_release(context);panel_release(native_device);return panel_install_fail(4);}
     PanelPresent prior=(PanelPresent)__atomic_load_n(slot,__ATOMIC_ACQUIRE);
-    if(prior==panel_present) { VirtualProtect(slot,sizeof(void *),protection,&ignored); panel_release(context); return 0; }
-    panel_addref(device); panel_device=device; panel_context=context; panel_render_tid=GetCurrentThreadId();
+    if(prior==panel_present) {VirtualProtect(slot,sizeof(void *),protection,&ignored);panel_release(context);panel_release(native_device);return 0;}
+    panel_device=native_device; panel_context=context; panel_render_tid=GetCurrentThreadId();
     panel_hook_slot=slot;
     __atomic_store_n(&panel_selected_chain,chain,__ATOMIC_RELEASE);
     __atomic_store_n(&panel_original,prior,__ATOMIC_RELEASE);
     void *expected=(void *)prior;
     BOOL installed=__atomic_compare_exchange_n(slot,&expected,(void *)panel_present,0,__ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE);
     BOOL restored=VirtualProtect(slot,sizeof(void *),protection,&ignored);
-    if(!installed) { panel_release(context); panel_release(device); panel_device=NULL; panel_context=NULL; return panel_install_fail(5); }
+    if(!installed) {panel_release(context);panel_release(native_device);panel_device=NULL;panel_context=NULL;return panel_install_fail(5);}
     __atomic_store_n(&panel_device_ready,1,__ATOMIC_RELEASE);
+    event("native_graphics_isolated",native_device!=device,GetCurrentThreadId());
     event(restored ? "present_hook_installed" : "present_hook_protection_restore_failed",0,GetCurrentThreadId());
     return 1;
 }

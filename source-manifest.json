@@ -4,7 +4,7 @@
   "version": "1.1.2",
   "scope": "PAIRED_NATIVE_DESKTOP_SOURCE_AND_FOUR_LANGUAGE_PLAYER_DOCS",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "nativeSourceReproduction": "EXACT_CLEAN_AND_DIRTY",
+  "nativeSourceReproduction": "RELEASE_BASELINE_WITH_UNRELEASED_SOURCE_CHANGES",
   "nativeVariants": [
     {
       "flavor": "Clean",
@@ -33,8 +33,8 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "370EB4BFE17E8438BCE7FA2E9161E39B6806038CB0DADE6D7EB8C03553AB4A0C",
-      "bytes": 83
+      "sha256": "C2AA80E3151637B7F8B101F72268E7356F8060BDF73892119EEB7820364ECACA",
+      "bytes": 113
     },
     {
       "path": "desktop-source/README.ja.md",
@@ -68,8 +68,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj",
-      "sha256": "C7FEADBB989946A6C170A971AC91136E8C8BF23903228D151B8CA470A4A8B0AC",
-      "bytes": 1422
+      "sha256": "9A3F98EE51296091DD1EC243DAA7492E8F96BBD2D1D1F046BB3CDC96C456CB40",
+      "bytes": 1978
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/en.json",
@@ -138,8 +138,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/GF2VR.Installer.csproj",
-      "sha256": "2FE13B2077F0498BE8F25DAB02BE6A998F7CB0A0EB8ACE5B236521186124A9C5",
-      "bytes": 589
+      "sha256": "F5DB761E7C4EB0344B37C0513F59D38CA9C2C755C49E9C475C5D4A6049020AA8",
+      "bytes": 868
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/GithubOwnerClient.cs",
@@ -263,8 +263,8 @@
     },
     {
       "path": "desktop-source/vrmod/tools/build_desktop_private_runtime.ps1",
-      "sha256": "7F4A653BE4E131111D7A03373CF7E71FCBC22E2E6B2F45E6A66468C98A48BEBA",
-      "bytes": 5556
+      "sha256": "37133114654B2358B538E03ED79D4E77CDA646C6657663C61B6ED20150CF857C",
+      "bytes": 6375
     },
     {
       "path": "desktop-source/vrmod/tools/desktop_private_runtime.targets",
@@ -275,6 +275,21 @@
       "path": "desktop-source/vrmod/tools/desktop_runtime_nuget.config",
       "sha256": "F545A7E2EA14AC53CDFB91217CAE67B8FF14275313F6298F9A3331D205B6C948",
       "bytes": 217
+    },
+    {
+      "path": "desktop-source/vrmod/tools/variant_metadata.props",
+      "sha256": "C5C1772533E72149E73DEFCBAEE9A435A99BB88B195966072634FC440950EB2B",
+      "bytes": 1272
+    },
+    {
+      "path": "docs/en/3DMIGOTO_COMPATIBILITY.md",
+      "sha256": "1520C10B38C2EA6CF72D0F47EDDB379F3032281214598466717E088E21635AF5",
+      "bytes": 2574
+    },
+    {
+      "path": "docs/en/BUILD_VARIANT_METADATA.md",
+      "sha256": "E57B920D97546656A86E3D6D051E6A53796F4A5AAF2B1045E0BAFE57A16E3459",
+      "bytes": 4484
     },
     {
       "path": "docs/en/INSTALLATION.md",
@@ -355,6 +370,11 @@
       "path": "docs/ja/VERIFICATION.md",
       "sha256": "DB21E4384687BD6C70ABDB499828520291C460D858E7BA3CF79AE56A5588404D",
       "bytes": 2130
+    },
+    {
+      "path": "docs/ko/3DMIGOTO_COMPATIBILITY.md",
+      "sha256": "8A2A4DFC88EB9852F7D856B283DFA369A9A10993F5D5DC6A76FD14F7D13D189A",
+      "bytes": 2962
     },
     {
       "path": "docs/ko/INSTALLATION.md",
@@ -453,8 +473,8 @@
     },
     {
       "path": "native-source/build-native.ps1",
-      "sha256": "8192187B65A18159CD413909AB9CB969FD2AFEA08DFA1DA5001BA566677C38F3",
-      "bytes": 3538
+      "sha256": "8FFAA747CF4FE66A57B04EFA107F1F1B4D062F93AE23A36BD68967AB7337D4EE",
+      "bytes": 3792
     },
     {
       "path": "native-source/managed/ActivityProducerEngineBridge.cs",
@@ -478,8 +498,8 @@
     },
     {
       "path": "native-source/README.md",
-      "sha256": "FFC5AE0A86978C7722F0E41445DEA7A7C3A59D38600878D4BC2EEC6C87F663D2",
-      "bytes": 3024
+      "sha256": "473EF86A5FA4AACE79C21CC160858B539EA3E3CF4458C5DE3D71D42B1A1EB086",
+      "bytes": 3584
     },
     {
       "path": "native-source/README.zh-CN.md",
@@ -1598,8 +1618,8 @@
     },
     {
       "path": "native-source/variants/build-variants.ps1",
-      "sha256": "A313603FBCF59115DF49BB082AA62EE7337B12D1714CF36A75B394945D4A7C30",
-      "bytes": 1494
+      "sha256": "26FF424FBE5AA8BA18E6DC3D56B21FE9FF2DF9BDF21A215B20AF2BB6564B75E3",
+      "bytes": 1817
     },
     {
       "path": "native-source/variants/Clean/build-config/probe_config.h",
@@ -1663,8 +1683,13 @@
     },
     {
       "path": "native-source/variants/common/src/panel/panel_capture.h",
-      "sha256": "F930CDC827B92196C5DDDED0A742C2ABEC494D02320E5146B32B4695C9BB30D8",
-      "bytes": 16558
+      "sha256": "40D2ACC35F6FC18E16D83288E4EF099204C8DF2367AA222F5AC4C4B6FC3EE181",
+      "bytes": 18327
+    },
+    {
+      "path": "native-source/variants/common/src/panel/panel_device_identity.h",
+      "sha256": "8460AEB2BF68563ED4CE9EE6866171206E8F35B8DF6C2271E2F79245F2410F58",
+      "bytes": 1156
     },
     {
       "path": "native-source/variants/common/src/panel/panel_xr.h",
@@ -1923,8 +1948,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/controller_cursor_gpu.h",
-      "sha256": "DE1C6E4218305A20AA1CF6AAD2D183BD84DDC6E1476D745BACB9E0D16F38DABA",
-      "bytes": 2991
+      "sha256": "DE5082085AAAEE164EF8B375357B130FFF3BB35C7D4D3ACFDC62358813BE79F5",
+      "bytes": 3009
     },
     {
       "path": "native-source/variants/common/src/stereo/controller_face_config.h",
@@ -2697,6 +2722,11 @@
       "bytes": 242377
     },
     {
+      "path": "native-source/variants/generate-desktop-metadata.ps1",
+      "sha256": "734FE80EEFFFA3E93BFE8AB7469D41C0F98EBFA361EC14B67FD48EAD5010358F",
+      "bytes": 4533
+    },
+    {
       "path": "native-source/variants/managed/build_touch_bridge.ps1",
       "sha256": "70FAA39B695BA52734EE4F1609FFA733EF82DE7E66B02A9F710F99E4F68C02E1",
       "bytes": 13547
@@ -2743,8 +2773,8 @@
     },
     {
       "path": "README.en.md",
-      "sha256": "76DCC32AFB9FF6B7A7FEB71BF2A7160881E6703A4A20DF16D6FAE7BB090529A7",
-      "bytes": 3559
+      "sha256": "00ABA116451953AF1D6781454FDDFA9A4A6B11EB2F4445DA8FD127E28D45DF10",
+      "bytes": 3900
     },
     {
       "path": "README.ja.md",
@@ -2753,8 +2783,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "1AD33EC1AF30DE26109A23CD061BE71BD9B9461A9372406C5448EC23CC0E5AB1",
-      "bytes": 3963
+      "sha256": "855C33F0C674462CB48D6BD3D2B1692216B6219775FADF8E847E6E0DBD3926FA",
+      "bytes": 4389
     },
     {
       "path": "README.zh-CN.md",
@@ -2879,5 +2909,14 @@
       ]
     },
     "latestDownloadTag": "v1.1.2"
+  },
+  "unreleasedSourceChanges": {
+    "description": "Native wrapper interop and matching desktop metadata build inputs; no release binaries included.",
+    "releaseReferenceFields": [
+      "nativeVariants",
+      "commonCoreSha256"
+    ],
+    "releaseReferenceNote": "These existing fields retain the released 1.1.2 artifact references; they do not describe a rebuilt release from this changed source.",
+    "metadataRecipe": "native-source/variants/generate-desktop-metadata.ps1"
   }
 }

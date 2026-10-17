@@ -1,0 +1,17 @@
+<Project>
+  <!-- Opt in for newly built native variants. Leaving this property unset keeps
+       the checked-in frozen release profiles and the existing desktop build. -->
+  <PropertyGroup Condition="'$(GF2VRVariantMetadataRoot)' != ''">
+    <GF2VRVariantProfilesFile>$(GF2VRVariantMetadataRoot)/VariantProfiles.generated.cs</GF2VRVariantProfilesFile>
+    <GF2VRVariantRuntimeContract>$(GF2VRVariantMetadataRoot)/$(GF2VRBuildFlavor)/runtime-contract.json</GF2VRVariantRuntimeContract>
+  </PropertyGroup>
+  <Target Name="GF2VRValidateVariantMetadata" BeforeTargets="PrepareForBuild"
+          Condition="'$(GF2VRVariantMetadataRoot)' != ''">
+    <Error Condition="!Exists('$(GF2VRVariantProfilesFile)')"
+           Text="Build BOTH native variants first; generated VariantProfiles.generated.cs is missing." />
+    <Error Condition="'$(AssemblyName)' == 'GF2VR.Configurator' And '$(GF2VRBuildFlavor)' != 'Clean' And '$(GF2VRBuildFlavor)' != 'Dirty'"
+           Text="A generated Configurator build requires GF2VRBuildFlavor=Clean or Dirty." />
+    <Error Condition="'$(AssemblyName)' == 'GF2VR.Configurator' And !Exists('$(GF2VRVariantRuntimeContract)')"
+           Text="The generated runtime contract for the selected native flavor is missing." />
+  </Target>
+</Project>

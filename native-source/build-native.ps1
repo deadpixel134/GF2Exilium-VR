@@ -1,6 +1,6 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([string]$Zig='zig',[string]$Kernel32Library=([IO.Path]::Combine(${env:ProgramFiles(x86)},'Windows Kits/10/Lib/10.0.26100.0/um/x64/kernel32.lib')),[string]$Output)
+param([string]$Zig='zig',[string]$Kernel32Library=([IO.Path]::Combine(${env:ProgramFiles(x86)},'Windows Kits/10/Lib/10.0.26100.0/um/x64/kernel32.lib')),[string]$Output,[switch]$AllowSourceChanges)
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath($PSScriptRoot)
 if(!$Output){$Output=Join-Path $root 'build'}
@@ -43,8 +43,10 @@ Compile $args 'native'
 $hash=(Get-FileHash -LiteralPath $dll).Hash
 $report=[ordered]@{build=$recipe.build;dllSha256=$hash;expectedDllSha256=$recipe.expectedDllSha256;exactMatch=($hash -eq $recipe.expectedDllSha256);objects=$objects;compilerSha256=(Get-FileHash -LiteralPath $zigExe).Hash;args=$args}
 [IO.File]::WriteAllText((Join-Path $Output 'build-result.json'),($report|ConvertTo-Json -Depth 6),[Text.UTF8Encoding]::new($false))
-if(!$report.exactMatch){throw 'Source build differs from frozen release DLL; inspect recorded object/build hashes before packaging'}
-'PASS exact release native reproduction '+$hash
+if(!$report.exactMatch){
+ if(!$AllowSourceChanges){throw 'Source build differs from frozen release DLL; inspect recorded object/build hashes before packaging. For an intentional source change, rebuild with -AllowSourceChanges and generate matching desktop metadata.'}
+ Write-Warning ('Intentional source build differs from the frozen release: '+$hash)
+}else{'PASS exact release native reproduction '+$hash}
 } finally {
  $env:ZIG_LOCAL_CACHE_DIR=$previousLocalCache
  $env:ZIG_GLOBAL_CACHE_DIR=$previousGlobalCache

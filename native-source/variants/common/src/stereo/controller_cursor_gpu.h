@@ -25,7 +25,7 @@ static void controller_cursor_render(void *chain) {
     PanelTextureDesc td={0};void *device=0;
     ((void (*)(void *,PanelTextureDesc *))panel_vt(controller_cursor_destination)[10])(controller_cursor_destination,&td);
     ((void (*)(void *,void **))panel_vt(controller_cursor_destination)[3])(controller_cursor_destination,&device);
-    int valid=device==panel_device&&td.width==64&&td.height==64&&td.mips==1&&td.array==1&&td.samples==1&&panel_destination_format(td.format,29);
+    int valid=panel_same_device(device,panel_device)&&td.width==64&&td.height==64&&td.mips==1&&td.array==1&&td.samples==1&&panel_destination_format(td.format,29);
     panel_release(device);
     unsigned query_desc[2]={0,0};
     if(!valid||((long (*)(void *,const void *,void **))panel_vt(panel_device)[24])(panel_device,query_desc,&controller_cursor_query)<0||!controller_cursor_query) {

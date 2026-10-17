@@ -12,6 +12,10 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
+## 3DMigoto 연동 개발
+
+현재 소스의 wrapper 장치 호환 변경은 [연동 안내](docs/ko/3DMIGOTO_COMPATIBILITY.md)와 [변경된 DLL의 설정 도구 빌드 절차](docs/en/BUILD_VARIANT_METADATA.md)를 참고하세요. 기존 1.1.2 릴리스 ZIP에 이 소스 변경이 포함되어 있다는 뜻은 아닙니다. 3DMigoto 프로그램이나 스킨은 이 프로젝트의 배포물에 포함하지 않습니다.
+
 ## Clean과 Dirty 선택
 
 | 기능 | Clean | Dirty |
