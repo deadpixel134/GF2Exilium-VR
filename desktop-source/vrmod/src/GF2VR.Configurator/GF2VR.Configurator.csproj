@@ -12,10 +12,13 @@
     <NuGetAudit>false</NuGetAudit>
     <OutputPath>../../build/settings/bin/</OutputPath>
   </PropertyGroup>
+  <Import Project="../../tools/variant_metadata.props" />
   <ItemGroup>
-    <Compile Include="../GF2VR.Installer/VariantProfiles.generated.cs" Link="InstallerUpdate/VariantProfiles.generated.cs" />
+    <Compile Include="../GF2VR.Installer/VariantProfiles.generated.cs" Link="InstallerUpdate/VariantProfiles.generated.cs" Condition="'$(GF2VRVariantMetadataRoot)' == ''" />
+    <Compile Include="$(GF2VRVariantProfilesFile)" Link="InstallerUpdate/VariantProfiles.generated.cs" Condition="'$(GF2VRVariantMetadataRoot)' != ''" />
     <EmbeddedResource Include="Locales/*.json" />
-    <Content Include="runtime-contract.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="runtime-contract.json" CopyToOutputDirectory="PreserveNewest" Condition="'$(GF2VRVariantMetadataRoot)' == ''" />
+    <Content Include="$(GF2VRVariantRuntimeContract)" Link="runtime-contract.json" TargetPath="runtime-contract.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Condition="'$(GF2VRVariantMetadataRoot)' != ''" />
   </ItemGroup>
   <ItemGroup>
     <!-- Installer owns update policy/transaction code; Settings consumes only

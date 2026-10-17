@@ -11,5 +11,10 @@
     <Version>0.3.0</Version>
     <OutputPath>../../build/installer/bin/</OutputPath>
   </PropertyGroup>
+  <Import Project="../../tools/variant_metadata.props" />
+  <ItemGroup Condition="'$(GF2VRVariantMetadataRoot)' != ''">
+    <Compile Remove="VariantProfiles.generated.cs" />
+    <Compile Include="$(GF2VRVariantProfilesFile)" Link="VariantProfiles.generated.cs" />
+  </ItemGroup>
   <ItemGroup><EmbeddedResource Include="Locales/*.json" /></ItemGroup>
 </Project>

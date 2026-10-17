@@ -2,6 +2,16 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## Unreleased wrapper compatibility changes
+
+The current common source includes wrapper/native-device interop changes.
+Use `-AllowSourceChanges` for intentional source builds and generate matching
+desktop contracts and compiled variant profiles as described in
+[BUILD_VARIANT_METADATA.md](../docs/en/BUILD_VARIANT_METADATA.md).
+Without that explicit option, the frozen release hash check remains enabled.
+The release reference hashes in `source-manifest.json` describe released 1.1.2
+artifacts, not a claim that the changed source reproduces those artifacts.
+
 ## 1.1.1 — Clean / Dirty
 
 Current 1.1.1 native source uses shared code and per-flavor generated headers under variants. Rebuild both flavors with:

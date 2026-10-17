@@ -12,6 +12,13 @@ An unofficial mod for playing GF2 Exilium in VR.
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
+## 3DMigoto integration development
+
+See the [wrapper compatibility notes](docs/en/3DMIGOTO_COMPATIBILITY.md) and
+[matching desktop metadata build](docs/en/BUILD_VARIANT_METADATA.md) for the
+current source changes. Build the native DLL and matching desktop metadata
+together using that procedure.
+
 ## Choose Clean or Dirty
 
 | Feature | Clean | Dirty |

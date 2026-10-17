@@ -2,8 +2,18 @@
 [CmdletBinding()]
 param([ValidateSet('Configurator','Installer')][string]$Application='Configurator',
     [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='FLEX-DESKTOP-001',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.1')
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.1',
+    [string]$NativeMetadataRoot,
+    [ValidateSet('Clean','Dirty')][string]$NativeFlavor)
 $ErrorActionPreference='Stop'
+if($NativeFlavor -and !$NativeMetadataRoot){throw '-NativeFlavor requires -NativeMetadataRoot from a paired native build.'}
+if($NativeMetadataRoot){
+    $NativeMetadataRoot=[IO.Path]::GetFullPath($NativeMetadataRoot)
+    if(!(Test-Path -LiteralPath (Join-Path $NativeMetadataRoot 'VariantProfiles.generated.cs') -PathType Leaf)){
+        throw 'Build BOTH native variants first; paired generated profiles are missing.'
+    }
+    if($Application -eq 'Configurator' -and !$NativeFlavor){throw 'Select -NativeFlavor Clean or Dirty for a generated Configurator contract.'}
+}
 $taskRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $evidence=Join-Path $taskRoot ('vrmod/build/offline/'+$BuildId)
 if(Test-Path -LiteralPath (Join-Path $evidence 'desktop-ready.json')) { throw 'Preserve frozen desktop build; select a new BuildId.' }
@@ -57,6 +67,8 @@ try {
         ('-p:GF2VRDesktopNotices='+$notices),
         '--configfile',(Join-Path $taskRoot 'vrmod/tools/desktop_runtime_nuget.config'),'--nologo','-v','minimal')
     $args+=('-p:Version='+$ProductVersion)
+    if($NativeMetadataRoot){$args+=('-p:GF2VRVariantMetadataRoot='+$NativeMetadataRoot)}
+    if($NativeFlavor){$args+=('-p:GF2VRBuildFlavor='+$NativeFlavor)}
     & $dotnet @args 2>&1 | Out-File -LiteralPath (Join-Path $evidence ($Application+'-publish.log')) -Encoding UTF8
     if($LASTEXITCODE -ne 0) { throw ('Private desktop publish failed. See '+$Application+'-publish.log') }
     $names=@('.exe','.dll','.deps.json','.runtimeconfig.json') | ForEach-Object {'GF2VR.'+$Application+$_}
