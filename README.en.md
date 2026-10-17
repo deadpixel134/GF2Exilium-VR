@@ -18,7 +18,9 @@ An unofficial mod for playing GF2 Exilium in VR.
 |---|---|---|
 | Ordinary VR, stereo, controller input and settings | Included | Included |
 | White spheres at both hand positions | Included | Included |
-| Character breast contact and deformation | Excluded | Included |
+| Character breast and buttock contact/deformation | Excluded | Included |
+
+Contact works when the character's supported bones for that region are bound. Supported regions vary by character model; actual buttock response in Dorm and Activity has not yet been confirmed.
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
