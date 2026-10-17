@@ -1,6 +1,8 @@
 # GF2VR
 
-[@TBluebox12](https://x.com/TBluebox12) · [가상현실 채널](https://arca.live/b/vrshits) · [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+制作者: [@TBluebox12](https://x.com/TBluebox12)  
+Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)  
+支援: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)  
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
@@ -38,7 +40,7 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 従来の実機確認環境: Meta Quest 2 · 4K モニター · Virtual Desktop。
 
-Quest 3 と Galaxy XR の左右映像のずれは、解決を確認していません。Galaxy XR では VDXR・SteamVR の両方で報告されています。1.1.2 はインストーラーと文書の案内を更新し、VR DLL と設定アプリは 1.1.1 と同じです。アンチエイリアスをオフにする案内の追加は、両機種の問題解決を確認したという意味ではありません。
+Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエイリアスが原因であると確認されました。VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。
 
 ## ガイド
 

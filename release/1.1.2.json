@@ -25,11 +25,23 @@
     }
   ],
   "tag": "v1.1.2",
-  "actualHeadsetFixConfirmed": false,
+  "actualHeadsetFixConfirmed": true,
   "configuratorPayloadUnchanged": true,
   "changes": [
     "Require anti-aliasing OFF in game settings; README and initial Installer screen",
     "Localized notice in ko/en/ja Installer and ko/en/ja/zh-CN documentation"
   ],
-  "runtimeProvidersUnchangedFrom": "1.1.1"
+  "runtimeProvidersUnchangedFrom": "1.1.1",
+  "headsetConfirmation": {
+    "date": "2026-10-17",
+    "source": "Direct user confirmation",
+    "headsets": [
+      "Meta Quest 3",
+      "Galaxy XR"
+    ],
+    "reportedIssue": "Binocular misalignment",
+    "cause": "Game anti-aliasing",
+    "requiredSetting": "OFF",
+    "newRuntimeBuild": false
+  }
 }

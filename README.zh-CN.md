@@ -1,6 +1,8 @@
 # GF2VR
 
-[@TBluebox12](https://x.com/TBluebox12) · [가상현실 채널](https://arca.live/b/vrshits) · [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+作者: [@TBluebox12](https://x.com/TBluebox12)  
+Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)  
+赞助: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)  
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
@@ -38,7 +40,7 @@
 
 此前实际测试环境：Meta Quest 2 · 4K 显示器 · Virtual Desktop。
 
-Quest 3 与 Galaxy XR 的左右画面错位报告仍未确认解决。Galaxy XR 在 VDXR 和 SteamVR 下均有报告。1.1.2 更新安装程序及文档提示，VR DLL 与设置程序和 1.1.1 相同。增加关闭抗锯齿的说明并不代表已经确认解决任一头显的问题。
+已确认 Quest 3 和 Galaxy XR 所报告的左右画面错位由抗锯齿导致。使用 VR 前，请在游戏设置中关闭抗锯齿。
 
 ## 使用指南
 

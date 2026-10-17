@@ -1,6 +1,8 @@
 # GF2VR
 
-[@TBluebox12](https://x.com/TBluebox12) · [가상현실 채널](https://arca.live/b/vrshits) · [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+제작자: [@TBluebox12](https://x.com/TBluebox12)  
+아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)  
+후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)  
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
@@ -38,7 +40,7 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
 기존 실기 확인 환경: Meta Quest 2 · 4K 모니터 · Virtual Desktop.
 
-Quest 3와 Galaxy XR의 양안 영상 어긋남 제보는 아직 해결 확인 전입니다. Galaxy XR에서는 VDXR와 SteamVR 모두 제보됐습니다. 1.1.2는 인스톨러·문서 안내를 추가한 버전이며, VR DLL과 설정 프로그램은 1.1.1과 같습니다. 안티앨리어싱 해제 안내를 추가한 것이 두 기기의 해결 확인을 뜻하지는 않습니다.
+Quest 3와 Galaxy XR에서 보고된 양안 영상 어긋남은 안티앨리어싱이 원인인 것으로 확인됐습니다. 게임 설정에서 안티앨리어싱을 끄고 VR을 사용하세요.
 
 ## 사용 안내
 
