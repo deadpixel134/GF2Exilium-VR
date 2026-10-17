@@ -18,6 +18,7 @@ internal static class Fields
         new("activity_ui.json", null, "activityPrimaryUiEnabled", "bool", true, "activityUiHelp"),
         new("controller_input.json", "controllerInput", "swapFaceButtons", "bool", false, "faceSwapHelp"),
         new("controller_input.json", "controllerInput", "swapPanelPointerHands", "bool", false, "handRolesHelp"),
+        new("controller_hands.json", null, "controllerHandsEnabled", "bool", true, "controllerHandsHelp"),
         new("navigation.json", "navigation", "locomotionEnabled", "bool", true, ""),
         new("navigation.json", "navigation", "cameraFollowEnabled", "bool", true, "cameraFollowHelp"),
         new("navigation.json", "navigation", "locomotionHand", "choice", "left", "handHelp", ["left", "right"]),
@@ -49,7 +50,9 @@ internal static class Fields
     internal static JsonNode JsonSerializerNode(object value) => System.Text.Json.JsonSerializer.SerializeToNode(value)!;
 
     internal static JsonNode? Get(Dictionary<string, JsonObject> docs, Field f)
-        => (f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject)?[f.Key];
+        => (f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject)?[JsonKey(f)];
+
+    internal static string JsonKey(Field f) => f.Key == "controllerHandsEnabled" ? "enabled" : f.Key;
 
     internal static void Set(Dictionary<string, JsonObject> docs, Field f, JsonNode value)
     {
@@ -59,7 +62,7 @@ internal static class Fields
             if (doc[f.Group] == null) doc[f.Group] = new JsonObject();
             doc = doc[f.Group]!.AsObject();
         }
-        doc[f.Key] = value;
+        doc[JsonKey(f)] = value;
     }
 
     internal static Dictionary<string, JsonObject> Clone(Dictionary<string, JsonObject> docs)

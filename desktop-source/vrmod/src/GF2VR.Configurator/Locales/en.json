@@ -112,5 +112,10 @@
   "speedLinkHelp": "Default ON: base speed × manual scale × World Scale. 200% = 2× speed; 50% = 0.5×. OFF removes only World Scale.",
   "effectiveSpatial": "World {0}× · head translation {1}× · automatic speed {2}×",
   "cameraFollowEnabled": "Follow game camera on startup",
-  "cameraFollowHelp": "Default ON. Saved choice applies on the next game launch. Right stick click toggles it during play without changing the saved choice."
+  "cameraFollowHelp": "Default ON. Saved choice applies on the next game launch. Right stick click toggles it during play without changing the saved choice.",
+  "updateVariantPending": "Current build preserved. Use an update package matching Clean or Dirty.",
+  "controllerHandsEnabled": "Show controller hands",
+  "handsTab": "Hands",
+  "controllerHandsHelp": "Enabled by default. Shared by Clean and Dirty. Save and restart the game.",
+  "handsSummary": "Show both controller positions as white spheres in the HMD. Contact deformation is available in Dirty only."
 }

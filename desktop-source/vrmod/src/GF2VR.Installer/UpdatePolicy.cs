@@ -7,7 +7,8 @@ namespace GF2VR.Installer;
 internal sealed record ReleaseAsset(long Id, string Name, long Bytes, string Hash);
 internal sealed record ReleaseCandidate(long Id, string Version, ReleaseAsset Descriptor, ReleaseAsset Archive);
 internal sealed record UpdateDescriptor(int SchemaVersion, string Product, string Repository, string Version,
-    string Channel, string ArchiveName, string ArchiveSha256, string PackageManifestSha256, PayloadFile[] InstallerFiles);
+    string Channel, string ArchiveName, string ArchiveSha256, string PackageManifestSha256, PayloadFile[] InstallerFiles,
+    string? BuildFlavor = null, string? CommonCoreSha256 = null);
 internal sealed record UpdateHandoff(int SchemaVersion, string Root, string Version, string ReceiptHash,
     string ManifestHash, string DescriptorHash, int ParentPid, long ParentStartTicks, bool UserConfirmed);
 internal sealed record PreparedUpdate(string Version, string Folder, string Root, string ReceiptHash, string ManifestHash, string DescriptorHash);
@@ -25,8 +26,9 @@ internal static class UpdatePolicy
             !Version.TryParse(text, out var version) || version.Build < 0 || version.Revision != -1) throw new InstallError("updateInvalid");
         return version;
     }
-    internal static string ArchiveName(string version) => "GF2VR-Native-SelfContained-" + version + ".zip";
-    internal static ReleaseCandidate? Select(byte[] json, string installedVersion)
+    internal static string ArchiveName(string version, string? flavor = null) => "GF2VR-Native-SelfContained-" + (flavor == null ? "" : flavor + "-") + version + ".zip";
+    internal static string DescriptorFor(string? flavor) => flavor == null ? DescriptorName : "GF2VR-" + flavor + "-update.json";
+    internal static ReleaseCandidate? Select(byte[] json, string installedVersion, string? flavor = null)
     {
         if (json.Length > 262144) throw new InstallError("updateInvalid");
         using var doc = JsonDocument.Parse(json); Contract.Duplicates(doc.RootElement);
@@ -52,12 +54,12 @@ internal static class UpdatePolicy
             if (!digest.StartsWith("sha256:", StringComparison.Ordinal) || a.GetProperty("state").GetString() != "uploaded") throw new InstallError("updateInvalid");
             string hash = digest[7..]; Paths.HashText(hash);
             long id = a.GetProperty("id").GetInt64(), size = a.GetProperty("size").GetInt64();
-            if (id < 1 || size < 1 || size > (name == DescriptorName ? 262144 : MaxArchive) ||
+            if (id < 1 || size < 1 || size > (name == DescriptorFor(flavor) ? 262144 : MaxArchive) ||
                 a.GetProperty("url").GetString() != "https://api.github.com/" + Api + "releases/assets/" + id) throw new InstallError("updateInvalid");
             return new(id, name, size, hash);
         }
         long releaseId = highest.Release.GetProperty("id").GetInt64(); if (releaseId < 1) throw new InstallError("updateInvalid");
-        return new(releaseId, normalized, Asset(DescriptorName), Asset(ArchiveName(normalized)));
+        return new(releaseId, normalized, Asset(DescriptorFor(flavor)), Asset(ArchiveName(normalized, flavor)));
     }
     internal static UpdateDescriptor Descriptor(byte[] bytes, ReleaseCandidate release)
     {
@@ -69,8 +71,11 @@ internal static class UpdatePolicy
     internal static void ValidateDescriptor(UpdateDescriptor d)
     {
         _ = VersionOf(d.Version);
+        if (d.BuildFlavor is not (null or "Clean" or "Dirty") ||
+            (d.BuildFlavor == null ? d.CommonCoreSha256 != null : d.CommonCoreSha256 == null)) throw new InstallError("updateInvalid");
+        if (d.CommonCoreSha256 != null) Paths.HashText(d.CommonCoreSha256);
         if (d.SchemaVersion != 1 || d.Product != Contract.Product || d.Repository != Repository || d.Channel != "stable" ||
-            d.ArchiveName != ArchiveName(d.Version) || d.InstallerFiles == null || d.InstallerFiles.Length != 4 ||
+            d.ArchiveName != ArchiveName(d.Version, d.BuildFlavor) || d.InstallerFiles == null || d.InstallerFiles.Length != 4 ||
             !d.InstallerFiles.Select(f => f?.Path).ToHashSet(StringComparer.Ordinal).SetEquals(HelperFiles)) throw new InstallError("updateInvalid");
         Paths.HashText(d.ArchiveSha256); Paths.HashText(d.PackageManifestSha256);
         foreach (var f in d.InstallerFiles) { if (f == null || f.Bytes < 1 || f.Bytes > Contract.MaxFile) throw new InstallError("updateInvalid"); Paths.HashText(f.Sha256); }

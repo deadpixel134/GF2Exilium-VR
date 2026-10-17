@@ -1,49 +1,53 @@
 # GF2VR
 
-Creator: [@TBluebox12](https://x.com/TBluebox12)<br>
-Arca.live VR community: [Virtual Reality channel](https://arca.live/b/vrshits)<br>
-Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+[@TBluebox12](https://x.com/TBluebox12) · [가상현실 채널](https://arca.live/b/vrshits) · [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
-[한국어](README.md) · [English](README.en.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
+[한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-An unofficial mod for playing GF2 Exilium in VR. Supported 3D scenes appear in stereoscopic VR, while game menus and other screens appear on a panel you can operate with your controllers.
+An unofficial mod for playing GF2 Exilium in VR.
 
-**Tested setup:** Meta Quest 2 · 4K monitor · Virtual Desktop.
+**[Download release 1.1.1](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)**
 
-**[Download official version 1.0.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)** · [Installation guide](docs/en/INSTALLATION.md) · [Basic controls](docs/en/USAGE.md)
+## Choose Clean or Dirty
 
-Download **GF2VR-Native-SelfContained-1.0.2.zip** from the release. The game is not included. **2.0.3936** remains the practically tested baseline; original-game SHA-256, size or cache differences do not block installation. This does not guarantee VR compatibility with other versions. See [Supported environment and verification scope](docs/en/VERIFICATION.md).
+| Feature | Clean | Dirty |
+|---|---|---|
+| Ordinary VR, stereo, controller input and settings | Included | Included |
+| White spheres at both hand positions | Included | Included |
+| Character breast contact and deformation | Excluded | Included |
 
-## Getting started
+Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-1. Extract the entire release ZIP into a new folder. GitHub's **Source code** ZIP is not an installation package.
-2. Open **GF2VR.Installer.exe** and select the **folder containing GF2_Exilium.exe** or an installation folder containing it. Installation files are found automatically; select only the game location.
-3. Use **Open settings** to save your preferred options, then start SteamVR and the game yourself.
-4. Read the [basic controls](docs/en/USAGE.md). Close the game before adjusting any settings you find uncomfortable.
+- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
 
-## Features
+Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 
-- Stereoscopic VR and head tracking in supported 3D scenes
-- A front panel for the normal game screen and an auxiliary panel you can open when needed
-- Stick movement and turning, screen clicks and Back using controllers
-- World grip to move your viewpoint by grabbing the world with your hand
-- Settings for world scale, stereo depth, movement speed, Activity UI and hand roles
-- A configurator and installer in Korean, English and Japanese
-- Settings profile import/export, installation, updates, removal and previous-version restoration
+## Install, switch and remove
 
-The VR implementation in 1.0.0 was frozen based on the user's confirmation of practical testing. The installation-path improvements in 1.0.2 were checked locally; no new post-change game/HMD run is recorded. See [Verified behavior and limitations](docs/en/VERIFICATION.md).
+1. Fully extract the desired Clean or Dirty ZIP into a fresh folder. GitHub Source code archives are not installers.
+2. Close the game, Configurator and Installer. Run GF2VR.Installer.exe from the new folder and select GF2_Exilium.exe or the game folder. The bundled package is found automatically.
+3. Confirm the variant and version, then install. To switch Clean↔Dirty, use the Installer from the desired ZIP.
+4. Open Settings, save, and start the game through your normal route. Hand spheres default to enabled and can be changed in the Hands tab.
+
+Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
+
+## Verification and limits
+
+Previously tested setup: Meta Quest 2 · 4K monitor · Virtual Desktop.
+
+Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
 
 ## Guides
 
-- [Installation, removal and recovery](docs/en/INSTALLATION.md)
-- [Starting the game and controller controls](docs/en/USAGE.md)
-- [Settings and profiles](docs/en/SETTINGS.md)
-- [Updating](docs/en/UPDATE.md)
+- [Installation, removal and restoration](docs/en/INSTALLATION.md)
+- [Controls](docs/en/USAGE.md)
+- [Settings](docs/en/SETTINGS.md)
+- [Updates](docs/en/UPDATE.md)
 - [Troubleshooting](docs/en/TROUBLESHOOTING.md)
-- [Recent changes](docs/en/RELEASE_NOTES.md)
-- [Downloads and support](docs/en/RELEASE_READINESS.md)
-- [Source contents and terms of use](SOURCE_BOUNDARY.en.md)
+- [Release notes](docs/en/RELEASE_NOTES.md)
+- [Downloads and contents](docs/en/RELEASE_READINESS.md)
+- [Verification](docs/en/VERIFICATION.md)
+- [Source boundary and terms](SOURCE_BOUNDARY.en.md)
 
-Close the game before changing settings, installing, updating or removing the mod. If something goes wrong, check the error message and operation log, then refer to the [troubleshooting guide](docs/en/TROUBLESHOOTING.md).
-
-> GF2 VR is an unofficial fan project. A legitimate installation of the game is required. Game-related trademarks and copyrighted works belong to their respective owners.
+> GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.

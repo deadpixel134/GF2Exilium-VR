@@ -1,19 +1,35 @@
 {
   "schemaVersion": 2,
   "product": "GF2VR",
-  "version": "1.0.2",
-  "scope": "CURRENT_NATIVE_DESKTOP_SOURCE_AND_PLAYER_DOCS",
+  "version": "1.1.1",
+  "scope": "PAIRED_NATIVE_DESKTOP_SOURCE_AND_FOUR_LANGUAGE_PLAYER_DOCS",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "nativeSourceReproduction": "EXACT_6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771",
-  "nativeClosureFiles": 225,
+  "nativeSourceReproduction": "EXACT_CLEAN_AND_DIRTY",
+  "nativeVariants": [
+    {
+      "flavor": "Clean",
+      "buildId": "GF2VR-CLEAN-111-002",
+      "dllSha256": "4F927C131C5E7288219C4805672D7B71C37E9024D33279AA9B5F7987E01A6C0D",
+      "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
+      "nativeProofSha256": "C96E43B6AFCF8BA4EA50091009D25DEA6AB7B887BC0B58F25D1A8223359A4AFB"
+    },
+    {
+      "flavor": "Dirty",
+      "buildId": "GF2VR-DIRTY-111-002",
+      "dllSha256": "F4066EB15F2E8574B7696FBE89F697B91866ED0E7F07C103BA3072CF6C0757ED",
+      "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
+      "nativeProofSha256": "13CC93C5CF0F3BEEC4EA6A3C3CE7498DCE23ECE10F7EA23ED1002C6667A2A104"
+    }
+  ],
+  "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
   "gameAssetsIncluded": false,
   "userConfigurationIncluded": false,
   "credentialMaterialIncluded": false,
   "files": [
     {
       "path": ".gitattributes",
-      "sha256": "FF04C7ED4F0C32C66E78B2D61689989063FA341959D003C0A8553F12D4AA1937",
-      "bytes": 59
+      "sha256": "92D34386D6AA28F02D5F3E35635762FB2E601AA6E91B266A8EF161334AC7A3E6",
+      "bytes": 93
     },
     {
       "path": ".gitignore",
@@ -22,23 +38,23 @@
     },
     {
       "path": "desktop-source/README.ja.md",
-      "sha256": "88271068BC7DAD7D1C5C769181E0B6A4BCB7B549CFAAA0E53EA0AD0FFDD03079",
-      "bytes": 3395
+      "sha256": "2CD4A9F1E18711EB7EE09F645691E537EBCB8933FF38FD457CBCD2AED70BEFFC",
+      "bytes": 4089
     },
     {
       "path": "desktop-source/README.ko.md",
-      "sha256": "967CD105EDD38C41D3E24948BECCB8D9909CC4FE9D0344484D1F0FFEB669794E",
-      "bytes": 2776
+      "sha256": "6828763AD102AB5E324812E0D423671B0C0B77A9FCBCC5085FC3ABEB51260A91",
+      "bytes": 3427
     },
     {
       "path": "desktop-source/README.md",
-      "sha256": "7F964C534B4FD36C9C3F16614F8D5FF02285A878070426205580126149861AF7",
-      "bytes": 2384
+      "sha256": "2ACD685F1BC7951FB0439275D8E2FB6B1B8C0E1A699456F6685557A00562E66F",
+      "bytes": 2904
     },
     {
       "path": "desktop-source/README.zh-CN.md",
-      "sha256": "5F272EF55EC60454687B70F85C88D9F2931D25A2B68FB0F9D61B9CB0F68A3418",
-      "bytes": 2424
+      "sha256": "89BDE1F46DE9DFF9E681DA4BE0176504D2C27710816BCF9B6E83D1CFC1D7BC0B",
+      "bytes": 2923
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Directory.Build.props",
@@ -47,53 +63,53 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Fields.cs",
-      "sha256": "A3BA8CBEE7423F42BA0F18D1BAA3A74D440AD40CF7C6E6DAAD537AE7C5F2DAAE",
-      "bytes": 3879
+      "sha256": "AB61ECCF07BB1E076C75268D1FDAEADAC72373ACAFD31521C49C3FCD58277876",
+      "bytes": 4099
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj",
-      "sha256": "BF84FC851C9179F1F5175BF3539A87F2D46B11B566D6186E7709413B8CE2BA3E",
-      "bytes": 1296
+      "sha256": "C7FEADBB989946A6C170A971AC91136E8C8BF23903228D151B8CA470A4A8B0AC",
+      "bytes": 1422
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/en.json",
-      "sha256": "2BC0AE6F3A7AD047DB30BA8748E6BE1B3E4C5B0E77EF1377F3EFE35BDFD5E78B",
-      "bytes": 9067
+      "sha256": "376C07914180CE3D511AFA58E9EB22D5A9C6F64C215B6C5322CD9D0EC85500BA",
+      "bytes": 9594
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ja.json",
-      "sha256": "01993B10F1B43EDE222CAEA6821A605D03EFB6CA07C261D744DA45810675D06B",
-      "bytes": 11123
+      "sha256": "7A2CF898E2BAF79C6EB826CE0ABB673448C07DE70DBC00715FF58A729586FE51",
+      "bytes": 11768
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ko.json",
-      "sha256": "431BE3F318F84742E84D6F15A97B6C53AAC24B6F1261EA2C9D7A627CA6721102",
-      "bytes": 10926
+      "sha256": "78C3C27B08579BD46CD0158E9B4E7E5AEFF624365AA2312472128D2F1E0F0FC5",
+      "bytes": 11534
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/MainForm.cs",
-      "sha256": "61DF1B84EE8AB08D256EF3AF0A34C0494E76C04AD41E823A8F6709846DAE9572",
-      "bytes": 32559
+      "sha256": "843D28524E79297ED49A2694871CAB780ED0133928BA52AFB5598B1C5C194362",
+      "bytes": 33876
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Program.cs",
-      "sha256": "1115DE1AEB3193AC4D0FE82B16AA979E263082B3CA2447C66995A25D7C2ED3FC",
-      "bytes": 1718
+      "sha256": "2B357ACB6A4DC2550EBF98D1A1693612D38E4231F58B2E5FA40AEB7596C45D00",
+      "bytes": 1737
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/runtime-contract.json",
-      "sha256": "14D86CCF64D793B8239DBFB848A54A813AF462569E9CB87E064E31CFB495E331",
-      "bytes": 413
+      "sha256": "B3A56DCECDD6F7DD52E44C3E681FE7DB5F830B81D2D6754B08C8699B1FF542D2",
+      "bytes": 632
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/SelfTest.cs",
-      "sha256": "1C3F2E305DA40FC92A332CB4BB7E061DC071294F9C87A431ED9C051F8B4F1905",
-      "bytes": 31324
+      "sha256": "B060A01CFD2453A5643E25F29A236779BB78FCE1934205087307FB0FF92A3D39",
+      "bytes": 33816
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/SettingsStore.cs",
-      "sha256": "144BDE766AD8300AEF15CE16A9FF95A68BC16F66DE61EED33428714699BB5989",
-      "bytes": 21290
+      "sha256": "B9C06889AABECD33678147F5F308DB3EE0DBB6DBDD4F988F5F3D2E8D31B9E093",
+      "bytes": 21485
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Texts.cs",
@@ -102,8 +118,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Contracts.cs",
-      "sha256": "0845991F95B417F047C9C87A5E09E4EC68E92A504DA20074DA4E8373C058EC7E",
-      "bytes": 3500
+      "sha256": "1C3BF7E0E74317A31F21A1576C1C73D00886BB19C16912F2BBF3B759D938906F",
+      "bytes": 3626
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/DesktopDeploymentChecks.cs",
@@ -117,12 +133,12 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/FlexibleLayoutChecks.cs",
-      "sha256": "9D0222A7A91BD8676B73E61CA3DA3A3032E7FAF2E41724DDFF2CAF13604C7553",
-      "bytes": 9329
+      "sha256": "C6A397FD54B88F305CC3D3D3F37B03F18DEB1A514C660F1EA349D575D2EB48AD",
+      "bytes": 9304
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/GF2VR.Installer.csproj",
-      "sha256": "4DA380D4827C30785800F6EE205EA8801A8F0D1F291C3C13C2FE7568CA7D273D",
+      "sha256": "2FE13B2077F0498BE8F25DAB02BE6A998F7CB0A0EB8ACE5B236521186124A9C5",
       "bytes": 589
     },
     {
@@ -132,13 +148,13 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallationEngine.cs",
-      "sha256": "21AAA816F5A04C5E43E0338386CDCB4218BEBBD54227B8861473C9FBF2083B99",
-      "bytes": 18864
+      "sha256": "0BD4FC47200A97591C8A2C065840F5B772244E68F053ECA2E1594F5F2F1B0CB8",
+      "bytes": 18949
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallerForm.cs",
-      "sha256": "A233C1D2ADDF32FC74B8CAF86BB37C2D7BE3C1A2168F3C3746BD7A815D55EDEF",
-      "bytes": 20544
+      "sha256": "917453B689253162DAEE3CAB52164C134D36BDCEEE5084BAAB2993664B24BAB2",
+      "bytes": 20846
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/InstallerText.cs",
@@ -167,8 +183,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/NativeLayout.cs",
-      "sha256": "C6362C544286B1934FAD0E391190090DEB5CA10040BC2FB76C0B04E9EE3F9BEF",
-      "bytes": 8879
+      "sha256": "2D7029BE14883443C08E242E6FCABBE0799FD1697B9A00655BCBC2DA3DA0CC92",
+      "bytes": 10093
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/NativePackageChecks.cs",
@@ -177,8 +193,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/OwnershipChecks.cs",
-      "sha256": "92FFC85F1C2A82D8BB46B94A2011C5EAA8849EA267FCFFF517A71659F2D6EBCC",
-      "bytes": 13402
+      "sha256": "86259821E08FD68E768FE69A6177CA3F415B48017BF2B782BCD98F2FB78277C2",
+      "bytes": 13381
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/PackageLocation.cs",
@@ -202,8 +218,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Program.cs",
-      "sha256": "58FFA2C51D9AEC3AEAFD166B1DFBC8E6AC6E03A457BD0DDB4BB6978CF44582AB",
-      "bytes": 7686
+      "sha256": "1EEAE8F91AADF61829EAC3CB38C3F0F577C89D42278A85CE10464643F53EC3E4",
+      "bytes": 8496
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/SelfTest.cs",
@@ -222,18 +238,28 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdatePolicy.cs",
-      "sha256": "CA50AF01812581FDB92CF405BAD9268832CD6F03EE6F9116A5A3B75903082DE6",
-      "bytes": 5695
+      "sha256": "333C155B12A51ADBC9DAD04E0511E3D731321C0164EC0E4CA219812BEC9BB16D",
+      "bytes": 6289
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateService.cs",
-      "sha256": "D671595914CE31A0C9FCAD8990FA6FE2B02845AEC5C3B9AE6359761AE237FC63",
-      "bytes": 1777
+      "sha256": "7774E910E2DB334FE5C9AC6A7BFFBE0E18C1F1A53BB46E8FE8AF59ACDF675BCF",
+      "bytes": 2142
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateStaging.cs",
-      "sha256": "2F07660CF17C5A26822C39416077F2FEB602B8676980E27ACE309F31C2CFA9BF",
-      "bytes": 7438
+      "sha256": "E067D800E9F4E123EFCDC92F87436701BC709E24F8ECE71A695C0E979B1CBFEC",
+      "bytes": 8064
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/VariantChecks.cs",
+      "sha256": "D8099774BCFD137B6ED5BA3F1AE3771143F7B5B06BFFAC9D2352BC43EDFBDED5",
+      "bytes": 8217
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/VariantProfiles.generated.cs",
+      "sha256": "2BB61FDA5CDCF28197C9E4DDF688BDD4B48388CC1072E807948742AC31EC3FE0",
+      "bytes": 786
     },
     {
       "path": "desktop-source/vrmod/tools/build_desktop_private_runtime.ps1",
@@ -252,163 +278,163 @@
     },
     {
       "path": "docs/en/INSTALLATION.md",
-      "sha256": "9F9B02E18BA9311B81275D143CB65C2A5FFA810BE581F94D508497CB5F6A274D",
-      "bytes": 5293
+      "sha256": "0F9F5EA6949422205CE6876FF10F2317DBC781310DA5984C845B471A9AE033B7",
+      "bytes": 2290
     },
     {
       "path": "docs/en/RELEASE_NOTES.md",
-      "sha256": "149BA98CD556851D7ADAB85358DDE7857D144723E563BA21BC43112D54D4D954",
-      "bytes": 4367
+      "sha256": "A1B39560305CA16D7DB8DDC7F74A9FE05F3AF06A8BE6E005061C94F4002FE21D",
+      "bytes": 1630
     },
     {
       "path": "docs/en/RELEASE_READINESS.md",
-      "sha256": "D1D5128D4C80B5883CB6120B2BD0368E7BD6C1281B19B8762FCF15648A5BE5F4",
-      "bytes": 2652
+      "sha256": "DD9F9BD5BD5780BE3E8A0197E5482E3BF44C9F27B3751D84BB77BBE3BE2E57F7",
+      "bytes": 2438
     },
     {
       "path": "docs/en/SETTINGS.md",
-      "sha256": "CCB998E6B15BDE7E9E189EB4A3F655AAC59B6B4392381DD15B60A01FF772BAF7",
-      "bytes": 6685
+      "sha256": "95ADB0EF160251C8FF708D53525DDEEA940C814BAC82F53CF0A070A277E256A9",
+      "bytes": 7980
     },
     {
       "path": "docs/en/TROUBLESHOOTING.md",
-      "sha256": "3FB119716ABD868AC6C3CFA8F6704657826AB375FEDB49DC946247CD05C77CF2",
-      "bytes": 6506
+      "sha256": "9E76EB881C8698B9D88D594750D49FC8B8B8AF84BC019DBEF5AC71489A1E2774",
+      "bytes": 7801
     },
     {
       "path": "docs/en/UPDATE.md",
-      "sha256": "F55E8C6DF39498D096ABF33D0870D9078849706D9F73DDED77B9EF759D657BE3",
-      "bytes": 3371
+      "sha256": "886C4E0CC0BA6B8C2C9A3F91BB16652DB6A6259E6AB253C0217B320B82F1F047",
+      "bytes": 1500
     },
     {
       "path": "docs/en/USAGE.md",
-      "sha256": "958BC65856329D8472C67CE423DBCB738F652E05B0714CB3BBF2CAA3B0054182",
-      "bytes": 4161
+      "sha256": "672F1D1B5F5DA11B80C4461FB32FE93FC7B704E19D5E8232340069661CF39077",
+      "bytes": 5456
     },
     {
       "path": "docs/en/VERIFICATION.md",
-      "sha256": "E063FA88D9988AD73000EC73136AA699CDB4D05CAE0094453252DB97B428071C",
-      "bytes": 4070
+      "sha256": "058A919144FEB4B33094CFB7476CB847E862910357AB875B6ACEDCE314E7129A",
+      "bytes": 1422
     },
     {
       "path": "docs/ja/INSTALLATION.md",
-      "sha256": "02E3782C029C3BB2E87364E9ABAA9977D15DE26BF06570AFB5D7F1E4A94BEB11",
-      "bytes": 7110
+      "sha256": "9068412BAC12E945B0F590B84500B05B6F031A6E56B7658BA751E5C782C738A8",
+      "bytes": 2789
     },
     {
       "path": "docs/ja/RELEASE_NOTES.md",
-      "sha256": "4CE138196FBD7767CB2B21738D275E916CB4593E4447E55552C07A5ACE264C92",
-      "bytes": 5651
+      "sha256": "7B0E3604E84C2DE8C1F9DBD1E11DD8DF514720A2CB85D7E917AC419BEF10F6BA",
+      "bytes": 1850
     },
     {
       "path": "docs/ja/RELEASE_READINESS.md",
-      "sha256": "651726C628F61DD3481C5F9ADBA9664755F70218388711BA77DE6C759E52E04C",
-      "bytes": 3472
+      "sha256": "27A7AB54264CF1EF4299385B26B0E128ABD41869DE56214FAEDA08C8C543943D",
+      "bytes": 2927
     },
     {
       "path": "docs/ja/SETTINGS.md",
-      "sha256": "C7200CD0412E4CC3E672DC9BF42C54881E428491E29BD2CB9F17F3063D4D5006",
-      "bytes": 8614
+      "sha256": "C1259041E1B444CCA478A4761A9EF8B9C5E8B36D02E7E6B1878E2C5DEA5FC444",
+      "bytes": 10211
     },
     {
       "path": "docs/ja/TROUBLESHOOTING.md",
-      "sha256": "F89770C64C7AB6707ADD09C54AA99816DF8B06AB15A05365B141C556C9E316A7",
-      "bytes": 8845
+      "sha256": "7415C46F2BA0E871C966D43F71348669BD8C3DE1FBECDF64F54C9DB7C1F0A24C",
+      "bytes": 10442
     },
     {
       "path": "docs/ja/UPDATE.md",
-      "sha256": "BCADA02D6A698E9C8A63F78293A30495C58120A95671A3BEE32E5A1F945EAB42",
-      "bytes": 4477
+      "sha256": "EE1D57BB571E362517C6CB0720A603D3B8C9140232506F2E292DD2387CF95F47",
+      "bytes": 1849
     },
     {
       "path": "docs/ja/USAGE.md",
-      "sha256": "8673A48A931C8842E3A600C1BD9783BB8EF24B7B30385E36B3DA30C499F6E665",
-      "bytes": 5381
+      "sha256": "EC90CE4E9907800E0A6102A059364BB841CFE14404B012B7E3482D8B9C23D725",
+      "bytes": 6978
     },
     {
       "path": "docs/ja/VERIFICATION.md",
-      "sha256": "5C3F5652A96683C52E323B542C2B0B8A3FB3E4F262CADC5399C0DC09BFD4209F",
-      "bytes": 4861
+      "sha256": "7868E417A55577D23327B5C68FE70A4037DA7B1DE7D39AC3A3316D4F69C0CD9A",
+      "bytes": 1720
     },
     {
       "path": "docs/ko/INSTALLATION.md",
-      "sha256": "3D377259016E0BE48183DC076C9463B323D5D642D7D94BC7F57C3DF716BE23E9",
-      "bytes": 5933
+      "sha256": "6BF9A5D1D7DEEE19B005176FB20D08922F5511808A1DC880C89D2D288B1F3375",
+      "bytes": 2615
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
-      "sha256": "51D1DA295316B299C171632F40314B4146C3528885AE767E15B97BCD9606E0FE",
-      "bytes": 4887
+      "sha256": "A3E3C4E28EBADE0BF2DE36B5D34B0D03C282FDE0454A768878C0BD7FD3878C75",
+      "bytes": 1845
     },
     {
       "path": "docs/ko/RELEASE_READINESS.md",
-      "sha256": "2E2402530223997682C64E91EA4D3779CA55519B05C0B5B5E85FDF2E4E2C9A75",
-      "bytes": 2975
+      "sha256": "838C226C79F99A682A4E1F4E17A4DDE362B81896D69140FED8670A78E7A2790B",
+      "bytes": 2780
     },
     {
       "path": "docs/ko/SETTINGS.md",
-      "sha256": "8A88EB7936B6A29D45B644DC33C9399623124946BBCDA7BB373D7E3605529C3A",
-      "bytes": 7756
+      "sha256": "841A53A5899A2C7EDE49EB716EC791B4EB4260C69206958B634A21417DCBC766",
+      "bytes": 9246
     },
     {
       "path": "docs/ko/TROUBLESHOOTING.md",
-      "sha256": "E9960C1CA06027D4E2A99EAE0DC32DCB41B2AA1A98547B7E7405DE5F34A3A7E3",
-      "bytes": 7617
+      "sha256": "8FD45EFD30406489C09CBFBEE1BF95F36D14965F7208F8C2E2987846B2C4F5CE",
+      "bytes": 9107
     },
     {
       "path": "docs/ko/UPDATE.md",
-      "sha256": "7EE9DE5BCAE80FDE9732DE794FEFBAC0396E86E6190211129B80DBE0E9148B6D",
-      "bytes": 3895
+      "sha256": "1111FC1A01E3A93868FFF2D855FA24F58584008EB6A9BEDBE6EF91CED8F22344",
+      "bytes": 1809
     },
     {
       "path": "docs/ko/USAGE.md",
-      "sha256": "23D5143961E84B6372643EC8A6D0837551552E5C805A2EC394FA9F50741C9C98",
-      "bytes": 4801
+      "sha256": "CB09393C4FB95568F90939CCD1A01C45A3C8189FC7676126BA6C5D72BCCFDF32",
+      "bytes": 6291
     },
     {
       "path": "docs/ko/VERIFICATION.md",
-      "sha256": "B6B9E90612F4D722177DB20BBA8944833B0038906AA90568C6CC6AED40BACB9C",
-      "bytes": 4259
+      "sha256": "DE8CC4E02EF8AB3A21208E5C4FF2516F5FDCDF8DE4AADD451467DA762A10F9F1",
+      "bytes": 1657
     },
     {
       "path": "docs/zh-CN/INSTALLATION.md",
-      "sha256": "AD7DBFDE908051396569BEBBA0800B171DA040880D1269ABAAEE4A8D3131D577",
-      "bytes": 4734
+      "sha256": "90F0D3A0CFDFE7C5157EAB690FFBB4DBE68E8693F0D18FBC011AABAA5420C68D",
+      "bytes": 2156
     },
     {
       "path": "docs/zh-CN/RELEASE_NOTES.md",
-      "sha256": "3AB2A781423462EB9FF811634128658357B8F9C2CCA4D81D8F005CF773AFE1E8",
-      "bytes": 4003
+      "sha256": "89D2AF42042C89FFAD32E673C08D330511A84170A4917229DBC8C0FBAD0115DC",
+      "bytes": 1485
     },
     {
       "path": "docs/zh-CN/RELEASE_READINESS.md",
-      "sha256": "44D94B57B803918BF52C45AB8C4482C8F2753C6D1FC66CF928B2E05BA7ED0A74",
-      "bytes": 2430
+      "sha256": "4968CB47202EC8900044D184E03B733DA957A333880BD092F03B4073BFD3FD6C",
+      "bytes": 2282
     },
     {
       "path": "docs/zh-CN/SETTINGS.md",
-      "sha256": "87993231393AC5C75FC3C8CD4098D03DC3DE0EBDFFD3BD24E1BFF999E20889F6",
-      "bytes": 6225
+      "sha256": "8C922E8FBBF38FEDF28BFD6F08D3F0D132AD6C7BB68AA9D8BE786A9C2D9CAF4C",
+      "bytes": 7419
     },
     {
       "path": "docs/zh-CN/TROUBLESHOOTING.md",
-      "sha256": "62005FBA4AE4B4D8F3772AAC573AFB9621594FB2028980036A8A67DC802C6AF3",
-      "bytes": 5904
+      "sha256": "5DC99D586F5F45DE4155F3A3E798916D49414CCFB8B0F5E07C52C0471C880AC0",
+      "bytes": 7098
     },
     {
       "path": "docs/zh-CN/UPDATE.md",
-      "sha256": "97C90FDFA421282ADCD3462B9110CBB70BF3771F6BD59B0661CF1B9A2C659D46",
-      "bytes": 2992
+      "sha256": "CA605C798C5443FA97EDD4679A883652E827F8005B1A769E9BE8000AACEFCBB5",
+      "bytes": 1420
     },
     {
       "path": "docs/zh-CN/USAGE.md",
-      "sha256": "A9E7E160B728152BD5B4087B33C50115260A79A1082434A90791C50C7304E57D",
-      "bytes": 3883
+      "sha256": "E69020E680CAAA500E75D3711BE9395F9085B1E40EA43810A1CE1D3423F8A8C9",
+      "bytes": 5077
     },
     {
       "path": "docs/zh-CN/VERIFICATION.md",
-      "sha256": "BF0028328101021A0C402FA910EFD21A01B108499373311CCE61ACB0D6BA96D3",
-      "bytes": 3544
+      "sha256": "174900C152C184E17D13FCA4D5E238F81DF2CD17BC1733906324826F058BDDE7",
+      "bytes": 1323
     },
     {
       "path": "DOTNET-NOTICES.txt",
@@ -442,23 +468,23 @@
     },
     {
       "path": "native-source/README.ja.md",
-      "sha256": "6C3CD2D40983FB14E7F9A734E440D18504467C86E4EDE1A2F5F7B5694A444D1A",
-      "bytes": 3117
+      "sha256": "CBFBD34DCC1EB0C95C7CCDA9270D971B9D3BA14D1A82F59E0963D40FB84E339E",
+      "bytes": 4240
     },
     {
       "path": "native-source/README.ko.md",
-      "sha256": "6C8ED8B88E844CCF873363D283B6C04C01B5B3D6226258A95355457926996978",
-      "bytes": 2647
+      "sha256": "4DFDC4EDAF6DBF6889765437858A69764AA20590D91072A76D71DEAD6D5CEF5A",
+      "bytes": 3772
     },
     {
       "path": "native-source/README.md",
-      "sha256": "452F9421BA63E3F83B7BC9A14B2211F83576117137B87E0D60737AFE077BCC81",
-      "bytes": 2246
+      "sha256": "E3C451C39C71C2EB93114DA7AC486ACC0E36D3D331D043C3798D96476019E593",
+      "bytes": 3221
     },
     {
       "path": "native-source/README.zh-CN.md",
-      "sha256": "3D8A645F3A7E4A1C7F58924DA912BBEF307A34342EF5C0C866ED3B9D435DE467",
-      "bytes": 2165
+      "sha256": "22958CF4D3CD3E0161E5264956FE1AE4FE0CB4B0B4201C2C2F8572DD9D61C885",
+      "bytes": 3063
     },
     {
       "path": "native-source/src/bootstrap/callback_observer.c",
@@ -1571,24 +1597,1169 @@
       "bytes": 11560
     },
     {
+      "path": "native-source/variants/build-variants.ps1",
+      "sha256": "A313603FBCF59115DF49BB082AA62EE7337B12D1714CF36A75B394945D4A7C30",
+      "bytes": 1494
+    },
+    {
+      "path": "native-source/variants/Clean/build-config/probe_config.h",
+      "sha256": "CC9330FF6378C426A74637D10CCE7D02418845E0EEA38041779D796E9604E718",
+      "bytes": 447
+    },
+    {
+      "path": "native-source/variants/Clean/build-config/version.def",
+      "sha256": "3118509640549265ADCF2634FBD5F00DB741BDE3A056374F198123FC2EA93D95",
+      "bytes": 712
+    },
+    {
+      "path": "native-source/variants/Clean/native-build.json",
+      "sha256": "BC56A6D16BE71699E7BD54D15AC601E60BC185D454B7E8139BBEE0C3369060EB",
+      "bytes": 6972
+    },
+    {
+      "path": "native-source/variants/Clean/overlay/src/stereo/gf2_touch_bridge_package.h",
+      "sha256": "BC02AA382825875AA70EECBD27611365C566E2BFF23B1F3BAC9EAD33C7B37E2E",
+      "bytes": 67999
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/callback_observer.c",
+      "sha256": "FADF40501E067DDCBA07DD6E9BE86E79ACFFDDE2D2FA73455C60F3D4AA012F92",
+      "bytes": 6311
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/native_probe.c",
+      "sha256": "6F7FD508511318C3AD178EC39540088BF8842D9B92007C1CCFC2E21E1598ECB0",
+      "bytes": 3609
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/portable_binding.h",
+      "sha256": "76FFA7F9A1BF3238D6C88C982FDC1164B9D1D7C462BB3048635222D5E6D17B15",
+      "bytes": 1667
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/portable_paths.h",
+      "sha256": "1368F2AD1E124C472F7F025335FC3162975363518BA782749391F83F88DBB23D",
+      "bytes": 5950
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/version_proxy.c",
+      "sha256": "DE6D7A6E4DA44F1A44C97B9C1A7CAC632CE4EE53A1E652B313836FAD4459518A",
+      "bytes": 2724
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/version_proxy.S",
+      "sha256": "76A33A12707499062798BFBA4663F6DDD03CC446C12DE3F633C51A83930F833E",
+      "bytes": 1506
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/xr_bootstrap_state.h",
+      "sha256": "F22115C35FBC17B4420B9CA8525F3D6B07F35C0815C18C34802DC1704E047BAA",
+      "bytes": 4200
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/xr_bootstrap.c",
+      "sha256": "FF35895F7F4728EEB9A3FF8E48D24DF433D44DF5635863A7FF2AEF1711038CAA",
+      "bytes": 5907
+    },
+    {
+      "path": "native-source/variants/common/src/panel/panel_capture.h",
+      "sha256": "F930CDC827B92196C5DDDED0A742C2ABEC494D02320E5146B32B4695C9BB30D8",
+      "bytes": 16558
+    },
+    {
+      "path": "native-source/variants/common/src/panel/panel_xr.h",
+      "sha256": "01294C568B399843D70BA9CAD9FDBFE06227391A9D5FAE3799EE02873728E501",
+      "bytes": 20855
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_canvas_scale.h",
+      "sha256": "0EC56EAD6F6E1396CAF4664DA3AF4B9C8BC6CADD3AD3A7CE5BDBF3BDD44B9A70",
+      "bytes": 2039
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_canvas_scope_runtime.h",
+      "sha256": "1357BB2D6FBE591DE4C0564EAAEB0348D215407EB5CB47FD8DDEE7F08CB9A66E",
+      "bytes": 8355
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_canvas_scope.h",
+      "sha256": "522680EB1D3BFDB2C5D6A6CD83F1DE200E72A081EC8EDFCDFE52AEF3BBF8096A",
+      "bytes": 3068
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_eye_group.h",
+      "sha256": "D296403059F905ACA01C5B0C61CD1BF4EB411F1BEE379E3761BA366E386DC355",
+      "bytes": 24936
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_primary_ui_runtime.h",
+      "sha256": "A3AE3FB4E3543C1DDA9FB2157A4552F2F523C93F563D3BA10C1D1D76A09DBD4F",
+      "bytes": 32214
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_private_batch.h",
+      "sha256": "46ACB173060B7E4A0F4BF1D5AE2D2564A06B66B708720BC4A2CF5B50554797C1",
+      "bytes": 3559
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_private_ui.h",
+      "sha256": "F2737224C52FC8378FA452C4149582838D595EE1A5201CD65378C1DBFFD61B60",
+      "bytes": 18170
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_producer_engine_bridge_package.h",
+      "sha256": "1DDC13DBCDA4C15C6E3AA61DBF065D99B2B238441739AABE5EAC8DC3879FB025",
+      "bytes": 44498
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_source_group.h",
+      "sha256": "C8C3FB6A77177427DDB4DD3767E0BDC16CA667FBCAF9190368BB374C441642D5",
+      "bytes": 26678
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_stack_plan.h",
+      "sha256": "E58E91F34936A743DD9F8C9A0837CBDC69EA8FEAC18F674A5884C35B942BB49B",
+      "bytes": 2919
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_target_surface.h",
+      "sha256": "3CE4749D9B76355E291FC1C9DBC3717BBA0032FAEFD07006870A438269B30FA2",
+      "bytes": 3932
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_camera_registry.h",
+      "sha256": "3A96B197E322EB6C0F1F7FCF526CDC4C203CA54296AB0C768FE6B187865C10C4",
+      "bytes": 4282
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_canvas_membership.h",
+      "sha256": "D3AF9E6045143DBBB84FBB95C20EE1A2683B243B747372EAD7584A6A3DAC8D37",
+      "bytes": 8174
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_config.h",
+      "sha256": "717C4B03024A39B269CFC82712E4795BBFCF0EE1A65CAA440BA441C0CBAEE2D0",
+      "bytes": 1017
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_frame_eligibility.h",
+      "sha256": "08E5F107E96C80A730E2F97CB119725ABD79BDE0619216491D86583A7A61E078",
+      "bytes": 3285
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_geometry.h",
+      "sha256": "0B42745C9B930B9ACAAF99C5A9586615AFC57C9D0B7FBA9ECE998D19E479E97C",
+      "bytes": 13358
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_native_register_observe.h",
+      "sha256": "91B729FECF214294A8C47B1CCB839EE5990CE6B811C8EFB2601B6AE7C682D495",
+      "bytes": 8991
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_route_observe.h",
+      "sha256": "65AF4B680A641FBA48D949481BA6291D38AB0106C676942930968D212F505FC7",
+      "bytes": 6805
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_transition_group.h",
+      "sha256": "BC2C42FFA847FCCA40C7463E20808C2C0320798EAA588FCFADFBA490F4EB425C",
+      "bytes": 2045
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_transition.h",
+      "sha256": "69F93300409A896B15FB0A28F68CBDB5149523642A4A0C6180124EE3138CB555",
+      "bytes": 3324
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_viewport.h",
+      "sha256": "84A963B13BA8C1A7B144EE3122CED24075892428467D7F4B0C373182CA5B5EC7",
+      "bytes": 3352
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/async_throughput_observe.h",
+      "sha256": "16852BA7E061538C80CB4FBB8081E28DF9E377C92922ECBF63042F9A911C7FB7",
+      "bytes": 3686
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/auto_stereo_policy.h",
+      "sha256": "AA11976472E28D10036560D86E88E8A531C67C2E22DC2823EC61B409BF5F38C6",
+      "bytes": 697
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/aux_panel.h",
+      "sha256": "FEEA9F8CC4F67EF64A34B645C4E57E9DD6C4C20C0F3B476EA1344A416F8351EA",
+      "bytes": 18859
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/bank_eye_write_observe.h",
+      "sha256": "D4B48C67BBABFC0E75AD7C3F207BDBB27E17D2FC85A26393E6E3C84325B6C735",
+      "bytes": 7917
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/bank_fence_observe.h",
+      "sha256": "84378DF50C1F9CB4B4CCD01F86877559183AF2895515056FBEAF309346B0DE1B",
+      "bytes": 8420
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/bank_gpu_observe.h",
+      "sha256": "E521F89838AEF3CA93913F9F579C022496DAB1E032E1E210AEE414501DAA3BE4",
+      "bytes": 5929
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/bank_presentation_runtime.h",
+      "sha256": "3CABCC3AEC4CF17A9C8732DC3A79F4E8584FC9F49BD663420419C100D5C96D51",
+      "bytes": 27361
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_data_owner.h",
+      "sha256": "156448DC1674111FFBFA34DA5171106521EA9643AE3E8BD88561BF26C8B760CE",
+      "bytes": 8562
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_data_references.h",
+      "sha256": "22394129FDEDCBB252401D6A962A335D6AA6DAC5A33589C0B56D9225F4933618",
+      "bytes": 11471
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_data_settings_binding.h",
+      "sha256": "29BC01986D0C3FA101A2EA2D77D8CC37FBD07193C55B4BFCC6F9D9B2C726CC5D",
+      "bytes": 2173
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_data_settings.h",
+      "sha256": "69A695B6ADE55E34B50E611FFAFAD5DFD06828A671FAEAE40AABA440CFD67389",
+      "bytes": 5067
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_follow_config.h",
+      "sha256": "E6B141AA1B49419F34F9C6C1D98A25DE786A586B7C5EC71F95C0E4AA4A2E368F",
+      "bytes": 2630
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_follow_handoff.h",
+      "sha256": "ABAEF0D71E88739D2CE8D5139C5372B7CEE0B39BEF89B2B50304CBF7A579BF41",
+      "bytes": 2752
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_follow_source.h",
+      "sha256": "590628D7DE6BB73EB169355270779B517272FE3EEE6720E0C245787470CE65AE",
+      "bytes": 988
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_pipeline_scope.h",
+      "sha256": "6D2AB7A715E8093B3DB0557BE358929BB715071F64D63D027F69AEC67E08019D",
+      "bytes": 3192
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_render_scope.h",
+      "sha256": "FF9434188AE43E3A2418B140A0B6B33EAB437AC8A216AEE57026F13B178139D3",
+      "bytes": 4654
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_return_handoff.h",
+      "sha256": "BD6A2DF3146B1DC9AFFDC7528B9F873884B0D0E34984775F338E2452DFEC085C",
+      "bytes": 2295
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_return_policy.h",
+      "sha256": "44A9B9CC3760B849C5B31DA53071BA00D1C2CBA387566E738C236679DC493D0E",
+      "bytes": 2249
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_return_runtime.h",
+      "sha256": "1F0E6D95C4251C1DC5B217908F7BC5469A5C029AC33850CAEBFDEB2F8C9C3285",
+      "bytes": 4647
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_stack_links.h",
+      "sha256": "40D6BACC244562CD0CCBE669F9D9257B7ED6F19755AC83905C869F6DB3595FFC",
+      "bytes": 6926
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_stack_managed.h",
+      "sha256": "8EF4719082499366118E13680EC7D342FA359048B58BE2BCBF1CFF71A08DC242",
+      "bytes": 6463
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/capacity_experiment.h",
+      "sha256": "A90A152E244467ADFD9731A8D0D02E287EF28B3020BDD375105E7590B028D870",
+      "bytes": 355
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/completed_presentation.h",
+      "sha256": "36950B9926F18A4DAF44380F57590A809854AC6A2B9FA6FAF0B934ADCCF664C7",
+      "bytes": 4719
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/completion_memory.c",
+      "sha256": "5EE0E1D316B180AB3C999F1D0AB9A52E863697EAFE50B9E1A4DB06CC000A8140",
+      "bytes": 469
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/composition_bridge_image_binding.h",
+      "sha256": "5DAF18C1177CE0F68395C5FE2C368910274511B3C50AB7A778FF6C36B3BACDB6",
+      "bytes": 3211
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/composition_bridge_image.h",
+      "sha256": "BFAD10BF33B0D78339E6FF89FCD33AA624643AFE199160BE3C5A1DD118C27C05",
+      "bytes": 3551
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/composition_camera_plan_binding.h",
+      "sha256": "63B4D066615584E0D40ED894EDA6661E905C99519A31867D71CF7B6ECA64D443",
+      "bytes": 1676
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/composition_camera_plan.h",
+      "sha256": "39DC828EA3C6B8BBE61564146CBD221F75CEF6E64A9AC1DA5600A8EA800639C1",
+      "bytes": 2326
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_actions.h",
+      "sha256": "EEC1EC84B6B6E4D5F4F1901C3C04EDA1E76CC5A50AA970F717E0615C7CFBE08E",
+      "bytes": 7286
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_cursor_gpu.h",
+      "sha256": "DE1C6E4218305A20AA1CF6AAD2D183BD84DDC6E1476D745BACB9E0D16F38DABA",
+      "bytes": 2991
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_face_config.h",
+      "sha256": "C966765888A3DC87AC8483C82D8B33CCA9543B71C852EC3FB484520FC53CC131",
+      "bytes": 2604
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_face_runtime.h",
+      "sha256": "D0D49F11F9229CC74A529B394A2999886F8861E3A09296C488D59FAAEACFB2AF",
+      "bytes": 1565
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_game_actions.h",
+      "sha256": "76D91C50B90A9890176D857434C9D90489FDF7E548E20DE31081E947C6D83DB5",
+      "bytes": 2988
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_game_keys_win32.h",
+      "sha256": "2AC48588AFA4DAA7F680145012BE382637035475BF32A92C19C300C54D7DD5D6",
+      "bytes": 3128
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_game_mode.h",
+      "sha256": "80519B293902525B5C88BE18B32FA93AA6D445324F87BE18D5A23DBEEC85A0CF",
+      "bytes": 5505
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_game_runtime.h",
+      "sha256": "7A170A949A4FB19E11718C71E2C7943A04C28E7BD20481B85C38E6C35BC44D74",
+      "bytes": 6695
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_input.h",
+      "sha256": "CDA9D6A38E35ABF4938F82BE3766F243F216A1F9B8F03FC5EBA8ECA8C0CC90BD",
+      "bytes": 9549
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_paths.h",
+      "sha256": "D707AF9D7A38D32EFC726C937D49C17695C2B3029763BC6C04BED16AF4A0B36D",
+      "bytes": 1154
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_platform.h",
+      "sha256": "50FB01901D0C91EE60FC7D32A574502FD2020C2C9548C50F6AD8B9EE46AFC217",
+      "bytes": 959
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_runtime.h",
+      "sha256": "77E76B04AD42C66F79A568A7BCED101F61B197217E55192D8F7F3F139C837890",
+      "bytes": 16560
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/controller_win32.h",
+      "sha256": "FA2A2BF17A9D412DDC92C845E4F1238152471231BE08ABAAD6AD436077E14613",
+      "bytes": 4520
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/copy_gpu_observe.h",
+      "sha256": "3969737AC244531738634D614C9F3B77BA18DCE41CC1B7F24F12DD38D2B8E094",
+      "bytes": 6744
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/copy_present_observe.h",
+      "sha256": "111F6E875A8DB2C1F15585C9F332010318E5633A8AF3847E140BAB55DEC4332E",
+      "bytes": 4906
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/dialogue_ray_geometry.h",
+      "sha256": "5DE82EAE46C0E96106E9C26B53A6666D4CDECAB168B3DA44CC649A0FA3FBC392",
+      "bytes": 4196
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/dialogue_ray_surface.h",
+      "sha256": "27CAF14431BB3C96A1529BDC781F13797542294654A530F3B51AA5319CC216B7",
+      "bytes": 4222
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/draw_order_probe.c",
+      "sha256": "2F95DCF44E58D4343B502AC2E94315E448CA3E970A8FF46FE3C6E503D9EAF0D9",
+      "bytes": 941
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/draw_order_probe.h",
+      "sha256": "38828FA83A6E41C6178D740EC1A28F27D0F038CE318DB6288C1D3440F9116242",
+      "bytes": 334
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/draw_queue_contract.h",
+      "sha256": "F5D5861E04DE3CE323C7D3C3CCDE2DBAD787378C72658727F6C1520E9ADDAB17",
+      "bytes": 3052
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/draw_runtime_contract.h",
+      "sha256": "79D9EAB77C7215DB5891872EE21CFCFE918DE65B2CA7BE3463043C0E64E3DA44",
+      "bytes": 1392
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/end_boundary_observe.h",
+      "sha256": "5811DE2E406442BD0F7FE25335FF2D7319B853FB8450D38EC987C77239DD2DAA",
+      "bytes": 1021
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_dispatch_bridge.h",
+      "sha256": "CF9D3B3992E2FE2AD278D5DAED17FDDC5DA890649A51301E9E2554B22D98070C",
+      "bytes": 3030
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_event_copy.c",
+      "sha256": "F6B67598E8B2EEB64D005097B124FAE8F4261143FD6D746906E8ACCEAA761A97",
+      "bytes": 10045
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_event_copy.h",
+      "sha256": "A01B1977DCD41A8D3E7AF7C30F920DCF002D257C03C3D1CF6BB98D8DC9A2F9AB",
+      "bytes": 3883
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_event_notice_integration.c",
+      "sha256": "6E1DF411FE8A4322FE87EFE3CC4749C5AA3687D43F48E87C99BA1FD9E840B8EF",
+      "bytes": 2131
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_event_notice_native.c",
+      "sha256": "8A0EA9877C197B766525DC3E15F8606B3FF736F281C5F210B65ECC871A19B92D",
+      "bytes": 716
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_event_notice.h",
+      "sha256": "9F446800C9713A62D2FADECE20F0C739071AE11D001DD53ABD615F4CB887C1F9",
+      "bytes": 5582
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_flight_backend.c",
+      "sha256": "DF8DF00D85FCBE1A691207BB2AF3FC20A0242C3D1CBA075FEBCE162BFEF2622A",
+      "bytes": 25914
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_flight_backend.h",
+      "sha256": "C88B5BDAB10D622E9865449599D3FE9BEE1AEADB8EBFF24B67904D16327EB482",
+      "bytes": 5666
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_flight_owner.c",
+      "sha256": "1385574E2DB37929709DAAB07415B3AEE6DEA84183132055E5F7E5591277A9EA",
+      "bytes": 29388
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_flight_owner.h",
+      "sha256": "58F6840432A52E666FD8B23B820ED0A5628E1022EDB0AB51248136D127293851",
+      "bytes": 7912
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_gpu_copy.c",
+      "sha256": "8F6F32664F25330C1121CD4ADE6BE36BF79AEE75556369C05B1D5D7571DC3741",
+      "bytes": 17088
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_gpu_copy.h",
+      "sha256": "9EB3CD763F2A52638BB7246DA1492C8D3616F9856AA70DAB38948A84AE03CDEA",
+      "bytes": 3670
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_native_cache.h",
+      "sha256": "DFEA7BBCB0F8337D89ED4A8CD6F1638C0F5F9898FE4A1D45D71FF47C31E3FABF",
+      "bytes": 6442
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_native_targets.h",
+      "sha256": "7CF647FA3C1B733EA31C8F255786E536667AA2239058AC3D686B9FA218BEB0AD",
+      "bytes": 6577
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_optics.h",
+      "sha256": "F60947026FEDFFC8BE67F5A54BE682F8CB3B2CB1EA8EECEC6D0B9B9B550A6DF2",
+      "bytes": 4570
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_pose_pool.c",
+      "sha256": "767047FC54D18165EC618DCD1D2FDA708FC403BC6A381A60B7F0AD16934CDE79",
+      "bytes": 4221
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_pose_pool.h",
+      "sha256": "F3AC6C55A74A87267E13C0116603D78FEA8E4906ACE98C7CEB9E480D06ACEDF5",
+      "bytes": 1517
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_render_interval.c",
+      "sha256": "7F2D9A545410C0011F717E37BD206C98B0CD671B09AC51454021654F86649DA5",
+      "bytes": 17961
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_render_interval.h",
+      "sha256": "48D14D943BEC6B28E034DEBDDF8C97FD0B537C552E98F3AF5A9FFA7B1305683F",
+      "bytes": 5116
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_target_hooks.c",
+      "sha256": "0D410EFA1D3521F99C13DFEC3F13C3191CFFA2F46FBC2DFF1B7276F2954CB826",
+      "bytes": 11184
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_target_hooks.h",
+      "sha256": "BFD3676D58791A8C5F59FCE69C8AC968200BFFF835A7EED68DE7F96A0D8405AD",
+      "bytes": 1603
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_target_watch.c",
+      "sha256": "56E407820E5796B97B7329374B4ED2CB77FF479C3F5C346686D0A67DBDDFB4C7",
+      "bytes": 6684
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_target_watch.h",
+      "sha256": "C2C750F7C3CC452AE9A1042EF296D8F080AFB8DB4C8C64AA3AA0710652060C71",
+      "bytes": 1709
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_upright_ps_uint.h",
+      "sha256": "3CA0C25C28D4EBD90047E1A047FEBB3708AF5EDEF50BA47EFC8721A06B3E8CEA",
+      "bytes": 5631
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_upright_ps_unorm.h",
+      "sha256": "998C04CFD3DBBA49F1523759AF76E5E2C69A458274860D8705CB06E87CD60045",
+      "bytes": 5644
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_upright_vs.h",
+      "sha256": "CF7F704DD50A42162D91A7E10092833C360D7B5D2C00C1A3E7E6B39CB6792DEF",
+      "bytes": 4735
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/eye_upright.h",
+      "sha256": "59477728B032F6D00AA23DAAEA05CF127682AB6A0CC3FE52CC4660ABFB639860",
+      "bytes": 3938
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/focus_capture.h",
+      "sha256": "4C0E45793C954F7164AFF6D52E2355DBCF418BC13A266D7FAF29A46AF16424AD",
+      "bytes": 4630
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/focus_gpu_observe.h",
+      "sha256": "EAE74D31E5587D9768B6CADE722570B2A0560EFDD42722FE3A790BE6234C7C5D",
+      "bytes": 7093
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/focus_lineage.h",
+      "sha256": "1AAFBCDD5DF5DB6A73D812BAC6B3E0CDD688EF326B8F56DF6DAFE8D1C2C1B1BA",
+      "bytes": 7221
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/focus_projection_runtime.h",
+      "sha256": "20F9C0B9AA96557057889B31F8C209A9812146A80A937469686EC437681DB4ED",
+      "bytes": 7741
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/focus_projection.h",
+      "sha256": "4B261E85604BC060CC201EFA13A5BC159B24B19F7C9B16D41A012633CB83E9FD",
+      "bytes": 2189
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/initial_pose_key.h",
+      "sha256": "BF573E1874E73B1BF9AD7C4B1A0855AC3C8FA90207359200D885F29ABB300818",
+      "bytes": 463
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/main_multicamera_observe.h",
+      "sha256": "D81697B181DE1FCA32A5125AE489C9BA68F6149BCD808317A49651677FD4F793",
+      "bytes": 6076
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/main_phase_roles.h",
+      "sha256": "4B6F7D14FA52CE8DAFE9B13FB69771CD49731A6062D8BDD97B300C29320C3C1C",
+      "bytes": 3439
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/main_test_grant.h",
+      "sha256": "734DCD1ACCB4E86742DF3BCFC635C8B16F5F8347D2AFBD7C0B3FF5D64F8B5756",
+      "bytes": 8236
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/managed_camera_batch.h",
+      "sha256": "A1A937236ACDA6883A693A8F8752DBF4E8E84AE0672D21E3E4A050E1E5E59183",
+      "bytes": 3803
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/managed_eye_binding.h",
+      "sha256": "A50982D1FAD0BE43E760F52145021222277A5DAF9907E15CB1757D898CA612DB",
+      "bytes": 8262
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/managed_eye_camera.h",
+      "sha256": "E6AD7D21702FD5FA24D3367467FBFE92187F6FDA06FC223FCC6EFA12675B253B",
+      "bytes": 14682
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/native_boundary_observe.h",
+      "sha256": "5C83C470FE48ABBFF1723E97CD3AC8EDD54506B1E17D8195A17154E027FACA0A",
+      "bytes": 4965
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_actions.h",
+      "sha256": "2454B82DCA5346C978B0BE723644ED1A9A30FFD7ABEEBDB6E28A3A1BB051456A",
+      "bytes": 6577
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_block_observe.h",
+      "sha256": "D1F1020960334B0B7E3D567C8552CCEB9714724819534BEFE210E8F337B76445",
+      "bytes": 10162
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_config.h",
+      "sha256": "0CDBC36A03373177C33410A605F9D55FDB4EE006654D8E8652EA202E7DCD1344",
+      "bytes": 3728
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_handoff.h",
+      "sha256": "5E98EB81AFF4CEE692F55516C4F02C6610BC5EC13BE0CCFA659CD4E8B8C845F0",
+      "bytes": 3580
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_policy.h",
+      "sha256": "1C1B7B103FB8F755008A0F6446A55FF1016D278DC7E771A31767A6DD18B25EA1",
+      "bytes": 9980
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/navigation_runtime.h",
+      "sha256": "E0C82ED8B74C0D4A31768D42457A8183BE5A9AF59D93334591DB293A212DBB8A",
+      "bytes": 8700
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/numeric_loss_observe.h",
+      "sha256": "626DC26654C69194D49D11CA948783F9FB95185C7BA476104FF20EFA979F0E36",
+      "bytes": 1690
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/numeric_residency_log.h",
+      "sha256": "42C9E167799E65D45A7BC77BE82B5BF9084F8CF7221D3D7EAA5D270DD1A3A7DB",
+      "bytes": 1467
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/numeric_residency_persist.h",
+      "sha256": "B9E41D8496E2B615D243E48E57A4FD0BA9842EE8D18C204E1427F97A9ADF880A",
+      "bytes": 6915
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/numeric_residency.h",
+      "sha256": "CDA6114A0C64C5DDB7EB828B8B63DB42659A61BAD74F6F56FB7A2665951BABCE",
+      "bytes": 1217
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/panel_eye_bridge.h",
+      "sha256": "36A2D44674273B09254A7C7DA5663C5A8F16AEB9998C1CE342ED76BEC2A22480",
+      "bytes": 4960
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/pose_apply.h",
+      "sha256": "F5C73E8E7CCE7D02F75B01039FE0C1C2F25EC53B03A9B8C89751D03DBFA84C35",
+      "bytes": 2810
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/pose_composition.h",
+      "sha256": "76FCD3EDDA80412E272037AE08DD0268A2BA056F81E534274D1932C6D0F9D9C9",
+      "bytes": 9016
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/pose_math_binding.h",
+      "sha256": "8BD0FBFDADE2A24ADE6FD147FF11608C49DB46637D75D8294FEF2B6A966D74DF",
+      "bytes": 1783
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/pose_render_check.h",
+      "sha256": "F7FB35319C4144DAE6188596B1BE9C1307B7DD29871333F48A846E2B1A6248B3",
+      "bytes": 2173
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/presentation_bank_pool.h",
+      "sha256": "B267885544D2FBB7C4ED234E9669546EDF38034799DD8314AD2B6E4AE17CEE72",
+      "bytes": 7956
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_borrow_return.h",
+      "sha256": "A0CC053E224FF360691704107367F2B70216EA77B682894364CF4DD344ED9599",
+      "bytes": 1444
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_bridge_invoke.h",
+      "sha256": "0042200A07737DFE923652152024BE2A5B25BC609BE642C390FC561735D40DF8",
+      "bytes": 3710
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_engine_adapter.h",
+      "sha256": "D15ED89AB79B114705A459D0719BA9DEB1733A3D91718975C0C4A1715C6619F7",
+      "bytes": 10603
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_engine_transport.h",
+      "sha256": "9D703772A64A408CBCAC1365CC4FE982F5D1D744062EAA0CD5D0ACAF16C3A47E",
+      "bytes": 2671
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_image.h",
+      "sha256": "A1A49810BCA8E0D8D7AC249B3889F512923D107F4F1734132F66923BF4FDA6D4",
+      "bytes": 2619
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_install_diagnostic.h",
+      "sha256": "E05DA96F4D3AFA2139DD91C268B3442834B00FBFECF9479950E42D35BD300D80",
+      "bytes": 2633
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_pending.h",
+      "sha256": "C687B905960DA67FCAB46909361E93145C12703CE814C6012DCFE4A84022F219",
+      "bytes": 913
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_prepare_lifetime.h",
+      "sha256": "DD64F4E92CABD85F0EDEE14C57A31AAC6612AB375E5656C684E4894F886777ED",
+      "bytes": 2239
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_scope_native.h",
+      "sha256": "5CF376A8309D89376031976889254465C75A1504BA6C720D32EA31227AB2CBBC",
+      "bytes": 7205
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_scope_observe.h",
+      "sha256": "B6FF1E586B972520F087982EF17CDDDA89BAB25CAA2380D8DB87BFCC85DDB978",
+      "bytes": 40439
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/producer_tail_order_observe.h",
+      "sha256": "95A2009602EC476D0EE1A36B041C2A660252C780848AAEC39DC90274E0F6B9B3",
+      "bytes": 1271
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/recent_camera_anchor.h",
+      "sha256": "CEF5E2DC4EAD64FDCF6F62DD9C6CBF640FBF919DD24FCF9E0261717CE87C7389",
+      "bytes": 5243
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/render_observer.h",
+      "sha256": "1A786F135CE68AF91503733A3CD827B2B7D0859A8C2385B794770B73A5E867F1",
+      "bytes": 8084
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/render_pipeline_integration.c",
+      "sha256": "1CB892B0AEC08F8A382CF83B8A42ABC0E5F6421A87BE8ACB86C6B99B0174FDCE",
+      "bytes": 220652
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/render_scale_config.h",
+      "sha256": "1918EC33F2F53C1EC71691979015494755FEB68EE76D15894C2BBE94212E2B4B",
+      "bytes": 3720
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/render_scale_runtime.h",
+      "sha256": "D28D1BEF0C78FAC3192E7DC5A47B504E3E87E0D4E35EF161304696D029993F96",
+      "bytes": 943
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/reserve_state_observe.h",
+      "sha256": "94E863DD20AF6AE0678B1EA0FA609EF7102CF930569C241A728CDDE2884857D4",
+      "bytes": 935
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/root_interval_observe.h",
+      "sha256": "9D755A620EDDCBA88F1D3B2D938D6E8060EDB1665B014876C3A2992FE31550C4",
+      "bytes": 2060
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_anchor.h",
+      "sha256": "3203980768973ED053C76C475EFA84A478AC16E089F8CB5824668FB35569D9DD",
+      "bytes": 2523
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_eye_pool.h",
+      "sha256": "0A2E7C754953F5B78FE60F6D7D5D21B1044738EAC38708B60B125A4BBEB06DEA",
+      "bytes": 7423
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_eye_prepare.h",
+      "sha256": "C44EA4C3750167D7117354CD344C1B273F4E9F02A0765A964D25878615AD1A7E",
+      "bytes": 5795
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_generation.h",
+      "sha256": "168B1DAC353D67CDC7D548FC60C2BFBA25E29FD8C64EE53FCE7F4393A7B5D0B8",
+      "bytes": 8496
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_live_owner.h",
+      "sha256": "E26F3784683056A44AA450BDD2E4702F07EA29A30652291EEC676949DA7ACF76",
+      "bytes": 12629
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_observer.h",
+      "sha256": "414A0B4EC560DE415C01448120FE5C50AE39A99F34743911DDBD13F2AF20C661",
+      "bytes": 9937
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_pose_apply.h",
+      "sha256": "B701C79124740E6543BBD5AF0259F19B5433FA636A5BB0DF80B11023572C187D",
+      "bytes": 2473
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_pose_reader.h",
+      "sha256": "97D5ECEC0FF29BC096D5F92AF83892C710EE59DB1757B006FD7719DFAA6D33FD",
+      "bytes": 4592
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_render_flights.h",
+      "sha256": "A0942D02CD27E360873E69E0B7AA268411E30975682C9FA319D9E7BF630479D3",
+      "bytes": 9198
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_render_frame.h",
+      "sha256": "0BACC180DCE512E03FF09AE31043DD38696C052A7D185995E2BA759C7BC3F099",
+      "bytes": 11028
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_retire_observe.h",
+      "sha256": "B3B80B89B4D62547E34EE575FDF46AA67EC61682942AD35D2D23EECDB19AF4BA",
+      "bytes": 5892
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/source_topology.h",
+      "sha256": "9D165A42C626AABBCC352D80139507C7AD81DFE6F4C2E94D031A8C3FBD4FC6B0",
+      "bytes": 12256
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/stereo_depth_config.h",
+      "sha256": "B4FB6EDFA848C4B0E24D700A599F2FDB51609108AA65ABBA3799889AFDD7B149",
+      "bytes": 1703
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/stereo_depth_policy.h",
+      "sha256": "98D3B0F85A0A32C8CFBF790F40BC8BF2FCFE6FAE2F62B2B45DD8083EA9EE3CBF",
+      "bytes": 2485
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/stereo_depth_runtime.h",
+      "sha256": "F77474F1102F80FF394839660881230FE1C7D81BB93D6B73063FAD33BF38049F",
+      "bytes": 7837
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/stereo_hooks.h",
+      "sha256": "172BE324C0A34FD1ACBFD69C09AECDBF9D0835F62F6F3F165B491718F34EADE2",
+      "bytes": 3419
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch_p3_runtime.h",
+      "sha256": "AE1DBCDCC097CF7CF9B699DF97FDBE72B98835C5A430DB211DA5D2F67686704F",
+      "bytes": 46796
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch2_capacity.h",
+      "sha256": "C65AA0427C466AF0BD50576DC0542E20F3FB191EDA48B36B4C83878C7BC615FA",
+      "bytes": 344
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch2_config.h",
+      "sha256": "0D4180C7A5A09BE4DDF953FE5CB9B16D35562B6BECA958D7A44145B73FA83F70",
+      "bytes": 10144
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch2_pose.h",
+      "sha256": "67CAB045B121B56DE87BA8A5248D808132CCD7DD1FF872BC78835F70E457332C",
+      "bytes": 5471
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch3_alignment.h",
+      "sha256": "6EB902E14572132E0B06CB5606AC135BFBAD6AC2ADBE2A45D03E20AFB0F67779",
+      "bytes": 4683
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/transition_hold.h",
+      "sha256": "48267CA220C0EEA9F6A1B96392687355230D923EB3579AA2B81B4BCA1F8759E1",
+      "bytes": 3052
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/two_flight_observe.h",
+      "sha256": "C89A2D799AFF4D400F4D772C38958F8BBC7C77B245CFA2D478DEB6DC9D8C82C9",
+      "bytes": 3226
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/two_flight_pipeline.h",
+      "sha256": "1B24C8D9340EB9173E940B0DD6303C6DB7FFDF29843F69D9A93B7DC9BC5815F8",
+      "bytes": 35310
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/two_flight_root_observe.h",
+      "sha256": "C44398EA112CBD58994E499B1070AA82F6EF55FD76A8AA15CEFD4B1916E64357",
+      "bytes": 5181
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_drag_actions.h",
+      "sha256": "8BE6AA76569D256DE2F008F652FBFE7412CF6AFB8FAA52F5E466612E671A1D91",
+      "bytes": 5077
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_drag_config.h",
+      "sha256": "600B3219CBF2D89722B1EAD6262DAD15294B0796095A469CFDD26792650D6284",
+      "bytes": 4779
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_drag_handoff.h",
+      "sha256": "F22611E8AE8EA4815CA67A29ED8DAD0FB04398D91A1CDCB80F122D436EC76AF8",
+      "bytes": 2215
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_drag_runtime.h",
+      "sha256": "7C79EA6D657A59D434B9AB90FFC909A1F90C165B2C3CE51334118F32C27021F4",
+      "bytes": 7072
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_drag.h",
+      "sha256": "E649E78382581B728983078BC4E3B70FAAB693E608106A11634E2A173F031940",
+      "bytes": 6856
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_scale_config.h",
+      "sha256": "A92149E795DE9EB710EA47B45365603EDFF2DC1766E175E52DA44C8A26EF9D0A",
+      "bytes": 1671
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_scale_policy.h",
+      "sha256": "08B658EC78803C47DDD06377BD0D9A8D2659E27E6ADFC6119A7B1DB3B0042DDD",
+      "bytes": 1516
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/world_scale_runtime.h",
+      "sha256": "988AF3166495DC3A85084EBC162BB4949861A32C5430D2B077D5A6086FE0342A",
+      "bytes": 2115
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_bank_transfer.h",
+      "sha256": "8FCCC543073F8C8251CDC7E32994D70B26DF72EF96BFEDC8BF802686F059BA73",
+      "bytes": 8530
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_display_exclusion.h",
+      "sha256": "64BFBC4603EED0DF1A086AB88BA173EE48702A4BC633C40FBECAE1DC69FFB70B",
+      "bytes": 1702
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_binding.h",
+      "sha256": "934B28CE1E2C64BA58216761967717DA971BCFA601BE3024E7F31CF76699E5BF",
+      "bytes": 1198
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_config.h",
+      "sha256": "6941ED6229D8E54C89FAD8076CC5071EB675A90E20CC47AF6B70E1FC01F404F1",
+      "bytes": 4009
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_flight_images.h",
+      "sha256": "1EEE738219E1696D6BFC2F730E38FE00937D14CEC2965AE5749D99D0ADA3F12F",
+      "bytes": 20522
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_frame_driver.h",
+      "sha256": "649B4B744CF6D94A35726CE2F7CBAF0DF92E63A609B3785582D4CF8BB227A1EC",
+      "bytes": 30613
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_input.h",
+      "sha256": "28F0271DB767DB8C5890499FACD82F885AA02A88A505272E714174EBDA4BCAFC",
+      "bytes": 4356
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_mailbox.h",
+      "sha256": "A4BF60E5135350D4B10A8F2EE1B96B0F2FE9EA389C74AAF0CDE4D074D77CEA6E",
+      "bytes": 2014
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_output.h",
+      "sha256": "5CE62FA78785FCC6C18C1BF4D047993292B45C6B891B430F76CDB77096F3C2A0",
+      "bytes": 12963
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_owner.h",
+      "sha256": "6B61E416E11A8C75737A6E117CE859ACD1FA313A7EFCE3CA6E5353F34F54AAF8",
+      "bytes": 7000
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_runtime.h",
+      "sha256": "02494A31A1C0BF4E2364F9AD3DB5154A28F60DEC3EA57683C5574DBD34F0EA27",
+      "bytes": 4064
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_eye_size.h",
+      "sha256": "7E7571F8EF9AC4BB5797CA6D8D9DCCCD2D392A90BC70837FB0E62C2B9AA8F1F5",
+      "bytes": 4220
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_frame_prefetch.c",
+      "sha256": "8B0B6C7DB7CD8642E690862FAD82F143C240E42FE1F56CAC6352C7D3898001CC",
+      "bytes": 5344
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_frame_prefetch.h",
+      "sha256": "26930B47BEEE386B1A3F254BE9DE86FCFA50A29DF49CDB010182F96F41373A0B",
+      "bytes": 2491
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_level_reference.h",
+      "sha256": "A391BBD137CCFD13B0D8F4C4668047CFD49F0EB64927110C0F3AD19F5D97D9FF",
+      "bytes": 650
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_ordered_frames.c",
+      "sha256": "147F249B535E1C16645668D056317630126E4227BBA59AD316FB28D88487AF5F",
+      "bytes": 6158
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_ordered_frames.h",
+      "sha256": "95595A84BBC025F50ED6F6F8F189D935F3DE8B57DBD25A1D121748D633A7725F",
+      "bytes": 1879
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_pose_coordinates.h",
+      "sha256": "21976101944A050F79C4306F9D64ADAB6110DCE4F9E9B065F348325FB857F239",
+      "bytes": 1604
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_presentation_banks.h",
+      "sha256": "0E40B685CBE56B3466AA7FAFA2B440252A45FEA0087B82B0FA78D26BE2EF4A40",
+      "bytes": 4301
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_presentation_cache.h",
+      "sha256": "E81F940B7D736681A67E7B4F75B2DC23D077FF57F8599AFBE60F7BBE6D816AC6",
+      "bytes": 4540
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_presentation_config.h",
+      "sha256": "073DDFFDAE950271BF47609D85B908E8678C74349140D2FE31906E084FED4211",
+      "bytes": 5251
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_presentation_flights.h",
+      "sha256": "97B2F7F6C288BBCAE9D65CED548496EA99F08EC1265AC448C91B99F5D85F6FD7",
+      "bytes": 9969
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/xr_ready_readmit.h",
+      "sha256": "BFBC978144098901087831716ADF12631A4B3DF6739D812B682DAF503C5BA230",
+      "bytes": 8327
+    },
+    {
+      "path": "native-source/variants/Dirty/build-config/probe_config.h",
+      "sha256": "39AB4E479E00AC3DD1C71B7DAD835E72D5E6D5C5B5A0CF00E4EC8353CDB2FCC3",
+      "bytes": 447
+    },
+    {
+      "path": "native-source/variants/Dirty/build-config/version.def",
+      "sha256": "3118509640549265ADCF2634FBD5F00DB741BDE3A056374F198123FC2EA93D95",
+      "bytes": 712
+    },
+    {
+      "path": "native-source/variants/Dirty/native-build.json",
+      "sha256": "A15E17E77B441E5A737143E901A766BA49FD25DC36C86A00D62F41DBF9E932C8",
+      "bytes": 7004
+    },
+    {
+      "path": "native-source/variants/Dirty/overlay/src/stereo/gf2_touch_bridge_package.h",
+      "sha256": "1524AA39F1459DAA9DDE283207AF6D54D220A3A7AEEB188C0381D4772514F876",
+      "bytes": 242377
+    },
+    {
+      "path": "native-source/variants/managed/build_touch_bridge.ps1",
+      "sha256": "70FAA39B695BA52734EE4F1609FFA733EF82DE7E66B02A9F710F99E4F68C02E1",
+      "bytes": 13547
+    },
+    {
+      "path": "native-source/variants/managed/CleanContactAdapter.cs",
+      "sha256": "896EE8FC49A1649586E2FF3A76FE93C40E88FCFE2D15A70EC8998113FEA02787",
+      "bytes": 926
+    },
+    {
+      "path": "native-source/variants/managed/ControllerDisplay.cs",
+      "sha256": "BC4A77823968516AAA839E68F7F4D1948AE965CE5441F4E2130543D7925F482C",
+      "bytes": 35432
+    },
+    {
+      "path": "native-source/variants/managed/dirty/BoneReadProbe.cs",
+      "sha256": "0583ED53D9BD1231BDBCCF70ECCAA642ADC1A0839F57FD831E17E7470B805F74",
+      "bytes": 12710
+    },
+    {
+      "path": "native-source/variants/managed/dirty/ContactConfig.cs",
+      "sha256": "B891E21852532C5755ADAD923EE0ADC1E0D07710A545947B010E8EE4AC5AD84C",
+      "bytes": 8717
+    },
+    {
+      "path": "native-source/variants/managed/dirty/ContactRuntime.cs",
+      "sha256": "986279F7A6A54DD578A3EEBC6CEE3314A193922F81D7BE1B3DBC0AB808F52A48",
+      "bytes": 31165
+    },
+    {
+      "path": "native-source/variants/managed/dirty/ContextActorContact.cs",
+      "sha256": "62F39949CF9C2D728A7D6E0ECE90235C561D022C46C888A3005980E063703120",
+      "bytes": 6302
+    },
+    {
+      "path": "native-source/variants/managed/ShaderDiagnostics.cs",
+      "sha256": "45595B5C7A72A64DBA6F64E95F573919274BDBF4640AB2CF8A7A0C8BD8B667B0",
+      "bytes": 5001
+    },
+    {
+      "path": "native-source/variants/managed/verify_touch_bridge_il.ps1",
+      "sha256": "DD3BD661D94B27095FE07AF995023ED61051DADB0258BB65FB725974B0F1CC59",
+      "bytes": 15434
+    },
+    {
       "path": "README.en.md",
-      "sha256": "3B36EB8860110415786DDBD665D5E8276D1F71EC728527E86C4DA80128627DD4",
-      "bytes": 3346
+      "sha256": "9E421DE442A089947D46BE463953EABED8B3D83ED353A56E8AA3EDEC342A6F34",
+      "bytes": 3443
     },
     {
       "path": "README.ja.md",
-      "sha256": "EC62122210FFE10D8B3260A7CFE64343267618F23DE697794D02BFD4A14D9148",
-      "bytes": 4049
+      "sha256": "0C31AA208977396F1E211AC2ACD35887990165680E458AB925BFCAB6AD9757D8",
+      "bytes": 4053
     },
     {
       "path": "README.md",
-      "sha256": "8CF5BA93ABDD696DB730DC6BE6D3E1739520412123E7D9BB5ACC6512E8443B85",
-      "bytes": 3583
+      "sha256": "FD9F3B7AA73EA43AD961EBF186FB98F69838DEF875D2635D0677DD638753BF61",
+      "bytes": 3830
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "54C5E7C866747837AE3A4744BA976FD0FC931AFEC88E71560DA154295BECC862",
-      "bytes": 3157
+      "sha256": "E25D0942C3558C918B11EDBDC1970110883B450AB0D8476C4F6AE911E02B7F2D",
+      "bytes": 3290
     },
     {
       "path": "release/1.0.0.json",
@@ -1606,9 +2777,39 @@
       "bytes": 1906
     },
     {
+      "path": "release/1.1.1.json",
+      "sha256": "59852D2AB7A59F6DC35F22FFF6694BDB1A4ADC5FF5C5F2740CE30E6BF09D38AE",
+      "bytes": 1903
+    },
+    {
+      "path": "release/CHECKSUMS-1.1.1.sha256",
+      "sha256": "0E42A44020859BFE131E7F43A4242F13F74C165BAD11DD3F007A59567D74EFEF",
+      "bytes": 398
+    },
+    {
       "path": "release/CHECKSUMS.sha256",
       "sha256": "54D7C6D0D9891AD53751F90E2B8203E1DBC4D14D80F133A2D01F024881EA7606",
       "bytes": 187
+    },
+    {
+      "path": "release/Clean-package-manifest.json",
+      "sha256": "1095DAE0A5C8F3606C5281C32CA6D4B295F9D57B1D5637D3C087AB6A26327D42",
+      "bytes": 4681
+    },
+    {
+      "path": "release/Dirty-package-manifest.json",
+      "sha256": "66C970706547CF77ED808F91918A64DB4CE19BDF7678A59994EE21C8BD593C87",
+      "bytes": 4681
+    },
+    {
+      "path": "release/GF2VR-Clean-update.json",
+      "sha256": "7D722E3828134BE9A5AA283BEB24C4DC7341DCB4E74C9CA9274FB2FDBD62ED1A",
+      "bytes": 1200
+    },
+    {
+      "path": "release/GF2VR-Dirty-update.json",
+      "sha256": "FCED293A5176A89FF7AFA283BAB7C5A1DF1E283398BD3322024FB5062EF52F93",
+      "bytes": 1200
     },
     {
       "path": "release/GF2VR-update.json",
@@ -1622,23 +2823,23 @@
     },
     {
       "path": "SOURCE_BOUNDARY.en.md",
-      "sha256": "08AB4DF3FD019B5DF18E39BE3D37557DBB6B96A832A267C327B91D4E1A6111AC",
-      "bytes": 3000
+      "sha256": "6D8C3BE236D47BC098D5E36A989493555F3A6ACC05D6871558FFEC5B80B3EDB3",
+      "bytes": 3403
     },
     {
       "path": "SOURCE_BOUNDARY.ja.md",
-      "sha256": "0E43C2136B0FE4896E488FB058F9A9478A62F56E54E310310EA96E68B04025B3",
-      "bytes": 3889
+      "sha256": "F2B97CB02106908B17E54441EE5EA2F76CD0FE95CC422DF8A4AF95CE83FEF477",
+      "bytes": 4321
     },
     {
       "path": "SOURCE_BOUNDARY.md",
-      "sha256": "9219C41819A166EE50DFACD183FF90BF525B47E002A6A611C6CF42C71F4DC5F1",
-      "bytes": 3214
+      "sha256": "AA4CF7560FE80E6C84B51083BDEA37941DBF75A4EE2F0A5443D913FD5FA45D97",
+      "bytes": 3619
     },
     {
       "path": "SOURCE_BOUNDARY.zh-CN.md",
-      "sha256": "71FE673067DAFCF35ACA7D3346069BD28AA1755AC3698DECD54B61A13E12F469",
-      "bytes": 2657
+      "sha256": "AA0999508CB5C41C555D8F7700BEDD97AB6EEFFA801533203CD3DA6080B00A2D",
+      "bytes": 3013
     }
   ]
 }

@@ -8,10 +8,15 @@ internal sealed class UpdateService
         string? version = await Task.Run(() => UpdateStaging.ManagedVersion(root), token);
         if (version == null) return (null, null, null, "updateUnmanaged");
         if (!client.Available) return (null, null, null, "updateAccess");
-        var release = UpdatePolicy.Select(await client.Releases(token), version);
+        string? flavor = new InstallationEngine().Inspect(root)?.BuildFlavor;
+        ReleaseCandidate? release;
+        try { release = UpdatePolicy.Select(await client.Releases(token), version, flavor); }
+        catch (InstallError) when (flavor != null) { return (null, null, null, "updateVariantPending"); }
         if (release == null) return (null, null, null, "updateCurrent");
         var bytes = await client.Metadata(release.Descriptor, token);
-        return (release, UpdatePolicy.Descriptor(bytes, release), bytes, "updateAvailable");
+        var descriptor = UpdatePolicy.Descriptor(bytes, release);
+        if (descriptor.BuildFlavor != flavor) return (null, null, null, "updateVariantPending");
+        return (release, descriptor, bytes, "updateAvailable");
     }
     internal async Task<PreparedUpdate> Stage(string root, ReleaseCandidate release, UpdateDescriptor descriptor, byte[] bytes, CancellationToken token)
     {

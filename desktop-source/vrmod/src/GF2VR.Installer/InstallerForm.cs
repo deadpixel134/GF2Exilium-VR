@@ -69,7 +69,7 @@ internal sealed class InstallerForm : Form
         install.Click += async (_, _) =>
         {
             var chosen = plan;
-            if (chosen == null || !Confirm(InstallerText.Format("confirmInstall", chosen.Package.Version, chosen.Package.Files.Length, chosen.Root))) return;
+            if (chosen == null || !Confirm(InstallerText.Format("confirmInstall", VariantVersion(chosen.Package.Version, chosen.Package.Native?.BuildFlavor), chosen.Package.Files.Length, chosen.Root))) return;
             await Run(() => engine.Install(chosen, Progress), "installed", chosen.Package.Files.Length + 1);
         };
         remove.Click += async (_, _) =>
@@ -134,7 +134,7 @@ internal sealed class InstallerForm : Form
     private void RefreshDisplay()
     {
         bundleNotice.Text = InstallerText.Get(packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
-        summary.Text = InstallerText.Format("summary", plan?.Package.Version ?? InstallerText.Get("unavailable"), receipt?.Version ?? InstallerText.Get("noReceipt"),
+        summary.Text = InstallerText.Format("summary", plan == null ? InstallerText.Get("unavailable") : VariantVersion(plan.Package.Version, plan.Package.Native?.BuildFlavor), receipt == null ? InstallerText.Get("noReceipt") : VariantVersion(receipt.Version, receipt.BuildFlavor),
             (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
         files.Items.Clear(); foreach (var file in plan?.Package.Files ?? receipt?.Files ?? [])
             files.Items.Add(new ListViewItem([file.Path, InstallerText.Get(plan == null ? "ownedAction" : receipt == null ? "newAction" : "updateAction")]));
@@ -144,6 +144,7 @@ internal sealed class InstallerForm : Form
         install.Enabled = !busy && !pending && plan != null; remove.Enabled = !busy && !pending && receiptHash != null;
         recover.Enabled = !busy && pending; openSettings.Enabled = !busy && !pending && settings != null;
     }
+    private static string VariantVersion(string version, string? flavor) => flavor == null ? version : version + " (" + flavor + ")";
     private void Inspect(bool setReady = true)
     {
         plan = null; receipt = null; receiptHash = null; settings = null; pending = false; hasPrevious = false;

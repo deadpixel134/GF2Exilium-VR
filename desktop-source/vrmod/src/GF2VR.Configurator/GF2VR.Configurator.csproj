@@ -7,12 +7,13 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>GF2VR.Configurator</AssemblyName>
-    <Version>1.0.2</Version>
+    <Version>0.1.0</Version>
     <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
     <NuGetAudit>false</NuGetAudit>
     <OutputPath>../../build/settings/bin/</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../GF2VR.Installer/VariantProfiles.generated.cs" Link="InstallerUpdate/VariantProfiles.generated.cs" />
     <EmbeddedResource Include="Locales/*.json" />
     <Content Include="runtime-contract.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

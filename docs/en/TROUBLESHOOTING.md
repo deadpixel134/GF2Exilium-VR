@@ -1,6 +1,22 @@
 # Troubleshooting
 
 [한국어](../ko/TROUBLESHOOTING.md) · [English](../en/TROUBLESHOOTING.md) · [日本語](../ja/TROUBLESHOOTING.md) · [简体中文](../zh-CN/TROUBLESHOOTING.md)
+## 1.1.1 — Clean / Dirty
+
+| Feature | Clean | Dirty |
+|---|---|---|
+| Ordinary VR, stereo, controller input and settings | Included | Included |
+| White spheres at both hand positions | Included | Included |
+| Character breast contact and deformation | Excluded | Included |
+
+Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
+
+Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
+
+Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
+
+The remaining detail is retained from earlier versions. Use the 1.1.1 download and verification scope above as current authority.
+
 
 First identify where the problem occurs. Settings saving, installation or updates, and the actual VR display or input each require different checks.
 

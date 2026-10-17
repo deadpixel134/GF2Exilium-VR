@@ -10,6 +10,7 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-variants")) return VariantChecks.Run(Value(args, "--clean")!, Value(args, "--dirty")!);
             if (args.Contains("--self-test-package-location")) return PackageLocationChecks.Run();
             if (args.Contains("--self-test-ownership")) return OwnershipChecks.Run(Value(args, "--package") ?? PackageLocation.Resolve());
             if (args.Contains("--self-test-flexible")) return FlexibleLayoutChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
@@ -52,6 +53,14 @@ internal static class Program
             if (args.Contains("--self-test")) return SelfTest.Run(Value(args, "--package"));
             if (args.Contains("--verify-localization")) return 0;
             string root = Value(args, "--root") ?? FindRoot();
+            if (args.Contains("--install") || args.Contains("--remove"))
+            {
+                if (Value(args, "--root") == null || args.Contains("--install") == args.Contains("--remove")) throw new InstallError("path", root);
+                var engine = new InstallationEngine();
+                if (args.Contains("--remove")) engine.Remove(root, engine.ReceiptHash(root));
+                else engine.Install(engine.Preview(root, PackageLocation.Require(Value(args, "--package") ?? throw new InstallError("manifestMissing"))));
+                return 0;
+            }
             string package = PackageLocation.Resolve(Value(args, "--package"));
             if (args.Contains("--interrupt-fixture"))
             {
@@ -82,7 +91,7 @@ internal static class Program
                 MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
-            if (args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--install") || args.Contains("--remove") || args.Contains("--self-test-variants") || args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;

@@ -68,6 +68,7 @@ internal sealed class MainForm : Form
         BuildPage("activityUiTab", Fields.All.Where(f => f.File == "activity_ui.json"), "activityUiSummary");
         BuildPage("controllerTab", Fields.All.Where(f => f.File == "controller_input.json"), "controllerSummary");
         BuildPage("worldScaleTab", new[] { "worldScale", "linkStereoDepthToWorldScale", "stereoDepthScale", "linkMovementSpeedToWorldScale" }.Select(k => Fields.All.Single(f => f.Key == k)), "worldScaleSummary");
+        BuildPage("handsTab", Fields.All.Where(f => f.File == "controller_hands.json"), "handsSummary");
         localized.Add(restart); restart.Tag = "restart"; restart.Margin = new Padding(3, 8, 3, 4); layout.Controls.Add(restart, 0, 2);
         var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
         footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -88,6 +89,10 @@ internal sealed class MainForm : Form
         void FitFooter()
         {
             if (actions.ClientSize.Width <= 0) return;
+            int languageWidth = languages.Padding.Horizontal + languages.Controls.Cast<Control>()
+                .Sum(c => Math.Max(c.Width, c.GetPreferredSize(Size.Empty).Width) + c.Margin.Horizontal);
+            if (languages.MinimumSize.Width != languageWidth)
+                languages.MinimumSize = new Size(languageWidth, languages.MinimumSize.Height);
             int height = footer.Padding.Vertical + Math.Max(
                 languages.GetPreferredSize(new Size(languages.ClientSize.Width, 0)).Height,
                 actions.GetPreferredSize(new Size(actions.ClientSize.Width, 0)).Height);
@@ -444,6 +449,17 @@ internal sealed class MainForm : Form
                         throw new InvalidDataException("Hand-role checkbox did not map to persistence");
                 }
                 handRoles.Checked = oldRoles;
+                tabs.SelectedIndex = 6; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                var hands = (CheckBox)inputs["controllerHandsEnabled"]; bool oldHands = hands.Checked;
+                foreach (bool value in new[] { false, true })
+                {
+                    hands.Checked = value;
+                    if (ReadControls()["controller_hands.json"]["enabled"]!.GetValue<bool>() != value)
+                        throw new InvalidDataException("Hand visibility checkbox did not map to native JSON");
+                }
+                using var handsBitmap = new Bitmap(Width, Height); DrawToBitmap(handsBitmap, new Rectangle(0, 0, Width, Height));
+                handsBitmap.Save(Path.Combine(smokeFolder!, "hands-" + Texts.Language + ".png"));
+                hands.Checked = oldHands; tabs.SelectedIndex = 4;
                 using var faceBitmap = new Bitmap(Width, Height); DrawToBitmap(faceBitmap, new Rectangle(0, 0, Width, Height));
                 faceBitmap.Save(Path.Combine(smokeFolder!, "controller-" + Texts.Language + ".png"));
                 tabs.SelectedIndex = 5;
@@ -485,7 +501,7 @@ internal sealed class MainForm : Form
                 SwitchLanguage(locale); VerifyButtonGeometry();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smokeFolder!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), "{\"passed\":true,\"locales\":[\"ko\",\"en\",\"ja\"],\"fields\":25,\"referenceButtonLayout\":true,\"languageButtons\":3,\"buttonBoundsAndPathAlignment\":true,\"layoutScaleStress\":1.5,\"cameraFollowStartupOnOff\":true,\"activityUiOnOff\":true,\"faceExchange\":true,\"pairedHandRoles\":true,\"worldScaleLinks\":true,\"liveSaves\":0,\"gameLaunches\":0}");
+            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=3, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, liveSaves=0, gameLaunches=0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smokeFolder!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

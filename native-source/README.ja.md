@@ -2,6 +2,21 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.1.1 — Clean / Dirty
+
+現在の 1.1.1 は variants 配下の共通コードと種類別の生成ヘッダーを使います。両方を再構築するコマンド:
+
+```powershell
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+```
+
+1.1.1 は Clean/Dirty の製品ソースと別パッケージを公開します。native-source/variants/common は共通ネイティブコード、Clean/Dirty overlay は接触の有無による生成ヘッダー、managed は自作の手表示・接触コードです。それ以外の native-source 直下には従来の 1.0.2 ソースと再構築手順を保持します。
+
+Galaxy XR の VDXR・SteamVR 両方で報告された左右映像のずれは、解決を確認していません。1.1.1 の共通投影補正の適用条件改善はオフライン検証済みですが、この問題の解決や全ヘッドセットへの対応を保証しません。接触機能は以前のユーザー実機テストで確認されましたが、今回の配布バイナリ自体では新たなゲーム/HMD 実行を行っていません。
+
+---
+
+
 これは、GF2VR 1.0.2 に含まれるネイティブランタイム `BOOTSTRAP-FLEX-001` のビルドに必要なソース一式です。SHA-256 は次のとおりです。
 
 ```text

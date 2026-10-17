@@ -330,6 +330,32 @@ internal static class SelfTest
             Reject(() => SettingsStore.Validate(badFollow), "follow explicit invalid/null must not mean missing default");
         }
         Assert(Fields.Get(Fields.Defaults(), followField)!.GetValue<bool>(), "reset lost camera follow ON default");
+        var hands = Fields.All.Single(f => f.Key == "controllerHandsEnabled");
+        Assert((bool)hands.Default && Fields.Get(Fields.Defaults(), hands)!.GetValue<bool>(), "hands common ON default");
+        string contact = Path.Combine(config, "touch_interaction.json");
+        byte[] contactBytes = Encoding.UTF8.GetBytes("{\"contactEnabled\":true,\"futurePrivateSetting\":42}");
+        File.WriteAllBytes(contact, contactBytes);
+        foreach (bool enabled in new[] { false, true, false })
+        {
+            var beforeHands = Fields.Files.Where(f => f != hands.File).ToDictionary(f => f, f => File.ReadAllBytes(Path.Combine(config, f)));
+            var change = Fields.Clone(store.Documents); Fields.Set(change, hands, JsonValue.Create(enabled)!); store.Save(change);
+            var reload = new SettingsStore(root, true); reload.Load();
+            Assert(Fields.Get(reload.Documents, hands)!.GetValue<bool>() == enabled, "hand visibility save/reload");
+            Assert(reload.Documents[hands.File]["enabled"]!.GetValue<bool>() == enabled && !reload.Documents[hands.File].ContainsKey(hands.Key), "native hands JSON key");
+            foreach (var p in beforeHands) Assert(p.Value.SequenceEqual(File.ReadAllBytes(Path.Combine(config, p.Key))), "hands toggle changed " + p.Key);
+            Assert(contactBytes.SequenceEqual(File.ReadAllBytes(contact)), "common GUI modified optional Dirty configuration");
+        }
+        foreach (JsonNode? invalid in new JsonNode?[] { null, JsonValue.Create(0), JsonValue.Create("false"), new JsonObject(), new JsonArray() })
+        {
+            var badHands = Fields.Clone(store.Documents); badHands[hands.File]["enabled"] = invalid?.DeepClone();
+            Reject(() => SettingsStore.Validate(badHands), "invalid hand setting accepted");
+        }
+        string oldHandsProfile = Path.Combine(root, "old-seven-file-profile.json");
+        SettingsStore.Export(oldHandsProfile, store.Documents);
+        var oldProfileNode = JsonNode.Parse(File.ReadAllBytes(oldHandsProfile))!;
+        oldProfileNode["configurations"]!.AsObject().Remove(hands.File); File.WriteAllBytes(oldHandsProfile, SettingsStore.Encode(oldProfileNode.AsObject()));
+        Assert(!Fields.Get(SettingsStore.Import(oldHandsProfile, store.Documents), hands)!.GetValue<bool>(), "old profile reset saved hands OFF");
+        Assert(Fields.Get(SettingsStore.Import(oldHandsProfile), hands)!.GetValue<bool>(), "old profile without current settings lost ON default");
         // Leave real GUI smoke and native-parser fixtures in a valid, representative current state.
         fixtureNew = Fields.Clone(store.Documents);
         fixtureNew["navigation.json"]["navigation"]!["locomotionHand"] = "left";

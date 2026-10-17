@@ -207,6 +207,8 @@ internal sealed class SettingsStore
                 // Runtime optional members use their actual policy defaults, without rewriting the file on load.
                 if (f.Key is "eyeRenderScale" or "stereoDepthScale" or "worldScale") throw new SettingsError("formatError", f.File);
                 if (f.File == "world_scale.json" && docs[f.File].ContainsKey(f.Key)) throw new SettingsError("formatError", f.File);
+                if (f.Key == "controllerHandsEnabled" && docs[f.File].ContainsKey(Fields.JsonKey(f)))
+                    throw new SettingsError("formatError", f.File);
                 if (f.Key == "activityPrimaryUiEnabled" && docs[f.File].ContainsKey(f.Key))
                     throw new SettingsError("formatError", f.File); // Explicit null is not the native missing-key default.
                 if ((f.Key is "swapFaceButtons" or "swapPanelPointerHands") && (docs[f.File][f.Group!] as JsonObject)?.ContainsKey(f.Key) == true)
@@ -331,7 +333,7 @@ internal sealed class SettingsStore
             profile["configurations"] is not JsonObject config)
             throw new SettingsError("profileError");
         // Older four/five-document profiles cannot reset a newer UI/face choice.
-        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json" }.Where(f => !config.ContainsKey(f)).ToHashSet(StringComparer.Ordinal);
+        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json", "controller_hands.json" }.Where(f => !config.ContainsKey(f)).ToHashSet(StringComparer.Ordinal);
         var expected = Fields.Files.Where(f => !missing.Contains(f)).ToHashSet(StringComparer.Ordinal);
         if (!expected.SetEquals(config.Select(p => p.Key))) throw new SettingsError("profileError");
         var result = new Dictionary<string, JsonObject>();

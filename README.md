@@ -1,49 +1,53 @@
 # GF2VR
 
-제작자: [@TBluebox12](https://x.com/TBluebox12)  
-아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)  
-후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
+[@TBluebox12](https://x.com/TBluebox12) · [가상현실 채널](https://arca.live/b/vrshits) · [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다. 지원되는 3D 장면은 입체 화면으로 보여 주고, 게임 메뉴와 일반 화면은 컨트롤러로 조작할 수 있는 패널로 표시합니다.
+GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
-**테스트 완료 환경:** Meta Quest 2 · 4K 모니터 · Virtual Desktop.
+**[정식 버전 1.1.1 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)**
 
-**[정식 버전 1.0.2 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)** · [설치 안내](docs/ko/INSTALLATION.md) · [기본 조작법](docs/ko/USAGE.md)
+## Clean과 Dirty 선택
 
-릴리스의 **GF2VR-Native-SelfContained-1.0.2.zip**을 받으세요. 게임은 포함되어 있지 않습니다. **2.0.3936**은 실기 확인 기준이며, 원본 게임 파일의 SHA-256·크기·캐시 차이만으로 설치를 막지 않습니다. 다른 버전의 VR 호환성을 보장하는 것은 아닙니다. [지원 환경과 확인 범위](docs/ko/VERIFICATION.md)를 함께 확인하세요.
+| 기능 | Clean | Dirty |
+|---|---|---|
+| 일반 VR·입체 화면·컨트롤러 입력·설정 | 포함 | 포함 |
+| 흰색 양손 구 표시 | 포함 | 포함 |
+| 캐릭터 가슴 접촉·변형 | 미포함 | 포함 |
 
-## 처음 사용하는 분께
+두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
 
-1. 릴리스 ZIP을 새 폴더에 전부 풉니다. GitHub의 **Source code** ZIP은 설치 파일이 아닙니다.
-2. **GF2VR.Installer.exe**를 열고, **GF2_Exilium.exe가 있는 폴더** 또는 이를 포함하는 설치 폴더만 선택해 설치합니다. 설치 파일은 자동으로 찾습니다.
-3. **설정 열기**에서 원하는 옵션을 저장한 뒤 SteamVR와 게임을 직접 실행합니다.
-4. [기본 조작법](docs/ko/USAGE.md)을 확인하고, 불편한 설정은 게임을 종료한 뒤 조정합니다.
+- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
 
-## 주요 기능
+둘 중 하나만 설치하세요. 두 빌드는 게임 실행 파일 옆의 같은 version.dll 한 개를 사용하며, OpenXR 로더·설정 프로그램 등 공통 지원 파일은 vrmod 아래에 설치합니다. 원본 GameAssembly.dll·UnityPlayer.dll·게임 에셋은 교체하지 않습니다. 두 빌드 모두 게임 프로세스에서 실행하므로 Clean이라는 이름이 미감지·안전을 보장하지 않습니다.
 
-- 지원되는 3D 장면의 입체 VR 화면과 머리 움직임 반영
-- 일반 게임 화면을 보여 주는 정면 패널과 필요할 때 여는 보조 패널
-- 스틱 이동·회전, 컨트롤러로 화면 클릭·뒤로 가기
-- 손으로 월드를 잡아 시점을 옮기는 월드 그립
-- 월드 크기, 입체감, 이동 속도, 활동층 UI와 손 역할 설정
-- 한국어·영어·일본어 설정 프로그램과 인스톨러
-- 설정 프로필 저장·불러오기, 설치·업데이트·제거·이전 버전 복원
+## 설치·전환·제거
 
-1.0.0의 VR 구현은 사용자의 실기 테스트 완료 확인을 기준으로 고정했습니다. 1.0.2의 설치 경로 개선은 로컬에서 검증했으며 변경 후 실제 게임/HMD 실행은 새로 기록하지 않았습니다. [확인된 동작과 제한 사항](docs/ko/VERIFICATION.md)에서 지원 범위를 안내합니다.
+1. 원하는 Clean 또는 Dirty ZIP을 새 폴더에 전부 풉니다. GitHub Source code ZIP은 설치 파일이 아닙니다.
+2. 게임·설정·인스톨러를 종료합니다. 새 폴더의 GF2VR.Installer.exe에서 GF2_Exilium.exe 또는 게임 폴더를 선택합니다. 패키지 폴더는 자동으로 찾습니다.
+3. 설치 종류와 버전을 확인하고 설치합니다. Clean↔Dirty 전환도 원하는 쪽 ZIP의 새 인스톨러로 진행합니다.
+4. 설정 열기에서 저장한 뒤 게임을 평소 방법으로 직접 실행합니다. 흰색 손 표시는 기본 켜짐이며 손 표시 탭에서 바꿀 수 있습니다.
+
+설치·전환·제거는 사용자 설정을 보존합니다. Dirty의 touch_interaction.json은 선택 사항이며 Clean은 읽지 않습니다. 제거는 기록된 직전 설치가 있으면 복원하고, 최초 설치에서는 소유 파일만 제거합니다. 수정되거나 소유권을 확인할 수 없는 DLL은 보존하며 덮어쓰지 않습니다. version.dll만 따로 복사하거나 서로 다른 패키지의 파일을 섞지 마세요.
+
+## 검증 범위와 제한
+
+기존 실기 확인 환경: Meta Quest 2 · 4K 모니터 · Virtual Desktop.
+
+Galaxy XR에서 VDXR와 SteamVR 모두 좌우 영상이 어긋난다는 제보는 아직 해결 확인 전입니다. 1.1.1의 공통 투영 보정 적용 범위 개선은 오프라인 검증을 통과했지만, 이 증상의 해결이나 전체 헤드셋 호환성을 보장하지 않습니다. 접촉 기능은 이전 사용자 실기에서 확인했으며, 이 배포 바이너리 자체의 새 게임/HMD 실기는 진행하지 않았습니다.
 
 ## 사용 안내
 
-- [설치·제거·복구](docs/ko/INSTALLATION.md)
-- [게임 실행과 컨트롤러 조작](docs/ko/USAGE.md)
-- [설정 항목과 프로필 사용](docs/ko/SETTINGS.md)
-- [업데이트 방법](docs/ko/UPDATE.md)
-- [문제가 생겼을 때](docs/ko/TROUBLESHOOTING.md)
-- [최근 변경 사항](docs/ko/RELEASE_NOTES.md)
-- [다운로드와 지원 안내](docs/ko/RELEASE_READINESS.md)
+- [설치·제거·복원](docs/ko/INSTALLATION.md)
+- [기본 조작](docs/ko/USAGE.md)
+- [설정](docs/ko/SETTINGS.md)
+- [업데이트](docs/ko/UPDATE.md)
+- [문제 해결](docs/ko/TROUBLESHOOTING.md)
+- [변경 사항](docs/ko/RELEASE_NOTES.md)
+- [다운로드·파일 구성](docs/ko/RELEASE_READINESS.md)
+- [검증 범위](docs/ko/VERIFICATION.md)
 - [소스 구성과 이용 조건](SOURCE_BOUNDARY.md)
 
-설정을 바꾸거나 설치·업데이트·제거할 때는 먼저 게임을 종료하세요. 문제가 생기면 오류 메시지와 작업 로그를 확인하고 [문제 해결 안내](docs/ko/TROUBLESHOOTING.md)를 참고하세요.
-
-> GF2 VR은 비공식 팬 프로젝트입니다. 게임을 정식으로 설치해야 사용할 수 있으며, 게임과 관련된 상표·저작물의 권리는 각 권리자에게 있습니다.
+> GF2VR은 비공식 팬 프로젝트입니다. 정식으로 설치한 게임이 필요하며, 게임의 상표·저작물은 각 권리자에게 있습니다.

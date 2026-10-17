@@ -21,7 +21,7 @@ internal static class Program
             string? smoke = Value(args, "--smoke-gui");
             using var form = new MainForm(root, smoke);
             Application.Run(form);
-            return 0;
+            return Environment.ExitCode;
         }
         catch (Exception ex)
         {

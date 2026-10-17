@@ -1,6 +1,22 @@
 # Using the configurator
 
 [한국어](../ko/SETTINGS.md) · [English](../en/SETTINGS.md) · [日本語](../ja/SETTINGS.md) · [简体中文](../zh-CN/SETTINGS.md)
+## 1.1.1 — Clean / Dirty
+
+| Feature | Clean | Dirty |
+|---|---|---|
+| Ordinary VR, stereo, controller input and settings | Included | Included |
+| White spheres at both hand positions | Included | Included |
+| Character breast contact and deformation | Excluded | Included |
+
+Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
+
+Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
+
+Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
+
+The remaining detail is retained from earlier versions. Use the 1.1.1 download and verification scope above as current authority.
+
 
 Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語** buttons at the bottom; your selection is remembered.
 

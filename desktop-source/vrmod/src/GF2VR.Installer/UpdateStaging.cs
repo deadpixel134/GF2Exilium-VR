@@ -19,6 +19,7 @@ internal static class UpdateStaging
     internal static PreparedUpdate Extract(string root, string folder, string archive, byte[] descriptorBytes, UpdateDescriptor descriptor)
     {
         UpdatePolicy.ValidateDescriptor(descriptor);
+        RequireFlavor(new InstallationEngine().Inspect(root), descriptor);
         if (!Paths.Equal(Paths.FileHash(archive), descriptor.ArchiveSha256)) throw new InstallError("updateInvalid");
         string package = Paths.Contained(folder, "package");
         if (Directory.Exists(package)) throw new InstallError("updateInvalid");
@@ -41,6 +42,7 @@ internal static class UpdateStaging
             if (!Paths.Equal(Paths.FileHash(Paths.Contained(package, f.Path)), f.Sha256) || new FileInfo(Paths.Contained(package, f.Path)).Length != f.Bytes) throw new InstallError("updateInvalid");
         if (!Paths.Equal(Paths.FileHash(Paths.Contained(package, "package-manifest.json")), descriptor.PackageManifestSha256)) throw new InstallError("updateInvalid");
         var plan = new InstallationEngine().Preview(root, package);
+        RequireFlavor(plan.Prior, descriptor, plan.Package);
         if (plan.Prior == null || plan.Package.Scope != "vrmod" || plan.Package.Version != descriptor.Version ||
             UpdatePolicy.VersionOf(plan.Package.Version) <= UpdatePolicy.VersionOf(plan.Prior.Version)) throw new InstallError("updateInvalid");
         Paths.WriteNew(Paths.Contained(folder, "release-descriptor.json"), descriptorBytes);
@@ -81,11 +83,18 @@ internal static class UpdateStaging
         foreach (var f in descriptor.InstallerFiles) if (!Paths.Equal(Paths.FileHash(Paths.Contained(package, f.Path)), f.Sha256)) throw new InstallError("updateInvalid");
         if (!Path.GetFullPath(Environment.ProcessPath!).Equals(Paths.Contained(package, "GF2VR.Installer.exe"), StringComparison.OrdinalIgnoreCase)) throw new InstallError("updateInvalid");
         var engine = new InstallationEngine(); var plan = engine.Preview(h.Root, package);
+        RequireFlavor(plan.Prior, descriptor, plan.Package);
         if (plan.Prior == null || !Paths.Equal(plan.PriorHash, h.ReceiptHash) || !Paths.Equal(plan.ManifestHash, h.ManifestHash) ||
             !Paths.Equal(plan.ManifestHash, descriptor.PackageManifestSha256) || plan.Package.Version != descriptor.Version || h.Version != descriptor.Version ||
             UpdatePolicy.VersionOf(plan.Package.Version) <= UpdatePolicy.VersionOf(plan.Prior.Version)) throw new InstallError("updateInvalid");
         var result = engine.Install(plan);
         Paths.WriteNew(Paths.Contained(folder, "update-result.json"), Contract.Encode(new { passed = true, result.Version, result.TransactionId }));
         return 0;
+    }
+    internal static void RequireFlavor(Receipt? receipt, UpdateDescriptor descriptor, Package? package = null)
+    {
+        if (receipt == null || receipt.BuildFlavor != descriptor.BuildFlavor ||
+            (package != null && (package.Native?.BuildFlavor != descriptor.BuildFlavor ||
+                !Paths.Equal(package.Native?.CommonCoreSha256, descriptor.CommonCoreSha256)))) throw new InstallError("updateInvalid");
     }
 }

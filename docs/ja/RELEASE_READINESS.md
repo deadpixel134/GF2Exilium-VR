@@ -1,37 +1,24 @@
-# ダウンロードとサポート
+# 正式版 1.1.1 をダウンロード
 
-[한국어](../ko/RELEASE_READINESS.md) · [English](../en/RELEASE_READINESS.md) · [日本語](RELEASE_READINESS.md) · [简体中文](../zh-CN/RELEASE_READINESS.md)
+[한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-## 正式版 1.0.2
+- [GF2VR-Native-SelfContained-Clean-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
+- [GF2VR-Native-SelfContained-Dirty-1.1.1.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1)
 
-[GitHub リリースページ](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2)から **GF2VR-Native-SelfContained-1.0.2.zip** をダウンロードしてください。公開ダウンロードに GitHub へのログインや別途のトークンは必要ありません。
+| 機能 | Clean | Dirty |
+|---|---|---|
+| 通常の VR・立体表示・コントローラー入力・設定 | 含む | 含む |
+| 両手の位置を示す白い球 | 含む | 含む |
+| キャラクターの胸への接触・変形 | 含まない | 含む |
 
-- [インストール ZIP を直接ダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/download/v1.0.2/GF2VR-Native-SelfContained-1.0.2.zip)
-- [インストール・削除・復元ガイド](INSTALLATION.md)
-- [現在のリリース一覧](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-GitHub が別途提供する **Source code** ZIP はインストール用ではありません。リリース ZIP の内容をすべて新しいフォルダーに展開し、**GF2VR.Installer.exe** を実行してください。
+同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 
-## 対応環境
+インストール・切替・削除ではユーザー設定を保持します。任意の touch_interaction.json は Dirty のみ使用します。削除時は記録された直前のインストールがあれば復元し、それ以外は所有ファイルだけを削除します。変更済み・所有権不明の DLL は上書きせず保持します。version.dll だけをコピーしたり、別パッケージのファイルを混ぜたりしないでください。
 
-Windows x64 PC に正規のゲームと VR 環境が必要です。**2.0.3936** は実機確認の基準ビルドです。元のゲームの SHA-256・ファイルサイズ・キャッシュの違いだけでインストールを止めませんが、他のゲームバージョンでの VR 動作を保証するものではありません。 ヘッドセット・コントローラー用ソフトウェアと SteamVR/OpenXR は別途用意してください。
+新しいインストーラーは種類切替・失敗復元 160 件、所有権 525 件、配置 175 件の検証に合格しました。共通投影補正はオフライン検証 183,984 件と既存経路の回帰検査に合格しています。公開ソースから両ネイティブ DLL を再構築し、配布バイトとの完全一致を確認しました。設定とインストーラーは必要な .NET 10.0.12 を同梱します。オフライン・インストール検証は実ゲーム/HMD の受入とは別です。
 
-標準の `GF2 Game/GF2_Exilium.exe` 構成では、従来どおり親フォルダーの `vrmod` を使います。それ以外の構成では、見つかった実行ファイルのフォルダーにある `vrmod` を使います。`version.dll` は常にその実行ファイルの隣にインストールされます。
+Galaxy XR の VDXR・SteamVR 両方で報告された左右映像のずれは、解決を確認していません。1.1.1 の共通投影補正の適用条件改善はオフライン検証済みですが、この問題の解決や全ヘッドセットへの対応を保証しません。接触機能は以前のユーザー実機テストで確認されましたが、今回の配布バイナリ自体では新たなゲーム/HMD 実行を行っていません。
 
-設定プログラムとインストーラーは韓国語・英語・日本語に対応し、必要な .NET ランタイムを同梱しています。ゲームと SteamVR はユーザーが手動で起動します。確認済みの動作と未検証の環境は、[確認範囲](VERIFICATION.md)に記載しています。
-
-## 更新
-
-新しいリリース ZIP をダウンロードし、インストーラーから既存のインストールを更新できます。設定プログラムの任意の更新機能は、インストール済みの **GitHub CLI（gh）** とそのログイン状態を使用します。この機能を使わなくても、公開リリースの手動インストール・更新は可能です。詳しくは、[更新方法](UPDATE.md)を確認してください。
-
-## 利用条件と問い合わせ
-
-元のゲームは含まれていません。プロジェクトソースの配布ライセンスはまだ定めておらず、外部コンポーネントにはそれぞれのライセンスが適用されます。[ソースの構成と利用条件](../../SOURCE_BOUNDARY.ja.md)を確認してください。
-
-問題が発生した場合は、[トラブルシューティング](TROUBLESHOOTING.md)に従ってエラーメッセージと発生までの手順をまとめてください。コミュニティは、[Arca Live バーチャルリアリティチャンネル](https://arca.live/b/vrshits)にあります。
-
-インストール ZIP のサイズ：**93,673,090 バイト**。SHA-256：
-
-```text
-9E2BDE8C9C3DB46F98BE16305899169EB7B11658C6BC1D7772A00AA55FB4ADA9
-```
+CHECKSUMS.sha256 · GF2VR-Clean-update.json · GF2VR-Dirty-update.json

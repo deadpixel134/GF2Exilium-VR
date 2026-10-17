@@ -2,7 +2,10 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-To install, use **GF2VR-Native-SelfContained-1.0.2.zip** from the [1.0.2 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
+Version 1.1.1 publishes the Clean/Dirty product sources and separate packages. native-source/variants/common holds shared native code; Clean/Dirty overlays contain the generated contact-specific headers; managed contains owned hand-display/contact code. The rest of the native-source root preserves the previous 1.0.2 source and reproduction recipe.
+
+
+To install, use **GF2VR-Native-SelfContained-Clean-1.1.1.zip / GF2VR-Native-SelfContained-Dirty-1.1.1.zip** from the [1.1.1 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.1). GitHub's **Source code** ZIP contains unbuilt source code. Extracting it and copying it into the game folder does not install the mod.
 
 ## Contents of this repository
 

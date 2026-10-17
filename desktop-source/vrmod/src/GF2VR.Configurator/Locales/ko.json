@@ -112,5 +112,10 @@
   "speedLinkHelp": "기본 켬. 최종 속도 = 기본 속도 × 수동 이동 배율 × 월드 배율. 200%는 2배, 50%는 0.5배입니다. 끄면 월드 배율만 제외합니다.",
   "effectiveSpatial": "월드 {0}배 · 머리 이동 {1}배 · 자동 이동 속도 {2}배",
   "cameraFollowEnabled": "시작 시 카메라 연출 따라가기",
-  "cameraFollowHelp": "기본 켬. 저장한 값은 다음 게임 실행부터 적용됩니다. 실행 중 오른쪽 스틱 클릭으로 전환하며 저장값은 바뀌지 않습니다."
+  "cameraFollowHelp": "기본 켬. 저장한 값은 다음 게임 실행부터 적용됩니다. 실행 중 오른쪽 스틱 클릭으로 전환하며 저장값은 바뀌지 않습니다.",
+  "updateVariantPending": "현재 빌드를 유지합니다. Clean/Dirty가 일치하는 업데이트 패키지를 사용하세요.",
+  "controllerHandsEnabled": "컨트롤러 손 표시",
+  "handsTab": "손 표시",
+  "controllerHandsHelp": "기본값 켜짐. Clean과 Dirty 공통 설정입니다. 저장한 뒤 게임을 다시 시작하세요.",
+  "handsSummary": "HMD 화면에 양손 위치를 흰색 구로 표시합니다. 접촉 변형은 Dirty 빌드에서만 지원합니다."
 }

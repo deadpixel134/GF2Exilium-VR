@@ -112,5 +112,10 @@
   "speedLinkHelp": "初期値オン：基本速度 × 手動移動倍率 × ワールド倍率。200%は2倍、50%は0.5倍。オフではワールド倍率だけを除きます。",
   "effectiveSpatial": "ワールド{0}倍 · 頭の移動{1}倍 · 自動移動速度{2}倍",
   "cameraFollowEnabled": "起動時にゲームカメラへ追従",
-  "cameraFollowHelp": "初期値オン。保存した値は次回起動時に適用。プレイ中は右スティック押し込みで切り替え、保存値は変更しません。"
+  "cameraFollowHelp": "初期値オン。保存した値は次回起動時に適用。プレイ中は右スティック押し込みで切り替え、保存値は変更しません。",
+  "updateVariantPending": "現在のビルドを維持します。Clean／Dirty が一致する更新パッケージを使用してください。",
+  "controllerHandsEnabled": "コントローラーの手を表示",
+  "handsTab": "手の表示",
+  "controllerHandsHelp": "初期値はオン。Clean と Dirty 共通の設定です。保存後にゲームを再起動してください。",
+  "handsSummary": "HMD 内で両手の位置を白い球で表示します。接触による変形は Dirty のみ対応します。"
 }

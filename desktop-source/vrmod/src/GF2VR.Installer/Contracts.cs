@@ -14,10 +14,11 @@ internal sealed record Package(int SchemaVersion, string Product, string Version
     string GameExecutableSha256, string? BoundGameRoot, string? RequiresInstalledDllSha256,
     PayloadFile[] Files, NativePackage? Native = null);
 internal sealed record NativePackage(string BuildId, string DllSha256, string LoaderSha256, PayloadFile[] GameFiles,
-    string? ResourceBinding = null);
+    string? ResourceBinding = null, string? BuildFlavor = null, string? CommonCoreSha256 = null);
 internal sealed record CheckedPackage(string Root, string PackageRoot, Package Package, string ManifestHash, IReadOnlyDictionary<string, byte[]> Payload);
 internal sealed record Receipt(int SchemaVersion, string Product, string Version, string Scope,
-    string Root, string TransactionId, string PackageSha256, PayloadFile[] Files, string? GameDirectory = null);
+    string Root, string TransactionId, string PackageSha256, PayloadFile[] Files, string? GameDirectory = null,
+    string? BuildFlavor = null, string? CommonCoreSha256 = null);
 internal sealed record Change(string Path, string? BeforeHash, string? AfterHash, string? BeforeFile, string? AfterFile);
 internal sealed record Journal(int SchemaVersion, string Product, string Root, string TransactionId,
     string State, Change[] Changes, string? GameDirectory = null);

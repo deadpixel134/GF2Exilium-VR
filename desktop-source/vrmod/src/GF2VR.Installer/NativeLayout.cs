@@ -22,6 +22,7 @@ internal static class NativeLayout
     internal static readonly string[] ConfigFiles = ["render_quality.json", "stereo_depth.json", "navigation.json", "world_drag.json"];
     internal static readonly string[] StableConfigFiles =
         [.. ConfigFiles, "activity_ui.json", "controller_input.json", "world_scale.json"];
+    internal static readonly string[] VariantConfigFiles = [.. StableConfigFiles, "controller_hands.json"];
     internal static readonly string[] Files =
         ["GF2 Game/version.dll", "vrmod/runtime/openxr_loader.dll", "vrmod/runtime/openxr-LICENSE.txt", "vrmod/runtime/minhook-LICENSE.txt",
          .. Paths.ToolFiles.Select(n => ToolRoot + n)];
@@ -36,6 +37,10 @@ internal static class NativeLayout
     {
         var native = package.Native;
         if (native == null || !files.SetEquals(Files)) throw new InstallError("incompletePackage");
+        bool variant = VariantProfiles.IsVariant(native.BuildId);
+        if (variant ? native.BuildFlavor != VariantProfiles.Flavor(native.BuildId) ||
+                !Paths.Equal(native.CommonCoreSha256, VariantProfiles.CommonCoreSha256) :
+                native.BuildFlavor != null || native.CommonCoreSha256 != null) throw new InstallError("nativeBuild");
         bool portable = IsPortable(package);
         if (portable)
         {
@@ -54,7 +59,7 @@ internal static class NativeLayout
             if (native.BuildId != BuildId || native.ResourceBinding != null || !Paths.Equal(native.DllSha256, DllHash))
                 throw new InstallError("nativeBuild");
         }
-        if (native.BuildId != FlexibleBuild && File.Exists(Paths.Contained(root, "GF2_Exilium.exe")))
+        if (!IsFlexible(package) && File.Exists(Paths.Contained(root, "GF2_Exilium.exe")))
             throw new InstallError("nativeBuild");
         if (!Paths.Equal(native.LoaderSha256, LoaderHash) ||
             package.RequiresInstalledDllSha256 != null) throw new InstallError("nativeBuild");
@@ -78,9 +83,12 @@ internal static class NativeLayout
         if (!File.Exists(Path.Combine(actual, "version.dll"))) throw new InstallError("systemVersionMissing");
         if (!portable && !actual.Equals(expected, StringComparison.OrdinalIgnoreCase)) throw new InstallError("systemBinding");
     }
-    internal static bool IsPortable(Package package) => package.Native?.BuildId is PortableBuild or StablePortableBuild or FlexibleBuild;
+    internal static bool IsFlexible(Package package) => package.Native?.BuildId == FlexibleBuild || VariantProfiles.IsVariant(package.Native?.BuildId);
+    internal static bool IsPortable(Package package) => package.Native?.BuildId is PortableBuild or StablePortableBuild || IsFlexible(package);
     internal static string ExpectedHash(Package package) => package.Native?.BuildId switch
     {
+        VariantProfiles.CleanBuild => VariantProfiles.CleanHash,
+        VariantProfiles.DirtyBuild => VariantProfiles.DirtyHash,
         FlexibleBuild => FlexibleDllHash,
         StablePortableBuild => StablePortableDllHash,
         PortableBuild => PortableDllHash,
@@ -94,12 +102,16 @@ internal static class NativeLayout
             using var doc = JsonDocument.Parse(bytes); Contract.Duplicates(doc.RootElement);
             var c = doc.RootElement;
             bool portable = IsPortable(package);
-            bool stable = package.Native?.BuildId is StablePortableBuild or FlexibleBuild;
-            string[] configFiles = stable ? StableConfigFiles : ConfigFiles;
+            bool variant = VariantProfiles.IsVariant(package.Native?.BuildId);
+            bool stable = package.Native?.BuildId == StablePortableBuild || IsFlexible(package);
+            string[] configFiles = variant ? VariantConfigFiles : stable ? StableConfigFiles : ConfigFiles;
             string expectedHash = ExpectedHash(package);
             if (package.Native == null || !Paths.Equal(package.Native.DllSha256, expectedHash) ||
                 (!portable && package.Native.BuildId != BuildId) ||
                 (portable && (package.BoundGameRoot != null || package.Native.ResourceBinding != PortableBinding)))
+                throw new InstallError("configContract");
+            if (variant && (c.GetProperty("buildFlavor").GetString() != package.Native.BuildFlavor ||
+                !Paths.Equal(c.GetProperty("commonCoreSha256").GetString(), package.Native.CommonCoreSha256)))
                 throw new InstallError("configContract");
             string expectedRoot = Path.Combine(root, "vrmod", "config");
             if (c.GetProperty("schemaVersion").GetInt32() != 1 || c.GetProperty("buildId").GetString() != package.Native!.BuildId ||
@@ -115,6 +127,7 @@ internal static class NativeLayout
             {
                 // A single explicit placeholder; never interpolate arbitrary manifest text.
                 string[] keys = ["schemaVersion", "buildId", "dllSha256", "configurationRoot", "files", "apply"];
+                if (variant) keys = [.. keys, "buildFlavor", "commonCoreSha256"];
                 if (c.EnumerateObject().Count() != keys.Length ||
                     !c.EnumerateObject().Select(p => p.Name).ToHashSet(StringComparer.Ordinal).SetEquals(keys))
                     throw new InstallError("configContract");

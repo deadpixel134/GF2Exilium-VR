@@ -134,7 +134,8 @@ internal sealed class InstallationEngine
         // Receipts/journals must bind the actual materialized bytes, not its template hash.
         var installedFiles = plan.Package.Files.Select(f => new PayloadFile(f.Path,
             Paths.Hash(plan.Payload[f.Path]), plan.Payload[f.Path].Length)).ToArray();
-        var receipt = new Receipt(1, Contract.Product, plan.Package.Version, plan.Package.Scope, plan.Root, id, plan.ManifestHash, installedFiles, plan.GameDirectory);
+        var receipt = new Receipt(1, Contract.Product, plan.Package.Version, plan.Package.Scope, plan.Root, id, plan.ManifestHash, installedFiles, plan.GameDirectory,
+            plan.Package.Native?.BuildFlavor, plan.Package.Native?.CommonCoreSha256);
         var changes = new List<(string Path, byte[]? Before, byte[]? After)>();
         foreach (var f in plan.Package.Files)
         {

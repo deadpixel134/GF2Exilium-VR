@@ -1,16 +1,17 @@
 {
   "schemaVersion": 1,
-  "buildId": "BOOTSTRAP-FLEX-001",
-  "dllSha256": "6215CEAFFFA46A3B89336DA73203122DD0095977206FDB395A1259F967B54771",
-  "configurationRoot": "INSTALL_ROOT/vrmod/config",
+  "buildId": "SETTINGS-CAMERA-FOLLOW-001",
+  "dllSha256": "5DE5F61E238D51E96B2827AA79B220BE90A9D9FE4A383B0236DCC2533E88CE82",
+  "configurationRoot": "G:/GF2Exilium/vrmod/config",
   "files": [
     "render_quality.json",
     "stereo_depth.json",
-    "navigation.json",
-    "world_drag.json",
     "activity_ui.json",
     "controller_input.json",
+    "navigation.json",
+    "world_drag.json",
     "world_scale.json"
   ],
-  "apply": "GAME_RESTART"
+  "apply": "GAME_RESTART",
+  "provenance": "25-field/seven-file settings: optional default-ON camera-follow startup choice in navigation.json. RIGHT live process override; restart to apply saved choice. Practical acceptance deferred."
 }

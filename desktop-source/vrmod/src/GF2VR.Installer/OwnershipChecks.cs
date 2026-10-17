@@ -70,7 +70,7 @@ internal static class OwnershipChecks
         if (Directory.Exists(fixture)) throw new InvalidDataException("Preserve fixture; use fresh ownership output.");
         var sourceSnapshot = Snapshot(actualPackage);
         var source = Contract.Read<Package>(File.ReadAllBytes(Paths.Contained(actualPackage, "package-manifest.json")));
-        Assert(source.Native?.BuildId == NativeLayout.FlexibleBuild && source.BoundGameRoot == null, "verified flexible portable package required");
+        Assert(NativeLayout.IsFlexible(source) && source.BoundGameRoot == null, "verified flexible portable package required");
         var engine = new InstallationEngine();
         string[] partial = ["GF2 Game/version.dll", "vrmod/runtime/openxr_loader.dll", GuiContract];
         int completedLayouts = 0;

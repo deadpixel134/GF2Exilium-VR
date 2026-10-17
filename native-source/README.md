@@ -2,6 +2,21 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.1.1 — Clean / Dirty
+
+Current 1.1.1 native source uses shared code and per-flavor generated headers under variants. Rebuild both flavors with:
+
+```powershell
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+```
+
+Version 1.1.1 publishes the Clean/Dirty product sources and separate packages. native-source/variants/common holds shared native code; Clean/Dirty overlays contain the generated contact-specific headers; managed contains owned hand-display/contact code. The rest of the native-source root preserves the previous 1.0.2 source and reproduction recipe.
+
+Reported binocular misalignment on Galaxy XR with both VDXR and SteamVR remains unresolved. The shared projection eligibility improvement in 1.1.1 passed offline checks, but does not establish a fix for that report or support for every headset. Contact was observed in an earlier user runtime test; these exact distribution binaries have not had a new game/HMD run.
+
+---
+
+
 This is the source closure for `BOOTSTRAP-FLEX-001`, the native runtime included in GF2VR 1.0.2. Its SHA-256 is:
 
 ```text

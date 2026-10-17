@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.1.1",
+  "tag": "v1.1.1",
+  "baseRelease": "1.0.2",
+  "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
+  "variants": [
+    {
+      "flavor": "Clean",
+      "buildId": "GF2VR-CLEAN-111-002",
+      "dllSha256": "4F927C131C5E7288219C4805672D7B71C37E9024D33279AA9B5F7987E01A6C0D",
+      "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
+      "nativeProofSha256": "C96E43B6AFCF8BA4EA50091009D25DEA6AB7B887BC0B58F25D1A8223359A4AFB"
+    },
+    {
+      "flavor": "Dirty",
+      "buildId": "GF2VR-DIRTY-111-002",
+      "dllSha256": "F4066EB15F2E8574B7696FBE89F697B91866ED0E7F07C103BA3072CF6C0757ED",
+      "commonCoreSha256": "AFBB28D1C82EC4209A2B59BAFC02EB336A2BFF9E62E36ADDDC1CBBC0BDAF456C",
+      "nativeProofSha256": "13CC93C5CF0F3BEEC4EA6A3C3CE7498DCE23ECE10F7EA23ED1002C6667A2A104"
+    }
+  ],
+  "archives": [
+    {
+      "bytes": 93706667,
+      "flavor": "Clean",
+      "sha256": "487FA067D969A88986A0F96EE992928FC689276A51609C8CF50BD943E17443BE",
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.1.zip",
+      "entries": 16
+    },
+    {
+      "bytes": 93727619,
+      "flavor": "Dirty",
+      "sha256": "1872CBC48EF6A4E44FDCA0C9C5A35AC8D92ACD4883EB1EFD90108BE75E019044",
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.1.zip",
+      "entries": 16
+    }
+  ],
+  "managedChecks": 1437,
+  "projectionAssertions": 183984,
+  "actualGalaxyFixConfirmed": false,
+  "hmdAcceptance": false,
+  "gameAssetsIncluded": false,
+  "credentialsIncluded": false,
+  "currentNativeSource": "native-source/variants",
+  "changes": [
+    "Shared VR and controller hand display; Dirty-only contact deformation",
+    "Paired source/version/profile and explicit flavor-safe installation",
+    "Common projection correction eligibility accepts a sufficient witness on either axis"
+  ]
+}

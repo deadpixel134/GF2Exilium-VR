@@ -30,7 +30,7 @@ internal static class FlexibleLayoutChecks
         Directory.CreateDirectory(fixture);
         var engine = new InstallationEngine();
         var source = Contract.Read<Package>(File.ReadAllBytes(Path.Combine(packageRoot, "package-manifest.json")));
-        Assert(source.Native?.BuildId == NativeLayout.FlexibleBuild, "new flexible native required");
+        Assert(NativeLayout.IsFlexible(source), "flexible native required");
         string package = Path.Combine(fixture, "package");
         foreach (var file in source.Files)
             Paths.WriteNew(Paths.Contained(package, "payload/" + file.Path), File.ReadAllBytes(Paths.Contained(packageRoot, "payload/" + file.Path)));
