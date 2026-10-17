@@ -32,8 +32,8 @@ The desktop tools pin the native DLL's hash. Copying a changed DLL alone can
 cause Configurator `runtimeError` and disabled controls. Follow
 [the metadata build procedure](BUILD_VARIANT_METADATA.md) to produce matching
 runtime contracts, compiled variant profiles, and package manifests from the
-actual DLL outputs. Preserve hash checks and installation transactions; do not
-distribute a user's installed contract or receipt.
+actual DLL outputs. Matching metadata keeps the existing integrity and
+installation checks valid.
 
 ## Evidence and limits
 
@@ -43,7 +43,3 @@ covered wrapper command execution and native copy/query/readback. Configurator's
 real installation check passed after matching metadata was installed. These
 are historical local observations, not a claim that every injector fork, skin,
 or headset was exercised. Clean has not been confirmed in the game with an HMD.
-
-This contribution contains GF2VR source and documentation only. It includes no
-3DMigoto program or configuration files, skins, game files, user settings,
-logs, or installation receipts.

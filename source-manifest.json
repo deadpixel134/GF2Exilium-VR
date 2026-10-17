@@ -283,13 +283,13 @@
     },
     {
       "path": "docs/en/3DMIGOTO_COMPATIBILITY.md",
-      "sha256": "1520C10B38C2EA6CF72D0F47EDDB379F3032281214598466717E088E21635AF5",
-      "bytes": 2574
+      "sha256": "FFA267122E3B7872A4B15989C896D849DD1C99A2616BF146934F3E8BF9FCACE8",
+      "bytes": 2355
     },
     {
       "path": "docs/en/BUILD_VARIANT_METADATA.md",
-      "sha256": "E57B920D97546656A86E3D6D051E6A53796F4A5AAF2B1045E0BAFE57A16E3459",
-      "bytes": 4484
+      "sha256": "B1DB01899B0E85F3AB8DD094A07CEEE12171287264AFFBF1808750BA86AC0304",
+      "bytes": 4333
     },
     {
       "path": "docs/en/INSTALLATION.md",
@@ -373,8 +373,8 @@
     },
     {
       "path": "docs/ko/3DMIGOTO_COMPATIBILITY.md",
-      "sha256": "8A2A4DFC88EB9852F7D856B283DFA369A9A10993F5D5DC6A76FD14F7D13D189A",
-      "bytes": 2962
+      "sha256": "68DFB3B555E87A1F150635830EEAB861BA6CF5308D56FDC9B341DAB58173D225",
+      "bytes": 2710
     },
     {
       "path": "docs/ko/INSTALLATION.md",
@@ -2773,8 +2773,8 @@
     },
     {
       "path": "README.en.md",
-      "sha256": "00ABA116451953AF1D6781454FDDFA9A4A6B11EB2F4445DA8FD127E28D45DF10",
-      "bytes": 3900
+      "sha256": "032F130CF652E0FF22963213681C248D217446A0636B4563179E6E064AF2B667",
+      "bytes": 3857
     },
     {
       "path": "README.ja.md",
@@ -2783,8 +2783,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "855C33F0C674462CB48D6BD3D2B1692216B6219775FADF8E847E6E0DBD3926FA",
-      "bytes": 4389
+      "sha256": "6AE10EA3B7F8D4D3F0506AACB921319C0AB59E45860286E2E5D7A128E0783CDC",
+      "bytes": 4273
     },
     {
       "path": "README.zh-CN.md",
@@ -2911,7 +2911,7 @@
     "latestDownloadTag": "v1.1.2"
   },
   "unreleasedSourceChanges": {
-    "description": "Native wrapper interop and matching desktop metadata build inputs; no release binaries included.",
+    "description": "Native wrapper interop and matching desktop metadata build inputs.",
     "releaseReferenceFields": [
       "nativeVariants",
       "commonCoreSha256"

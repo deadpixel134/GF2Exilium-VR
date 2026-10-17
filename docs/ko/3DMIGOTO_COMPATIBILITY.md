@@ -16,10 +16,8 @@
 - 실제 장치/context에서 알려진 3DMigoto wrapper 인터페이스가 발견되면 설치를 거부합니다. 실패 이유 11/12는 추가 함수 후킹이 남은 조합을 뜻합니다.
 - `native_graphics_isolated` 진단의 값 1은 Unity wrapper와 VR의 실제 장치 주소가 분리된 경우이며, 0은 처음부터 같은 주소였던 경우입니다.
 
-설정 프로그램과 인스톨러는 DLL 해시를 검증합니다. 변경된 DLL만 복사하면 설정 도구가 `runtimeError`를 표시하고 입력을 잠글 수 있습니다. [빌드 메타데이터 생성 절차](../en/BUILD_VARIANT_METADATA.md)에 따라 실제 DLL과 일치하는 runtime contract·variant profile·패키지 manifest를 함께 만드세요. 해시 검사를 제거하거나 사용자 PC의 설치 기록을 배포 파일로 복사하지 마세요.
+설정 프로그램과 인스톨러는 DLL 해시를 검증합니다. 변경된 DLL만 복사하면 설정 도구가 `runtimeError`를 표시하고 입력을 잠글 수 있습니다. [빌드 메타데이터 생성 절차](../en/BUILD_VARIANT_METADATA.md)에 따라 실제 DLL과 일치하는 runtime contract·variant profile·패키지 manifest를 함께 만들면 기존 무결성 검사를 유지할 수 있습니다.
 
 ## 확인 범위
 
 이 PR을 준비하기 전에 로컬 Dirty 1.1.2 수정본에서 사용자가 VR 화면과 스킨의 동시 작동을 확인했습니다. 기존 독립 D3D11 검사에서는 wrapper 명령 실행, native 복사·GPU 완료 확인·readback을 확인했고, 설정 정보 보정 후 Configurator의 실제 설치 검사도 통과했습니다. 이 설명은 과거 로컬 확인 결과이며 모든 파생 버전·스킨·헤드셋의 호환성을 보장하지 않습니다. Clean의 실제 게임/HMD 실행은 확인하지 않았습니다.
-
-이 변경의 배포 대상은 GF2VR 소스와 문서입니다. 3DMigoto 프로그램, 설정 파일, 스킨, 게임 파일, 사용자 설정·로그·설치 기록은 포함하지 않습니다.

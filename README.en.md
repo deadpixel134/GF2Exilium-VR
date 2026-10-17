@@ -16,8 +16,8 @@ An unofficial mod for playing GF2 Exilium in VR.
 
 See the [wrapper compatibility notes](docs/en/3DMIGOTO_COMPATIBILITY.md) and
 [matching desktop metadata build](docs/en/BUILD_VARIANT_METADATA.md) for the
-current source changes. This does not mean the existing 1.1.2 release ZIPs
-contain those changes. No 3DMigoto program or skins are distributed here.
+current source changes. Build the native DLL and matching desktop metadata
+together using that procedure.
 
 ## Choose Clean or Dirty
 

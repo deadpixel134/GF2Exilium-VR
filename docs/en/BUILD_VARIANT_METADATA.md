@@ -84,6 +84,3 @@ Here `\t` and `\n` denote a tab and LF byte. `commonCoreSha256` is the uppercase
 SHA-256 of those manifest bytes. It identifies the common source snapshot; it
 does not attest to runtime behavior, and it excludes flavor overlays and compiler
 outputs. DLL identity remains independently pinned by the actual output hashes.
-
-No game assets, external graphics injector files, skins, machine-specific
-configuration paths, or installed user files are inputs to this generation.
