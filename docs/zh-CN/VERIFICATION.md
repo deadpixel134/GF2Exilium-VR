@@ -2,6 +2,9 @@
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
+
+1.1.2 检查了三种语言下 Clean、Dirty、缺少安装包以及默认、最小、150% 布局的共27种界面状态。下方安装与投影检查数量沿用未改动的1.1.1实现的既有证据。未关闭正在运行的游戏，因此不声称重新完成了安装写入测试。
+
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 VR DLL 与公共设置程序 payload 和 1.1.1 完全相同。此版本仅更新安装程序提示。

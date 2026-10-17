@@ -2,6 +2,9 @@
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
+
+Version 1.1.2 was checked in 27 UI states across three languages, Clean/Dirty/missing packages, and default/minimum/150% layouts. The installation and projection counts below reuse existing evidence for the unchanged 1.1.1 implementation. The running game was left open; installation-write tests are not claimed as newly completed.
+
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 The VR DLLs and shared Configurator payload are identical to 1.1.1. This version updates Installer guidance only.
