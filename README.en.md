@@ -14,6 +14,10 @@ An unofficial mod for playing GF2 Exilium in VR.
 
 Updating to 1.1.3: extract the complete Clean or Dirty ZIP into a new folder and use its GF2VR.Installer.exe with your existing game location. The old 1.1.2 Configurator rejects automatic staging because it cannot validate the new native profile, preserving the current installation. Do not copy only the DLL or mix package files.
 
+## Contributors
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+
 ## 3DMigoto compatibility
 
 1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
@@ -65,9 +69,5 @@ The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be
 - [Downloads and contents](docs/en/RELEASE_READINESS.md)
 - [Verification](docs/en/VERIFICATION.md)
 - [Source boundary and terms](SOURCE_BOUNDARY.en.md)
-
-## Contributors
-
-- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
 
 > GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.

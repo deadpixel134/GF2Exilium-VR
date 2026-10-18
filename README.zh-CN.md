@@ -14,6 +14,10 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。
 
+## 贡献者
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 改进 3DMigoto 兼容性与构建工具（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。
+
 ## 3DMigoto 兼容性
 
 1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
@@ -65,9 +69,5 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 - [下载与内容](docs/zh-CN/RELEASE_READINESS.md)
 - [验证范围](docs/zh-CN/VERIFICATION.md)
 - [源码范围与使用条款](SOURCE_BOUNDARY.zh-CN.md)
-
-## 贡献者
-
-- [rgbtl1248](https://github.com/rgbtl1248) — 改进 3DMigoto 兼容性与构建工具（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。
 
 > GF2VR 是非官方粉丝项目，需要合法安装的游戏。游戏商标及相关作品的权利属于各自权利人。

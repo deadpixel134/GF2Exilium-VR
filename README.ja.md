@@ -14,6 +14,10 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 1.1.3 への更新: Clean または Dirty の ZIP 全体を新しいフォルダーに展開し、その GF2VR.Installer.exe で既存ゲームの場所にインストールしてください。旧 1.1.2 設定アプリの自動更新は新しい native プロファイルを検証できず拒否します。既存インストールは保持されます。DLL だけのコピーやファイルの混在は避けてください。
 
+## 貢献者
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 互換性とビルドツールの改善 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1))。
+
 ## 3DMigoto との互換性
 
 1.1.3 は PR #1 の 3DMigoto 既定 wrapper モードとの互換性変更を Clean・Dirty の両方に反映します。ゲームの wrapper を保持し、VR コピーと OpenXR には実際の D3D11 デバイス/context を使用します。DLL と一致する設定アプリ・インストーラーを同梱します。
@@ -65,9 +69,5 @@ Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエ�
 - [ダウンロード・内容](docs/ja/RELEASE_READINESS.md)
 - [検証範囲](docs/ja/VERIFICATION.md)
 - [ソース構成と利用条件](SOURCE_BOUNDARY.ja.md)
-
-## 貢献者
-
-- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 互換性とビルドツールの改善 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1))。
 
 > GF2VR は非公式ファンプロジェクトです。正規にインストールしたゲームが必要です。ゲームの商標・著作物の権利は各権利者に帰属します。
