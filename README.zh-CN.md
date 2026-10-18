@@ -8,9 +8,19 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 用于以 VR 游玩 GF2 Exilium 的非官方模组。
 
-**[下载正式版 1.1.2](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)**
+**[下载正式版 1.1.3](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)**
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
+
+更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。
+
+## 3DMigoto 兼容性
+
+1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
+
+请使用默认 wrapper 模式，即省略或注释 [System] 中的 `hook`。`hook=recommended` 和 `hook=all` 不在支持范围内。`calls`、`crash` 用于日志/转储，并非此修复的必要选项。皮肤 INI 语法与重复规则警告属于其他问题。
+
+[3DMigoto](docs/zh-CN/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](docs/zh-CN/BUILD_VARIANT_METADATA.md)
 
 ## 选择 Clean 或 Dirty
 
@@ -24,8 +34,8 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 两个版本的常规 VR 源码、版本和更新保持一致。只有 Dirty 包含接触变形代码；Clean 在构建时排除该实现，而不是仅将其关闭。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
-- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Clean-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Dirty-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
 
 一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
 

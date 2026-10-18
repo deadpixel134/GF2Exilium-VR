@@ -2,17 +2,21 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
-## 1.1.1 — Clean / Dirty
+## 1.1.3 — Clean / Dirty
 
-現在の 1.1.1 は variants 配下の共通コードと種類別の生成ヘッダーを使います。両方を再構築するコマンド:
+現在の 1.1.3 は variants 配下の共通コードと種類別の生成ヘッダーを使います。両方を再構築するコマンド:
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.3'
 ```
 
-1.1.1 は Clean/Dirty の製品ソースと別パッケージを公開します。native-source/variants/common は共通ネイティブコード、Clean/Dirty overlay は接触の有無による生成ヘッダー、managed は自作の手表示・接触コードです。それ以外の native-source 直下には従来の 1.0.2 ソースと再構築手順を保持します。
+1.1.3 は Clean/Dirty の製品ソースと別パッケージを公開します。native-source/variants/common は共通ネイティブコード、Clean/Dirty overlay は接触の有無による生成ヘッダー、managed は自作の手表示・接触コードです。それ以外の native-source 直下には従来の 1.0.2 ソースと再構築手順を保持します。
 
 Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエイリアスが原因であると確認されました。VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。
+
+1.1.3 は PR #1 の 3DMigoto 既定 wrapper モードとの互換性変更を Clean・Dirty の両方に反映します。ゲームの wrapper を保持し、VR コピーと OpenXR には実際の D3D11 デバイス/context を使用します。DLL と一致する設定アプリ・インストーラーを同梱します。
+
+[3DMigoto](../docs/ja/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](../docs/ja/BUILD_VARIANT_METADATA.md)
 
 ---
 

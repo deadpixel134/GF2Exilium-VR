@@ -2,27 +2,21 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-## Unreleased wrapper compatibility changes
+## 1.1.3 — Clean / Dirty
 
-The current common source includes wrapper/native-device interop changes.
-Use `-AllowSourceChanges` for intentional source builds and generate matching
-desktop contracts and compiled variant profiles as described in
-[BUILD_VARIANT_METADATA.md](../docs/en/BUILD_VARIANT_METADATA.md).
-Without that explicit option, the frozen release hash check remains enabled.
-The release reference hashes in `source-manifest.json` describe released 1.1.2
-artifacts, not a claim that the changed source reproduces those artifacts.
-
-## 1.1.1 — Clean / Dirty
-
-Current 1.1.1 native source uses shared code and per-flavor generated headers under variants. Rebuild both flavors with:
+Current 1.1.3 native source uses shared code and per-flavor generated headers under variants. Rebuild both flavors with:
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.3'
 ```
 
-Version 1.1.1 publishes the Clean/Dirty product sources and separate packages. native-source/variants/common holds shared native code; Clean/Dirty overlays contain the generated contact-specific headers; managed contains owned hand-display/contact code. The rest of the native-source root preserves the previous 1.0.2 source and reproduction recipe.
+Version 1.1.3 publishes the Clean/Dirty product sources and separate packages. native-source/variants/common holds shared native code; Clean/Dirty overlays contain the generated contact-specific headers; managed contains owned hand-display/contact code. The rest of the native-source root preserves the previous 1.0.2 source and reproduction recipe.
 
 The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
+
+1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
+
+[3DMigoto](../docs/en/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](../docs/en/BUILD_VARIANT_METADATA.md)
 
 ---
 

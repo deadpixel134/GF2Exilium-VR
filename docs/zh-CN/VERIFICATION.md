@@ -1,19 +1,19 @@
-# 验证范围与限制
+# 审查与验证
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
-
-1.1.2 检查了三种语言下 Clean、Dirty、缺少安装包以及默认、最小、150% 布局的共27种界面状态。下方安装与投影检查数量沿用未改动的1.1.1实现的既有证据。未关闭正在运行的游戏，因此不声称重新完成了安装写入测试。
-
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
-VR DLL 与公共设置程序 payload 和 1.1.1 完全相同。此版本仅更新安装程序提示。
-
-
-此前实际测试环境：Meta Quest 2 · 4K 显示器 · Virtual Desktop。
-
-新安装程序通过了 160 项版本切换与失败恢复、525 项所有权以及 175 项目录布局检查。公共投影修正通过 183,984 项离线断言及原有路径回归检查。由公开源码重新构建的两个原生 DLL 与发行文件逐字节一致。安装和设置程序包含所需 .NET 10.0.12 运行时。离线与安装检查不能替代真实游戏/HMD 验收。
+PR 作者报告在 Dirty 开发构建中连续启动三次，确认 VR 与皮肤同时工作。这是贡献者的记录，不代表新 1.1.3 二进制已通过 HMD 验收。本次发布验证两种 native 构建、使用实际修改源码的 COM 同一性/失败路径、桌面构建及包完整性。没有重新运行游戏或 HMD。
 
 已确认 Quest 3 和 Galaxy XR 所报告的左右画面错位由抗锯齿导致。使用 VR 前，请在游戏设置中关闭抗锯齿。
 
-一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
+增加 3DMigoto 默认 wrapper 模式兼容性修改及匹配的构建元数据。普通 VR 与手部显示保持共用，接触变形仅属于 Dirty。保留现有设置和安装归属/恢复保护。
+
+[3DMigoto](3DMIGOTO_COMPATIBILITY.md) · [Build metadata](BUILD_VARIANT_METADATA.md)
+
+贡献：[rgbtl1248](https://github.com/rgbtl1248)，[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)。
+
+更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。
+
+1.1.3 验证通过：COM 47项、Clean/Dirty 安装/切换/恢复160项、归属保护525项、目录结构175项、包位置12项、安装界面19项、设置程序各577项，以及1.1.2 → 1.1.3 → 精确恢复28项。这些是离线/模拟文件测试，不等同于游戏或HMD验收。

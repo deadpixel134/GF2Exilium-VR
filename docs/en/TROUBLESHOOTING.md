@@ -4,7 +4,7 @@
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
-The VR DLLs and shared Configurator payload are identical to 1.1.1. This version updates Installer guidance only.
+1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
 
 ## 1.1.1 — Clean / Dirty
 

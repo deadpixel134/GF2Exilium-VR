@@ -2,6 +2,20 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.1.3
+
+1.1.3 への更新: Clean または Dirty の ZIP 全体を新しいフォルダーに展開し、その GF2VR.Installer.exe で既存ゲームの場所にインストールしてください。旧 1.1.2 設定アプリの自動更新は新しい native プロファイルを検証できず拒否します。既存インストールは保持されます。DLL だけのコピーやファイルの混在は避けてください。
+
+1.1.3 は PR #1 の 3DMigoto 既定 wrapper モードとの互換性変更を Clean・Dirty の両方に反映します。ゲームの wrapper を保持し、VR コピーと OpenXR には実際の D3D11 デバイス/context を使用します。DLL と一致する設定アプリ・インストーラーを同梱します。
+
+[System] の `hook` を省略またはコメントアウトした既定 wrapper モードを使用してください。`hook=recommended` と `hook=all` は対応範囲外です。`calls`・`crash` はログ/ダンプ用で、この修正に必須ではありません。スキンの INI 構文や重複ルール警告は別の問題です。
+
+> **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
+
+PR 作者は Dirty 開発ビルドで 3 回連続起動し、VR とスキンの同時動作を確認したと報告しています。これは投稿者の記録であり、新しい 1.1.3 バイナリの HMD 受け入れ確認ではありません。本リリースでは両 native ビルド、実際の変更ソースを使う COM 同一性/失敗経路、デスクトップビルド、パッケージ整合性を検証します。新たなゲーム/HMD 実行は行っていません。
+
+貢献: [rgbtl1248](https://github.com/rgbtl1248)、[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)。
+
 ## 1.1.2
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**

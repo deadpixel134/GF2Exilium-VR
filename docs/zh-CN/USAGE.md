@@ -4,7 +4,7 @@
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
-VR DLL 与公共设置程序 payload 和 1.1.1 完全相同。此版本仅更新安装程序提示。
+1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
 
 ## 1.1.1 — Clean / Dirty
 

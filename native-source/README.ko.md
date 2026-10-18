@@ -2,17 +2,21 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-## 1.1.1 — Clean / Dirty
+## 1.1.3 — Clean / Dirty
 
-현재 1.1.1 네이티브 소스는 variants 아래의 공통 코드와 빌드별 생성 헤더로 구성합니다. 두 종류를 함께 재빌드하는 명령은 다음과 같습니다.
+현재 1.1.3 네이티브 소스는 variants 아래의 공통 코드와 빌드별 생성 헤더로 구성합니다. 두 종류를 함께 재빌드하는 명령은 다음과 같습니다.
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.3'
 ```
 
-1.1.1은 Clean/Dirty의 제품 소스와 별도 패키지를 공개합니다. native-source/variants/common은 공통 native 코드, Clean/Dirty overlay는 접촉 유무에 따른 생성 헤더, managed는 자체 제작 손 표시·접촉 코드입니다. 그 밖의 native-source 루트는 기존 1.0.2 소스·재현 스크립트를 보존합니다.
+1.1.3은 Clean/Dirty의 제품 소스와 별도 패키지를 공개합니다. native-source/variants/common은 공통 native 코드, Clean/Dirty overlay는 접촉 유무에 따른 생성 헤더, managed는 자체 제작 손 표시·접촉 코드입니다. 그 밖의 native-source 루트는 기존 1.0.2 소스·재현 스크립트를 보존합니다.
 
 Quest 3와 Galaxy XR에서 보고된 양안 영상 어긋남은 안티앨리어싱이 원인인 것으로 확인됐습니다. 게임 설정에서 안티앨리어싱을 끄고 VR을 사용하세요.
+
+1.1.3은 PR #1의 3DMigoto 기본 wrapper 모드 호환 변경을 Clean·Dirty에 함께 반영합니다. 게임의 wrapper는 유지하고 VR 복사·OpenXR에는 실제 D3D11 장치/context를 사용합니다. 변경된 DLL과 일치하는 설정 도구·인스톨러를 함께 제공합니다.
+
+[3DMigoto](../docs/ko/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](../docs/ko/BUILD_VARIANT_METADATA.md)
 
 ---
 

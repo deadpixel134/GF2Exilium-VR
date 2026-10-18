@@ -1,49 +1,29 @@
 # Using GF2VR with 3DMigoto
 
-This change keeps the game's D3D11 wrapper while using the underlying native
-device and immediate context for private VR copies and OpenXR. Device checks
-use canonical COM `IUnknown` identity instead of comparing interface addresses.
+[한국어](../ko/3DMIGOTO_COMPATIBILITY.md) | [English](../en/3DMIGOTO_COMPATIBILITY.md) | [日本語](../ja/3DMIGOTO_COMPATIBILITY.md) | [简体中文](../zh-CN/3DMIGOTO_COMPATIBILITY.md)
+
+1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
+
+> **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 ## Configuration
 
-Use 3DMigoto's default wrapper mode. An omitted or commented `[System]` `hook`
-entry already has the required behavior; no additional edit is needed in that
-case. Additional function hooks such as `hook=recommended` or `hook=all` are
-outside this change's supported configuration.
-
-`calls` and `crash` control logging and dump handling; enabling them is not a
-compatibility requirement. Skin-specific INI syntax and duplicate-rule warnings
-remain separate issues.
+Use the default wrapper mode, with the [System] `hook` entry omitted or commented out. `hook=recommended` and `hook=all` are outside the supported configuration. `calls` and `crash` control logging/dumps and are not required by this fix. Skin INI syntax and duplicate-rule warnings are separate issues.
 
 ## Implementation
 
-- Obtain the native device using the swapchain's public `GetDevice`, falling
-  back to its backbuffer's `GetDevice` when necessary.
-- Validate COM identity against Unity's device, then retain the native device
-  and immediate context for VR. Preserve the game's device/context wrappers.
-- Apply the same identity rule to panel captures, destination textures, and
-  controller cursor textures.
-- At the pre-draw boundary, compare wrapper/native context COM identity and
-  refresh the retained native context's hooks when its dispatch targets change.
-- Reject known wrapper interfaces on the supposed native device/context;
-  installation failure reasons 11/12 indicate remaining function hooks.
-- The `native_graphics_isolated` diagnostic value is 1 when the Unity and native
-  device addresses differ, and 0 when they were already the same address.
+- Obtain the native device through public swapchain GetDevice, falling back to the backbuffer GetDevice if needed.
+- Compare the Unity wrapper and native device through canonical COM IUnknown identity. Do not replace game wrappers.
+- Retain the native device/immediate context for VR. Use the same identity check for panel, destination and controller cursor textures.
+- At the pre-eye-draw boundary, compare context COM identity and refresh hooks on the retained native context.
+- If the supposed native device/context exposes a known 3DMigoto wrapper interface, stop VR initialization. Reasons 11/12 identify this check; ordinary game execution remains available.
 
-The desktop tools pin the native DLL's hash. Copying a changed DLL alone can
-cause Configurator `runtimeError` and disabled controls. Follow
-[the metadata build procedure](BUILD_VARIANT_METADATA.md) to produce matching
-runtime contracts, compiled variant profiles, and package manifests from the
-actual DLL outputs. Matching metadata keeps the existing integrity and
-installation checks valid.
+Copying a DLL alone leaves desktop integrity metadata mismatched. Extract the whole ZIP and update with its new Installer. Developers should follow [the metadata procedure](BUILD_VARIANT_METADATA.md). Diagnostic native_graphics_isolated=1 means wrapper/native addresses differ; 0 means they match. It is not a compatibility-success verdict.
 
 ## Evidence and limits
 
-The user confirmed simultaneous VR and skin rendering across three consecutive
-game launches with the latest Dirty 1.1.2 compatibility build. Live inspection
-also confirmed that changed graphics dispatch targets were covered after the
-fix. Earlier standalone D3D11 checks
-covered wrapper command execution and native copy/query/readback. Configurator's
-real installation check passed after matching metadata was installed. These
-are historical local observations, not a claim that every injector fork, skin,
-or headset was exercised. Clean has not been confirmed in the game with an HMD.
+The PR author reported simultaneous VR and skin rendering on three consecutive launches of a Dirty development build. That is contributor evidence, not HMD acceptance of these new 1.1.3 binaries. This release verifies both native builds, COM identity/failure paths using the actual changed source, desktop builds and package integrity. No new game/HMD run was performed.
+
+The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
+
+Contribution: [rgbtl1248](https://github.com/rgbtl1248), [PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1).

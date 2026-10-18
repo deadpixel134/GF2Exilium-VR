@@ -8,13 +8,19 @@
 
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
-**[정식 버전 1.1.2 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)**
+**[정식 버전 1.1.3 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)**
 
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
-## 3DMigoto 연동 개발
+1.1.3 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.2 설정 창의 자동 업데이트는 새 native 프로필을 검증하지 못해 거부됩니다. 기존 설치는 보존됩니다. DLL만 복사하거나 파일을 섞지 마세요.
 
-현재 소스의 wrapper 장치 호환 변경은 [연동 안내](docs/ko/3DMIGOTO_COMPATIBILITY.md)와 [설정 도구 빌드 절차](docs/en/BUILD_VARIANT_METADATA.md)를 참고하세요. 소스에서 빌드할 때는 DLL과 설정 도구 메타데이터를 함께 생성하세요.
+## 3DMigoto 호환성
+
+1.1.3은 PR #1의 3DMigoto 기본 wrapper 모드 호환 변경을 Clean·Dirty에 함께 반영합니다. 게임의 wrapper는 유지하고 VR 복사·OpenXR에는 실제 D3D11 장치/context를 사용합니다. 변경된 DLL과 일치하는 설정 도구·인스톨러를 함께 제공합니다.
+
+3DMigoto의 `[System]`에서 `hook`이 생략되었거나 주석 처리된 기본 wrapper 모드를 사용하세요. `hook=recommended` 및 `hook=all` 조합은 지원 범위 밖입니다. `calls`·`crash`는 기록/덤프 옵션이며 이 수정에 필수는 아닙니다. 스킨의 INI 문법·중복 규칙 경고는 별도 문제입니다.
+
+[3DMigoto](docs/ko/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](docs/ko/BUILD_VARIANT_METADATA.md)
 
 ## Clean과 Dirty 선택
 
@@ -28,8 +34,8 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
 두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
-- [GF2VR-Native-SelfContained-Dirty-1.1.2.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.2)
+- [GF2VR-Native-SelfContained-Clean-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Dirty-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
 
 둘 중 하나만 설치하세요. 두 빌드는 게임 실행 파일 옆의 같은 version.dll 한 개를 사용하며, OpenXR 로더·설정 프로그램 등 공통 지원 파일은 vrmod 아래에 설치합니다. 원본 GameAssembly.dll·UnityPlayer.dll·게임 에셋은 교체하지 않습니다. 두 빌드 모두 게임 프로세스에서 실행하므로 Clean이라는 이름이 미감지·안전을 보장하지 않습니다.
 

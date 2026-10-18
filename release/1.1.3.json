@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.1.3",
+  "tag": "v1.1.3",
+  "baseRelease": "1.1.2",
+  "mergedPullRequest": "https://github.com/deadpixel134/GF2Exilium-VR/pull/1",
+  "mergedCommit": "95d1c165d5c50b5c5e4bab2847b2b39c19bd8fe0",
+  "changes": [
+    "COM identity for device/context wrapper interop",
+    "Native device/context retained for private VR copies and OpenXR",
+    "Paired generated desktop metadata with actual DLL hashes",
+    "Matching native/Configurator/Installer and four-language documentation"
+  ],
+  "configuration": "3DMigoto default wrapper mode; [System] hook omitted/commented; hook=recommended/all unsupported",
+  "archives": [
+    {
+      "entries": 16,
+      "flavor": "Clean",
+      "nativeSha256": "31D2CC0F8098AE939C9B06A12B06104564E8AF337B1D58F4A9CD04D4151D93E2",
+      "sha256": "C9B5B43DF250D39A5ED525098A945CEA62D7FE3F495FDE6E8DB9E26136B3F517",
+      "bytes": 93705354,
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.3.zip"
+    },
+    {
+      "entries": 16,
+      "flavor": "Dirty",
+      "nativeSha256": "89520AD83F72903CF79E9185C4B4DEF3BA034D3A6CFDF0C12647BDFD3EE66D60",
+      "sha256": "D0DE91753967FD2ECF9AA5738B4A60A9DF6FC42859C0735287C6298D678250C6",
+      "bytes": 93726045,
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.3.zip"
+    }
+  ],
+  "native": {
+    "schemaVersion": 1,
+    "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+    "commonCoreSha256": "063E384231813F07776307F9DEB10C11E954BE081556249CF3271630212E0E22",
+    "variants": {
+      "Clean": {
+        "buildId": "GF2VR-CLEAN-113-001",
+        "dllSha256": "31D2CC0F8098AE939C9B06A12B06104564E8AF337B1D58F4A9CD04D4151D93E2"
+      },
+      "Dirty": {
+        "buildId": "GF2VR-DIRTY-113-001",
+        "dllSha256": "89520AD83F72903CF79E9185C4B4DEF3BA034D3A6CFDF0C12647BDFD3EE66D60"
+      }
+    }
+  },
+  "offlineValidation": {
+    "nativeExactReproduction": true,
+    "installSwitchRollbackChecks": 160,
+    "ownershipChecks": 525,
+    "comSyntheticChecks": 47,
+    "previous112UpgradeRollbackChecks": 28,
+    "proxyExports": 19,
+    "layoutChecks": 175,
+    "packageLocationChecks": 12,
+    "installerUxChecks": 19,
+    "settingsChecksEach": 577
+  },
+  "manualFullZipUpgradeRequiredFrom112": true,
+  "oldUpdaterRejection": "nativeBuild; existing installation preserved",
+  "gameLaunches": 0,
+  "exact113HmdAcceptance": false,
+  "authorRuntimeEvidence": "PR author reported3consecutive VR+skin runs on a Dirty development build; not exact1.1.3HMD acceptance",
+  "antiAliasingRequired": "OFF",
+  "settingsPreserved": true,
+  "ownedFilesEach": 9,
+  "contactAndManagedSourcesUnchanged": true
+}

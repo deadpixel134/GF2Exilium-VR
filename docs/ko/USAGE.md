@@ -4,7 +4,7 @@
 
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
-VR DLL과 공통 설정 프로그램 payload는 1.1.1과 동일합니다. 이 버전은 인스톨러 안내만 갱신합니다.
+1.1.3은 PR #1의 3DMigoto 기본 wrapper 모드 호환 변경을 Clean·Dirty에 함께 반영합니다. 게임의 wrapper는 유지하고 VR 복사·OpenXR에는 실제 D3D11 장치/context를 사용합니다. 변경된 DLL과 일치하는 설정 도구·인스톨러를 함께 제공합니다.
 
 ## 1.1.1 — Clean / Dirty
 

@@ -1,17 +1,19 @@
 {
   "schemaVersion": 1,
-  "buildId": "SETTINGS-CAMERA-FOLLOW-001",
-  "dllSha256": "5DE5F61E238D51E96B2827AA79B220BE90A9D9FE4A383B0236DCC2533E88CE82",
-  "configurationRoot": "G:/GF2Exilium/vrmod/config",
+  "buildId": "GF2VR-CLEAN-113-001",
+  "dllSha256": "31D2CC0F8098AE939C9B06A12B06104564E8AF337B1D58F4A9CD04D4151D93E2",
+  "configurationRoot": "INSTALL_ROOT/vrmod/config",
   "files": [
     "render_quality.json",
     "stereo_depth.json",
-    "activity_ui.json",
-    "controller_input.json",
     "navigation.json",
     "world_drag.json",
-    "world_scale.json"
+    "activity_ui.json",
+    "controller_input.json",
+    "world_scale.json",
+    "controller_hands.json"
   ],
   "apply": "GAME_RESTART",
-  "provenance": "25-field/seven-file settings: optional default-ON camera-follow startup choice in navigation.json. RIGHT live process override; restart to apply saved choice. Practical acceptance deferred."
+  "buildFlavor": "Clean",
+  "commonCoreSha256": "063E384231813F07776307F9DEB10C11E954BE081556249CF3271630212E0E22"
 }

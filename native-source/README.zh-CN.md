@@ -2,17 +2,21 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
-## 1.1.1 — Clean / Dirty
+## 1.1.3 — Clean / Dirty
 
-当前 1.1.1 使用 variants 下的公共代码及各类型生成头文件。一起重新构建两个版本：
+当前 1.1.3 使用 variants 下的公共代码及各类型生成头文件。一起重新构建两个版本：
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.1'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.1.3'
 ```
 
-1.1.1 公开 Clean/Dirty 产品源码及独立安装包。native-source/variants/common 为公共原生代码，Clean/Dirty overlay 为接触功能差异生成的头文件，managed 为自有手部显示及接触代码。native-source 根目录其余部分保留此前 1.0.2 的源码与重建脚本。
+1.1.3 公开 Clean/Dirty 产品源码及独立安装包。native-source/variants/common 为公共原生代码，Clean/Dirty overlay 为接触功能差异生成的头文件，managed 为自有手部显示及接触代码。native-source 根目录其余部分保留此前 1.0.2 的源码与重建脚本。
 
 已确认 Quest 3 和 Galaxy XR 所报告的左右画面错位由抗锯齿导致。使用 VR 前，请在游戏设置中关闭抗锯齿。
+
+1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
+
+[3DMigoto](../docs/zh-CN/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](../docs/zh-CN/BUILD_VARIANT_METADATA.md)
 
 ---
 
