@@ -66,4 +66,8 @@ Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエ�
 - [検証範囲](docs/ja/VERIFICATION.md)
 - [ソース構成と利用条件](SOURCE_BOUNDARY.ja.md)
 
+## 貢献者
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 互換性とビルドツールの改善 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1))。
+
 > GF2VR は非公式ファンプロジェクトです。正規にインストールしたゲームが必要です。ゲームの商標・著作物の権利は各権利者に帰属します。

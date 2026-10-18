@@ -66,4 +66,8 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 - [验证范围](docs/zh-CN/VERIFICATION.md)
 - [源码范围与使用条款](SOURCE_BOUNDARY.zh-CN.md)
 
+## 贡献者
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 改进 3DMigoto 兼容性与构建工具（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。
+
 > GF2VR 是非官方粉丝项目，需要合法安装的游戏。游戏商标及相关作品的权利属于各自权利人。

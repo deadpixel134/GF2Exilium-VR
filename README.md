@@ -66,4 +66,8 @@ Quest 3와 Galaxy XR에서 보고된 양안 영상 어긋남은 안티앨리어�
 - [검증 범위](docs/ko/VERIFICATION.md)
 - [소스 구성과 이용 조건](SOURCE_BOUNDARY.md)
 
+## 기여자
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 호환성 및 빌드 도구 개선 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+
 > GF2VR은 비공식 팬 프로젝트입니다. 정식으로 설치한 게임이 필요하며, 게임의 상표·저작물은 각 권리자에게 있습니다.

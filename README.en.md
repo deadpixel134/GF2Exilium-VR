@@ -66,4 +66,8 @@ The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be
 - [Verification](docs/en/VERIFICATION.md)
 - [Source boundary and terms](SOURCE_BOUNDARY.en.md)
 
+## Contributors
+
+- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+
 > GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.
