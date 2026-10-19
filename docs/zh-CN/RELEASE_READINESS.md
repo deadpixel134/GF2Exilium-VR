@@ -2,6 +2,13 @@
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
+## 1.1.4
+
+两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
+
+两个native DLL均与源码重编译逐字节一致。通过4,517项native布局/配置检查、Clean706项/Dirty941项GUI检查、236项分部位默认值及先前真实IL显式配置一致性检查、236项真实GUI默认JSON检查、159项安装/切换/失败恢复检查，以及11项先前安装精确恢复检查。验证bridge131个方法、接触hot IL46个方法。这些是离线、不可执行fixture和个人安装检查，不声称进行了新的游戏/HMD验收。
+
+
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。

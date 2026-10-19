@@ -48,7 +48,7 @@ foreach($flavor in @('Clean','Dirty')){
  $folder=Join-Path $metadata $flavor
  [IO.Directory]::CreateDirectory($folder)|Out-Null
  $contract=[ordered]@{schemaVersion=1;buildId=$variants[$flavor].buildId;dllSha256=$variants[$flavor].dllSha256;
-  configurationRoot='INSTALL_ROOT/vrmod/config';files=$files;apply='GAME_RESTART';buildFlavor=$flavor;commonCoreSha256=$commonHash}
+  configurationRoot='INSTALL_ROOT/vrmod/config';files=$(if($flavor -eq 'Dirty'){@($files)+@('touch_interaction.json')}else{$files});apply='GAME_RESTART';buildFlavor=$flavor;commonCoreSha256=$commonHash}
  [IO.File]::WriteAllText((Join-Path $folder 'runtime-contract.json'),(($contract|ConvertTo-Json -Depth 4)+"`n"),$utf8)
 }
 $profiles=@"

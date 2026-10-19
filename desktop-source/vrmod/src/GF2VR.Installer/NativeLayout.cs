@@ -104,7 +104,7 @@ internal static class NativeLayout
             bool portable = IsPortable(package);
             bool variant = VariantProfiles.IsVariant(package.Native?.BuildId);
             bool stable = package.Native?.BuildId == StablePortableBuild || IsFlexible(package);
-            string[] configFiles = variant ? VariantConfigFiles : stable ? StableConfigFiles : ConfigFiles;
+            string[] configFiles = variant ? (package.Native?.BuildFlavor == "Dirty" ? [.. VariantConfigFiles, "touch_interaction.json"] : VariantConfigFiles) : stable ? StableConfigFiles : ConfigFiles;
             string expectedHash = ExpectedHash(package);
             if (package.Native == null || !Paths.Equal(package.Native.DllSha256, expectedHash) ||
                 (!portable && package.Native.BuildId != BuildId) ||

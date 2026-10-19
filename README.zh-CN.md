@@ -8,11 +8,11 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 用于以 VR 游玩 GF2 Exilium 的非官方模组。
 
-**[下载正式版 1.1.3](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)**
+**[下载正式版 1.1.4](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
-更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。
+更新至1.1.4：将Clean或Dirty ZIP完整解压到新文件夹，使用其中的GF2VR.Installer.exe选择现有游戏位置安装。旧版1.1.3设置程序无法验证新的native配置，因此此次请使用新ZIP内的安装程序。保留已有设置。请勿只复制DLL或混用包文件。
 
 ## 贡献者
 
@@ -33,13 +33,15 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 | 常规 VR、立体画面、控制器输入和设置 | 包含 | 包含 |
 | 双手位置的白色球体 | 包含 | 包含 |
 | 角色胸部、臀部接触与变形 | 不包含 | 包含 |
+| 辅助面板手动位置、旋转与倾斜设置 | 包含 | 包含 |
+| 接触振动、晃动及分部位设置 | 不包含 | 包含 |
 
 接触功能在对应部位的受支持骨骼已绑定的角色上生效。支持部位因角色模型而异；尚未确认宿舍和活动层中的实际臀部反应。
 
 两个版本的常规 VR 源码、版本和更新保持一致。只有 Dirty 包含接触变形代码；Clean 在构建时排除该实现，而不是仅将其关闭。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
 
 一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
 

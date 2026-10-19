@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+両ビルドで補助パネルのユーザー向き・位置・回転・画面の傾き・最大サイズを設定できます。Dirtyはキャラクター接触時の振動と、胸・臀部別の揺れ設定を追加します。
+
+[Build metadata](../docs/ja/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 1.1.3 は PR #1 の 3DMigoto 既定 wrapper モードとの互換性変更を Clean・Dirty の両方に反映します。ゲームの wrapper を保持し、VR コピーと OpenXR には実際の D3D11 デバイス/context を使用します。DLL と一致する設定アプリ・インストーラーを同梱します。
 
 
@@ -13,8 +20,8 @@
 設定プログラムとインストーラーは、Windows Forms、.NET SDK 10.0.112、公式の .NET 10.0.12 Windows x64 ランタイムパックを使用します。PowerShell 7 と Windows x64 が必要です。このディレクトリから、次のコマンドを実行します。
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.3
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.3
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.4
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.4
 ```
 
 最初のビルドでは、リポジトリ内のソース設定を使い、NuGet から公式のランタイムパックを復元します。プロジェクト内のキャッシュ、ビルド出力、必要な .NET のライセンス告知を `vrmod/build/` に作成します。ゲームファイルやシステム共通の .NET インストールは変更しません。両方のアプリに専用ランタイムを含みます。アプリの DLL、deps、runtimeconfig ファイルは EXE と同じ場所に維持してください。

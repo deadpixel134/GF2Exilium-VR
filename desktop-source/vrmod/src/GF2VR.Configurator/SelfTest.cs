@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 
 namespace GF2VR.Configurator;
 
-internal static class SelfTest
+internal static partial class SelfTest
 {
     private static int checks;
     private static void Assert(bool ok, string message)
@@ -16,6 +16,122 @@ internal static class SelfTest
         ++checks;
         try { act(); } catch (SettingsError) { return; }
         throw new InvalidDataException("Expected rejection: " + message);
+    }
+
+    private static void HapticChecks(SettingsStore store, string root)
+    {
+        const string file = "controller_hands.json", strength = "contactHapticStrengthPercent", duration = "contactHapticDurationMs";
+        var original = Fields.Clone(store.Documents);
+        Assert(Fields.All.Single(f => f.Key == strength).Default.Equals(15d), "haptic strength default");
+        Assert(Fields.All.Single(f => f.Key == duration).Default.Equals(30d), "haptic duration default");
+        foreach (double value in new[] { 0d, 1d, 15d, 30d, 75d, 100d })
+            Assert(SettingsStore.Number(value.ToString(System.Globalization.CultureInfo.InvariantCulture), strength) == value, "OpenXR strength without recommendation clamp");
+        foreach (double value in new[] { 0d, .000001d, 1d, 30d, 125.5d, 1000d, 9000000000000d })
+            Assert(SettingsStore.Number(value.ToString(System.Globalization.CultureInfo.InvariantCulture), duration) == value, "representable duration without recommendation clamp");
+        foreach (string value in new[] { "-1", "-0", "101", "1e-99", "NaN", "Infinity", "1e999" })
+            Reject(() => SettingsStore.Number(value, strength), "invalid strength " + value);
+        foreach (string value in new[] { "-1", "-0", "0.0000009", "9223372036854.776", "NaN", "Infinity", "1e999" })
+            Reject(() => SettingsStore.Number(value, duration), "invalid duration " + value);
+        foreach (string key in new[] { strength, duration })
+        {
+            foreach (JsonNode? invalid in new JsonNode?[] { null, JsonValue.Create("30"), JsonValue.Create(false), new JsonArray() })
+            {
+                var bad = Fields.Clone(original); bad[file][key] = invalid?.DeepClone();
+                Reject(() => SettingsStore.Validate(bad), "invalid typed haptic " + key);
+            }
+        }
+        var custom = Fields.Clone(original); custom[file][strength] = 62.5; custom[file][duration] = 125.5;
+        custom[file]["enabled"] = true; // Saved native fixture exercises active output, independently of the preceding OFF-toggle test.
+        custom[file]["hapticFutureMetadata"] = new JsonObject { ["retain"] = 42 };
+        store.Save(custom); var reload = new SettingsStore(root, true); reload.Load();
+        Assert(reload.Documents[file][strength]!.GetValue<double>() == 62.5 && reload.Documents[file][duration]!.GetValue<double>() == 125.5, "haptics save reload");
+        Assert(reload.Documents[file]["hapticFutureMetadata"]!["retain"]!.GetValue<int>() == 42, "unknown haptic metadata preserved");
+        File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "haptic-native.json"), File.ReadAllBytes(Path.Combine(root, "vrmod", "config", file)));
+        string profile = Path.Combine(root, "haptic-profile.json"); SettingsStore.Export(profile, store.Documents);
+        var imported = SettingsStore.Import(profile);
+        Assert(imported[file][strength]!.GetValue<double>() == 62.5 && imported[file][duration]!.GetValue<double>() == 125.5, "haptic profile round trip");
+        var legacy = JsonNode.Parse(File.ReadAllBytes(profile))!.AsObject();
+        legacy["configurations"]![file]!.AsObject().Remove(strength); legacy["configurations"]![file]!.AsObject().Remove(duration);
+        File.WriteAllBytes(profile, SettingsStore.Encode(legacy));
+        imported = SettingsStore.Import(profile, store.Documents);
+        Assert(imported[file][strength]!.GetValue<double>() == 62.5 && imported[file][duration]!.GetValue<double>() == 125.5, "old profile preserves newer haptics");
+        imported = SettingsStore.Import(profile);
+        Assert(imported[file][strength]!.GetValue<double>() == 15 && imported[file][duration]!.GetValue<double>() == 30, "old profile without current uses haptic defaults");
+        store.Save(original);
+    }
+
+    private static void PanelChecks(SettingsStore store, string root)
+    {
+        var original = Fields.Clone(store.Documents);
+        var fields = Fields.All.Where(f => f.Group == "auxiliaryPanel").ToArray();
+        var defaults = Fields.Defaults()["controller_input.json"]["auxiliaryPanel"]!;
+        File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "panel-defaults-native.json"), SettingsStore.Encode(Fields.Defaults()["controller_input.json"]));
+        string priorPanelLanguage = Texts.Language;
+        foreach (string language in new[] { "ko", "en", "ja" }) {
+            Texts.Language = language;
+            Assert(Texts.Get("panelOffsetHelp").Contains("-0.10") && Texts.Get("panelOffsetHelp").Contains("0.01"), "localized captured XYZ defaults");
+            Assert(Texts.Get("panelTiltHelp").Contains("+5") && Texts.Get("panelScreenTilt") != Texts.Get("unavailable"), "localized upward tilt guide");
+            Assert(Texts.Get("panelOffsetHelp").Contains("+Y") && Texts.Get("panelOffsetHelp").Contains("+Z") && !Texts.Get("panelOffsetHelp").Contains("-Z"), "reported held-controller axis guide");
+        }
+        Texts.Language = priorPanelLanguage;
+        Assert(defaults["offsetX"]!.GetValue<double>() == 0 && defaults["offsetY"]!.GetValue<double>() == -.1 && defaults["offsetZ"]!.GetValue<double>() == .01, "captured panel position defaults");
+        Assert(defaults["screenTilt"]!.GetValue<double>() == 45, "captured screen tilt default");
+        Assert(!defaults["applyAnglesWhenFacing"]!.GetValue<bool>(), "captured policy OFF default");
+        foreach (double tilt in new[] { -270d, -5d, 0d, 5d, 720d })
+            Assert(SettingsStore.Number(tilt.ToString(System.Globalization.CultureInfo.InvariantCulture), "panelScreenTilt") == tilt, "signed tilt without advice clamp");
+        foreach (string badTilt in new[] { "NaN", "Infinity", "1e39", "1e-60" })
+            Reject(() => SettingsStore.Number(badTilt, "panelScreenTilt"), "invalid tilt " + badTilt);
+        var next = Fields.Clone(original);
+        foreach (var f in fields) Fields.Set(next, f, Fields.JsonSerializerNode(f.Default));
+        next["controller_input.json"]["auxiliaryPanel"]!["viewerFacing"] = false;
+        next["controller_input.json"]["auxiliaryPanel"]!["offsetX"] = -.75;
+        next["controller_input.json"]["auxiliaryPanel"]!["rotationPitch"] = -270;
+        next["controller_input.json"]["auxiliaryPanel"]!["rotationYaw"] = 720;
+        next["controller_input.json"]["auxiliaryPanel"]!["screenTilt"] = 5;
+        next["controller_input.json"]["auxiliaryPanel"]!["maximumWidth"] = 1.2;
+        next["controller_input.json"]["auxiliaryPanel"]!["futurePanel"] = 42;
+        next["controller_input.json"]["auxiliaryPanel"]!["applyAnglesWhenFacing"] = false;
+        var other = Fields.Files.Where(f => f != "controller_input.json")
+            .ToDictionary(f => f, f => File.ReadAllBytes(Path.Combine(root, "vrmod", "config", f)));
+        store.Save(next); store.Load();
+        foreach (var f in fields) Assert(Fields.Get(store.Documents, f)!.ToJsonString() == Fields.Get(next, f)!.ToJsonString(), "panel persistence " + f.Key);
+        foreach (var pair in other) Assert(pair.Value.SequenceEqual(File.ReadAllBytes(Path.Combine(root, "vrmod", "config", pair.Key))), "panel edit changed unrelated file " + pair.Key);
+        Assert(store.Documents["controller_input.json"]["auxiliaryPanel"]!["futurePanel"]!.GetValue<int>() == 42, "panel future fields lost");
+        File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "panel-native.json"), SettingsStore.Encode(store.Documents["controller_input.json"]));
+        foreach (string raw in new[] { "-0.75", "-270", "720", "3e38", "-3e38", "-0", "0.001" })
+            Assert(double.IsFinite(SettingsStore.Number(raw, "panelOffsetX")), "signed/outside advice rejected " + raw);
+        foreach (string raw in new[] { "NaN", "Infinity", "1e39", "-1e39", "1e-60", "-1e-999" })
+            Reject(() => SettingsStore.Number(raw, "panelOffsetX"), "unrepresentable panel number " + raw);
+        foreach (string key in new[] { "maximumWidth", "maximumHeight" }) foreach (double bad in new[] { 0d, -1d })
+        {
+            var invalid = Fields.Clone(next); invalid["controller_input.json"]["auxiliaryPanel"]![key] = bad;
+            Reject(() => SettingsStore.Validate(invalid), "invalid panel size " + key);
+        }
+        foreach (var f in fields)
+        {
+            var invalid = Fields.Clone(next); invalid[f.File][f.Group!]![Fields.JsonKey(f)] = null;
+            Reject(() => SettingsStore.Validate(invalid), "null panel field " + f.Key);
+        }
+        foreach (JsonNode? invalidGroup in new JsonNode?[] { null, new JsonArray(), JsonValue.Create(1) })
+        {
+            var invalid = Fields.Clone(next); invalid["controller_input.json"]["auxiliaryPanel"] = invalidGroup?.DeepClone();
+            Reject(() => SettingsStore.Validate(invalid), "invalid panel group");
+        }
+        string oldProfile = Path.Combine(root, "pre-panel-profile.json");
+        string policyProfile = Path.Combine(root, "angle-policy-profile.json");
+        SettingsStore.Export(policyProfile, store.Documents);
+        Assert(!SettingsStore.Import(policyProfile)["controller_input.json"]["auxiliaryPanel"]!["applyAnglesWhenFacing"]!.GetValue<bool>(), "policy false profile roundtrip");
+        var prePolicy = JsonNode.Parse(File.ReadAllBytes(policyProfile))!.AsObject();
+        prePolicy["configurations"]!["controller_input.json"]!["auxiliaryPanel"]!.AsObject().Remove("applyAnglesWhenFacing");
+        File.WriteAllBytes(policyProfile, SettingsStore.Encode(prePolicy));
+        Assert(!SettingsStore.Import(policyProfile)["controller_input.json"]["auxiliaryPanel"]!["applyAnglesWhenFacing"]!.GetValue<bool>(), "old panel profile uses selected OFF default");
+        Assert(!SettingsStore.Import(policyProfile, store.Documents)["controller_input.json"]["auxiliaryPanel"]!["applyAnglesWhenFacing"]!.GetValue<bool>(), "old panel profile preserves explicit current policy");
+        var legacy = Fields.Clone(original); legacy["controller_input.json"].Remove("auxiliaryPanel");
+        SettingsStore.Export(oldProfile, legacy);
+        var imported = SettingsStore.Import(oldProfile, next);
+        foreach (var f in fields) Assert(Fields.Get(imported, f)!.ToJsonString() == Fields.Get(next, f)!.ToJsonString(), "old import reset panel " + f.Key);
+        Assert(!SettingsStore.Import(oldProfile, legacy)["controller_input.json"].ContainsKey("auxiliaryPanel"), "old import activated new layout");
+        store.Save(original);
     }
 
     private static void RootLayoutChecks(string fixtureRoot)
@@ -67,6 +183,7 @@ internal static class SelfTest
         var store = new SettingsStore(root, testFixture: true); store.Load();
         Reject(() => new SettingsStore(root), "unknown deployed runtime cannot expose active configuration");
         Assert(!Directory.Exists(Path.Combine(root, "vrmod", "config")), "load created configuration");
+        Assert(!store.Documents["controller_input.json"].ContainsKey("auxiliaryPanel"), "load activated new panel layout");
         var uiField = Fields.All.Single(f => f.Key == "activityPrimaryUiEnabled");
         var faceField = Fields.All.Single(f => f.Key == "swapFaceButtons");
         var roleField = Fields.All.Single(f => f.Key == "swapPanelPointerHands");
@@ -334,7 +451,16 @@ internal static class SelfTest
         Assert((bool)hands.Default && Fields.Get(Fields.Defaults(), hands)!.GetValue<bool>(), "hands common ON default");
         string contact = Path.Combine(config, "touch_interaction.json");
         byte[] contactBytes = Encoding.UTF8.GetBytes("{\"contactEnabled\":true,\"futurePrivateSetting\":42}");
+#if GF2VR_DIRTY_CONTACT
+        store.Documents["touch_interaction.json"]["futurePrivateSetting"] = 42;
+        contactBytes = SettingsStore.Encode(store.Documents["touch_interaction.json"]);
+#endif
         File.WriteAllBytes(contact, contactBytes);
+#if GF2VR_DIRTY_CONTACT
+        store.Load();
+        JiggleChecks(store, root);
+        contactBytes = File.ReadAllBytes(contact);
+#endif
         foreach (bool enabled in new[] { false, true, false })
         {
             var beforeHands = Fields.Files.Where(f => f != hands.File).ToDictionary(f => f, f => File.ReadAllBytes(Path.Combine(config, f)));
@@ -356,6 +482,8 @@ internal static class SelfTest
         oldProfileNode["configurations"]!.AsObject().Remove(hands.File); File.WriteAllBytes(oldHandsProfile, SettingsStore.Encode(oldProfileNode.AsObject()));
         Assert(!Fields.Get(SettingsStore.Import(oldHandsProfile, store.Documents), hands)!.GetValue<bool>(), "old profile reset saved hands OFF");
         Assert(Fields.Get(SettingsStore.Import(oldHandsProfile), hands)!.GetValue<bool>(), "old profile without current settings lost ON default");
+        HapticChecks(store, root);
+        PanelChecks(store, root);
         // Leave real GUI smoke and native-parser fixtures in a valid, representative current state.
         fixtureNew = Fields.Clone(store.Documents);
         fixtureNew["navigation.json"]["navigation"]!["locomotionHand"] = "left";

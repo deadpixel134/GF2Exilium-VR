@@ -2,6 +2,13 @@
 
 [한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.1.4
+
+Clean·Dirty 공통으로 보조패널의 사용자 바라보기, 위치·회전·화면 기울기·최대 크기를 설정할 수 있습니다. Dirty에는 캐릭터 터치 진동과 가슴·엉덩이별 흔들림 설정을 추가했습니다.
+
+[Source manifest](source-manifest.json) · [Native metadata](release/1.1.4-native-metadata.json)
+
+
 1.1.1은 Clean/Dirty의 제품 소스와 별도 패키지를 공개합니다. native-source/variants/common은 공통 native 코드, Clean/Dirty overlay는 접촉 유무에 따른 생성 헤더, managed는 자체 제작 손 표시·접촉 코드입니다. 그 밖의 native-source 루트는 기존 1.0.2 소스·재현 스크립트를 보존합니다.
 
 

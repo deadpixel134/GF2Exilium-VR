@@ -2,9 +2,14 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
+## 1.1.4
+
+[1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)
+
+
 Configurator と Installer は native DLL のハッシュを厳密に検査します。検査を無効化せず、両 native ビルドが生成した同じメタデータを使用してください。Windows x64、PowerShell 7、Zig 0.16.0、Windows SDK が必要です。以下はリポジトリのルートで実行します。
 
-正式 1.1.3 ソースの既定ビルドは配布ハッシュの完全一致を要求します。意図的にソースを変更した開発時だけ -AllowSourceChanges を追加してください。新しい出力フォルダーで両方を一緒にビルドします。
+正式 1.1.4 ソースの既定ビルドは配布ハッシュの完全一致を要求します。意図的にソースを変更した開発時だけ -AllowSourceChanges を追加してください。新しい出力フォルダーで両方を一緒にビルドします。
 
 ```powershell
 ./native-source/variants/build-variants.ps1 -Flavor Both `
@@ -18,11 +23,11 @@ desktop-metadata に実 DLL の build ID/ハッシュを持つ VariantProfiles.g
 ```powershell
 $metadata = (Resolve-Path ./native-source/variants/build/desktop-metadata).Path
 $desktop = './desktop-source/vrmod/tools/build_desktop_private_runtime.ps1'
-& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.3 `
+& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata
-& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Clean
-& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Dirty
 ```
 

@@ -14,19 +14,25 @@ namespace GF2.Private
         private const int ContactCap = 64;
         private struct ContactTarget
         {
-            internal Transform Bone, Parent, Actor;
+            internal Transform Bone, Parent, Actor, Child;
             internal Animator Animator;
             internal SkinnedMeshRenderer Skin;
             internal Mesh Mesh;
             internal Vector3 Base, LastWritten, Offset, Velocity;
             internal int InsideMask;
             internal long HandTicket;
-            internal bool Owned;
+            internal bool Owned, RotationOwned, ScaleOwned;
+            internal Quaternion BaseRotation, LastRotation;
+            internal Vector3 BaseScale, LastScale, Tilt, TiltVelocity, PressLog;
+            internal ContactMaterial Material;
+            internal int Alignment, PressAlignment;
         }
         private static ContactSettings contactSettings;
         private static ContactTarget[] contactTargets;
         private static int contactCount, contactLastFrame = -1, contactHandFrame = -1;
         private static int contactMask, contactStatus, contactPid;
+        private static readonly ContactHapticEdges contactHaptics = new ContactHapticEdges();
+        private static int contactHapticValid, contactHapticInside;
         private static bool contactConfigured, contactRunning, contactSubscribed, contactNeedsRebind, contactFault;
         private static UnityAction contactAction;
         private static Vector3 contactLeft, contactRight;
@@ -35,6 +41,7 @@ namespace GF2.Private
         private static float contactUnitScale, contactHandScale;
         private static long contactEpoch, contactGeneration, contactTicket = -1, contactHandStamp, contactStepStamp, contactServiceStamp;
         private static long contactCallbacks, contactFrames, contactWrites, contactRestores, contactExternal, contactFaults, contactBindings;
+        private static long contactRotationWrites, contactScaleWrites, contactStiffnessCaps, contactImplicitSteps;
         private static long contactGapHeld, contactGapDecay, contactMaskZero, contactInvalid, contactGenerationReset, contactHardExpiry, contactDtReset, contactImpulses;
 
         public static void ConfigureContact(byte[] utf8, ref int status)
@@ -78,6 +85,7 @@ namespace GF2.Private
         // Called only on the existing main owner, never during event iteration.
         private static void ClearContact()
         {
+            contactHaptics.Suspend();
             contactRunning = false; contactMask = 0;
             ContactRestoreAll();
             if (contactSubscribed)
@@ -95,28 +103,6 @@ namespace GF2.Private
         private static bool ContactExact(Vector3 a, Vector3 b)
         { return a.x == b.x && a.y == b.y && a.z == b.z; }
 
-        private static void ContactRestoreOne(int index)
-        {
-            ContactTarget target = contactTargets[index];
-            if (target.Owned)
-            {
-                try
-                {
-                    if (target.Bone != null && target.Bone.parent == target.Parent)
-                    {
-                        Vector3 current = target.Bone.localPosition;
-                        if (ContactExact(current, target.LastWritten))
-                        { target.Bone.localPosition = target.Base; ++contactRestores; }
-                        else ++contactExternal;
-                    }
-                }
-                catch (Exception) { ++contactFaults; }
-            }
-            target.Owned = false; target.Offset = target.Velocity = Vector3.zero;
-            target.InsideMask = 0; target.HandTicket = -1;
-            contactTargets[index] = target;
-        }
-
         private static void ContactRestoreAll()
         {
             if (contactTargets == null) return;
@@ -125,6 +111,7 @@ namespace GF2.Private
 
         private static void ContactStop(int status, bool fault)
         {
+            contactHaptics.Suspend();
             contactRunning = false; contactMask = 0; contactStatus = status;
             contactVelocityMask = 0; contactLeftVelocity = contactRightVelocity = Vector3.zero;
             if (fault) { contactFault = true; ++contactFaults; }
@@ -151,13 +138,13 @@ namespace GF2.Private
                     contactLeftVelocity = contactRightVelocity = Vector3.zero;
                     if (ticket > contactTicket) contactTicket = ticket;
                     contactHandFrame = Time.frameCount; contactHandStamp = now;
-                    ContactForgetInside(); return;
+                    contactHaptics.Suspend(); ContactForgetInside(); return;
                 }
                 if (ticket <= contactTicket) return;
                 if (!Finite(radius) || radius <= 0f || ((mask & 1) != 0 && !Finite(left)) || ((mask & 2) != 0 && !Finite(right)))
-                { ++contactInvalid; contactMask = contactVelocityMask = 0; ContactRestoreAll(); return; }
+                { ++contactInvalid; contactMask = contactVelocityMask = 0; contactHaptics.Suspend(); ContactRestoreAll(); return; }
                 float handScale = radius / .035f;
-                if (!Finite(unit) || unit < .00001f || unit > 100000f || !Finite(handScale) || handScale <= 0f || handScale > 100000f) { ++contactInvalid; contactMask = contactVelocityMask = 0; ContactRestoreAll(); return; }
+                if (!Finite(unit) || unit < .00001f || unit > 100000f || !Finite(handScale) || handScale <= 0f || handScale > 100000f) { ++contactInvalid; contactMask = contactVelocityMask = 0; contactHaptics.Suspend(); ContactRestoreAll(); return; }
                 double elapsed = ((double)now - contactHandStamp) / Stopwatch.Frequency;
                 contactVelocityMask = 0; contactLeftVelocity = contactRightVelocity = Vector3.zero;
                 // Only two consecutive, same-scale, present-hand samples can
@@ -226,9 +213,9 @@ namespace GF2.Private
                 long now = Stopwatch.GetTimestamp();
                 double age = ((double)now - contactHandStamp) / Stopwatch.Frequency;
                 if (age < 0 || contactHandFrame > frame)
-                { ++contactInvalid; contactMask = contactVelocityMask = 0; ContactRestoreAll(); contactStepStamp = now; return; }
+                { ++contactInvalid; contactMask = contactVelocityMask = 0; contactHaptics.Suspend(); ContactRestoreAll(); contactStepStamp = now; return; }
                 if (contactHandStamp == 0 || age > .250)
-                { ++contactHardExpiry; contactMask = contactVelocityMask = 0; ContactRestoreAll(); contactStepStamp = now; return; }
+                { ++contactHardExpiry; contactMask = contactVelocityMask = 0; contactHaptics.Suspend(); ContactRestoreAll(); contactStepStamp = now; return; }
                 bool hands = contactMask != 0 && contactHandFrame >= 0 && age <= contactSettings.HandHoldSeconds;
                 if (contactMask == 0) ++contactMaskZero;
                 else if (!hands) ++contactGapDecay;
@@ -236,21 +223,24 @@ namespace GF2.Private
                 double dt = contactStepStamp == 0 ? 1.0 / 90 : ((double)now - contactStepStamp) / Stopwatch.Frequency;
                 contactStepStamp = now;
                 if (Double.IsNaN(dt) || Double.IsInfinity(dt) || dt <= 0 || dt > .250)
-                { ++contactDtReset; ContactRestoreAll(); return; }
+                { ++contactDtReset; contactHaptics.Suspend(); ContactRestoreAll(); return; }
                 if (dt > .050) dt = .050;
+                contactHapticInside = 0;
+                contactHapticValid = hands && contactCount != 0 && !contactNeedsRebind ? contactMask : 0;
                 for (int i = 0; i < contactCount; ++i)
                 {
                     if (!ContactValidTarget(contactTargets[i]))
-                    { ++contactInvalid; ContactRestoreOne(i); contactNeedsRebind = true; continue; }
+                    { ++contactInvalid; contactHapticValid = 0; ContactRestoreOne(i); contactNeedsRebind = true; continue; }
                     ContactApply(i, (float)dt, hands);
                 }
+                contactHaptics.Observe(contactHapticValid, contactHapticInside, now);
                 contactStatus = contactCount == 0 ? 2 : 1;
             }
             catch (Exception) { ContactStop(-77, true); }
         }
 
         private static bool ContactFiniteScale(Vector3 value)
-        { return Finite(value) && Math.Abs(value.x) > .00001f && Math.Abs(value.y) > .00001f && Math.Abs(value.z) > .00001f; }
+        { return Finite(value) && value.x != 0f && value.y != 0f && value.z != 0f; }
 
         private static bool ContactFiniteMatrix(Matrix4x4 value)
         {
@@ -273,82 +263,9 @@ namespace GF2.Private
             return away * (Math.Min(radius - distance, maximum) / distance);
         }
 
-        // Stable symplectic integration at <=1/480s, capped at .05s total.
-        // Frequency <=15Hz, damping <=2; max displacement also bounds velocity.
-        private static void ContactSpring(ref Vector3 offset, ref Vector3 velocity, Vector3 desired,
-            float dt, float frequency, float damping, float maximum)
-        {
-            if (!Finite(dt) || !Finite(offset) || !Finite(velocity) || !Finite(desired) ||
-                !Finite(frequency) || !Finite(damping) || !Finite(maximum) || dt <= 0f || frequency <= 0f || damping <= 0f || maximum <= 0f)
-            { offset = velocity = Vector3.zero; return; }
-            dt = Math.Min(dt, .05f); int steps = (int)Math.Ceiling(dt * 480f); if (steps < 1) steps = 1;
-            float h = dt / steps, omega = (float)(2 * Math.PI) * frequency;
-            for (int i = 0; i < steps; ++i)
-            {
-                velocity += ((desired - offset) * (omega * omega) - velocity * (2f * damping * omega)) * h;
-                velocity = ContactClamp(velocity, maximum * omega * 2f);
-                offset = ContactClamp(offset + velocity * h, maximum);
-            }
-            if (!Finite(offset) || !Finite(velocity)) offset = velocity = Vector3.zero;
-            if (desired.sqrMagnitude == 0f && offset.sqrMagnitude < maximum * maximum * .000001f && velocity.sqrMagnitude < maximum * maximum * .000001f)
-                offset = velocity = Vector3.zero;
-        }
-
-        private static void ContactApply(int index, float dt, bool hands)
-        {
-            ContactTarget target = contactTargets[index];
-            Vector3 current = target.Bone.localPosition;
-            if (!Finite(current) || !ContactFiniteScale(target.Parent.lossyScale) || !ContactFiniteMatrix(target.Parent.localToWorldMatrix))
-            { ++contactInvalid; ContactRestoreOne(index); return; }
-            if (!target.Owned || !ContactExact(current, target.LastWritten))
-            { if (target.Owned) ++contactExternal; target.Base = current; target.Owned = false; }
-            Vector3 position = target.Parent.TransformPoint(target.Base);
-            if (!Finite(position)) { ++contactInvalid; ContactRestoreOne(index); return; }
-            float maximum = contactSettings.MaxDisplacement * contactUnitScale;
-            float radius = contactSettings.HandRadius * contactHandScale + contactSettings.BodyRadius * contactUnitScale;
-            Vector3 desired = Vector3.zero;
-            int inside = 0;
-            if (hands)
-            {
-                if ((contactMask & 1) != 0)
-                { desired += ContactDesired(position, contactLeft, radius, maximum); if ((position - contactLeft).sqrMagnitude < radius * radius) inside |= 1; }
-                if ((contactMask & 2) != 0)
-                { desired += ContactDesired(position, contactRight, radius, maximum); if ((position - contactRight).sqrMagnitude < radius * radius) inside |= 2; }
-                if (target.HandTicket != contactTicket)
-                {
-                    int released = target.InsideMask & ~inside & contactMask & contactVelocityMask;
-                    if ((released & 1) != 0 && contactSettings.ReleaseImpulse > 0f && contactLeftVelocity.sqrMagnitude > 0f)
-                    { target.Velocity += contactLeftVelocity * contactSettings.ReleaseImpulse; ++contactImpulses; }
-                    if ((released & 2) != 0 && contactSettings.ReleaseImpulse > 0f && contactRightVelocity.sqrMagnitude > 0f)
-                    { target.Velocity += contactRightVelocity * contactSettings.ReleaseImpulse; ++contactImpulses; }
-                    target.HandTicket = contactTicket;
-                }
-            }
-            else target.HandTicket = -1;
-            // Missing hands expire contact history without fabricating an exit.
-            target.InsideMask = inside;
-            desired = ContactClamp(desired, maximum);
-            ContactSpring(ref target.Offset, ref target.Velocity, desired, dt, contactSettings.Frequency, contactSettings.Damping, maximum);
-            Vector3 localOffset = target.Parent.InverseTransformVector(target.Offset);
-            Vector3 final = target.Base + localOffset;
-            if (!Finite(localOffset) || !Finite(final)) { ++contactInvalid; ContactRestoreOne(index); return; }
-            if (target.Offset.sqrMagnitude == 0f && target.Velocity.sqrMagnitude == 0f)
-            {
-                contactTargets[index] = target; ContactRestoreOne(index);
-                // A balanced two-hand force may have no displacement while
-                // both hands remain inside. Natural spring completion must
-                // preserve that real contact history for the next valid exit.
-                contactTargets[index].InsideMask = target.InsideMask;
-                contactTargets[index].HandTicket = target.HandTicket;
-                return;
-            }
-            target.Bone.localPosition = final; ++contactWrites;
-            target.LastWritten = final; target.Owned = true;
-            contactTargets[index] = target;
-        }
-
         private static bool ContactName(string value)
         {
+            if (ContactSettings.Region(value)==0) return false;
             string[] names = contactSettings.Targets;
             for (int i = 0; i < names.Length; ++i) if (String.Equals(value, names[i], StringComparison.Ordinal)) return true;
             return false;
@@ -387,6 +304,8 @@ namespace GF2.Private
                     selected[count].Bone = bone; selected[count].Parent = bone.parent;
                     selected[count].Actor = animator.transform; selected[count].Animator = animator;
                     selected[count].Skin = skin; selected[count].Mesh = skin.sharedMesh;
+                    selected[count].Material = contactSettings.ForBone(bone.name);
+                    selected[count].Child = bone.childCount>0?bone.GetChild(0):null;
                     ++count;
                 }
             }
@@ -434,6 +353,20 @@ namespace GF2.Private
         }
 
         // Cold F11/mailbox only; no logging/formatting at the callback boundary.
+        // Native polls on the existing Unity owner; no OpenXR or native imports here.
+        public static void DrainContactHaptics(long epoch, long generation, ref int mask)
+        {
+            mask = 0;
+            if (Thread.CurrentThread.ManagedThreadId != ownerThread) return;
+            if (!contactRunning || !ContactOwnerValid() || epoch != contactEpoch || generation != contactGeneration)
+            { contactHaptics.Suspend(); return; }
+            long now = Stopwatch.GetTimestamp();
+            if (contactHandStamp == 0 || now < contactHandStamp ||
+                now - contactHandStamp > Stopwatch.Frequency / 10)
+            { contactHaptics.Suspend(); return; }
+            mask = contactHaptics.Drain(now, Stopwatch.Frequency / 10) & contactMask;
+        }
+
         public static string ContactDiagnostics()
         {
             if (!OnOwner()) return "{\"event\":\"touch_p3_contact\",\"status\":-1}";
@@ -472,10 +405,13 @@ namespace GF2.Private
                 ContactTarget target = contactTargets[i];
                 text.Append("{\"id\":").Append((target.Bone == null ? 0 : target.Bone.GetInstanceID()).ToString(CultureInfo.InvariantCulture));
                 text.Append(",\"name\":"); Quoted(text, target.Bone == null ? null : target.Bone.name);
+                text.Append(",\"axis_status\":").Append(target.Alignment).Append(",\"press_axis_status\":").Append(target.PressAlignment);
                 text.Append(",\"actor_id\":").Append((target.Actor == null ? 0 : target.Actor.GetInstanceID()).ToString(CultureInfo.InvariantCulture)).Append('}');
             }
             text.Append(']');
-            text.Append(",\"timing\":\"Application.onBeforeRender; actual Animator-skinning visibility requires runtime acceptance\",\"rotation_scale_writes\":0}");
+            text.Append(",\"implicit_steps\":").Append(contactImplicitSteps);
+            text.Append(",\"rotation_writes\":").Append(contactRotationWrites).Append(",\"scale_writes\":").Append(contactScaleWrites).Append(",\"stiffness_caps\":").Append(contactStiffnessCaps);
+            text.Append(",\"timing\":\"Application.onBeforeRender; actual Animator-skinning visibility requires runtime acceptance\"}");
             return text.ToString();
         }
     }

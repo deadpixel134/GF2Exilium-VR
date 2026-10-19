@@ -2,6 +2,13 @@
 
 [한국어](../ko/USAGE.md) | [English](../en/USAGE.md) | [日本語](../ja/USAGE.md) | [简体中文](../zh-CN/USAGE.md)
 
+## 1.1.4
+
+Clean·Dirty 공통으로 보조패널의 사용자 바라보기, 위치·회전·화면 기울기·최대 크기를 설정할 수 있습니다. Dirty에는 캐릭터 터치 진동과 가슴·엉덩이별 흔들림 설정을 추가했습니다.
+
+[Settings](SETTINGS.md)
+
+
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
 1.1.3은 PR #1의 3DMigoto 기본 wrapper 모드 호환 변경을 Clean·Dirty에 함께 반영합니다. 게임의 wrapper는 유지하고 VR 복사·OpenXR에는 실제 D3D11 장치/context를 사용합니다. 변경된 DLL과 일치하는 설정 도구·인스톨러를 함께 제공합니다.

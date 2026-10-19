@@ -2,6 +2,18 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.1.4
+
+**Common**
+
+- Added manual auxiliary panel settings
+
+**Dirty build**
+
+- Added vibration on character contact
+- Added character-contact jiggle and settings
+
+
 ## 1.1.3
 
 Updating to 1.1.3: extract the complete Clean or Dirty ZIP into a new folder and use its GF2VR.Installer.exe with your existing game location. The old 1.1.2 Configurator rejects automatic staging because it cannot validate the new native profile, preserving the current installation. Do not copy only the DLL or mix package files.

@@ -2,6 +2,13 @@
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
+## 1.1.4
+
+Both builds provide auxiliary-panel viewer-facing, position, rotation, screen tilt and maximum-size settings. Dirty adds character-contact vibration and separate breast/buttock jiggle settings.
+
+Both native DLLs reproduce byte for byte from source. Passed: 4,517 native placement/configuration checks, 706 Clean and 941 Dirty GUI checks, 236 regional-default/prior-actual-IL explicit-profile parity checks, 236 actual GUI-default JSON checks, 159 install/switch/failure-rollback checks and 11 exact prior-install restoration checks. The bridge contains 131 verified methods; contact hot IL covers 46 methods. These are offline, inert-fixture and personal-install checks; no new game/HMD run is claimed as acceptance.
+
+
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 Updating to 1.1.3: extract the complete Clean or Dirty ZIP into a new folder and use its GF2VR.Installer.exe with your existing game location. The old 1.1.2 Configurator rejects automatic staging because it cannot validate the new native profile, preserving the current installation. Do not copy only the DLL or mix package files.

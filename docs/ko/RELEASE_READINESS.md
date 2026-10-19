@@ -2,6 +2,13 @@
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
+## 1.1.4
+
+Clean·Dirty 공통으로 보조패널의 사용자 바라보기, 위치·회전·화면 기울기·최대 크기를 설정할 수 있습니다. Dirty에는 캐릭터 터치 진동과 가슴·엉덩이별 흔들림 설정을 추가했습니다.
+
+Clean/Dirty native가 각각 동일 소스 재빌드와 바이트 단위로 일치합니다. native 배치·설정 4,517개, GUI Clean 706개/Dirty 941개, 부위별 기본값과 직전 실제 IL의 명시적 설정 동작 일치 236개, 실제 GUI 기본 JSON 236개, 설치·전환·실패 복원 159개와 직전 설치의 정확한 복원 11개를 통과했습니다. bridge 131개 메서드와 contact hot IL 46개를 검사했습니다. 오프라인·모의 파일·개인용 설치 검증이며 새 게임/HMD 실행을 수용 증거로 주장하지 않습니다.
+
+
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
 1.1.3 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.2 설정 창의 자동 업데이트는 새 native 프로필을 검증하지 못해 거부됩니다. 기존 설치는 보존됩니다. DLL만 복사하거나 파일을 섞지 마세요.

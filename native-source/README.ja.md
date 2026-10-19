@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+両ビルドで補助パネルのユーザー向き・位置・回転・画面の傾き・最大サイズを設定できます。Dirtyはキャラクター接触時の振動と、胸・臀部別の揺れ設定を追加します。
+
+[Build metadata](../docs/ja/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 ## 1.1.3 — Clean / Dirty
 
 現在の 1.1.3 は variants 配下の共通コードと種類別の生成ヘッダーを使います。両方を再構築するコマンド:

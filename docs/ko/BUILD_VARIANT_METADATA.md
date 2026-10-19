@@ -2,9 +2,14 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
+## 1.1.4
+
+[1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)
+
+
 Configurator와 Installer는 native DLL 해시를 엄격히 검사합니다. 검사 조건을 끄지 말고 두 native 빌드에서 생성한 동일한 메타데이터를 사용하세요. Windows x64, PowerShell 7, Zig 0.16.0과 Windows SDK가 필요합니다. 아래 명령은 저장소 루트에서 실행합니다.
 
-정식 1.1.3 소스의 기본 빌드는 배포 해시와 정확히 일치해야 합니다. 의도적으로 소스를 바꾼 개발 빌드에만 -AllowSourceChanges를 추가하세요. 새 출력 폴더를 사용하고 두 종류를 함께 빌드하세요.
+정식 1.1.4 소스의 기본 빌드는 배포 해시와 정확히 일치해야 합니다. 의도적으로 소스를 바꾼 개발 빌드에만 -AllowSourceChanges를 추가하세요. 새 출력 폴더를 사용하고 두 종류를 함께 빌드하세요.
 
 ```powershell
 ./native-source/variants/build-variants.ps1 -Flavor Both `
@@ -18,11 +23,11 @@ desktop-metadata에는 실제 DLL의 build ID/해시를 담은 VariantProfiles.g
 ```powershell
 $metadata = (Resolve-Path ./native-source/variants/build/desktop-metadata).Path
 $desktop = './desktop-source/vrmod/tools/build_desktop_private_runtime.ps1'
-& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.3 `
+& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata
-& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Clean
-& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Dirty
 ```
 

@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
+
+[Build metadata](../docs/zh-CN/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
 
 
@@ -13,8 +20,8 @@
 设置程序与安装程序使用 Windows Forms、.NET SDK 10.0.112，以及官方 .NET 10.0.12 Windows x64 运行时包。需要 PowerShell 7 与 Windows x64。从本目录运行：
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.3
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.3
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.4
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.4
 ```
 
 首次构建会使用仓库中的源配置，从 NuGet 还原官方运行时包，并在项目本地的 `vrmod/build/` 下创建缓存、构建输出及所需的 .NET 许可证声明。不会修改游戏文件或系统共享的 .NET 安装。两个宿主程序均包含私有运行时；请将应用 DLL、deps 与 runtimeconfig 文件保留在 EXE 旁。

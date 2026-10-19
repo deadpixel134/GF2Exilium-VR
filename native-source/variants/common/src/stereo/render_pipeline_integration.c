@@ -2197,8 +2197,9 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
             if(!stereo_aux.ready) { /* No controller route: preserve prior presentation. */
                 layers[1]=end->layers[0];combined.layerCount=2;
             } else if(end->layers[0]->type==XR_TYPE_COMPOSITION_LAYER_QUAD && aux_visible(&stereo_aux)) {
-                aux_quad(&stereo_aux,(const XrCompositionLayerQuad *)end->layers[0],&auxiliary);
-                layers[1]=(const XrCompositionLayerBaseHeader *)&auxiliary;combined.layerCount=2;
+                if(aux_quad(&stereo_aux,(const XrCompositionLayerQuad *)end->layers[0],&auxiliary)) {
+                    layers[1]=(const XrCompositionLayerBaseHeader *)&auxiliary;combined.layerCount=2;
+                }
             }
         }
 #else
@@ -2442,6 +2443,13 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
     /* Diagnostic isolation suppresses submission only; keep the normal
        producer opportunity next frame so releasing F10 can restore stereo. */
     stereo_aux.last_projection=projected && XR_SUCCEEDED(result);
+#ifdef GF2VR_DIRTY_CONTACT
+    contact_haptic_frame(&stereo_aux.haptics,input.reference_epoch,
+        __atomic_load_n(&stereo_publication_generation,__ATOMIC_ACQUIRE),GetTickCount64(),
+        result==XR_SUCCESS && projected && !held && !isolated && stereo_hold_focused &&
+        input.valid && input.head_valid && !stereo_eye_runtime.owner.retiring,
+        (stereo_aux.drag.frame.tracked[0]?1u:0u)|(stereo_aux.drag.frame.tracked[1]?2u:0u));
+#endif
     static unsigned previous_mode=~0u;
     unsigned mode=isolated?3u:(projected?(combined.layerCount>=2&&combined.layers[1]->type==XR_TYPE_COMPOSITION_LAYER_QUAD?2u:1u):0u);
 #ifdef GF2VR_TOUCH_PRIVATE

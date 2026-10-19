@@ -21,7 +21,7 @@ internal static class VariantChecks
         Assert(c.Native?.BuildFlavor == "Clean" && d.Native?.BuildFlavor == "Dirty", "variant identities");
         Assert(c.Version == d.Version && cn.CommonCoreSha256 == dn.CommonCoreSha256, "paired common version/core");
         Assert(c.Files.Select(f => f.Path).SequenceEqual(d.Files.Select(f => f.Path)), "same minimal nine-file ownership");
-        foreach (var file in c.Files.Where(f => f.Path is not "GF2 Game/version.dll" && !f.Path.EndsWith("/runtime-contract.json")))
+        foreach (var file in c.Files.Where(f => f.Path is not "GF2 Game/version.dll" && !f.Path.EndsWith("/runtime-contract.json") && !f.Path.EndsWith("/GF2VR.Configurator.dll")))
             Assert(file.Sha256 == d.Files.Single(f => f.Path == file.Path).Sha256, "shared payload byte equality " + file.Path);
         foreach (bool standard in new[] { true, false })
         {
@@ -35,7 +35,7 @@ internal static class VariantChecks
                 byte[] bytes = Encoding.UTF8.GetBytes(entry.Item2); File.WriteAllBytes(p, bytes); preserved.Add(p, bytes);
             }
             foreach (var entry in new[] { ("controller_hands.json", "{\"schemaVersion\":1,\"enabled\":false,\"future\":42}"),
-                ("touch_interaction.json", "{\"contactEnabled\":true,\"privateFuture\":42}"), ("configurator.json", "{\"language\":\"ja\"}") })
+                ("touch_interaction.json", "{\"schemaVersion\":1,\"enabled\":true,\"privateFuture\":42}"), ("configurator.json", "{\"language\":\"ja\"}") })
             {
                 string p = Paths.Contained(root, "vrmod/config/" + entry.Item1); byte[] bytes = Encoding.UTF8.GetBytes(entry.Item2);
                 Paths.WriteNew(p, bytes); preserved.Add(p, bytes);

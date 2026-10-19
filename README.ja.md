@@ -8,11 +8,11 @@ Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)
 
 GF2 Exilium を VR で楽しむための非公式 MOD です。
 
-**[正式版 1.1.3 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)**
+**[正式版 1.1.4 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
 
-1.1.3 への更新: Clean または Dirty の ZIP 全体を新しいフォルダーに展開し、その GF2VR.Installer.exe で既存ゲームの場所にインストールしてください。旧 1.1.2 設定アプリの自動更新は新しい native プロファイルを検証できず拒否します。既存インストールは保持されます。DLL だけのコピーやファイルの混在は避けてください。
+1.1.4への更新: CleanまたはDirtyのZIP全体を新しいフォルダーに展開し、そのGF2VR.Installer.exeで既存ゲームの場所にインストールしてください。旧1.1.3設定アプリは新しいnativeプロファイルを検証できないため、今回は新しいZIPのインストーラーを使用します。既存設定を保持します。DLLのみのコピーやパッケージの混在は避けてください。
 
 ## 貢献者
 
@@ -33,13 +33,15 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 | 通常の VR・立体表示・コントローラー入力・設定 | 含む | 含む |
 | 両手の位置を示す白い球 | 含む | 含む |
 | キャラクターの胸・臀部への接触と変形 | 含まない | 含む |
+| 補助パネルの手動位置・回転・傾き設定 | 含む | 含む |
+| 接触振動・揺れと部位別設定 | 含まない | 含む |
 
 接触は、その部位の対応ボーンが接続されたキャラクターで動作します。対応部位はキャラクターモデルによって異なり、宿舎・活動層での実際の臀部の反応はまだ確認されていません。
 
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
 
 同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 

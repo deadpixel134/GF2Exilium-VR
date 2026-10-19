@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+Both builds provide auxiliary-panel viewer-facing, position, rotation, screen tilt and maximum-size settings. Dirty adds character-contact vibration and separate breast/buttock jiggle settings.
+
+[Build metadata](../docs/en/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 ## 1.1.3 — Clean / Dirty
 
 Current 1.1.3 native source uses shared code and per-flavor generated headers under variants. Rebuild both flavors with:

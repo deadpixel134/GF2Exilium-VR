@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+Clean·Dirty 공통으로 보조패널의 사용자 바라보기, 위치·회전·화면 기울기·최대 크기를 설정할 수 있습니다. Dirty에는 캐릭터 터치 진동과 가슴·엉덩이별 흔들림 설정을 추가했습니다.
+
+[Build metadata](../docs/ko/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 ## 1.1.3 — Clean / Dirty
 
 현재 1.1.3 네이티브 소스는 variants 아래의 공통 코드와 빌드별 생성 헤더로 구성합니다. 두 종류를 함께 재빌드하는 명령은 다음과 같습니다.

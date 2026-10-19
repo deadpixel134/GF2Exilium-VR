@@ -16,6 +16,7 @@ internal sealed class SettingsError(string key, params object[] arguments) : Exc
 internal sealed class SettingsStore
 {
     internal string Root { get; }
+    internal bool ContactHapticsAvailable { get; private set; }
     private string Config => Path.Combine(Root, "vrmod", "config");
     private readonly Dictionary<string, byte[]?> originals = [];
     private readonly bool fixture;
@@ -83,12 +84,22 @@ internal sealed class SettingsStore
         if (!File.Exists(executable))
             throw new SettingsError("rootError");
         CheckPath(Config);
+        if (fixture)
+        {
+            string metadata = Path.Combine(AppContext.BaseDirectory, "runtime-contract.json");
+            if (File.Exists(metadata))
+            {
+                using var known = JsonDocument.Parse(File.ReadAllBytes(metadata));
+                ContactHapticsAvailable = known.RootElement.TryGetProperty("buildFlavor", out var flavor) && flavor.GetString() == "Dirty";
+            }
+        }
         if (!fixture)
         {
             // Existing mod embeds absolute paths. A moved/unknown build must never appear configured successfully.
             string manifest = Path.Combine(AppContext.BaseDirectory, "runtime-contract.json");
             using var j = JsonDocument.Parse(File.ReadAllBytes(manifest));
             var c = j.RootElement;
+            ContactHapticsAvailable = c.TryGetProperty("buildFlavor", out var flavor) && flavor.GetString() == "Dirty";
             string dll = Path.Combine(Path.GetDirectoryName(executable)!, "version.dll");
             if (c.GetProperty("schemaVersion").GetInt32() != 1 ||
                 !Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!).Equals(Config, StringComparison.OrdinalIgnoreCase) ||
@@ -125,6 +136,8 @@ internal sealed class SettingsStore
             bytes[file] = raw;
             if (raw != null) next[file] = Parse(raw, file);
         }
+        // No new panel mode is activated merely by saving an unrelated tab.
+        if (bytes["controller_input.json"] == null) next["controller_input.json"].Remove("auxiliaryPanel");
         Validate(next);
         Documents = next; originals.Clear();
         foreach (var p in bytes) originals.Add(p.Key, p.Value);
@@ -177,6 +190,17 @@ internal sealed class SettingsStore
 
     internal static double Number(string raw, string key)
     {
+        if (Fields.IsPanelNumber(key))
+        {
+            // Signed positions/angles use native float storage. Reject actual
+            // representation loss, never clamp to the reference UI's advice.
+            if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out double p) ||
+                !double.IsFinite(p) || !float.IsFinite((float)p) || (p != 0 && (float)p == 0))
+                throw new SettingsError("panelNumberError", Texts.Get(key));
+            if (p == 0 && raw.Split('e', 'E')[0].Any(c => c is >= '1' and <= '9'))
+                throw new SettingsError("panelNumberError", Texts.Get(key));
+            return p;
+        }
         // Native numbers are nonnegative, locale-independent JSON numbers, not NaN/Infinity/-0.
         if (raw.TrimStart().StartsWith('-') || !double.TryParse(raw, NumberStyles.Float,
             CultureInfo.InvariantCulture, out double number) || !double.IsFinite(number) || number < 0)
@@ -184,6 +208,14 @@ internal sealed class SettingsStore
         if (number == 0 && raw.Any(c => c is >= '1' and <= '9') &&
             raw.Split('e', 'E')[0].Any(c => c is >= '1' and <= '9'))
             throw new SettingsError("numberError", Texts.Get(key)); // Underflow isn't a requested zero.
+        if (key == "contactHapticStrengthPercent" && (number > 100 || (number > 0 && (float)(number / 100d) == 0)))
+            throw new SettingsError("contactHapticStrengthError");
+        if (key == "contactHapticDurationMs")
+        {
+            double ns = number * 1000000d;
+            if (!double.IsFinite(ns) || ns >= 9223372036854775808d || (number > 0 && ns < 1))
+                throw new SettingsError("contactHapticDurationError");
+        }
         return number;
     }
 
@@ -196,7 +228,8 @@ internal sealed class SettingsStore
             _ = Parse(Encode(doc), name);
             if ((name == "navigation.json" && doc["navigation"] is not JsonObject) ||
                 (doc.ContainsKey("worldDrag") && doc["worldDrag"] is not JsonObject) ||
-                (name == "controller_input.json" && doc.ContainsKey("controllerInput") && doc["controllerInput"] is not JsonObject))
+                (name == "controller_input.json" && doc.ContainsKey("controllerInput") && doc["controllerInput"] is not JsonObject) ||
+                (name == "controller_input.json" && doc.ContainsKey("auxiliaryPanel") && doc["auxiliaryPanel"] is not JsonObject))
                 throw new SettingsError("formatError", name);
         }
         foreach (Field f in Fields.All)
@@ -204,9 +237,13 @@ internal sealed class SettingsStore
             JsonNode? value = Fields.Get(docs, f);
             if (value == null)
             {
+                if (f.Group == "auxiliaryPanel" && (docs[f.File][f.Group] as JsonObject)?.ContainsKey(Fields.JsonKey(f)) == true)
+                    throw new SettingsError("formatError", f.File);
                 // Runtime optional members use their actual policy defaults, without rewriting the file on load.
                 if (f.Key is "eyeRenderScale" or "stereoDepthScale" or "worldScale") throw new SettingsError("formatError", f.File);
                 if (f.File == "world_scale.json" && docs[f.File].ContainsKey(f.Key)) throw new SettingsError("formatError", f.File);
+                if (Fields.IsContactHaptic(f.Key) && docs[f.File].ContainsKey(Fields.JsonKey(f)))
+                    throw new SettingsError("formatError", f.File);
                 if (f.Key == "controllerHandsEnabled" && docs[f.File].ContainsKey(Fields.JsonKey(f)))
                     throw new SettingsError("formatError", f.File);
                 if (f.Key == "activityPrimaryUiEnabled" && docs[f.File].ContainsKey(f.Key))
@@ -224,10 +261,15 @@ internal sealed class SettingsStore
             if (f.Kind == "number")
             {
                 double d = Number(val.ToJsonString(), f.Key);
+                if ((f.Key is "panelMaximumWidth" or "panelMaximumHeight") && d <= 0)
+                    throw new SettingsError("panelNumberError", Texts.Get(f.Key));
                 if ((f.Key is "eyeRenderScale" or "worldScale" && d <= 0) || (f.Key == "stickDeadzone" && d >= 1))
                     throw new SettingsError("numberError", Texts.Get(f.Key)); // Semantic/backend constraints, not advice.
             }
         }
+#if GF2VR_DIRTY_CONTACT
+        if (!GF2.Private.ContactSettings.Read(Encode(docs["touch_interaction.json"]), out _)) throw new SettingsError("jiggleConfigError");
+#endif
         bool Flag(string key) { var f = Fields.All.Single(f => f.Key == key); return (Fields.Get(docs, f) ?? Fields.Get(defaults, f))!.GetValue<bool>(); }
         if (Flag("enabled") && (!(Flag("leftGripActivation") || Flag("leftTriggerActivation") ||
             Flag("rightGripActivation") || Flag("rightTriggerActivation")) || !(Flag("trackLeftHand") || Flag("trackRightHand"))))
@@ -326,14 +368,23 @@ internal sealed class SettingsStore
     internal static Dictionary<string, JsonObject> Import(string path, Dictionary<string, JsonObject>? current = null)
     {
         using var stream = File.OpenRead(path);
+#if GF2VR_DIRTY_CONTACT
+        // Nine documents of at most4096bytes plus bounded profile structure.
+        if (stream.Length > 40960) throw new SettingsError("profileError");
+#else
         if (stream.Length > 32768) throw new SettingsError("profileError");
+#endif
         using var doc = JsonDocument.Parse(stream, new JsonDocumentOptions { MaxDepth = 20 }); CheckDuplicates(doc.RootElement);
         var profile = JsonNode.Parse(doc.RootElement.GetRawText())!.AsObject();
         if (profile["schemaVersion"]?.ToJsonString() != "1" || profile["product"]?.GetValue<string>() != "GF2VR.Configurator" ||
             profile["configurations"] is not JsonObject config)
             throw new SettingsError("profileError");
         // Older four/five-document profiles cannot reset a newer UI/face choice.
-        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json", "controller_hands.json" }.Where(f => !config.ContainsKey(f)).ToHashSet(StringComparer.Ordinal);
+        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json", "controller_hands.json"
+#if GF2VR_DIRTY_CONTACT
+            , "touch_interaction.json"
+#endif
+        }.Where(f => !config.ContainsKey(f)).ToHashSet(StringComparer.Ordinal);
         var expected = Fields.Files.Where(f => !missing.Contains(f)).ToHashSet(StringComparer.Ordinal);
         if (!expected.SetEquals(config.Select(p => p.Key))) throw new SettingsError("profileError");
         var result = new Dictionary<string, JsonObject>();
@@ -344,6 +395,19 @@ internal sealed class SettingsStore
         // Profiles from the face-only GUI share this document but lack the
         // newer role field. Import must not silently reset the current hands.
         Validate(result);
+        // Capture presence before filling fields: result shares the imported
+        // JSON nodes, so checking afterwards would observe our own defaults.
+        bool importedHasPanel = (config["controller_input.json"] as JsonObject)?.ContainsKey("auxiliaryPanel") == true;
+        // Pre-panel profiles cannot silently reset a newer panel pose/mode.
+        foreach (var field in Fields.All.Where(f => f.Group == "auxiliaryPanel"))
+            if (Fields.Get(result, field) == null)
+                Fields.Set(result, field, (Fields.Get(current ?? Fields.Defaults(), field) ?? Fields.JsonSerializerNode(field.Default)).DeepClone());
+        if (!importedHasPanel)
+            if (current != null && !current["controller_input.json"].ContainsKey("auxiliaryPanel"))
+                result["controller_input.json"].Remove("auxiliaryPanel");
+        foreach (var field in Fields.All.Where(f => Fields.IsContactHaptic(f.Key)))
+            if (Fields.Get(result, field) == null)
+                Fields.Set(result, field, (Fields.Get(current ?? Fields.Defaults(), field) ?? Fields.JsonSerializerNode(field.Default)).DeepClone());
         var roleField = Fields.All.Single(f => f.Key == "swapPanelPointerHands");
         if (Fields.Get(result, roleField) == null)
             Fields.Set(result, roleField, (Fields.Get(current ?? Fields.Defaults(), roleField) ?? Fields.JsonSerializerNode(false)).DeepClone());

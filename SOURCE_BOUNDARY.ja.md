@@ -2,6 +2,13 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.1.4
+
+両ビルドで補助パネルのユーザー向き・位置・回転・画面の傾き・最大サイズを設定できます。Dirtyはキャラクター接触時の振動と、胸・臀部別の揺れ設定を追加します。
+
+[Source manifest](source-manifest.json) · [Native metadata](release/1.1.4-native-metadata.json)
+
+
 1.1.1 は Clean/Dirty の製品ソースと別パッケージを公開します。native-source/variants/common は共通ネイティブコード、Clean/Dirty overlay は接触の有無による生成ヘッダー、managed は自作の手表示・接触コードです。それ以外の native-source 直下には従来の 1.0.2 ソースと再構築手順を保持します。
 
 

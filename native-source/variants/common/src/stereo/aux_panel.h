@@ -12,6 +12,10 @@
 #else
 #define AUX_DRAG_API(F)
 #endif
+#include "aux_panel_config.h"
+#ifdef GF2VR_DIRTY_CONTACT
+#include "contact_haptics.h"
+#endif
 #ifdef GF2VR_CONTROLLER_INPUT
 #ifdef GF2VR_CONTROLLER_FACE_CONFIG
 #include "controller_face_runtime.h"
@@ -33,8 +37,13 @@ typedef struct {
 } AuxApi;
 typedef struct {
     AuxApi api; XrActionSet set; XrAction pose,grip; XrSpace space;
+#ifdef GF2VR_DIRTY_CONTACT
+    ContactHapticActions haptics;
+#endif
     XrSession session; DWORD thread; int ready,shown,armed,down,tracked,last_projection;
     unsigned long long generation; XrVector3f position;
+    XrQuaternionf orientation;AuxPlacementSettings placement;
+    AuxPlacementMath placement_math;HINSTANCE placement_module;
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
     unsigned panel_hand;
 #endif
@@ -74,6 +83,9 @@ static void aux_reset_visibility(AuxPanel *a) {
 static int aux_close(AuxPanel *a) {
     if(a->thread && a->thread!=GetCurrentThreadId()) return 0;
     aux_reset_visibility(a);a->ready=0;
+#ifdef GF2VR_DIRTY_CONTACT
+    contact_haptic_cancel(&a->haptics);
+#endif
 #ifdef GF2VR_CONTROLLER_INPUT
     if(!controller_actions_close(&a->pointer))return 0;
 #endif
@@ -85,11 +97,64 @@ static int aux_close(AuxPanel *a) {
     if(a->space && a->api.DestroySpace)a->api.DestroySpace(a->space);
     if(a->set && a->api.DestroyActionSet)a->api.DestroyActionSet(a->set);
 #endif
+    if(a->placement_module && !FreeLibrary(a->placement_module))return 0;
     *a=(AuxPanel){0};return 1;
 }
+static void aux_placement_load(AuxPanel *a) {
+    DWORD saved=GetLastError();a->placement=aux_placement_defaults();unsigned status=1;
+    HANDLE file=CreateFileW(GF2VR_CONTROLLER_FACE_CONFIG_PATH,0x80000000u,7,0,3,128,0);
+    if(file!=(HANDLE)(unsigned long long)-1) {
+        static char text[4097];DWORD length=0;int ok=ReadFile(file,text,sizeof(text),&length,0);CloseHandle(file);
+        if(!ok||length>=sizeof(text)||!aux_placement_config_parse(text,length,&a->placement)) {
+            a->placement=aux_placement_defaults();status=0;
+        }else status=2;
+    }else if(GetLastError()!=2&&GetLastError()!=3)status=0;
+    if(a->placement.configured) {
+        HINSTANCE module=0;
+        if(GetModuleHandleExW(0,L"ucrtbase.dll",&module)) {
+            a->placement_module=module;
+            a->placement_math=(AuxPlacementMath){(void *)GetProcAddress(module,"sin"),(void *)GetProcAddress(module,"cos"),
+                (void *)GetProcAddress(module,"sqrt"),(void *)GetProcAddress(module,"atan2")};
+        }
+        if(!a->placement_math.sin||!a->placement_math.cos||!a->placement_math.sqrt||!a->placement_math.atan2) {
+            a->placement.configured=0;status=0;
+        }
+    }
+    event("aux_panel_config",((unsigned long long)status<<32)|a->placement.configured|((unsigned long long)a->placement.viewer_facing<<1),GetCurrentThreadId());
+    SetLastError(saved);
+}
+#ifdef GF2VR_DIRTY_CONTACT
+static void aux_haptic_load(AuxPanel *a) {
+    DWORD saved=GetLastError();ContactHapticSettings settings=contact_haptic_defaults();unsigned status=1;
+    static unsigned short path[1024];
+#ifdef GF2VR_PORTABLE_BINDING
+    int path_ok=gf2vr_paths.ready && gf2vr_path_join(path,gf2vr_paths.root,gf2vr_path_length(gf2vr_paths.root),L"vrmod\\config\\controller_hands.json");
+#else
+    const unsigned short local[]=L"vrmod\\config\\controller_hands.json";unsigned n=0;do{path[n]=local[n];}while(local[n++]);int path_ok=1;
+#endif
+    if(!path_ok)status=0;
+    else {
+        HANDLE file=CreateFileW(path,0x80000000u,7,0,3,128,0);
+        if(file!=(HANDLE)(unsigned long long)-1) {
+            static char text[4097];DWORD length=0;int ok=ReadFile(file,text,sizeof(text),&length,0);CloseHandle(file);
+            status=ok && length<sizeof(text) && contact_haptic_config_parse(text,length,&settings)?2u:0u;
+        }else if(GetLastError()!=2 && GetLastError()!=3)status=0;
+    }
+    if(!status)settings=(ContactHapticSettings){0,0};a->haptics.settings=settings;
+    event("contact_haptic_config",status,GetCurrentThreadId());SetLastError(saved);
+}
+#endif
+static XrResult aux_suggest(AuxPanel *a,XrInstance instance,unsigned profile,const XrInteractionProfileSuggestedBinding *suggest) {
+#ifdef GF2VR_DIRTY_CONTACT
+    return contact_haptic_suggest(&a->haptics,a->api.SuggestInteractionProfileBindings,a->api.StringToPath,instance,profile,suggest);
+#else
+    (void)profile;return a->api.SuggestInteractionProfileBindings(instance,suggest);
+#endif
+}
 static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instance,XrSession session) {
-    if(!get || !instance || !session || a->set) return 0;
+    if(!get || !instance || !session || a->set || a->placement_module) return 0;
     a->thread=GetCurrentThreadId();a->session=session;
+    aux_placement_load(a);
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
     unsigned selected_face=controller_input_config_load(&a->panel_hand);
 #endif
@@ -100,6 +165,10 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
     XrActionSetCreateInfo set={0};set.type=XR_TYPE_ACTION_SET_CREATE_INFO;
     aux_text(set.actionSetName,"gf2_aux_panel");aux_text(set.localizedActionSetName,"Game panel");
     if(a->api.CreateActionSet(instance,&set,&a->set)!=XR_SUCCESS) goto fail;
+    #ifdef GF2VR_DIRTY_CONTACT
+    contact_haptic_open(&a->haptics,get,a->api.CreateAction,a->api.StringToPath,instance,session,a->set);
+    aux_haptic_load(a);
+#endif
     XrActionCreateInfo action={0};action.type=XR_TYPE_ACTION_CREATE_INFO;
     action.actionType=XR_ACTION_TYPE_POSE_INPUT;
     aux_text(action.actionName,"panel_hand");aux_text(action.localizedActionName,"Panel hand");
@@ -210,7 +279,7 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
 #ifdef GF2VR_CONTROLLER_GAME_MODE
             if(mask&4)for(unsigned n=0;n<game_count;++n)bindings[count++]=full[before_game+n];
 #endif
-            suggest.countSuggestedBindings=count;suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);
+            suggest.countSuggestedBindings=count;suggested=aux_suggest(a,instance,i,&suggest);
             if(suggested==XR_SUCCESS){chosen=mask;break;}
         }
 #ifdef GF2VR_CONTROLLER_GAME_MODE
@@ -219,7 +288,7 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
         if(suggested==XR_SUCCESS&&(chosen&1))a->navigation.camera_return_profiles|=1u<<i;
         if(suggested==XR_SUCCESS&&(chosen&2))a->navigation.camera_follow_profiles|=1u<<i;
 #else
-        XrResult suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);
+        XrResult suggested=aux_suggest(a,instance,i,&suggest);
 #ifdef GF2VR_CAMERA_RETURN
         if(suggested!=XR_SUCCESS&&return_count){
             /* Retry without only this optional binding first; preserve all
@@ -230,7 +299,7 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
             before_game-=return_count;
 #endif
             suggest.countSuggestedBindings=binding_count;
-            suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);return_count=0;
+            suggested=aux_suggest(a,instance,i,&suggest);return_count=0;
         }
 #endif
 #ifdef GF2VR_CONTROLLER_GAME_MODE
@@ -240,11 +309,11 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
                independently without them before falling back to navigation. */
             return_count=navigation_camera_return_binding(&a->navigation,instance,i,bindings+before_game,
                 (unsigned)(sizeof(bindings)/sizeof(bindings[0]))-before_game);
-            if(return_count){suggest.countSuggestedBindings=before_game+return_count;suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);}
+            if(return_count){suggest.countSuggestedBindings=before_game+return_count;suggested=aux_suggest(a,instance,i,&suggest);}
             if(!return_count||suggested!=XR_SUCCESS){return_count=0;
 #endif
             suggest.countSuggestedBindings=before_game;
-            suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);
+            suggested=aux_suggest(a,instance,i,&suggest);
 #ifdef GF2VR_CAMERA_RETURN
             }
 #endif
@@ -258,14 +327,14 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
 #endif /* independent optional camera controls */
         if(suggested!=XR_SUCCESS&&nav_count) {
             suggest.countSuggestedBindings=original_count;
-            suggested=a->api.SuggestInteractionProfileBindings(instance,&suggest);
+            suggested=aux_suggest(a,instance,i,&suggest);
         }
 #ifdef GF2VR_THUMBSTICK_NAVIGATION
         else if(suggested==XR_SUCCESS&&nav_count)a->navigation.bound_profiles|=1u<<i;
 #endif
         if(suggested==XR_SUCCESS)++supported;
 #else
-        if(a->api.SuggestInteractionProfileBindings(instance,&suggest)==XR_SUCCESS) ++supported;
+        if(aux_suggest(a,instance,i,&suggest)==XR_SUCCESS) ++supported;
 #endif
     }
 #ifdef GF2VR_THUMBSTICK_NAVIGATION
@@ -348,12 +417,23 @@ static void aux_frame(AuxPanel *a,XrSpace view,XrTime time,unsigned long long ge
 #ifdef GF2VR_AUX_OBSERVE
     a->observe_pose=location.pose;a->observe_flags=location.locationFlags;a->observe_reason=6;
 #endif
+    if(a->placement.configured &&
+       (location.locationFlags & (XR_SPACE_LOCATION_ORIENTATION_VALID_BIT|XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT)) !=
+        (XR_SPACE_LOCATION_ORIENTATION_VALID_BIT|XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT))goto lost;
     aux_button(a,1,button.currentState!=0,generation);
     /* Viewer-facing, hand-positioned quad in VIEW space. Comparisons reject
        NaN/infinite and far/behind-head data without importing pose math. */
     XrVector3f p=location.pose.position;p.y+=0.12f;p.z-=0.10f;
+    XrQuaternionf orientation={0,0,0,1};
+    if(a->placement.configured) {
+        AuxPlacementPose hand={{location.pose.position.x,location.pose.position.y,location.pose.position.z},
+            {location.pose.orientation.x,location.pose.orientation.y,location.pose.orientation.z,location.pose.orientation.w}},placed;
+        if(!aux_placement_pose(&a->placement,&a->placement_math,hand,&placed))goto lost;
+        p=(XrVector3f){placed.position.x,placed.position.y,placed.position.z};
+        orientation=(XrQuaternionf){placed.orientation.x,placed.orientation.y,placed.orientation.z,placed.orientation.w};
+    }
     if(p.z < -0.15f && p.z > -2.0f && p.x > p.z*1.2f && p.x < -p.z*1.2f &&
-       p.y > p.z && p.y < -p.z) {a->position=p;a->tracked=1;}
+       p.y > p.z && p.y < -p.z) {a->position=p;a->orientation=orientation;a->tracked=1;}
     return;
 lost:
 #ifdef GF2VR_AUX_OBSERVE
@@ -370,8 +450,11 @@ static int aux_copy_needed(const AuxPanel *a,unsigned long long generation) {
        can prove that skipping this copy never strands the front panel. */
     return 1;
 }
-static void aux_quad(const AuxPanel *a,const XrCompositionLayerQuad *front,XrCompositionLayerQuad *out) {
-    *out=*front;out->pose.orientation=(XrQuaternionf){0,0,0,1};out->pose.position=a->position;
+static int aux_quad(const AuxPanel *a,const XrCompositionLayerQuad *front,XrCompositionLayerQuad *out) {
+    *out=*front;out->pose.orientation=a->orientation;out->pose.position=a->position;
     out->size.width=0.65f;out->size.height=0.65f*front->size.height/front->size.width;
+    if(a->placement.configured && !aux_placement_size(&a->placement,front->size.width,front->size.height,
+        &out->size.width,&out->size.height))return 0;
+    return 1;
 }
 #endif

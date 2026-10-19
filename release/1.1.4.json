@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.1.4",
+  "tag": "v1.1.4",
+  "baseRelease": "1.1.3",
+  "changes": [
+    "Manual auxiliary panel settings in both builds",
+    "Character-contact haptics in Dirty",
+    "Regional character-contact jiggle and settings in Dirty"
+  ],
+  "native": {
+    "schemaVersion": 1,
+    "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+    "commonCoreSha256": "4476A0A0597FD82197AB3E588E0E6DA04291C1F6F18DEE8EC4429646C6222005",
+    "variants": {
+      "Clean": {
+        "buildId": "GF2VR-CLEAN-114-001",
+        "dllSha256": "4C43DE2B433000EB4FD2D41F7240D4ECAB3B2F135A97CFAC90B555D775E3D135"
+      },
+      "Dirty": {
+        "buildId": "GF2VR-DIRTY-114-001",
+        "dllSha256": "5711393862935F49096054296385AD5DA6FFD5BF09987D7C67608D93C8488970"
+      }
+    }
+  },
+  "archives": [
+    {
+      "sha256": "389971AD92923ACB9D856255202552E7E1FFBDE7B98B310E4B758255C6F05A8B",
+      "bytes": 93717069,
+      "entries": 16,
+      "nativeSha256": "4C43DE2B433000EB4FD2D41F7240D4ECAB3B2F135A97CFAC90B555D775E3D135",
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.4.zip",
+      "flavor": "Clean"
+    },
+    {
+      "sha256": "ADBF80223777959867C2E110E9E929F8FABB788A10F0D2EAACEA7EB3F565DC02",
+      "bytes": 93760431,
+      "entries": 16,
+      "nativeSha256": "5711393862935F49096054296385AD5DA6FFD5BF09987D7C67608D93C8488970",
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.4.zip",
+      "flavor": "Dirty"
+    }
+  ],
+  "settingsDefaults": {
+    "auxiliaryPanel": {
+      "offsetZ": 0.01,
+      "screenTilt": 45,
+      "maximumWidth": 0.66,
+      "offsetX": 0,
+      "applyAnglesWhenFacing": false,
+      "viewerFacing": true,
+      "maximumHeight": 0.66,
+      "rotationPitch": -67,
+      "offsetY": -0.1,
+      "rotationYaw": 3,
+      "rotationRoll": 0
+    },
+    "butt": [
+      120,
+      0.5,
+      120,
+      120,
+      140
+    ],
+    "jiggleOrder": [
+      "strengthPercent",
+      "durationMultiplier",
+      "rangePercent",
+      "tiltPercent",
+      "stretchPercent"
+    ],
+    "breast": [
+      40,
+      0.4,
+      75,
+      50,
+      45
+    ]
+  },
+  "offlineValidation": {
+    "managedMethods": 131,
+    "previousLocalUpgradeExactRollbackChecks": 11,
+    "nativePlacementAndConfigurationChecks": 4517,
+    "proxyExports": 19,
+    "installSwitchFailureRollbackChecks": 159,
+    "actualConfiguratorContractRuns": 6,
+    "contactHotTransitiveMethods": 46,
+    "actualGuiDefaultsJsonChecks": 236,
+    "dirtySettingsChecks": 941,
+    "cleanSettingsChecks": 706,
+    "priorActualIlExplicitProfileParityChecks": 236,
+    "nativeExactReproduction": true
+  },
+  "manualFullZipUpgradeRequiredFrom113": true,
+  "oldUpdaterRejection": "nativeBuild; existing installation preserved",
+  "ownedFilesEach": 9,
+  "archiveEntriesEach": 16,
+  "antiAliasingRequired": "OFF",
+  "gameLaunches": 0,
+  "exact114HmdAcceptance": false,
+  "settingsPreserved": true,
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialMaterialIncluded": false
+}

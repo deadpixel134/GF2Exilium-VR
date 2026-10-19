@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
+
+[Build metadata](../docs/zh-CN/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 ## 1.1.3 — Clean / Dirty
 
 当前 1.1.3 使用 variants 下的公共代码及各类型生成头文件。一起重新构建两个版本：

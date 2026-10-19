@@ -137,6 +137,9 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
         current.reference_epoch==stereo_eye_runtime.owner.head_reference_epoch &&
         !stereo_eye_runtime.owner.changing && !stereo_eye_runtime.owner.retiring;
     if(!immersive)stereo_bank_cache.valid=0;
+#ifdef GF2VR_DIRTY_CONTACT
+    if(!immersive)contact_haptic_cancel(&stereo_aux.haptics);
+#endif
     if(stereo_bank_drain(p,0)==EFO_REJECTED){d->fault=d->stopping=1;return XR_ERROR_RUNTIME_FAILURE;}
     EyeFlightToken fresh_token={0};XrEyeInput captured={0};int r;
 #ifdef GF2VR_BANK_THROUGHPUT_OBSERVE
@@ -329,6 +332,14 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
 #endif
             1,stereo_aux.pointer.hand?0u:1u,1,1);
     U64 generation=__atomic_load_n(&stereo_publication_generation,__ATOMIC_ACQUIRE);
+#ifdef GF2VR_DIRTY_CONTACT
+    contact_haptic_frame(&stereo_aux.haptics,current.reference_epoch,generation,GetTickCount64(),
+        result==XR_SUCCESS && projected && immersive && current.head_valid &&
+        !stereo_eye_runtime.owner.changing && !stereo_eye_runtime.owner.retiring &&
+        stereo_eye_runtime.owner.epoch==current.reference_epoch &&
+        generation==(fresh?fresh_token.generation:stereo_bank_cache.token.generation),
+        (stereo_aux.drag.frame.tracked[0]?1u:0u)|(stereo_aux.drag.frame.tracked[1]?2u:0u));
+#endif
     stereo_world_drag_end(stereo_aux.drag.frame,result==XR_SUCCESS && projected && immersive &&
         generation==(fresh?fresh_token.generation:stereo_bank_cache.token.generation),current.reference_epoch,generation);
 #ifdef GF2VR_THUMBSTICK_NAVIGATION

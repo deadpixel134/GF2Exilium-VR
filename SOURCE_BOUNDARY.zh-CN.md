@@ -2,6 +2,13 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.1.4
+
+两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
+
+[Source manifest](source-manifest.json) · [Native metadata](release/1.1.4-native-metadata.json)
+
+
 1.1.1 公开 Clean/Dirty 产品源码及独立安装包。native-source/variants/common 为公共原生代码，Clean/Dirty overlay 为接触功能差异生成的头文件，managed 为自有手部显示及接触代码。native-source 根目录其余部分保留此前 1.0.2 的源码与重建脚本。
 
 

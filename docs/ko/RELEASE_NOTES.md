@@ -2,6 +2,18 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.1.4
+
+**공통 사항**
+
+- 수동 보조 패널 설정 추가
+
+**Dirty 빌드**
+
+- 캐릭터 터치 시 진동 추가
+- 캐릭터 터치 관련 흔들림 및 설정 추가
+
+
 ## 1.1.3
 
 1.1.3 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.2 설정 창의 자동 업데이트는 새 native 프로필을 검증하지 못해 거부됩니다. 기존 설치는 보존됩니다. DLL만 복사하거나 파일을 섞지 마세요.

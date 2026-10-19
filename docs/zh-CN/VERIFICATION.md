@@ -2,6 +2,11 @@
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
+## 1.1.4
+
+两个native DLL均与源码重编译逐字节一致。通过4,517项native布局/配置检查、Clean706项/Dirty941项GUI检查、236项分部位默认值及先前真实IL显式配置一致性检查、236项真实GUI默认JSON检查、159项安装/切换/失败恢复检查，以及11项先前安装精确恢复检查。验证bridge131个方法、接触hot IL46个方法。这些是离线、不可执行fixture和个人安装检查，不声称进行了新的游戏/HMD验收。
+
+
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 PR 作者报告在 Dirty 开发构建中连续启动三次，确认 VR 与皮肤同时工作。这是贡献者的记录，不代表新 1.1.3 二进制已通过 HMD 验收。本次发布验证两种 native 构建、使用实际修改源码的 COM 同一性/失败路径、桌面构建及包完整性。没有重新运行游戏或 HMD。

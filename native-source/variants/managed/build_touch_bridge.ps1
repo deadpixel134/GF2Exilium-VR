@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty')
+param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty',[string]$GameRoot='')
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName Microsoft.CodeAnalysis.CSharp
 Add-Type -AssemblyName System.Reflection.Metadata
@@ -9,13 +9,14 @@ if ($OutputDirectory) { $folder=[IO.Path]::GetFullPath($OutputDirectory) }
 New-Item -ItemType Directory -Path $folder -Force|Out-Null
 $source=Join-Path $PSScriptRoot 'ControllerDisplay.cs'
 $dirty=Join-Path $PSScriptRoot 'dirty'
-$sourceFiles=if($Flavor -eq 'Dirty'){@((Join-Path $dirty 'ContextActorContact.cs'),$source,(Join-Path $PSScriptRoot 'ShaderDiagnostics.cs'),(Join-Path $dirty 'BoneReadProbe.cs'),(Join-Path $dirty 'ContactRuntime.cs'),(Join-Path $dirty 'ContactConfig.cs'))}else{@($source,(Join-Path $PSScriptRoot 'ShaderDiagnostics.cs'),(Join-Path $PSScriptRoot 'CleanContactAdapter.cs'))}
+$sourceFiles=if($Flavor -eq 'Dirty'){@((Join-Path $dirty 'ContextActorContact.cs'),$source,(Join-Path $PSScriptRoot 'ShaderDiagnostics.cs'),(Join-Path $dirty 'BoneReadProbe.cs'),(Join-Path $dirty 'ContactRuntime.cs'),(Join-Path $dirty 'ContactHapticEdges.cs'),(Join-Path $dirty 'ContactConfig.cs'),(Join-Path $dirty 'ContactMaterial.cs'),(Join-Path $dirty 'ContactMotion.cs'),(Join-Path $dirty 'ContactDeformation.cs'))}else{@($source,(Join-Path $PSScriptRoot 'ShaderDiagnostics.cs'),(Join-Path $PSScriptRoot 'CleanContactAdapter.cs'))}
 $generated=Join-Path $folder 'BuildContract.generated.cs'
 $generatedText="#if GF2VR_TOUCH_PRIVATE`nnamespace GF2.Private { internal static class BuildContract { internal const int EyeCapacity = $NativeEyeCapacity; } }`n#endif`n"
 [IO.File]::WriteAllText($generated,$generatedText,[Text.UTF8Encoding]::new($false))
 $sourceFiles+=$generated
 $sourceHashes=[ordered]@{}
 foreach($file in $sourceFiles) { $sourceHashes[$file]=(Get-FileHash -LiteralPath $file).Hash }
+if ($GameRoot) { $root=[IO.Path]::GetFullPath($GameRoot) }
 $cache=Join-Path $root 'GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.0.3936/Codes'
 $expected=@{
  'Assembly-CSharp.dll.bytes'='C093192EF639AA9590850B0A85EFDF9C22BB9C71F098B2015D71E1DEEB38ECEC'
@@ -106,6 +107,7 @@ public static class TouchPrivateContract {
    {"ServiceContact","void|ref int"},
    {"ContactDiagnostics","string"}
   };
+  if(c.GetTypeByMetadataName("GF2.Private.ContactHapticEdges")!=null)expected.Add("DrainContactHaptics","void|long|long|ref int");
   var found=new List<string>();
   foreach(var a in t.GetMembers())if(a is IMethodSymbol m && m.DeclaredAccessibility==Accessibility.Public) {
    string wanted;if(!m.IsStatic||!expected.TryGetValue(m.Name,out wanted))throw new InvalidOperationException("Unexpected public contract "+m.Name);

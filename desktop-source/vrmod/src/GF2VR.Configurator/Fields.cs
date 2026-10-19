@@ -18,7 +18,32 @@ internal static class Fields
         new("activity_ui.json", null, "activityPrimaryUiEnabled", "bool", true, "activityUiHelp"),
         new("controller_input.json", "controllerInput", "swapFaceButtons", "bool", false, "faceSwapHelp"),
         new("controller_input.json", "controllerInput", "swapPanelPointerHands", "bool", false, "handRolesHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelViewerFacing", "bool", true, "panelFacingHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelApplyAnglesWhenFacing", "bool", false, "panelAnglePolicyHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelOffsetX", "number", 0d, "panelOffsetHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelOffsetY", "number", -.1d, ""),
+        new("controller_input.json", "auxiliaryPanel", "panelOffsetZ", "number", .01d, ""),
+        new("controller_input.json", "auxiliaryPanel", "panelScreenTilt", "number", 45d, "panelTiltHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelRotationPitch", "number", -67d, "panelRotationHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelRotationYaw", "number", 3d, ""),
+        new("controller_input.json", "auxiliaryPanel", "panelRotationRoll", "number", 0d, ""),
+        new("controller_input.json", "auxiliaryPanel", "panelMaximumWidth", "number", .66d, "panelSizeHelp"),
+        new("controller_input.json", "auxiliaryPanel", "panelMaximumHeight", "number", .66d, ""),
         new("controller_hands.json", null, "controllerHandsEnabled", "bool", true, "controllerHandsHelp"),
+        new("controller_hands.json", null, "contactHapticStrengthPercent", "number", 15d, "contactHapticStrengthHelp"),
+        new("controller_hands.json", null, "contactHapticDurationMs", "number", 30d, "contactHapticDurationHelp"),
+#if GF2VR_DIRTY_CONTACT
+        new("touch_interaction.json", null, "breastJiggleStrengthPercent", "number", 40d, "breastJiggleStrengthHelp"),
+        new("touch_interaction.json", null, "breastJiggleDurationMultiplier", "number", .4d, "breastJiggleDurationHelp"),
+        new("touch_interaction.json", null, "breastJiggleRangePercent", "number", 75d, "breastJiggleRangeHelp"),
+        new("touch_interaction.json", null, "breastJiggleTiltPercent", "number", 50d, "breastJiggleTiltHelp"),
+        new("touch_interaction.json", null, "breastJiggleStretchPercent", "number", 45d, "breastJiggleStretchHelp"),
+        new("touch_interaction.json", null, "buttJiggleStrengthPercent", "number", 120d, "buttJiggleStrengthHelp"),
+        new("touch_interaction.json", null, "buttJiggleDurationMultiplier", "number", .5d, "buttJiggleDurationHelp"),
+        new("touch_interaction.json", null, "buttJiggleRangePercent", "number", 120d, "buttJiggleRangeHelp"),
+        new("touch_interaction.json", null, "buttJiggleTiltPercent", "number", 120d, "buttJiggleTiltHelp"),
+        new("touch_interaction.json", null, "buttJiggleStretchPercent", "number", 140d, "buttJiggleStretchHelp"),
+#endif
         new("navigation.json", "navigation", "locomotionEnabled", "bool", true, ""),
         new("navigation.json", "navigation", "cameraFollowEnabled", "bool", true, "cameraFollowHelp"),
         new("navigation.json", "navigation", "locomotionHand", "choice", "left", "handHelp", ["left", "right"]),
@@ -50,9 +75,33 @@ internal static class Fields
     internal static JsonNode JsonSerializerNode(object value) => System.Text.Json.JsonSerializer.SerializeToNode(value)!;
 
     internal static JsonNode? Get(Dictionary<string, JsonObject> docs, Field f)
-        => (f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject)?[JsonKey(f)];
+    {
+        var owner = f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject;
+#if GF2VR_DIRTY_CONTACT
+        // A present regional null is invalid, never legacy fallback. Reading
+        // an old common value must not rewrite settings merely by loading.
+        if (f.File == "touch_interaction.json" && owner != null && !owner.ContainsKey(f.Key))
+        {
+            string common = CommonJiggleKey(f.Key);
+            if (owner.ContainsKey(common)) return owner[common];
+        }
+#endif
+        return owner?[JsonKey(f)];
+    }
 
-    internal static string JsonKey(Field f) => f.Key == "controllerHandsEnabled" ? "enabled" : f.Key;
+    internal static string CommonJiggleKey(string key)
+    {
+        string suffix = key.StartsWith("breastJiggle", StringComparison.Ordinal) ? key[6..] :
+            key.StartsWith("buttJiggle", StringComparison.Ordinal) ? key[4..] : key;
+        return char.ToLowerInvariant(suffix[0]) + suffix[1..];
+    }
+
+    internal static string JsonKey(Field f) => f.Key == "controllerHandsEnabled" ? "enabled" :
+        f.Group == "auxiliaryPanel" ? char.ToLowerInvariant(f.Key[5]) + f.Key[6..] : f.Key;
+
+    internal static bool IsContactHaptic(string key) => key is "contactHapticStrengthPercent" or "contactHapticDurationMs";
+
+    internal static bool IsPanelNumber(string key) => All.Any(f => f.Group == "auxiliaryPanel" && f.Kind == "number" && f.Key == key);
 
     internal static void Set(Dictionary<string, JsonObject> docs, Field f, JsonNode value)
     {

@@ -2,6 +2,13 @@
 
 [한국어](../ko/USAGE.md) · [English](../en/USAGE.md) · [日本語](../ja/USAGE.md) · [简体中文](USAGE.md)
 
+## 1.1.4
+
+两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
+
+[Settings](SETTINGS.md)
+
+
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。

@@ -15,6 +15,10 @@ static struct {
     CompositionImageApi api; CompositionImage image;
     void *prepare,*draw,*reset,*snapshot,*diagnostics;
     void *contact_configure,*contact_service,*contact_diagnostics;
+#ifdef GF2VR_DIRTY_CONTACT
+    void *contact_haptics;
+    unsigned haptic_route;
+#endif
     unsigned contact_configured,contact_config_length,contact_ready,contact_length;
     char contact_config[4097],contact_json[16384];
     unsigned contact_down;
@@ -123,6 +127,10 @@ static int touch_p2_bind(void) {
     t2.reset=eye_binding_method_args(klass,"Reset",1,r,"System.Void",1,generic);
     t2.snapshot=eye_binding_method_args(klass,"Snapshot",2,s,"System.String",1,generic);
     t2.diagnostics=eye_binding_method_args(klass,"Diagnostics",0,0,"System.String",1,generic);
+#ifdef GF2VR_DIRTY_CONTACT
+    const char *ch[]={"System.Int64","System.Int64","System.Int32&"};
+    t2.contact_haptics=eye_binding_method_args(klass,"DrainContactHaptics",3,ch,"System.Void",1,generic);
+#endif
     const char *cc[]={"System.Byte[]","System.Int32&"};
     t2.contact_configure=eye_binding_method_args(klass,"ConfigureContact",2,cc,"System.Void",1,generic);
     t2.contact_service=eye_binding_method_args(klass,"ServiceContact",1,r,"System.Void",1,generic);
@@ -187,6 +195,9 @@ static void touch_p2_status(int status) {
     }
 }
 static void touch_p2_reset(void) {
+#ifdef GF2VR_DIRTY_CONTACT
+    contact_haptic_publish(0,0,0,GetTickCount64(),0);
+#endif
     touch_p2_bone_cancel();
     if(t2.bound && t2.prepared){int status;void *args[]={&status};(void)touch_p2_void(t2.reset,args,&status);touch_p2_status(status);touch_p3_contact_report();}
     t2.prepared=0;t2.mask=0;touch3_invalidate(&t2.hand_basis);t2.epoch=t2.generation=t2.last_draw=t2.prepare_after=0;
@@ -340,7 +351,19 @@ static void touch_p3_contact_report(void){
 static void touch_p3_contact_service(void){
     if(!t2.bound || !t2.prepared || !t2.enabled || t2.fault || !t2.contact_service)return;
     int status;void *args[]={&status};
-    if(!touch_p2_void(t2.contact_service,args,&status))touch_p2_reset();
+    if(!touch_p2_void(t2.contact_service,args,&status)){touch_p2_reset();return;}
+#ifdef GF2VR_DIRTY_CONTACT
+    if(t2.contact_haptics) {
+        unsigned route=__atomic_load_n(&contact_haptic_route,__ATOMIC_ACQUIRE);
+        int stable=route==t2.haptic_route;t2.haptic_route=route;
+        int mask=0;void *feedback[]={&t2.epoch,&t2.generation,&mask};
+        void *exception=0;unsigned prior=t2.busy;t2.busy=1;
+        sa.runtime_invoke(t2.contact_haptics,0,feedback,&exception);t2.busy=prior;
+        if(exception)t2.contact_haptics=0; /* Optional feedback cannot fault hands/contact. */
+        else if(stable && (route&1u) && mask>0 && mask<=3)
+            contact_haptic_publish((unsigned)mask,t2.epoch,t2.generation,GetTickCount64(),route);
+    }
+#endif
 }
 static void touch_p2_bone_cancel(void){
     if(!t2.bone_bound || !t2.bone_pending)return;

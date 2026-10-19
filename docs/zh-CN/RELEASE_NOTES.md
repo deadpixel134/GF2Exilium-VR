@@ -2,6 +2,18 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.1.4
+
+**通用更新**
+
+- 新增辅助面板手动设置
+
+**Dirty版本**
+
+- 新增角色接触时的振动反馈
+- 新增角色接触晃动及相关设置
+
+
 ## 1.1.3
 
 更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。

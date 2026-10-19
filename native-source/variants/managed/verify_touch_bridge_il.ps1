@@ -146,7 +146,7 @@ $expectedHot=if($Flavor -eq 'Clean'){5}else{7}
 if(@($hot|Where-Object {$_.pass -ne $true}).Count -gt 0 -or $hot.Count -ne $expectedHot){throw 'Hot transitive IL allocation/string check failed'}
 if($Flavor -eq 'Clean'){
  $all=[IO.File]::ReadAllText((Join-Path $out 'managed-il.txt'))
- if($all -match 'ContactSettings|ContactBeforeRender|BeginContact|BoneReadProbe|UnityEngine\.Animator|UnityEngine\.SkinnedMeshRenderer|add_onBeforeRender|set_localPosition|set_localRotation'){throw 'Clean contains forbidden contact implementation'}
+ if($all -match 'ContactSettings|ContactBeforeRender|BeginContact|BoneReadProbe|ContactHapticEdges|DrainContactHaptics|UnityEngine\.Animator|UnityEngine\.SkinnedMeshRenderer|add_onBeforeRender|set_localPosition|set_localRotation'){throw 'Clean contains forbidden contact implementation'}
 }
 if($summary -match 'AMBIGUOUS_OR_INVALID'){throw 'Ambiguous or invalid owned method body'}
 Write-Output ('Hot transitive IL PASS methods='+$hot.Count+'; engine internal allocations are not measured')
@@ -163,6 +163,7 @@ foreach($part in $sections){
  }
 }
 $contactRoots=@('GF2.Private.ControllerDisplay.ContactBeforeRender','GF2.Private.ControllerDisplay.CacheContactHands')
+if($byName.ContainsKey('GF2.Private.ControllerDisplay.DrainContactHaptics')){$contactRoots+='GF2.Private.ControllerDisplay.DrainContactHaptics'}
 if($byName.ContainsKey($contactRoots[0])){
  $pending=[Collections.Generic.Queue[string]]::new();$seen=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
  foreach($name in $contactRoots){$pending.Enqueue($name)}
@@ -173,6 +174,9 @@ if($byName.ContainsKey($contactRoots[0])){
   $overload=0
   foreach($part in $byName[$name]){
    $bad=@(($part -split "`n")|Where-Object {$_ -match ': (newobj|newarr|box|ldstr|ldftn|ldvirtftn) ' -or $_ -match ': (call|callvirt) .*(FindObjects|GetComponentsInChildren|System\.IO\.|StringBuilder|add_onBeforeRender|remove_onBeforeRender)'})
+   # Exact SDK value-type constructors produce stack values; newobj alone
+   # does not imply a GC allocation. Keep all reference constructors forbidden.
+   $bad=@($bad|Where-Object {$_ -notmatch ': newobj UnityEngine\.(Vector3|Quaternion)\.\.ctor\s*$'})
    $calls=@([regex]::Matches($part,'(?m)^IL_[0-9A-F]+: (?:call|callvirt) (GF2\.Private\.[^\r\n]+)')|ForEach-Object {$_.Groups[1].Value.Trim()})
    foreach($call in $calls){$pending.Enqueue($call)}
    $contactChecks+=[ordered]@{method=$name;overload=$overload++;pass=($bad.Count -eq 0);forbidden_instructions=$bad;owned_calls=$calls}

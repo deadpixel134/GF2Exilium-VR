@@ -12,6 +12,13 @@
     <NuGetAudit>false</NuGetAudit>
     <OutputPath>../../build/settings/bin/</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(GF2VRBuildFlavor)' == 'Dirty'">
+    <DefineConstants>$(DefineConstants);GF2VR_TOUCH_PRIVATE;GF2VR_DIRTY_CONTACT</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(GF2VRBuildFlavor)' == 'Dirty'">
+    <Compile Include="../../../../native-source/variants/managed/dirty/ContactConfig.cs;../../../../native-source/variants/managed/dirty/ContactMaterial.cs" Link="Contact/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Locales/Dirty/*.json" />
+  </ItemGroup>
   <Import Project="../../tools/variant_metadata.props" />
   <ItemGroup>
     <Compile Include="../GF2VR.Installer/VariantProfiles.generated.cs" Link="InstallerUpdate/VariantProfiles.generated.cs" Condition="'$(GF2VRVariantMetadataRoot)' == ''" />

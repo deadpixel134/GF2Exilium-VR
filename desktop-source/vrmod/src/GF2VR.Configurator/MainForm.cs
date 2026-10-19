@@ -24,6 +24,7 @@ internal sealed class MainForm : Form
     private readonly string? smokeFolder;
     private bool loading;
     private bool dirty;
+    private bool panelConfigurationTouched;
     private readonly Label updateStatus = new() { Dock = DockStyle.Fill, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.FromArgb(71, 87, 110) };
     private readonly CancellationTokenSource updateCancel = new();
     private string updateKey = "updateIdle";
@@ -66,9 +67,13 @@ internal sealed class MainForm : Form
         BuildPage("navigationTab", Fields.All.Where(f => f.File == "navigation.json"), "navigationSummary");
         BuildPage("dragTab", Fields.All.Where(f => f.File == "world_drag.json"), "conflictHelp");
         BuildPage("activityUiTab", Fields.All.Where(f => f.File == "activity_ui.json"), "activityUiSummary");
-        BuildPage("controllerTab", Fields.All.Where(f => f.File == "controller_input.json"), "controllerSummary");
+        BuildPage("controllerTab", Fields.All.Where(f => f.File == "controller_input.json" && f.Group != "auxiliaryPanel"), "controllerSummary");
         BuildPage("worldScaleTab", new[] { "worldScale", "linkStereoDepthToWorldScale", "stereoDepthScale", "linkMovementSpeedToWorldScale" }.Select(k => Fields.All.Single(f => f.Key == k)), "worldScaleSummary");
         BuildPage("handsTab", Fields.All.Where(f => f.File == "controller_hands.json"), "handsSummary");
+        BuildPage("panelTab", Fields.All.Where(f => f.Group == "auxiliaryPanel"), "panelSummary");
+#if GF2VR_DIRTY_CONTACT
+        BuildJigglePage();
+#endif
         localized.Add(restart); restart.Tag = "restart"; restart.Margin = new Padding(3, 8, 3, 4); layout.Controls.Add(restart, 0, 2);
         var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
         footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -169,10 +174,10 @@ internal sealed class MainForm : Form
         b.Click += handler; localized.Add(b); return b;
     }
 
-    private void BuildPage(string key, IEnumerable<Field> fields, string summary)
+    private void BuildPage(string key, IEnumerable<Field> fields, string summary, TabControl? owner = null)
     {
         var page = new TabPage { Tag = key, BackColor = Color.White, AutoScroll = true, Padding = new Padding(12) };
-        localized.Add(page); tabs.TabPages.Add(page);
+        localized.Add(page); (owner ?? tabs).TabPages.Add(page);
         var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, GrowStyle = TableLayoutPanelGrowStyle.AddRows, ColumnCount = 2, Padding = new Padding(16) };
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42));
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58));
@@ -183,22 +188,23 @@ internal sealed class MainForm : Form
         int row = 1;
         foreach (Field f in fields)
         {
+            void Edited() { if (!loading && f.Group == "auxiliaryPanel") panelConfigurationTouched = true; Changed(); }
             table.Controls.Add(Label(f.Key), 0, row);
             Control input;
             if (f.Kind == "bool")
             {
                 var check = new CheckBox { AutoSize = true, Margin = new Padding(8, 8, 8, 9) };
-                check.CheckedChanged += (_, _) => Changed(); input = check;
+                check.CheckedChanged += (_, _) => Edited(); input = check;
             }
             else if (f.Kind == "choice")
             {
                 var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 165 };
-                combo.SelectedIndexChanged += (_, _) => Changed(); input = combo;
+                combo.SelectedIndexChanged += (_, _) => Edited(); input = combo;
             }
             else
             {
                 var text = new TextBox { Width = 160, Margin = new Padding(4, 5, 10, 9) };
-                text.TextChanged += (_, _) => Changed(); input = text;
+                text.TextChanged += (_, _) => Edited(); input = text;
             }
             input.AccessibleName = f.Key; inputs.Add(f.Key, input);
             var editor = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, FlowDirection = FlowDirection.TopDown, WrapContents = false, Margin = new Padding(3, 4, 3, 4) };
@@ -214,6 +220,19 @@ internal sealed class MainForm : Form
         if (key == "navigationTab") { table.Controls.Add(effectiveSpeed, 0, row); table.SetColumnSpan(effectiveSpeed, 2); }
         if (key == "worldScaleTab") { table.Controls.Add(effectiveSpatial, 0, row); table.SetColumnSpan(effectiveSpatial, 2); }
     }
+
+#if GF2VR_DIRTY_CONTACT
+    private TabControl? jiggleRegions;
+    private void BuildJigglePage()
+    {
+        var page = new TabPage { Tag = "jiggleTab", BackColor = Color.White, Padding = new Padding(6) };
+        localized.Add(page); tabs.TabPages.Add(page);
+        jiggleRegions = new TabControl { Dock = DockStyle.Fill };
+        page.Controls.Add(jiggleRegions);
+        BuildPage("breastJiggleTab", Fields.All.Where(f => f.File == "touch_interaction.json" && f.Key.StartsWith("breast", StringComparison.Ordinal)), "breastJiggleSummary", jiggleRegions);
+        BuildPage("buttJiggleTab", Fields.All.Where(f => f.File == "touch_interaction.json" && f.Key.StartsWith("butt", StringComparison.Ordinal)), "buttJiggleSummary", jiggleRegions);
+    }
+#endif
 
     private void Translate()
     {
@@ -242,7 +261,7 @@ internal sealed class MainForm : Form
             // A damaged preference cannot replace valid runtime settings with defaults.
             string locale;
             try { locale = candidate.LoadLanguage(); } catch { locale = "ko"; }
-            store = candidate; rootBox.Text = candidate.Root; editing = Fields.Clone(candidate.Documents);
+            store = candidate; rootBox.Text = candidate.Root; editing = Fields.Clone(candidate.Documents); panelConfigurationTouched = false;
             Texts.Language = locale;
             Translate(); ApplyControls(); dirty = false; SetStatus("loaded"); UpdateSave();
         }, failedLoad: true);
@@ -260,12 +279,12 @@ internal sealed class MainForm : Form
                 if (c is CheckBox cb) cb.Checked = value.GetValue<bool>();
                 else if (c is ComboBox combo) combo.SelectedIndex = Array.IndexOf(f.Choices!, value.GetValue<string>());
                 else c.Text = value.ToJsonString();
-                c.Enabled = store != null;
+                c.Enabled = store != null && (!Fields.IsContactHaptic(f.Key) || store.ContactHapticsAvailable);
             }
             manualDepthText = inputs["stereoDepthScale"].Text;
             depthWasLinked = ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked;
         }
-        finally { loading = false; UpdateEffectiveSpeed(); }
+        finally { loading = false; UpdateEffectiveSpeed(); UpdatePanelAngleAvailability(); }
     }
 
     internal Dictionary<string, JsonObject> ReadControls()
@@ -279,13 +298,23 @@ internal sealed class MainForm : Form
             else val = JsonValue.Create(SettingsStore.Number(f.Key == "stereoDepthScale" && ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked ? manualDepthText : c.Text, f.Key))!;
             Fields.Set(result, f, val);
         }
+        if (!panelConfigurationTouched && !editing["controller_input.json"].ContainsKey("auxiliaryPanel"))
+            result["controller_input.json"].Remove("auxiliaryPanel");
         SettingsStore.Validate(result); return result;
     }
 
     private void Changed()
     {
         if (loading) return;
-        dirty = true; SetStatus("unsaved"); UpdateSave(); UpdateEffectiveSpeed();
+        dirty = true; SetStatus("unsaved"); UpdateSave(); UpdateEffectiveSpeed(); UpdatePanelAngleAvailability();
+    }
+    private void UpdatePanelAngleAvailability()
+    {
+        if (!inputs.TryGetValue("panelViewerFacing", out var facing) ||
+            !inputs.TryGetValue("panelApplyAnglesWhenFacing", out var policy)) return;
+        bool apply = !((CheckBox)facing).Checked || ((CheckBox)policy).Checked;
+        foreach (string key in new[] { "panelRotationPitch", "panelRotationYaw", "panelRotationRoll", "panelScreenTilt" })
+            if (inputs.TryGetValue(key, out var control)) control.Enabled = store != null && apply;
     }
     private void UpdateEffectiveSpeed()
     {
@@ -400,6 +429,8 @@ internal sealed class MainForm : Form
             updateVersion = "0.6.0"; UpdateState("updateAvailable"); updateButton.Visible = true;
             // Real forms/resources, no runtime writes. Exercise language, all field creation, initial config and persistence mapping.
             var initial = ReadControls(); SettingsStore.Validate(initial);
+            if (initial["controller_input.json"].ContainsKey("auxiliaryPanel") != editing["controller_input.json"].ContainsKey("auxiliaryPanel"))
+                throw new InvalidDataException("Unrelated settings save activated a panel layout");
             for (int i = 0; i < Texts.Languages.Length; i++)
             {
                 ((Button)languages.Controls[i]).PerformClick();
@@ -457,8 +488,39 @@ internal sealed class MainForm : Form
                     if (ReadControls()["controller_hands.json"]["enabled"]!.GetValue<bool>() != value)
                         throw new InvalidDataException("Hand visibility checkbox did not map to native JSON");
                 }
+                foreach (string key in new[] { "contactHapticStrengthPercent", "contactHapticDurationMs" })
+                    if (inputs[key].Enabled != store!.ContactHapticsAvailable)
+                        throw new InvalidDataException("Dirty-only haptic availability mismatch");
+                var hapticStrength = (TextBox)inputs["contactHapticStrengthPercent"];
+                var hapticDuration = (TextBox)inputs["contactHapticDurationMs"];
+                string savedStrength = hapticStrength.Text, savedDuration = hapticDuration.Text;
+                hapticStrength.Text = "62.5"; hapticDuration.Text = "125.5";
+                var hapticValues = ReadControls()["controller_hands.json"];
+                if (hapticValues["contactHapticStrengthPercent"]!.GetValue<double>() != 62.5 ||
+                    hapticValues["contactHapticDurationMs"]!.GetValue<double>() != 125.5)
+                    throw new InvalidDataException("Haptic controls did not map to native settings");
+                hapticStrength.Text = savedStrength; hapticDuration.Text = savedDuration;
                 using var handsBitmap = new Bitmap(Width, Height); DrawToBitmap(handsBitmap, new Rectangle(0, 0, Width, Height));
                 handsBitmap.Save(Path.Combine(smokeFolder!, "hands-" + Texts.Language + ".png"));
+#if GF2VR_DIRTY_CONTACT
+                foreach (var field in Fields.All.Where(f => f.File == "touch_interaction.json"))
+                {
+                    var input = (TextBox)inputs[field.Key]; string saved = input.Text;
+                    if (!input.Enabled) throw new InvalidDataException("Jiggle input disabled");
+                    input.Text = Fields.CommonJiggleKey(field.Key) == "jiggleDurationMultiplier" ? "1.5" : "150";
+                    if (ReadControls()[field.File][field.Key]!.GetValue<double>() != (Fields.CommonJiggleKey(field.Key) == "jiggleDurationMultiplier" ? 1.5 : 150))
+                        throw new InvalidDataException("Jiggle control persistence mapping");
+                    input.Text = saved;
+                    tabs.SelectedIndex = 8;
+                    jiggleRegions!.SelectedIndex = field.Key.StartsWith("breast", StringComparison.Ordinal) ? 0 : 1;
+                    tabs.PerformLayout(); jiggleRegions.PerformLayout(); jiggleRegions.SelectedTab!.PerformLayout();
+                    jiggleRegions.SelectedTab.ScrollControlIntoView(input); PerformLayout();
+                    var rectangle = jiggleRegions.SelectedTab.RectangleToClient(input.RectangleToScreen(input.ClientRectangle));
+                    if (!jiggleRegions.SelectedTab.ClientRectangle.Contains(rectangle)) throw new InvalidDataException("Jiggle input cannot be scrolled into view");
+                    using var jiggleBitmap = new Bitmap(Width, Height); DrawToBitmap(jiggleBitmap, new Rectangle(0, 0, Width, Height));
+                    jiggleBitmap.Save(Path.Combine(smokeFolder!, field.Key + "-" + Texts.Language + ".png"));
+                }
+#endif
                 hands.Checked = oldHands; tabs.SelectedIndex = 4;
                 using var faceBitmap = new Bitmap(Width, Height); DrawToBitmap(faceBitmap, new Rectangle(0, 0, Width, Height));
                 faceBitmap.Save(Path.Combine(smokeFolder!, "controller-" + Texts.Language + ".png"));
@@ -479,7 +541,52 @@ internal sealed class MainForm : Form
                 linkDepth.Checked = false; linkSpeed.Checked = false; world.Text = "2";
                 if (ReadControls()["stereo_depth.json"]["stereoDepthScale"]!.GetValue<double>() != 2 || !effectiveSpeed.Text.Contains("1")) throw new InvalidDataException("Unlinked settings changed with world");
                 using var offBitmap = new Bitmap(Width, Height); DrawToBitmap(offBitmap, new Rectangle(0, 0, Width, Height)); offBitmap.Save(Path.Combine(smokeFolder!, "world-off-" + Texts.Language + ".png"));
-                editing = Fields.Clone(initial); ApplyControls();
+                tabs.SelectedIndex = 7; PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                var panelFacing = (CheckBox)inputs["panelViewerFacing"];
+                var anglePolicy = (CheckBox)inputs["panelApplyAnglesWhenFacing"];
+                foreach (bool facing in new[] { false, true })
+                foreach (bool applyAngles in new[] { false, true })
+                {
+                    panelFacing.Checked = !facing; panelFacing.Checked = facing;
+                    anglePolicy.Checked = !applyAngles; anglePolicy.Checked = applyAngles;
+                    inputs["panelOffsetX"].Text = "-0.75"; inputs["panelRotationPitch"].Text = "-270"; inputs["panelScreenTilt"].Text = "5";
+                    var panel = ReadControls()["controller_input.json"]["auxiliaryPanel"]!;
+                    if (panel["viewerFacing"]!.GetValue<bool>() != facing || panel["applyAnglesWhenFacing"]!.GetValue<bool>() != applyAngles || panel["offsetX"]!.GetValue<double>() != -.75 || panel["rotationPitch"]!.GetValue<double>() != -270 || panel["screenTilt"]!.GetValue<double>() != 5)
+                        throw new InvalidDataException("Panel mode/signed position/angle mapping failed");
+                    foreach (string key in new[] { "panelRotationPitch", "panelRotationYaw", "panelRotationRoll", "panelScreenTilt" })
+                        if (inputs[key].Enabled != (!facing || applyAngles)) throw new InvalidDataException("Panel angle policy enablement " + key);
+                    if (!inputs["panelOffsetY"].Enabled || !inputs["panelMaximumHeight"].Enabled) throw new InvalidDataException("Policy disabled position/size");
+                    tabs.SelectedTab!.AutoScrollPosition = Point.Empty;
+                    using var panelBitmap = new Bitmap(Width, Height); DrawToBitmap(panelBitmap, new Rectangle(0, 0, Width, Height));
+                    panelBitmap.Save(Path.Combine(smokeFolder!, "panel-" + (facing ? "on-" : "off-") + (applyAngles ? "angles-on-" : "angles-off-") + Texts.Language + ".png"));
+                    tabs.SelectedTab!.ScrollControlIntoView(inputs["panelRotationPitch"]);
+                    using var angleBitmap = new Bitmap(Width, Height); DrawToBitmap(angleBitmap, new Rectangle(0, 0, Width, Height));
+                    angleBitmap.Save(Path.Combine(smokeFolder!, "panel-angles-" + (facing ? "on-" : "off-") + (applyAngles ? "on-" : "off-") + Texts.Language + ".png"));
+                }
+                tabs.SelectedTab!.ScrollControlIntoView(inputs["panelMaximumHeight"]);
+                using (var panelBottom = new Bitmap(Width, Height))
+                { DrawToBitmap(panelBottom, new Rectangle(0, 0, Width, Height)); panelBottom.Save(Path.Combine(smokeFolder!, "panel-bottom-" + Texts.Language + ".png")); }
+                ApplyDefaults();
+                var defaultValues = ReadControls();
+                foreach (var field in Fields.All)
+                    if (Fields.Get(defaultValues, field)!.ToJsonString() != Fields.JsonSerializerNode(field.Default).ToJsonString())
+                        throw new InvalidDataException("Reset lost selected default " + field.Key);
+                tabs.SelectedTab!.AutoScrollPosition = Point.Empty;
+                using (var defaultsPanel = new Bitmap(Width, Height))
+                { DrawToBitmap(defaultsPanel, new Rectangle(0, 0, Width, Height)); defaultsPanel.Save(Path.Combine(smokeFolder!, "defaults-panel-" + Texts.Language + ".png")); }
+                tabs.SelectedTab.ScrollControlIntoView(inputs["panelScreenTilt"]);
+                using (var defaultsAngles = new Bitmap(Width, Height))
+                { DrawToBitmap(defaultsAngles, new Rectangle(0, 0, Width, Height)); defaultsAngles.Save(Path.Combine(smokeFolder!, "defaults-angles-" + Texts.Language + ".png")); }
+#if GF2VR_DIRTY_CONTACT
+                tabs.SelectedIndex = 8;
+                foreach (int region in new[] { 0, 1 }) {
+                    jiggleRegions!.SelectedIndex = region; jiggleRegions.SelectedTab!.AutoScrollPosition = Point.Empty;
+                    PerformLayout(); jiggleRegions.PerformLayout(); jiggleRegions.SelectedTab.PerformLayout();
+                    using var defaultsJiggle = new Bitmap(Width, Height); DrawToBitmap(defaultsJiggle, new Rectangle(0, 0, Width, Height));
+                    defaultsJiggle.Save(Path.Combine(smokeFolder!, "defaults-jiggle-" + region + "-" + Texts.Language + ".png"));
+                }
+#endif
+                editing = Fields.Clone(initial); panelConfigurationTouched = false; ApplyControls();
             }
             ((TextBox)inputs["eyeRenderScale"]).Text = "2.5";
             ((ComboBox)inputs["locomotionHand"]).SelectedIndex = 1;
@@ -501,7 +608,7 @@ internal sealed class MainForm : Form
                 SwitchLanguage(locale); VerifyButtonGeometry();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smokeFolder!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=3, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, liveSaves=0, gameLaunches=0 }));
+            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=3, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, contactHapticStrengthDuration=true, dirtyOnlyHapticAvailability=true, liveSaves=0, gameLaunches=0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smokeFolder!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

@@ -19,6 +19,11 @@ internal static class Texts
             string name = assembly.GetManifestResourceNames().Single(n => n.EndsWith(".Locales." + language + ".json", StringComparison.Ordinal));
             using var stream = assembly.GetManifestResourceStream(name)!;
             resources[language] = JsonSerializer.Deserialize<Dictionary<string, string>>(stream)!;
+#if GF2VR_DIRTY_CONTACT
+            string overlay = assembly.GetManifestResourceNames().Single(n => n.EndsWith(".Locales.Dirty." + language + ".json", StringComparison.Ordinal));
+            using var dirtyStream = assembly.GetManifestResourceStream(overlay)!;
+            foreach (var p in JsonSerializer.Deserialize<Dictionary<string, string>>(dirtyStream)!) resources[language][p.Key] = p.Value;
+#endif
         }
         return resources;
     }

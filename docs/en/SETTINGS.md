@@ -1,6 +1,30 @@
 # Using the configurator
 
 [한국어](../ko/SETTINGS.md) · [English](../en/SETTINGS.md) · [日本語](../ja/SETTINGS.md) · [简体中文](../zh-CN/SETTINGS.md)
+
+## 1.1.4
+
+### Auxiliary panel — common
+
+Choose Face the viewer and Apply manual angles while facing viewer independently. With manual-angle application off, yaw/pitch/roll and screen tilt apply only when Face the viewer is off; inactive values are retained. Position and maximum width/height always apply. The panel preserves its aspect ratio within both size limits.
+
+Defaults: Face the viewer ON, apply manual angles while facing OFF. Position X/Y/Z = 0 / -0.10 / 0.01m; pitch/yaw/roll = -67 / 3 / 0 degrees; screen tilt 45 degrees; maximum width and height 0.66m each.
+
+Position follows the controller local axes. In the observed held pose, +X is right / +Y forward / +Z up; the axes rotate with your hand. Screen tilt uses the final screen horizontal axis: positive upward, negative downward. Existing settings without an auxiliaryPanel object retain the previous layout until panel settings or defaults are applied.
+
+### Contact feedback — Dirty
+
+The Hands tab controls contact-vibration strength and duration. It pulses once at initial contact and rearms after full separation. Defaults are 15% / 30ms; zero disables vibration.
+
+The Contact jiggle tab provides separate breast/buttock controls. Values below are strength / duration / range / tilt / stretch.
+
+| Region | Defaults |
+|---|---|
+| Breasts | 40% / 0.4x / 75% / 50% / 45% |
+| Buttocks | 120% / 0.5x / 120% / 120% / 140% |
+
+Explicit saved values are preserved; regional values override legacy common values. Arbitrary upper limits are removed while finite-number, positive-duration and positive-compression-scale checks remain. Restart the game after saving.
+
 ## 1.1.1 — Clean / Dirty
 
 | Feature | Clean | Dirty |
@@ -15,7 +39,7 @@ Installation, switching and removal preserve user settings. Optional touch_inter
 
 The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
 
-The remaining detail is retained from earlier versions. Use the 1.1.1 download and verification scope above as current authority.
+The remaining detail is retained from earlier versions. Use the 1.1.4 download and verification scope above as current authority.
 
 
 Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語** buttons at the bottom; your selection is remembered.

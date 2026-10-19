@@ -2,9 +2,14 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
+## 1.1.4
+
+[1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)
+
+
 Configurator 和 Installer 严格校验 native DLL 哈希。请保留检查并使用两种 native 构建生成的同一份元数据。需要 Windows x64、PowerShell 7、Zig 0.16.0 和 Windows SDK。在仓库根目录执行以下命令。
 
-正式 1.1.3 源码默认要求与发布哈希完全一致。仅在主动修改源码的开发构建中添加 -AllowSourceChanges。使用新的输出目录，同时构建两个版本。
+正式 1.1.4 源码默认要求与发布哈希完全一致。仅在主动修改源码的开发构建中添加 -AllowSourceChanges。使用新的输出目录，同时构建两个版本。
 
 ```powershell
 ./native-source/variants/build-variants.ps1 -Flavor Both `
@@ -18,11 +23,11 @@ desktop-metadata 包含实际 DLL build ID/哈希对应的 VariantProfiles.gener
 ```powershell
 $metadata = (Resolve-Path ./native-source/variants/build/desktop-metadata).Path
 $desktop = './desktop-source/vrmod/tools/build_desktop_private_runtime.ps1'
-& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.3 `
+& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata
-& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Clean
-& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.3 `
+& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.4 `
     -NativeMetadataRoot $metadata -NativeFlavor Dirty
 ```
 

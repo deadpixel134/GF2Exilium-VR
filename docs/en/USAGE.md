@@ -2,6 +2,13 @@
 
 [한국어](../ko/USAGE.md) · [English](../en/USAGE.md) · [日本語](../ja/USAGE.md) · [简体中文](../zh-CN/USAGE.md)
 
+## 1.1.4
+
+Both builds provide auxiliary-panel viewer-facing, position, rotation, screen tilt and maximum-size settings. Dirty adds character-contact vibration and separate breast/buttock jiggle settings.
+
+[Settings](SETTINGS.md)
+
+
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.

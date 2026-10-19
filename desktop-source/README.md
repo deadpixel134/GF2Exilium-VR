@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+Both builds provide auxiliary-panel viewer-facing, position, rotation, screen tilt and maximum-size settings. Dirty adds character-contact vibration and separate breast/buttock jiggle settings.
+
+[Build metadata](../docs/en/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
 
 
@@ -13,8 +20,8 @@ Installation, switching and removal preserve user settings. Optional touch_inter
 The Configurator and Installer use Windows Forms, .NET SDK 10.0.112 and the official .NET 10.0.12 Windows x64 runtime packs. PowerShell 7 and Windows x64 are required. From this directory:
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.3
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.3
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.4
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.4
 ```
 
 The first build restores the official runtime packs from NuGet using the checked-in source configuration. It creates a project-local cache, build output and the required .NET license notices under `vrmod/build/`. No game files or shared system .NET installation are changed. Both hosts include a private runtime; keep their app DLL, deps and runtimeconfig files alongside the EXE.

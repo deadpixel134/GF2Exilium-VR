@@ -2,6 +2,13 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.1.4
+
+Clean·Dirty 공통으로 보조패널의 사용자 바라보기, 위치·회전·화면 기울기·최대 크기를 설정할 수 있습니다. Dirty에는 캐릭터 터치 진동과 가슴·엉덩이별 흔들림 설정을 추가했습니다.
+
+[Build metadata](../docs/ko/BUILD_VARIANT_METADATA.md) · [Native metadata](../release/1.1.4-native-metadata.json)
+
+
 1.1.3은 PR #1의 3DMigoto 기본 wrapper 모드 호환 변경을 Clean·Dirty에 함께 반영합니다. 게임의 wrapper는 유지하고 VR 복사·OpenXR에는 실제 D3D11 장치/context를 사용합니다. 변경된 DLL과 일치하는 설정 도구·인스톨러를 함께 제공합니다.
 
 
@@ -13,8 +20,8 @@
 설정 프로그램과 인스톨러는 Windows Forms, .NET SDK 10.0.112와 공식 .NET 10.0.12 Windows x64 런타임 팩을 사용합니다. PowerShell 7과 Windows x64가 필요합니다. 이 디렉터리에서 다음 명령을 실행하세요.
 
 ```powershell
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.3
-./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.3
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Configurator -BuildId RELEASE-CLEAN-113 -ProductVersion 1.1.4
+./vrmod/tools/build_desktop_private_runtime.ps1 -Application Installer -BuildId RELEASE-INSTALLER-113 -ProductVersion 1.1.4
 ```
 
 첫 빌드는 저장소에 포함된 패키지 소스 설정으로 NuGet의 공식 런타임 팩을 복원합니다. 프로젝트 내부 캐시, 빌드 출력과 필요한 .NET 라이선스 고지를 `vrmod/build/` 아래에 만듭니다. 게임 파일이나 공용 시스템 .NET 설치는 변경하지 않습니다. 두 실행 프로그램 모두 전용 런타임을 포함하므로 앱 DLL, deps, runtimeconfig 파일을 EXE 옆에 함께 유지하세요.
