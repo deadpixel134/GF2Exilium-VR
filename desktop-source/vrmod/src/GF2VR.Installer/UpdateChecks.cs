@@ -15,6 +15,7 @@ internal static class UpdateChecks
         var candidateManifest = Contract.Read<Package>(File.ReadAllBytes(Paths.Contained(candidate, "package-manifest.json")));
         var previousManifest = Contract.Read<Package>(File.ReadAllBytes(Paths.Contained(previous, "package-manifest.json")));
         string candidateVersion = candidateManifest.Version, previousVersion = previousManifest.Version;
+        string? flavor = candidateManifest.Native?.BuildFlavor;
         var nextVersion = UpdatePolicy.VersionOf(candidateVersion);
         Check(nextVersion > UpdatePolicy.VersionOf(previousVersion), "candidate version advances previous package");
         string otherVersion = new Version(nextVersion.Major, nextVersion.Minor, checked(nextVersion.Build + 1)).ToString(3);
@@ -34,7 +35,7 @@ internal static class UpdateChecks
         var engine = new InstallationEngine(); Check(UpdateStaging.ManagedVersion(root) == null, "unmanaged install ineligible");
         string settings = Paths.Contained(root, "vrmod/config/render_quality.json"); byte[] settingsBytes = Encoding.UTF8.GetBytes("{\"schemaVersion\":1,\"eyeRenderScale\":0.6}"); Paths.WriteNew(settings, settingsBytes);
         engine.Install(engine.Preview(root, old)); Check(UpdateStaging.ManagedVersion(root) == previousVersion, "receipt uses prior package version");
-        string archive = Path.Combine(fixture, UpdatePolicy.ArchiveName(candidateVersion)); Directory.CreateDirectory(fixture);
+        string archive = Path.Combine(fixture, UpdatePolicy.ArchiveName(candidateVersion, flavor)); Directory.CreateDirectory(fixture);
         using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
         {
             foreach (var f in Contract.Read<Package>(File.ReadAllBytes(Paths.Contained(pkg, "package-manifest.json"))).Files) zip.CreateEntryFromFile(Paths.Contained(pkg, "payload/" + f.Path), "payload/" + f.Path);
@@ -43,21 +44,21 @@ internal static class UpdateChecks
             foreach (string f in new[] { "DOTNET-NOTICES.txt", "LOCAL-VR.txt" }) { using var writer = new StreamWriter(zip.CreateEntry(f).Open()); writer.Write("INERT OWNED UPDATE TEST NOTICE"); }
         }
         var descriptor = new UpdateDescriptor(1, "GF2VR", UpdatePolicy.Repository, candidateVersion, "stable", Path.GetFileName(archive), Paths.FileHash(archive)!, Paths.FileHash(Paths.Contained(pkg, "package-manifest.json"))!,
-            UpdatePolicy.HelperFiles.Select(p => new PayloadFile(p, Paths.FileHash(Path.Combine(AppContext.BaseDirectory, p))!, new FileInfo(Path.Combine(AppContext.BaseDirectory, p)).Length)).ToArray());
+            UpdatePolicy.HelperFiles.Select(p => new PayloadFile(p, Paths.FileHash(Path.Combine(AppContext.BaseDirectory, p))!, new FileInfo(Path.Combine(AppContext.BaseDirectory, p)).Length)).ToArray(), flavor, candidateManifest.Native?.CommonCoreSha256);
         byte[] meta = Contract.Encode(descriptor);
         JsonObject Asset(long id, string name, long size, string hash) => new() { ["id"] = id, ["name"] = name, ["size"] = size, ["state"] = "uploaded", ["digest"] = "sha256:" + hash, ["url"] = "https://api.github.com/" + UpdatePolicy.Api + "releases/assets/" + id };
         JsonObject Release(string version) => new() { ["id"] = 1, ["draft"] = false, ["prerelease"] = false, ["published_at"] = "2026-10-11T00:00:00Z", ["tag_name"] = "v" + version,
-            ["assets"] = new JsonArray(Asset(11, UpdatePolicy.DescriptorName, meta.Length, Paths.Hash(meta)), Asset(12, descriptor.ArchiveName, new FileInfo(archive).Length, descriptor.ArchiveSha256)) };
+            ["assets"] = new JsonArray(Asset(11, UpdatePolicy.DescriptorFor(flavor), meta.Length, Paths.Hash(meta)), Asset(12, descriptor.ArchiveName, new FileInfo(archive).Length, descriptor.ArchiveSha256)) };
         byte[] Catalog(JsonObject r) => Contract.Encode(new JsonArray(r));
-        Check(UpdatePolicy.Select(Encoding.UTF8.GetBytes("[]"), previousVersion) == null, "empty release list");
-        var release = UpdatePolicy.Select(Catalog(Release(candidateVersion)), previousVersion)!; Check(release.Version == candidateVersion, "exact new stable selection");
-        Check(UpdatePolicy.Select(Catalog(Release(candidateVersion)), candidateVersion) == null, "same version no update");
-        var draft = Release(candidateVersion); draft["draft"] = true; Check(UpdatePolicy.Select(Catalog(draft), previousVersion) == null, "draft ignored");
-        var pre = Release(candidateVersion); pre["prerelease"] = true; Check(UpdatePolicy.Select(Catalog(pre), previousVersion) == null, "prerelease ignored");
+        Check(UpdatePolicy.Select(Encoding.UTF8.GetBytes("[]"), previousVersion, flavor) == null, "empty release list");
+        var release = UpdatePolicy.Select(Catalog(Release(candidateVersion)), previousVersion, flavor)!; Check(release.Version == candidateVersion, "exact new stable selection");
+        Check(UpdatePolicy.Select(Catalog(Release(candidateVersion)), candidateVersion, flavor) == null, "same version no update");
+        var draft = Release(candidateVersion); draft["draft"] = true; Check(UpdatePolicy.Select(Catalog(draft), previousVersion, flavor) == null, "draft ignored");
+        var pre = Release(candidateVersion); pre["prerelease"] = true; Check(UpdatePolicy.Select(Catalog(pre), previousVersion, flavor) == null, "prerelease ignored");
         Reject(() => UpdatePolicy.VersionOf(candidateVersion + "-beta"), "unapproved tag/channel");
-        var foreign = Release(candidateVersion); foreign["assets"]![0]!["url"] = "https://example.invalid/token"; Reject(() => UpdatePolicy.Select(Catalog(foreign), previousVersion), "foreign asset host/repo");
-        var missing = Release(candidateVersion); missing["assets"]![1]!["name"] = "looks-latest.zip"; Reject(() => UpdatePolicy.Select(Catalog(missing), previousVersion), "unrelated zip selection");
-        var noHash = Release(candidateVersion); noHash["assets"]![1]!["digest"] = null; Reject(() => UpdatePolicy.Select(Catalog(noHash), previousVersion), "no integrity");
+        var foreign = Release(candidateVersion); foreign["assets"]![0]!["url"] = "https://example.invalid/token"; Reject(() => UpdatePolicy.Select(Catalog(foreign), previousVersion, flavor), "foreign asset host/repo");
+        var missing = Release(candidateVersion); missing["assets"]![1]!["name"] = "looks-latest.zip"; Reject(() => UpdatePolicy.Select(Catalog(missing), previousVersion, flavor), "unrelated zip selection");
+        var noHash = Release(candidateVersion); noHash["assets"]![1]!["digest"] = null; Reject(() => UpdatePolicy.Select(Catalog(noHash), previousVersion, flavor), "no integrity");
         Check(UpdatePolicy.Descriptor(meta, release).Version == candidateVersion, "descriptor bound to release assets");
         Reject(() => UpdatePolicy.ValidateDescriptor(descriptor with { Repository = "someone/other" }), "descriptor repo");
         Reject(() => UpdatePolicy.ValidateDescriptor(descriptor with { InstallerFiles = descriptor.InstallerFiles[..3] }), "missing executable dependencies");

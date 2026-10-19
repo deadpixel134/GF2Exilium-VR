@@ -10,6 +10,8 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-public-transport")) return PublicTransportChecks.Run().GetAwaiter().GetResult();
+            if (args.Contains("--check-public-update-source")) return PublicTransportChecks.CheckPublic().GetAwaiter().GetResult();
             if (args.Contains("--self-test-log-cleanup")) return RuntimeLogCleanupChecks.Run();
             if (args.Contains("--self-test-variants")) return VariantChecks.Run(Value(args, "--clean")!, Value(args, "--dirty")!);
             if (args.Contains("--self-test-package-location")) return PackageLocationChecks.Run();
@@ -86,6 +88,8 @@ internal static class Program
         }
         catch (Exception ex)
         {
+            if (args.Contains("--self-test-public-transport") || args.Contains("--check-public-update-source"))
+            { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--apply-confirmed-update"))
             {
                 if (updateFixture) return 1;

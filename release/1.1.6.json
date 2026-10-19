@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.1.6",
+  "tag": "v1.1.6",
+  "baseRelease": "1.1.5",
+  "changes": [
+    "Forward-compatible verified update handoff to incoming Installer",
+    "Anonymous public HTTPS update checks and downloads without GitHub CLI or login"
+  ],
+  "native": {
+    "schemaVersion": 1,
+    "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+    "commonCoreSha256": "6D8D9340A97D4A11F32C7620F784D4C35442906D4D60D933B9F891D055EB5C84",
+    "variants": {
+      "Clean": {
+        "buildId": "GF2VR-CLEAN-115-001",
+        "dllSha256": "7806AE352C49B9326BD51C21374C0F2A92CD4E46C8B9812E2459B178088C4663"
+      },
+      "Dirty": {
+        "buildId": "GF2VR-DIRTY-115-001",
+        "dllSha256": "DEB4A0DD6462E661455002BF369ECE5C11A566EA66995C9B84F41EA4C6390EDC"
+      }
+    }
+  },
+  "nativeBytesIdenticalTo115": true,
+  "archives": [
+    {
+      "bytes": 93731933,
+      "nativeSha256": "7806AE352C49B9326BD51C21374C0F2A92CD4E46C8B9812E2459B178088C4663",
+      "sha256": "9D7B8F05ACE3DBA3FA9C8788BA2E9C06B9B915A11542198B73F5D3CE356AA0B3",
+      "flavor": "Clean",
+      "entries": 16,
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.6.zip"
+    },
+    {
+      "bytes": 93775743,
+      "nativeSha256": "DEB4A0DD6462E661455002BF369ECE5C11A566EA66995C9B84F41EA4C6390EDC",
+      "sha256": "15F86587350489F07FBC214F45121EA2DA11388C013C56F94F75029FB49616E5",
+      "flavor": "Dirty",
+      "entries": 16,
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.6.zip"
+    }
+  ],
+  "offlineValidation": {
+    "upgradeExactRollbackChecks": 11,
+    "actualConfiguratorRuns": 6,
+    "transportChecks": 11,
+    "cleanSettingsChecks": 725,
+    "updateSecurityChecks": 54,
+    "futureUnknownNativeAndFrozen115ClientBoundaryRoutes": 2,
+    "dirtySettingsChecks": 960,
+    "variantChecks": 159,
+    "publicAnonymousMetadataVerified": true
+  },
+  "old114Recovery": "One-time new ZIP installation; immutable old client cannot be remotely patched",
+  "old115Recovery": "Existing GUI update works with its existing CLI transport; otherwise one-time ZIP installation",
+  "cliOrLoginRequiredAfter116": false,
+  "userConfirmationRequired": true,
+  "loggingDefaultsAndOnExemptionPreserved": true,
+  "ownedFilesEach": 9,
+  "archiveEntriesEach": 16,
+  "previousReleaseNotesRetained": true,
+  "gameLaunches": 0,
+  "hmdAcceptance": false,
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialMaterialIncluded": false
+}

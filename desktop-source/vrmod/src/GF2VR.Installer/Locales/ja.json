@@ -78,7 +78,7 @@
   "updateIdle": "更新確認待ち",
   "updateChecking": "更新を確認中 — 設定は引き続き利用できます。",
   "updateUnmanaged": "管理対象のインストール記録がありません。現在のファイルは変更しません。",
-  "updateAccess": "更新確認には自分のアカウントでログインしたGitHub CLIが必要です。",
+  "updateAccess": "公開更新サーバーに接続できません。接続を確認し、後でもう一度お試しください。GitHubへのログインは不要です。",
   "updateCurrent": "新しい正式更新はありません。",
   "updateAvailable": "更新を利用できます。",
   "updateQuestion": "{0}に更新しますか？ゲームを終了してください。設定を閉じて置換後に再度開きます。",

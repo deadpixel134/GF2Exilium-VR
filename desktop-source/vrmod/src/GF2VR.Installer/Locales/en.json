@@ -78,7 +78,7 @@
   "updateIdle": "Update check pending",
   "updateChecking": "Checking updates — settings remain available.",
   "updateUnmanaged": "No managed installation receipt; current files will stay unchanged.",
-  "updateAccess": "Update checks require GitHub CLI signed in with your own account.",
+  "updateAccess": "Could not reach the public update server. Check your connection and try again later. GitHub sign-in is not required.",
   "updateCurrent": "No newer stable update.",
   "updateAvailable": "An update is available.",
   "updateQuestion": "Update to {0}? Close the game. Settings will close for replacement, then reopen.",

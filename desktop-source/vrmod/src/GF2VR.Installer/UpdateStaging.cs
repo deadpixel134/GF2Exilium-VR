@@ -41,12 +41,33 @@ internal static class UpdateStaging
         foreach (var f in descriptor.InstallerFiles)
             if (!Paths.Equal(Paths.FileHash(Paths.Contained(package, f.Path)), f.Sha256) || new FileInfo(Paths.Contained(package, f.Path)).Length != f.Bytes) throw new InstallError("updateInvalid");
         if (!Paths.Equal(Paths.FileHash(Paths.Contained(package, "package-manifest.json")), descriptor.PackageManifestSha256)) throw new InstallError("updateInvalid");
-        var plan = new InstallationEngine().Preview(root, package);
-        RequireFlavor(plan.Prior, descriptor, plan.Package);
-        if (plan.Prior == null || plan.Package.Scope != "vrmod" || plan.Package.Version != descriptor.Version ||
-            UpdatePolicy.VersionOf(plan.Package.Version) <= UpdatePolicy.VersionOf(plan.Prior.Version)) throw new InstallError("updateInvalid");
+        // Old clients verify provenance and bytes; the verified incoming helper
+        // knows the future native profile and owns final preflight/installation.
+        var incoming = Contract.Read<Package>(Paths.Bytes(Paths.Contained(package, "package-manifest.json"), 262144)!);
+        var engine = new InstallationEngine(); var prior = engine.Inspect(root);
+        string? installedVersion = ManagedVersion(root);
+        RequireFlavor(prior, descriptor, incoming);
+        if (incoming.SchemaVersion != 1 || incoming.Product != Contract.Product || incoming.Scope != "vrmod" ||
+            incoming.Version != descriptor.Version || incoming.Native == null || incoming.BoundGameRoot != null ||
+            incoming.RequiresInstalledDllSha256 != null || incoming.Native.ResourceBinding != NativeLayout.PortableBinding ||
+            installedVersion == null || UpdatePolicy.VersionOf(incoming.Version) <= UpdatePolicy.VersionOf(installedVersion) ||
+            incoming.Files == null || incoming.Files.Length != NativeLayout.Files.Length ||
+            !incoming.Files.Select(f => f?.Path).ToHashSet(StringComparer.Ordinal).SetEquals(NativeLayout.Files))
+            throw new InstallError("updateInvalid");
+        foreach (var f in incoming.Files)
+        {
+            if (f == null || !Paths.Owned(f.Path) || f.Bytes is < 1 or > Contract.MaxFile) throw new InstallError("updateInvalid");
+            Paths.HashText(f.Sha256); string payload = Paths.Contained(package, "payload/" + f.Path);
+            if (new FileInfo(payload).Length != f.Bytes || !Paths.Equal(Paths.FileHash(payload), f.Sha256)) throw new InstallError("updateInvalid");
+        }
+        Paths.HashText(incoming.Native.DllSha256); Paths.HashText(incoming.Native.LoaderSha256);
+        if (!Paths.Equal(incoming.Files.Single(f => f.Path == "GF2 Game/version.dll").Sha256, incoming.Native.DllSha256) ||
+            !Paths.Equal(incoming.Files.Single(f => f.Path == "vrmod/runtime/openxr_loader.dll").Sha256, incoming.Native.LoaderSha256))
+            throw new InstallError("updateInvalid");
+        string receiptHash = engine.ReceiptHash(root);
+        if (ManagedVersion(root) != installedVersion || !Paths.Equal(engine.ReceiptHash(root), receiptHash)) throw new InstallError("updateInvalid");
         Paths.WriteNew(Paths.Contained(folder, "release-descriptor.json"), descriptorBytes);
-        return new(descriptor.Version, folder, plan.Root, plan.PriorHash!, plan.ManifestHash, Paths.Hash(descriptorBytes));
+        return new(descriptor.Version, folder, root, receiptHash, descriptor.PackageManifestSha256, Paths.Hash(descriptorBytes));
     }
     internal static void Handoff(PreparedUpdate update)
     {

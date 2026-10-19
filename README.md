@@ -8,11 +8,21 @@
 
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
-**[정식 버전 1.1.5 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
+**[정식 버전 1.1.6 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)**
 
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
-1.1.5 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.3 설정 창은 새 native 프로필을 검증하지 못하므로 이번 업데이트는 새 ZIP의 인스톨러를 사용하세요. 기존 설정은 보존됩니다. DLL만 복사하거나 패키지 파일을 섞지 마세요.
+1.1.6: 설정 GUI의 업데이트 확인·승인 후 설치 경로를 수정했습니다. 1.1.4 이하 또는 기존 GUI에서 업데이트 확인이 안 되는 환경은 이번 한 번 새 Clean·Dirty ZIP의 인스톨러로 설치하세요. 이후에는 GitHub CLI·로그인 없이 GUI에서 업데이트할 수 있습니다.
+
+## 1.1.6 — 자동 업데이트 수정
+
+설정 GUI 실행 시 공개 GitHub 릴리즈를 자동 확인하고, 알림의 **업데이트**를 승인하면 다운로드·검증·설치합니다. 1.1.6부터 GitHub CLI 설치나 로그인이 필요하지 않습니다.
+
+새 빌드를 구버전의 고정 허용 목록으로 검사하던 문제를 수정했습니다. 기존 프로그램은 릴리즈·파일 해시·설치 종류와 소유권을 확인하고, 검증된 새 인스톨러가 최종 빌드 검증과 백업·설치를 처리합니다. Clean·Dirty 종류와 설정을 유지합니다.
+
+1.1.4 이하는 이번 한 번 원하는 Clean·Dirty ZIP 전체를 새 폴더에 풀고 새 GF2VR.Installer.exe로 업데이트하세요. 기존 1.1.5에서 업데이트 확인이 동작하는 환경은 GUI 업데이트를 사용할 수 있습니다. 구버전에 필요한 GitHub CLI가 없는 경우도 이번 한 번 새 ZIP으로 설치하면 됩니다. 1.1.6을 설치한 뒤부터는 CLI·로그인 없이 GUI에서 업데이트합니다.
+
+이번 버전은 VR DLL을 1.1.5와 동일하게 유지합니다. 로그 기본값 OFF, 명시적 ON 설정과 최초 정리 제외, 보조패널·접촉 설정을 보존합니다. 게임과 설정 창을 종료한 상태에서 업데이트하세요.
 
 ## 1.1.5 — 로그 기록 설정
 
@@ -50,8 +60,8 @@ Clean·Dirty 공통으로 설정 GUI의 **진단 → 로그 자동 기록**을 �
 
 두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
-- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Clean-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
+- [GF2VR-Native-SelfContained-Dirty-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
 
 둘 중 하나만 설치하세요. 두 빌드는 게임 실행 파일 옆의 같은 version.dll 한 개를 사용하며, OpenXR 로더·설정 프로그램 등 공통 지원 파일은 vrmod 아래에 설치합니다. 원본 GameAssembly.dll·UnityPlayer.dll·게임 에셋은 교체하지 않습니다. 두 빌드 모두 게임 프로세스에서 실행하므로 Clean이라는 이름이 미감지·안전을 보장하지 않습니다.
 

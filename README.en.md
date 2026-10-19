@@ -8,11 +8,21 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium in VR.
 
-**[Download release 1.1.5](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
+**[Download release 1.1.6](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)**
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
-Updating to 1.1.5: extract the entire Clean or Dirty ZIP into a new folder and install with its GF2VR.Installer.exe at your existing game location. The old 1.1.3 Configurator cannot validate the new native profile, so use the installer from the new ZIP for this update. Existing settings are preserved. Do not copy only the DLL or mix package files.
+1.1.6 fixes GUI update checks and approved installation. For 1.1.4 or earlier, or an old GUI that cannot check updates, install once with the new Clean/Dirty ZIP installer. Subsequent GUI updates need neither GitHub CLI nor sign-in.
+
+## 1.1.6 — Automatic update fix
+
+The settings GUI checks public GitHub releases at startup. Approve **Update** in the notification to download, verify and install. Starting with 1.1.6, GitHub CLI and sign-in are no longer required.
+
+Fixed rejection of new native builds by the old clients frozen allowlist. The client verifies release/file hashes, build flavor and current ownership; the verified incoming Installer owns final native validation, backups and installation. Clean/Dirty flavor and settings are preserved.
+
+For 1.1.4 or earlier, extract the complete desired Clean/Dirty ZIP into a new folder and run its new GF2VR.Installer.exe once. Existing 1.1.5 installations with working update checks can use the GUI updater. Users whose old version lacks its required GitHub CLI also need this one-time ZIP installation. After installing 1.1.6, GUI updates need neither CLI nor sign-in.
+
+This release retains the exact 1.1.5 VR DLLs. Logging remains OFF by default; explicit ON and its permanent initial-cleanup exemption, panel and contact settings are preserved. Close the game and settings window before installation.
 
 ## 1.1.5 — Logging controls
 
@@ -50,8 +60,8 @@ Contact works when the character's supported bones for that region are bound. Su
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
-- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Clean-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
+- [GF2VR-Native-SelfContained-Dirty-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
 
 Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 
