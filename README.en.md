@@ -8,11 +8,21 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium in VR.
 
-**[Download release 1.1.4](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
+**[Download release 1.1.5](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
-Updating to 1.1.4: extract the entire Clean or Dirty ZIP into a new folder and install with its GF2VR.Installer.exe at your existing game location. The old 1.1.3 Configurator cannot validate the new native profile, so use the installer from the new ZIP for this update. Existing settings are preserved. Do not copy only the DLL or mix package files.
+Updating to 1.1.5: extract the entire Clean or Dirty ZIP into a new folder and install with its GF2VR.Installer.exe at your existing game location. The old 1.1.3 Configurator cannot validate the new native profile, so use the installer from the new ZIP for this update. Existing settings are preserved. Do not copy only the DLL or mix package files.
+
+## 1.1.5 — Logging controls
+
+Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
+
+On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
+
+Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
+
+For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
 
 ## Contributors
 
@@ -40,8 +50,8 @@ Contact works when the character's supported bones for that region are bound. Su
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
 
 Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 

@@ -1,5 +1,6 @@
 #ifndef GF2_FOCUS_CAPTURE_H
 #define GF2_FOCUS_CAPTURE_H
+#include "../bootstrap/runtime_logging_state.h"
 /* Diagnostic-only, serialized render owner. One attempt per process. The
    existing pair event covers these copies; no new wait/flush or publication
    permission. Faulted owners retain staging exactly like their normal refs. */
@@ -17,6 +18,7 @@ static void focus_capture_release(void) {
     focus_capture.owner=0;
 }
 static void focus_capture_begin(EyeGpuCopy *p) {
+    if(!GF2VR_LOGGING_ALLOWED())return;
     if(focus_capture.attempted || p->drain_only) return;
     DWORD saved=GetLastError();focus_capture.attempted=1;
     D3D11_TEXTURE2D_DESC desc;

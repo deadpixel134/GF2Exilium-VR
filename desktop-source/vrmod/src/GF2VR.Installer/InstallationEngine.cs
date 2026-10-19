@@ -148,6 +148,8 @@ internal sealed class InstallationEngine
         if (!Paths.Equal(priorState == null ? null : Paths.Hash(priorState), plan.PriorHash)) throw new InstallError("previewChanged");
         changes.Add((Contract.StatePath, priorState, Contract.Encode(receipt)));
         Execute(plan.Root, id, changes, progress, plan.GameDirectory);
+        if (plan.Package.Scope == "vrmod" && plan.Package.Native != null && Version.Parse(plan.Package.Version) >= new Version(1, 1, 5))
+            _ = RuntimeLogCleanup.Apply(plan.Root, plan.Prior != null);
         return new OperationResult(receipt.Version, false, id);
     }
 

@@ -2,33 +2,33 @@
   "schemaVersion": 1,
   "product": "GF2VR",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "channel": "stable",
-  "archiveName": "GF2VR-Native-SelfContained-Clean-1.1.4.zip",
-  "archiveSha256": "389971AD92923ACB9D856255202552E7E1FFBDE7B98B310E4B758255C6F05A8B",
-  "packageManifestSha256": "8351E479887DB3D82DCA83802743F7C64B66420652ABD4150F6244E05C6FCCE2",
+  "archiveName": "GF2VR-Native-SelfContained-Clean-1.1.5.zip",
+  "archiveSha256": "C87064857A18A73A3FF002234741C598CBAFA264A2681CFB7E636FC9FA8B2F34",
+  "packageManifestSha256": "F0225C5C5CFB23F74CA69B2283CF663360F4F3C9A83D98ABD5771EE3C6C746AE",
   "installerFiles": [
     {
-      "bytes": 51597583,
-      "sha256": "B10DA3091F64F3B534B8E356FEA4A46CE3488197FEA57CD0D8C8F7A05F67A106",
-      "path": "GF2VR.Installer.exe"
+      "sha256": "F132C40B05E452C832576CFFB199D62C96014F8B276B3177F037AFABDBA20978",
+      "path": "GF2VR.Installer.exe",
+      "bytes": 51597583
     },
     {
-      "bytes": 368640,
-      "sha256": "8A15A37B8AB5CC7C64A44D09A4011BF660C5A52D72A7347BA5BCFCB2A35D8D49",
-      "path": "GF2VR.Installer.dll"
+      "sha256": "310A81FD6747E8BCF958A0C03BA367CDBF2B4C176AB8AE2CBAF5F95BC41BA3D0",
+      "path": "GF2VR.Installer.dll",
+      "bytes": 378880
     },
     {
-      "bytes": 31144,
-      "sha256": "B4DDF07963AFE7CBE9E167B486F4DB5C9D4065013B6C570560124729C3080063",
-      "path": "GF2VR.Installer.deps.json"
+      "sha256": "787B614AD34B45F573C574FFC929DC0830F748E12E247B3B2E3A67924A1324FA",
+      "path": "GF2VR.Installer.deps.json",
+      "bytes": 31144
     },
     {
-      "bytes": 529,
       "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3",
-      "path": "GF2VR.Installer.runtimeconfig.json"
+      "path": "GF2VR.Installer.runtimeconfig.json",
+      "bytes": 529
     }
   ],
   "buildFlavor": "Clean",
-  "commonCoreSha256": "4476A0A0597FD82197AB3E588E0E6DA04291C1F6F18DEE8EC4429646C6222005"
+  "commonCoreSha256": "6D8D9340A97D4A11F32C7620F784D4C35442906D4D60D933B9F891D055EB5C84"
 }

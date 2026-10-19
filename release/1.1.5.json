@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.1.5",
+  "tag": "v1.1.5",
+  "baseRelease": "1.1.4",
+  "changes": [
+    "Optional runtime logging in both build GUIs; default OFF",
+    "One-time previous automatic runtime log cleanup on successful upgrade for logging-OFF users",
+    "Logging-ON users permanently excluded from the initial cleanup"
+  ],
+  "previousReleaseNotesRetained": true,
+  "native": {
+    "schemaVersion": 1,
+    "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+    "commonCoreSha256": "6D8D9340A97D4A11F32C7620F784D4C35442906D4D60D933B9F891D055EB5C84",
+    "variants": {
+      "Clean": {
+        "buildId": "GF2VR-CLEAN-115-001",
+        "dllSha256": "7806AE352C49B9326BD51C21374C0F2A92CD4E46C8B9812E2459B178088C4663"
+      },
+      "Dirty": {
+        "buildId": "GF2VR-DIRTY-115-001",
+        "dllSha256": "DEB4A0DD6462E661455002BF369ECE5C11A566EA66995C9B84F41EA4C6390EDC"
+      }
+    }
+  },
+  "archives": [
+    {
+      "bytes": 93724666,
+      "nativeSha256": "7806AE352C49B9326BD51C21374C0F2A92CD4E46C8B9812E2459B178088C4663",
+      "entries": 16,
+      "flavor": "Clean",
+      "sha256": "C87064857A18A73A3FF002234741C598CBAFA264A2681CFB7E636FC9FA8B2F34",
+      "name": "GF2VR-Native-SelfContained-Clean-1.1.5.zip"
+    },
+    {
+      "bytes": 93768472,
+      "nativeSha256": "DEB4A0DD6462E661455002BF369ECE5C11A566EA66995C9B84F41EA4C6390EDC",
+      "entries": 16,
+      "flavor": "Dirty",
+      "sha256": "14BF95E42B29E9A63940DF40666D356D16D056883F9AC5AA01AABD2389AEF2E6",
+      "name": "GF2VR-Native-SelfContained-Dirty-1.1.5.zip"
+    }
+  ],
+  "logging": {
+    "apply": "GAME_RESTART",
+    "default": false,
+    "file": "controller_input.json",
+    "invalidNativeInput": "OFF",
+    "missingConfig": "OFF",
+    "key": "loggingEnabled",
+    "personalOverrideIncluded": false,
+    "group": "diagnostics"
+  },
+  "upgradeCleanup": {
+    "onUsers": "PRESERVE_AND_EXCLUDE",
+    "migration": "runtime-logs-115",
+    "laterOff": "NO_DEFERRED_DELETION",
+    "onceOnly": true,
+    "unsafeOrInvalid": "PRESERVE",
+    "scope": "Top-level prior automatic GF2VR Clean/Dirty and BOOTSTRAP-FLEX JSONL logs in vrmod/logs/bootstrap"
+  },
+  "offlineValidation": {
+    "nativeFileLoggingChecks": 38,
+    "cleanSettings": 725,
+    "passed": true,
+    "noGameHmdLaunch": true,
+    "migrationChecks": 33,
+    "upgradeChecks": 11,
+    "variantChecks": 159,
+    "dirtySettings": 960,
+    "actualMigrationChecks": 14
+  },
+  "nativeExactReproduction": true,
+  "oldUpdaterRequiresFullZip": true,
+  "ownedFilesEach": 9,
+  "archiveEntriesEach": 16,
+  "gameLaunches": 0,
+  "hmdAcceptance": false,
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialMaterialIncluded": false
+}

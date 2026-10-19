@@ -229,7 +229,8 @@ internal sealed class SettingsStore
             if ((name == "navigation.json" && doc["navigation"] is not JsonObject) ||
                 (doc.ContainsKey("worldDrag") && doc["worldDrag"] is not JsonObject) ||
                 (name == "controller_input.json" && doc.ContainsKey("controllerInput") && doc["controllerInput"] is not JsonObject) ||
-                (name == "controller_input.json" && doc.ContainsKey("auxiliaryPanel") && doc["auxiliaryPanel"] is not JsonObject))
+                (name == "controller_input.json" && doc.ContainsKey("auxiliaryPanel") && doc["auxiliaryPanel"] is not JsonObject) ||
+                (name == "controller_input.json" && doc.ContainsKey("diagnostics") && doc["diagnostics"] is not JsonObject))
                 throw new SettingsError("formatError", name);
         }
         foreach (Field f in Fields.All)
@@ -237,7 +238,7 @@ internal sealed class SettingsStore
             JsonNode? value = Fields.Get(docs, f);
             if (value == null)
             {
-                if (f.Group == "auxiliaryPanel" && (docs[f.File][f.Group] as JsonObject)?.ContainsKey(Fields.JsonKey(f)) == true)
+                if ((f.Group is "auxiliaryPanel" or "diagnostics") && (docs[f.File][f.Group] as JsonObject)?.ContainsKey(Fields.JsonKey(f)) == true)
                     throw new SettingsError("formatError", f.File);
                 // Runtime optional members use their actual policy defaults, without rewriting the file on load.
                 if (f.Key is "eyeRenderScale" or "stereoDepthScale" or "worldScale") throw new SettingsError("formatError", f.File);
@@ -412,6 +413,9 @@ internal sealed class SettingsStore
         if (Fields.Get(result, roleField) == null)
             Fields.Set(result, roleField, (Fields.Get(current ?? Fields.Defaults(), roleField) ?? Fields.JsonSerializerNode(false)).DeepClone());
         var followField = Fields.All.Single(f => f.Key == "cameraFollowEnabled");
+        var logField = Fields.All.Single(f => f.Key == "loggingEnabled");
+        if (Fields.Get(result, logField) == null)
+            Fields.Set(result, logField, (Fields.Get(current ?? Fields.Defaults(), logField) ?? Fields.JsonSerializerNode(false)).DeepClone());
         if (Fields.Get(result, followField) == null)
             Fields.Set(result, followField, (Fields.Get(current ?? Fields.Defaults(), followField) ?? Fields.JsonSerializerNode(true)).DeepClone());
         Validate(result); return Fields.Clone(result);

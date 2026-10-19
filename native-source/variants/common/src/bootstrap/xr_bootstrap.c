@@ -25,6 +25,7 @@ static unsigned worker_test_enabled;
 #endif
 
 static void bootstrap_report(const BootstrapState *s, DWORD loader_error) {
+    if(!GF2VR_LOGGING_ALLOWED()) return;
     DWORD written; HANDLE f=CreateFileW(GF2VR_PROBE_LOG,FILE_APPEND_DATA,7,NULL,OPEN_ALWAYS,128,NULL);
     if(f!=INVALID_HANDLE_VALUE) {
         char line[768],*p=line;

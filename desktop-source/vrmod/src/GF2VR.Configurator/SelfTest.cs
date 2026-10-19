@@ -483,6 +483,7 @@ internal static partial class SelfTest
         Assert(!Fields.Get(SettingsStore.Import(oldHandsProfile, store.Documents), hands)!.GetValue<bool>(), "old profile reset saved hands OFF");
         Assert(Fields.Get(SettingsStore.Import(oldHandsProfile), hands)!.GetValue<bool>(), "old profile without current settings lost ON default");
         HapticChecks(store, root);
+        LoggingChecks(store, root);
         PanelChecks(store, root);
         // Leave real GUI smoke and native-parser fixtures in a valid, representative current state.
         fixtureNew = Fields.Clone(store.Documents);

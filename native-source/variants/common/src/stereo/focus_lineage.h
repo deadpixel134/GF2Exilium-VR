@@ -118,6 +118,7 @@ static void focus_lineage_draw(EyeTargetWatch *w,ID3D11DeviceContext *c) {
 #endif
 }
 static void focus_lineage_end(EyeTargetWatch *w) {
+    if(!GF2VR_LOGGING_ALLOWED())return;
     if(fl.done || fl.owner!=w || !etw_ticket(fl.ticket,w->ticket))return;
     fl.done=1;
     wchar_t path[512];const wchar_t *base=GF2VR_FOCUS_LINEAGE_DIR;unsigned n=0;

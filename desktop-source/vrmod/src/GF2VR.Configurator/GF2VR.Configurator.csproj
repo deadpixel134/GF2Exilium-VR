@@ -31,5 +31,6 @@
     <!-- Installer owns update policy/transaction code; Settings consumes only
          the startup/consent surface. No duplicate file replacement engine. -->
     <Compile Include="../GF2VR.Installer/Contracts.cs;../GF2VR.Installer/Paths.cs;../GF2VR.Installer/NativeLayout.cs;../GF2VR.Installer/InstallationEngine.cs;../GF2VR.Installer/UpdatePolicy.cs;../GF2VR.Installer/GithubOwnerClient.cs;../GF2VR.Installer/UpdateStaging.cs;../GF2VR.Installer/UpdateService.cs" Link="InstallerUpdate/%(Filename)%(Extension)" />
+    <Compile Include="../GF2VR.Installer/RuntimeLogCleanup.cs" Link="InstallerUpdate/RuntimeLogCleanup.cs" />
   </ItemGroup>
 </Project>

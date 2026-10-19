@@ -18,6 +18,7 @@ internal static class Fields
         new("activity_ui.json", null, "activityPrimaryUiEnabled", "bool", true, "activityUiHelp"),
         new("controller_input.json", "controllerInput", "swapFaceButtons", "bool", false, "faceSwapHelp"),
         new("controller_input.json", "controllerInput", "swapPanelPointerHands", "bool", false, "handRolesHelp"),
+        new("controller_input.json", "diagnostics", "loggingEnabled", "bool", false, "loggingHelp"),
         new("controller_input.json", "auxiliaryPanel", "panelViewerFacing", "bool", true, "panelFacingHelp"),
         new("controller_input.json", "auxiliaryPanel", "panelApplyAnglesWhenFacing", "bool", false, "panelAnglePolicyHelp"),
         new("controller_input.json", "auxiliaryPanel", "panelOffsetX", "number", 0d, "panelOffsetHelp"),

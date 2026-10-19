@@ -143,5 +143,9 @@
   "contactHapticStrengthHelp": "Dirty 전용. 기본값 15%, 권장 5–30%. 0은 진동 끄기입니다. OpenXR 허용 범위는 0–100%입니다.",
   "contactHapticDurationHelp": "Dirty 전용. 기본값 30ms, 권장 10–80ms. 0은 진동 끄기입니다. 처음 닿을 때 한 번만 진동하며, 완전히 떼었다 다시 닿아야 재발생합니다. 저장 후 게임을 재시작하세요.",
   "contactHapticStrengthError": "진동 세기는 OpenXR에서 표현 가능한 0–100%의 숫자여야 합니다.",
-  "contactHapticDurationError": "진동 시간은 0 또는 1ns 이상이며 64비트 나노초로 표현 가능한 숫자여야 합니다. 단위는 ms입니다."
+  "contactHapticDurationError": "진동 시간은 0 또는 1ns 이상이며 64비트 나노초로 표현 가능한 숫자여야 합니다. 단위는 ms입니다.",
+  "diagnosticsTab": "진단",
+  "loggingEnabled": "로그 자동 기록",
+  "loggingHelp": "기본값 OFF. 켜면 VR 모드의 진단 로그를 기록하며 용량이 계속 증가할 수 있습니다. 저장 후 게임을 재시작하세요.",
+  "diagnosticsSummary": "Clean·Dirty 공통 옵션입니다. 문제 분석이 필요할 때 켜세요. 업데이트의 최초 이전 로그 정리는 로그 ON 사용자를 제외합니다."
 }

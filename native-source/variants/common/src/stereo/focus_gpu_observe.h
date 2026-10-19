@@ -1,5 +1,6 @@
 #ifndef GF2_FOCUS_GPU_OBSERVE_H
 #define GF2_FOCUS_GPU_OBSERVE_H
+#include "../bootstrap/runtime_logging_state.h"
 #include <d3d11_1.h>
 static const GUID focus_context1_iid={0xbb2c6faa,0xb5fb,0x4082,{0x8e,0x6b,0x38,0x8b,0x8c,0xfa,0x90,0xe1}};
 /* Diagnostic render-owner state. Bound buffers are not proof that the shader
@@ -18,6 +19,7 @@ static struct {
     FocusGpuDraw draws[8];
 } focus_gpu;
 static void focus_gpu_draw(EyeTargetWatch *w,ID3D11DeviceContext *c,unsigned mask,unsigned trace_row) {
+    if(!GF2VR_LOGGING_ALLOWED())return;
     if(focus_gpu.done || (mask!=1 && mask!=2) ||
        (focus_gpu.owner && (focus_gpu.owner!=w || focus_gpu.ticket.serial!=w->ticket.serial ||
         focus_gpu.ticket.generation!=w->ticket.generation || focus_gpu.ticket.epoch!=w->ticket.epoch))) return;

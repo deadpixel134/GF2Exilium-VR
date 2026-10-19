@@ -10,6 +10,7 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-log-cleanup")) return RuntimeLogCleanupChecks.Run();
             if (args.Contains("--self-test-variants")) return VariantChecks.Run(Value(args, "--clean")!, Value(args, "--dirty")!);
             if (args.Contains("--self-test-package-location")) return PackageLocationChecks.Run();
             if (args.Contains("--self-test-ownership")) return OwnershipChecks.Run(Value(args, "--package") ?? PackageLocation.Resolve());

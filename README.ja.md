@@ -8,11 +8,21 @@ Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)
 
 GF2 Exilium を VR で楽しむための非公式 MOD です。
 
-**[正式版 1.1.4 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
+**[正式版 1.1.5 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
 
-1.1.4への更新: CleanまたはDirtyのZIP全体を新しいフォルダーに展開し、そのGF2VR.Installer.exeで既存ゲームの場所にインストールしてください。旧1.1.3設定アプリは新しいnativeプロファイルを検証できないため、今回は新しいZIPのインストーラーを使用します。既存設定を保持します。DLLのみのコピーやパッケージの混在は避けてください。
+1.1.5への更新: CleanまたはDirtyのZIP全体を新しいフォルダーに展開し、そのGF2VR.Installer.exeで既存ゲームの場所にインストールしてください。旧1.1.3設定アプリは新しいnativeプロファイルを検証できないため、今回は新しいZIPのインストーラーを使用します。既存設定を保持します。DLLのみのコピーやパッケージの混在は避けてください。
+
+## 1.1.5 — ログ記録設定
+
+Clean・Dirty共通で設定GUIに **診断 → ログを自動記録** を追加しました。初期値は **OFF** で、旧設定に項目がない場合もOFFです。保存後にゲームを再起動すると適用されます。
+
+初回の更新インストール時に、ログOFFのユーザーの以前のVR自動ログを一度だけ整理します。**ログONのユーザーは既存ログを保持し、この初回整理から除外されます。** 後でOFFに変えても過去のログを遅れて削除しません。設定・他のMOD・手動で収集した資料は保持します。
+
+問題の調査時にログを有効にしてください。ONでは同じビルドのログに追記され、容量が増加することがあります。
+
+1.1.5では必要なCleanまたはDirtyのZIP全体を新しいフォルダーに展開し、付属の新しいGF2VR.Installer.exeで更新してください。旧設定アプリは新しいnativeプロファイルを拒否する場合があります。既存設定は保持されます。
 
 ## 貢献者
 
@@ -40,8 +50,8 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
 
 同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 

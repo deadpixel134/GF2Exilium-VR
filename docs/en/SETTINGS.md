@@ -2,6 +2,16 @@
 
 [한국어](../ko/SETTINGS.md) · [English](../en/SETTINGS.md) · [日本語](../ja/SETTINGS.md) · [简体中文](../zh-CN/SETTINGS.md)
 
+## 1.1.5 — Logging controls
+
+Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
+
+On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
+
+Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
+
+For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
+
 ## 1.1.4
 
 ### Auxiliary panel — common

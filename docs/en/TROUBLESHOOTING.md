@@ -2,6 +2,16 @@
 
 [한국어](../ko/TROUBLESHOOTING.md) · [English](../en/TROUBLESHOOTING.md) · [日本語](../ja/TROUBLESHOOTING.md) · [简体中文](../zh-CN/TROUBLESHOOTING.md)
 
+## 1.1.5 — Logging controls
+
+Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
+
+On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
+
+Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
+
+For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
+
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.

@@ -1,5 +1,6 @@
 #ifndef GF2_NUMERIC_RESIDENCY_PERSIST_H
 #define GF2_NUMERIC_RESIDENCY_PERSIST_H
+#include "../bootstrap/runtime_logging_state.h"
 /* Observer only. XR submits a bounded work item; file IO belongs to that item.
    Static immutable records/module live until process exit. Never join at exit. */
 #ifndef GF2VR_NUMERIC_RESIDENCY
@@ -100,6 +101,7 @@ close: CloseHandle(file);
 done: __atomic_store_n(&nrp_active,0,__ATOMIC_RELEASE);SetLastError(saved);
 }
 static void nrp_request(unsigned reason,U64 now){
+ if(!GF2VR_LOGGING_ALLOWED())return;
  DWORD saved=GetLastError();__atomic_fetch_or(&nrp_pending,reason,__ATOMIC_RELEASE);
  if(now<nrp_retry_due){SetLastError(saved);return;}
  unsigned zero=0;if(!__atomic_compare_exchange_n(&nrp_active,&zero,1,0,__ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE)){

@@ -67,13 +67,14 @@ internal sealed class MainForm : Form
         BuildPage("navigationTab", Fields.All.Where(f => f.File == "navigation.json"), "navigationSummary");
         BuildPage("dragTab", Fields.All.Where(f => f.File == "world_drag.json"), "conflictHelp");
         BuildPage("activityUiTab", Fields.All.Where(f => f.File == "activity_ui.json"), "activityUiSummary");
-        BuildPage("controllerTab", Fields.All.Where(f => f.File == "controller_input.json" && f.Group != "auxiliaryPanel"), "controllerSummary");
+        BuildPage("controllerTab", Fields.All.Where(f => f.Group == "controllerInput"), "controllerSummary");
         BuildPage("worldScaleTab", new[] { "worldScale", "linkStereoDepthToWorldScale", "stereoDepthScale", "linkMovementSpeedToWorldScale" }.Select(k => Fields.All.Single(f => f.Key == k)), "worldScaleSummary");
         BuildPage("handsTab", Fields.All.Where(f => f.File == "controller_hands.json"), "handsSummary");
         BuildPage("panelTab", Fields.All.Where(f => f.Group == "auxiliaryPanel"), "panelSummary");
 #if GF2VR_DIRTY_CONTACT
         BuildJigglePage();
 #endif
+        BuildPage("diagnosticsTab", Fields.All.Where(f => f.Group == "diagnostics"), "diagnosticsSummary");
         localized.Add(restart); restart.Tag = "restart"; restart.Margin = new Padding(3, 8, 3, 4); layout.Controls.Add(restart, 0, 2);
         var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
         footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -586,6 +587,17 @@ internal sealed class MainForm : Form
                     defaultsJiggle.Save(Path.Combine(smokeFolder!, "defaults-jiggle-" + region + "-" + Texts.Language + ".png"));
                 }
 #endif
+                tabs.SelectedTab = tabs.TabPages.Cast<TabPage>().Single(p => (string?)p.Tag == "diagnosticsTab");
+                var logging = (CheckBox)inputs["loggingEnabled"];
+                if (logging.Checked) throw new InvalidDataException("Logging default must be OFF");
+                foreach (bool enabled in new[] { false, true })
+                {
+                    logging.Checked = enabled; PerformLayout(); tabs.SelectedTab.PerformLayout();
+                    if (ReadControls()["controller_input.json"]["diagnostics"]!["loggingEnabled"]!.GetValue<bool>() != enabled)
+                        throw new InvalidDataException("Logging checkbox persistence mapping");
+                    using var diagnostics = new Bitmap(Width, Height); DrawToBitmap(diagnostics, new Rectangle(0, 0, Width, Height));
+                    diagnostics.Save(Path.Combine(smokeFolder!, "logging-" + (enabled ? "on-" : "off-") + Texts.Language + ".png"));
+                }
                 editing = Fields.Clone(initial); panelConfigurationTouched = false; ApplyControls();
             }
             ((TextBox)inputs["eyeRenderScale"]).Text = "2.5";

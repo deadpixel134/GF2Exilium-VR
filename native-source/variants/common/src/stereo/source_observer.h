@@ -1,5 +1,6 @@
 /* Read-only managed camera metadata on the already attributed main callback.
    No raw managed layout, method-pointer ABI, camera mutation or render calls. */
+#include "../bootstrap/runtime_logging_state.h"
 typedef struct SourceApi {
     void *(*domain_get)(void);
     void **(*domain_get_assemblies)(void *,U64 *);
@@ -54,6 +55,7 @@ static void *source_invoke(void *method,void *object,void **args,BOOL *ok) {
     return value;
 }
 static void source_log(char *line,char *end) {
+    if(!GF2VR_LOGGING_ALLOWED()) return;
     DWORD written; HANDLE f=CreateFileW(GF2VR_PROBE_LOG,FILE_APPEND_DATA,7,NULL,OPEN_ALWAYS,128,NULL);
     if(f!=INVALID_HANDLE_VALUE) { WriteFile(f,line,(DWORD)(end-line),&written,NULL); CloseHandle(f); }
 }

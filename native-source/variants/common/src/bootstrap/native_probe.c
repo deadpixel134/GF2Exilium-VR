@@ -35,6 +35,8 @@ _Static_assert(sizeof(DWORD) == 4 && sizeof(void *) == 8, "Win32 x64 ABI");
 #define gf2vr_native_initialize(instance) ((void)(instance))
 #endif
 
+#include "runtime_logging.h"
+
 static char *decimal(char *p, DWORD value) {
     char digits[10]; unsigned n = 0;
     do { digits[n++] = (char)('0' + value % 10); value /= 10; } while (value);
@@ -70,9 +72,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
         DWORD previous_error = GetLastError();
         gf2vr_native_initialize(instance);
         /* Kernel32 file I/O only; missing log access must never reject DLL load. */
-        HANDLE file = CreateFileW(GF2VR_PROBE_LOG, FILE_APPEND_DATA,
+        HANDLE file = GF2VR_LOGGING_ALLOWED() ? CreateFileW(GF2VR_PROBE_LOG, FILE_APPEND_DATA,
             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
-            OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+            OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL) : INVALID_HANDLE_VALUE;
         if (file != INVALID_HANDLE_VALUE) {
             char line[240]; char *p = line; DWORD written = 0;
             p = literal(p, "{\"probe\":\"BSP-001\",\"event\":\"native_attach\",\"pid\":");

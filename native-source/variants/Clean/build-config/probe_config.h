@@ -3,8 +3,8 @@
 #define GF2VR_ACCEPTED_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\BOOTSTRAP-FLEX-001.jsonl"
 
 #ifdef GF2VR_TOUCH_PRIVATE
-#define GF2VR_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\GF2VR-CLEAN-114-001.jsonl"
-#define GF2VR_HANDS_INVENTORY_TAIL L"vrmod\\logs\\bootstrap\\GF2VR-CLEAN-114-001.inventory.jsonl"
+#define GF2VR_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\GF2VR-CLEAN-115-001.jsonl"
+#define GF2VR_HANDS_INVENTORY_TAIL L"vrmod\\logs\\bootstrap\\GF2VR-CLEAN-115-001.inventory.jsonl"
 #else
 #define GF2VR_PORTABLE_LOG GF2VR_ACCEPTED_PORTABLE_LOG
 #endif

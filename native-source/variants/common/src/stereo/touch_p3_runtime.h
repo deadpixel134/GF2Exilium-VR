@@ -1,5 +1,6 @@
 #ifndef GF2VR_TOUCH_P3_RUNTIME_H
 #define GF2VR_TOUCH_P3_RUNTIME_H
+#include "../bootstrap/runtime_logging_state.h"
 /* Included late in the single frozen integration TU, private macro only.
    XR owner publishes POD. All managed calls remain on Unity's main owner. */
 #include "touch2_pose.h"
@@ -310,6 +311,7 @@ static void touch_p2_draw(void *opaque) {
 }
 /* Writer-only disk path; main copies cold managed JSON to a bounded mailbox. */
 static void touch_p2_write(const char *text,unsigned length){
+    if(!GF2VR_LOGGING_ALLOWED())return;
     HANDLE file=CreateFileW(gf2vr_controller_path(2),FILE_APPEND_DATA,7,0,OPEN_ALWAYS,128,0);
     if(file==INVALID_HANDLE_VALUE)return;
     while(length){DWORD done=0;if(!WriteFile(file,text,length,&done,0)||!done)break;text+=done;length-=done;}CloseHandle(file);

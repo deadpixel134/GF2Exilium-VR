@@ -38,6 +38,7 @@ static char *hexadecimal(char *p, U64 x) {
     *p++ = '"'; return p;
 }
 static void event(const char *kind, U64 count, DWORD tid) {
+    if(!GF2VR_LOGGING_ALLOWED()) return;
     DWORD saved = GetLastError(), written;
     HANDLE f = CreateFileW(GF2VR_PROBE_LOG, FILE_APPEND_DATA, 7, NULL, OPEN_ALWAYS, 128, NULL);
     if (f != INVALID_HANDLE_VALUE) {
@@ -81,6 +82,7 @@ static DWORD WINAPI worker(void *unused) {
     HINSTANCE pinned;
     /* Static-import lifetime starts us safely; pin before exposing callbacks. */
     if (!GetModuleHandleExW(5, (const unsigned short *)&worker, &pinned)) return 0;
+    gf2vr_logging_initialize();
     unity = (unsigned char *)GetModuleHandleW(L"UnityPlayer.dll");
     if (!unity || !GetModuleHandleExW(5, (const unsigned short *)unity, &pinned)) return 0;
     DWORD pe = *(DWORD *)(unity + 0x3c);

@@ -8,11 +8,21 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 用于以 VR 游玩 GF2 Exilium 的非官方模组。
 
-**[下载正式版 1.1.4](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
+**[下载正式版 1.1.5](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
-更新至1.1.4：将Clean或Dirty ZIP完整解压到新文件夹，使用其中的GF2VR.Installer.exe选择现有游戏位置安装。旧版1.1.3设置程序无法验证新的native配置，因此此次请使用新ZIP内的安装程序。保留已有设置。请勿只复制DLL或混用包文件。
+更新至1.1.5：将Clean或Dirty ZIP完整解压到新文件夹，使用其中的GF2VR.Installer.exe选择现有游戏位置安装。旧版1.1.3设置程序无法验证新的native配置，因此此次请使用新ZIP内的安装程序。保留已有设置。请勿只复制DLL或混用包文件。
+
+## 1.1.5 — 日志记录设置
+
+Clean和Dirty均在设置GUI中新增 **诊断 → 自动记录日志**。默认 **关闭**，旧设置中缺少此项时也保持关闭。保存后重启游戏生效。设置程序的界面语言仍为韩语、英语和日语。
+
+首次更新安装时，仅为日志关闭的用户清理一次旧VR自动日志。**日志开启的用户保留已有日志，并排除在此次首次清理之外。** 之后改为关闭也不会延迟删除旧日志。保留设置、其他模组文件和手动收集的资料。
+
+排查问题时再开启日志。开启后会继续追加到同一构建的日志文件，容量可能持续增加。
+
+更新1.1.5时，请将所选Clean或Dirty ZIP完整解压到新文件夹，并使用随附的新GF2VR.Installer.exe安装。旧设置程序可能拒绝新的native配置。保留已有设置。
 
 ## 贡献者
 
@@ -40,8 +50,8 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 两个版本的常规 VR 源码、版本和更新保持一致。只有 Dirty 包含接触变形代码；Clean 在构建时排除该实现，而不是仅将其关闭。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
 
 一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
 

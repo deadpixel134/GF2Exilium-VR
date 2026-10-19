@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "build": "GF2VR-CLEAN-114-001",
-  "expectedDllSha256": "4C43DE2B433000EB4FD2D41F7240D4ECAB3B2F135A97CFAC90B555D775E3D135",
+  "build": "GF2VR-CLEAN-115-001",
+  "expectedDllSha256": "7806AE352C49B9326BD51C21374C0F2A92CD4E46C8B9812E2459B178088C4663",
   "compiler": "zig0.16.0",
   "sdk": "Windows10SDK10.0.26100.0",
   "units": {
@@ -52,7 +52,8 @@
     "NUMERIC_LOSS_OBSERVE",
     "NATIVE_TARGET_CACHE",
     "ROOT_INTERVAL_TIMING_OBSERVE",
-    "HELD_FRESH_CLOCK"
+    "HELD_FRESH_CLOCK",
+    "OPTIONAL_LOGGING"
   ],
   "mainArgs": [
     "cc",
@@ -200,7 +201,8 @@
     "SOURCE_ROOT/src/bootstrap/version_proxy.c",
     "SOURCE_ROOT/src/bootstrap/version_proxy.S",
     "-DGF2VR_TOUCH_PRIVATE=1",
-    "-DGF2VR_COMMON_STEREO_POLICY=1"
+    "-DGF2VR_COMMON_STEREO_POLICY=1",
+    "-DGF2VR_OPTIONAL_LOGGING"
   ],
   "scope": "Generated exact native closure. Owned generated managed package; no game binaries/assets."
 }

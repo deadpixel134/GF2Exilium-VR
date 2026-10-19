@@ -8,11 +8,21 @@
 
 GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
-**[정식 버전 1.1.4 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.4)**
+**[정식 버전 1.1.5 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)**
 
 > **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
 
-1.1.4 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.3 설정 창은 새 native 프로필을 검증하지 못하므로 이번 업데이트는 새 ZIP의 인스톨러를 사용하세요. 기존 설정은 보존됩니다. DLL만 복사하거나 패키지 파일을 섞지 마세요.
+1.1.5 업데이트: Clean 또는 Dirty ZIP 전체를 새 폴더에 풀고, 그 안의 GF2VR.Installer.exe로 기존 게임 위치에 설치하세요. 기존 1.1.3 설정 창은 새 native 프로필을 검증하지 못하므로 이번 업데이트는 새 ZIP의 인스톨러를 사용하세요. 기존 설정은 보존됩니다. DLL만 복사하거나 패키지 파일을 섞지 마세요.
+
+## 1.1.5 — 로그 기록 설정
+
+Clean·Dirty 공통으로 설정 GUI의 **진단 → 로그 자동 기록**을 추가했습니다. 기본값은 **OFF**이며 기존 설정에 해당 값이 없어도 OFF입니다. 저장 후 게임을 다시 실행하면 적용됩니다.
+
+이번 버전으로 처음 업데이트 설치할 때 로그가 OFF인 사용자의 이전 VR 자동 로그를 한 번만 정리합니다. **로그 ON 사용자는 기존 로그를 보존하며 이 최초 정리에서 제외**됩니다. 이후 OFF로 바꿔도 과거 로그를 뒤늦게 삭제하지 않습니다. 설정·다른 모드 파일·수동 수집 자료는 보존합니다.
+
+문제 분석이 필요할 때만 로그 기록을 켜세요. ON에서는 같은 빌드의 로그에 계속 추가하므로 용량이 커질 수 있습니다.
+
+1.1.5 업데이트는 원하는 Clean·Dirty ZIP 전체를 새 폴더에 풀고 포함된 새 GF2VR.Installer.exe로 진행하세요. 이전 버전 설정 창은 새 native 프로필을 거부할 수 있습니다. 사용자 설정은 보존됩니다.
 
 ## 기여자
 
@@ -40,8 +50,8 @@ GF2 Exilium을 VR로 즐기기 위한 비공식 모드입니다.
 
 두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.4.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
+- [GF2VR-Native-SelfContained-Clean-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
+- [GF2VR-Native-SelfContained-Dirty-1.1.5.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.5)
 
 둘 중 하나만 설치하세요. 두 빌드는 게임 실행 파일 옆의 같은 version.dll 한 개를 사용하며, OpenXR 로더·설정 프로그램 등 공통 지원 파일은 vrmod 아래에 설치합니다. 원본 GameAssembly.dll·UnityPlayer.dll·게임 에셋은 교체하지 않습니다. 두 빌드 모두 게임 프로세스에서 실행하므로 Clean이라는 이름이 미감지·안전을 보장하지 않습니다.
 

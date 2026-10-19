@@ -143,5 +143,9 @@
   "contactHapticStrengthHelp": "Dirty only. Default 15%; suggested 5–30%. Set 0 to disable vibration. OpenXR supports 0–100%.",
   "contactHapticDurationHelp": "Dirty only. Default 30ms; suggested 10–80ms. Set 0 to disable vibration. One pulse on initial contact; fully separate before touching again. Restart the game after saving.",
   "contactHapticStrengthError": "Vibration strength must be a number from 0–100% representable by OpenXR.",
-  "contactHapticDurationError": "Vibration duration must be 0 or at least 1ns, representable as 64-bit nanoseconds. Enter the value in ms."
+  "contactHapticDurationError": "Vibration duration must be 0 or at least 1ns, representable as 64-bit nanoseconds. Enter the value in ms.",
+  "diagnosticsTab": "Diagnostics",
+  "loggingEnabled": "Automatically record logs",
+  "loggingHelp": "Default OFF. Enabling records VR diagnostic logs that can grow over time. Save and restart the game.",
+  "diagnosticsSummary": "Shared by Clean and Dirty. Enable when troubleshooting. The one-time upgrade cleanup preserves existing logs for users with logging ON."
 }

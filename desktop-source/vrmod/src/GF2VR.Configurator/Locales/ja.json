@@ -143,5 +143,9 @@
   "contactHapticStrengthHelp": "Dirty専用。初期値15%、推奨5–30%。0で振動を無効にします。OpenXRの許容範囲は0–100%です。",
   "contactHapticDurationHelp": "Dirty専用。初期値30ms、推奨10–80ms。0で振動を無効にします。触れた瞬間に1回だけ振動し、完全に離して再び触れると再発生します。保存後にゲームを再起動してください。",
   "contactHapticStrengthError": "振動の強さはOpenXRで表現可能な0–100%の数値にしてください。",
-  "contactHapticDurationError": "振動時間は0、または1ns以上で64ビットのナノ秒として表現可能な数値にしてください。入力単位はmsです。"
+  "contactHapticDurationError": "振動時間は0、または1ns以上で64ビットのナノ秒として表現可能な数値にしてください。入力単位はmsです。",
+  "diagnosticsTab": "診断",
+  "loggingEnabled": "ログを自動記録",
+  "loggingHelp": "初期値OFF。有効にするとVR診断ログを記録し、容量が増加することがあります。保存後にゲームを再起動してください。",
+  "diagnosticsSummary": "Clean・Dirty共通です。問題の調査時に有効にしてください。更新時の初回ログ整理では、ログONのユーザーの既存ログを保持します。"
 }
