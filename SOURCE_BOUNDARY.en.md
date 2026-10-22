@@ -38,7 +38,7 @@ To install, use **GF2VR-Native-SelfContained-Clean-1.1.3.zip / GF2VR-Native-Self
 
 | Location | Contents |
 |---|---|
-| `native-source/` | Native VR module source, our managed bridge code and generated headers, build configuration and scripts, required third-party headers and notices |
+| `native-source/` | Native VR module source, our managed bridge code and generated headers, build configuration and scripts, required third-party headers and notices Current source: `variants/`; historical reproduction closure: `src/`. |
 | `desktop-source/` | Configurator and installer source, with Korean, English and Japanese resources |
 | `docs/en/` | Installation, controls, settings, update and troubleshooting guides |
 | `source-manifest.json` | List of published source files and integrity information |

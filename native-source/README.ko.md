@@ -2,6 +2,14 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 소스 트리 안내
+
+`variants/common/`과 `variants/<Flavor>/overlay/`가 현재1.2.0 배포 DLL의 소스입니다. Steam/Haoplay 빌드 프로필과 런타임 유도 훅 대상을 포함합니다. 재현 명령은 아래1.2.0 절을 참고하세요.
+
+`src/`와 루트 `build-native.ps1`, `native-build.json`은 과거1.0.x `BOOTSTRAP-FLEX-001`(`6215CEAF…`)의 역사적 재현 전용입니다. 이 트리의 Haoplay 전용 상수(예: `src/stereo/stereo_hooks.h:48`)는 현재 빌드에서 사용되지 않으며, `variants/common/src/stereo/stereo_hooks.h`의 런타임 유도 대상으로 대체되었습니다. 바이트 재현을 위해 기존 소스는 수정하지 않습니다.
+
+`variants/common/`의 `GF2VR_STEAM_COMPAT` 래퍼는 과거 참조 해시 재현을 위한 것으로, `#else` 분기는 배포 DLL에 포함되지 않습니다.
+
 ## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
 
 Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다. 게임 업데이트 후 흰색 손 표시와 캐릭터 접촉이 사라지던 호환성 문제를 수정했습니다. Dirty는 활동층에서 동시에 보이는 지원 캐릭터들을 각각 접촉 대상으로 처리합니다. Clean에는 접촉 변형이 포함되지 않습니다.

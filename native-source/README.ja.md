@@ -2,6 +2,14 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## ソースツリー案内
+
+`variants/common/`と`variants/<Flavor>/overlay/`は現在の1.2.0配布DLLのソースです。Steam/Haoplayビルドプロファイルと実行時に導出するフック対象を含みます。再現コマンドは下の1.2.0節を参照してください。
+
+`src/`とルートの`build-native.ps1`、`native-build.json`は過去1.0.xの`BOOTSTRAP-FLEX-001`（`6215CEAF…`）の歴史的再現専用です。旧Haoplay専用定数（例：`src/stereo/stereo_hooks.h:48`）は現在のビルドでは使わず、`variants/common/src/stereo/stereo_hooks.h`の実行時導出対象に置き換わっています。バイト再現のため既存ソースを変更しません。
+
+`variants/common/`の`GF2VR_STEAM_COMPAT`ラッパーは過去の参照ハッシュ再現用で、`#else`分岐は配布DLLに含まれません。
+
 ## 1.2.0 — Steam対応と手・接触の互換性修正
 
 Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応します。ゲーム更新後に白い手の表示とキャラクター接触が失われる互換性問題を修正しました。Dirtyは活動層で同時に見える対応キャラクターを個別に扱います。Cleanには接触変形を含みません。

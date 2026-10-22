@@ -2,6 +2,14 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 源码目录说明
+
+`variants/common/`与`variants/<Flavor>/overlay/`是当前1.2.0发行DLL的源码，包含Steam/Haoplay构建配置及运行时推导的挂钩目标。复现命令见下方1.2.0章节。
+
+`src/`以及根目录的`build-native.ps1`、`native-build.json`仅用于历史1.0.x `BOOTSTRAP-FLEX-001`（`6215CEAF…`）的精确复现。旧Haoplay专用常量（如`src/stereo/stereo_hooks.h:48`）不用于当前构建，已由`variants/common/src/stereo/stereo_hooks.h`中的运行时推导目标替代。为保持字节复现，不修改历史源码。
+
+`variants/common/`中的`GF2VR_STEAM_COMPAT`包装用于复现历史参考哈希，发行DLL不包含其`#else`分支。
+
 ## 1.2.0 — Steam支持与手部、接触兼容性修复
 
 支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。

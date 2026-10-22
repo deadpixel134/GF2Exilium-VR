@@ -2,6 +2,14 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## Source tree guide
+
+`variants/common/` together with `variants/<Flavor>/overlay/` is the source of the current1.2.0 distributed DLLs, including Steam/Haoplay build profiles and runtime-derived hook targets. Use the reproduction commands in the1.2.0 section below.
+
+`src/` with the root `build-native.ps1` and `native-build.json` is retained only for historical1.0.x `BOOTSTRAP-FLEX-001` reproduction (`6215CEAF…`). Its old Haoplay-only constants, for example `src/stereo/stereo_hooks.h:48`, are not used by the current build; runtime-derived targets in `variants/common/src/stereo/stereo_hooks.h` replace that route. Historical source bytes are intentionally unchanged.
+
+The `GF2VR_STEAM_COMPAT` wrappers in `variants/common/` retain historical reference reproduction; their `#else` branches are excluded from the distributed DLLs.
+
 ## 1.2.0 — Steam support and hand/contact compatibility fixes
 
 Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
