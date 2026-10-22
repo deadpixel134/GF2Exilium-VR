@@ -43,23 +43,23 @@
     },
     {
       "path": "README.en.md",
-      "sha256": "77D3863F0B1ED4232269C59FB6D6ED4655F8C0700ED00E391B7D2AD6886CD54C",
-      "bytes": 7981
+      "sha256": "BBC5ABFD6F5A5926825C2EF4DD92BB7159FEFA1B8F26CBF2975BD0E210EC8B6F",
+      "bytes": 4921
     },
     {
       "path": "README.ja.md",
-      "sha256": "51731AE209159D18B1FBBF5D44D85D16AC4B0FC31B82DD80862329E79E6160EE",
-      "bytes": 9470
+      "sha256": "0D7CC3E572C797EA38AD6C726D2F0DC90BDCC4E465F0994049D34D2B79F3A2A2",
+      "bytes": 5756
     },
     {
       "path": "README.md",
-      "sha256": "4D387ED10F5966222936BDCD350EC632431D5FBAA6ECC1E0E99511F054BBD415",
-      "bytes": 8846
+      "sha256": "A9BDC24F502242AC16E31170290ED8B9755F3FE3F78A3138408C75C9D4EA7BB4",
+      "bytes": 5443
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "3546D6D421E689D672F92C0499CF48B91EC49BED0EE4B4004EA9172EF34C5D1C",
-      "bytes": 7490
+      "sha256": "CF1347F1F762165F5FB8925ECE220FE3F0DEC8FE5278B3DEC8863DE2E6AF6E23",
+      "bytes": 4601
     },
     {
       "path": "SOURCE_BOUNDARY.en.md",
@@ -3260,5 +3260,21 @@
     },
     "latestDownloadTag": "v1.2.0"
   },
-  "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1"
+  "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+  "readmeContentPolicy": {
+    "scope": [
+      "README.md",
+      "README.en.md",
+      "README.ja.md",
+      "README.zh-CN.md"
+    ],
+    "versionChangelogInReadme": false,
+    "purpose": "Current product compatibility, features, installation and usage; release history belongs in release notes.",
+    "platforms": [
+      "Haoplay",
+      "Steam"
+    ],
+    "preserveTestedScope": true,
+    "authority": "Explicit user2026-10-22: remove per-version README updates and state Steam compatibility."
+  }
 }

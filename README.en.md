@@ -8,41 +8,11 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium in VR.
 
+**Compatible with both the Haoplay and Steam versions.** Both platforms use the same Clean/Dirty packages.
+
 **[Download release 1.2.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
-
-1.1.6 fixes GUI update checks and approved installation. For 1.1.4 or earlier, or an old GUI that cannot check updates, install once with the new Clean/Dirty ZIP installer. Subsequent GUI updates need neither GitHub CLI nor sign-in.
-
-## 1.2.0 — Steam support and hand/contact compatibility fixes
-
-Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
-
-Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Steam Main launch/stereo. All Steam contexts and the new Clean DLL have not received separate HMD acceptance. Turn OFF in-game anti-aliasing.
-
-An intact managed 1.1.6 installation can update to 1.2.0 by approving the Settings GUI notification, without GitHub CLI or sign-in. Flavor and user settings are preserved. For 1.1.4 or earlier, or old clients unable to check updates, extract the entire desired ZIP into a fresh folder and run its GF2VR.Installer.exe once. Close the game first.
-
-The release version is 1.2.0. Internal native build IDs retaining 130 identify the exact validated DLLs from an earlier unpublished candidate. The normal Installer does not silently overwrite manually replaced or unowned files.
-
-## 1.1.6 — Automatic update fix
-
-The settings GUI checks public GitHub releases at startup. Approve **Update** in the notification to download, verify and install. Starting with 1.1.6, GitHub CLI and sign-in are no longer required.
-
-Fixed rejection of new native builds by the old clients frozen allowlist. The client verifies release/file hashes, build flavor and current ownership; the verified incoming Installer owns final native validation, backups and installation. Clean/Dirty flavor and settings are preserved.
-
-For 1.1.4 or earlier, extract the complete desired Clean/Dirty ZIP into a new folder and run its new GF2VR.Installer.exe once. Existing 1.1.5 installations with working update checks can use the GUI updater. Users whose old version lacks its required GitHub CLI also need this one-time ZIP installation. After installing 1.1.6, GUI updates need neither CLI nor sign-in.
-
-This release retains the exact 1.1.5 VR DLLs. Logging remains OFF by default; explicit ON and its permanent initial-cleanup exemption, panel and contact settings are preserved. Close the game and settings window before installation.
-
-## 1.1.5 — Logging controls
-
-Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
-
-On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
-
-Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
-
-For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
 
 ## Contributors
 
@@ -50,7 +20,7 @@ For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and u
 
 ## 3DMigoto compatibility
 
-1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
+Both Clean and Dirty support the default 3DMigoto wrapper mode ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)). Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
 
 Use the default wrapper mode, with the [System] `hook` entry omitted or commented out. `hook=recommended` and `hook=all` are outside the supported configuration. `calls` and `crash` control logging/dumps and are not required by this fix. Skin INI syntax and duplicate-rule warnings are separate issues.
 
@@ -85,6 +55,8 @@ Install one variant at a time. Both use the same single version.dll beside the g
 Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
 
 ## Verification and limits
+
+Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Dirty launch/stereo in Steam Main. Other Steam contexts and the new Clean DLL have not received separate HMD validation.
 
 Previously tested setup: Meta Quest 2 · 4K monitor · Virtual Desktop.
 
