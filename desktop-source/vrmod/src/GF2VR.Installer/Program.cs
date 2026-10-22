@@ -16,6 +16,7 @@ internal static class Program
             if (args.Contains("--self-test-variants")) return VariantChecks.Run(Value(args, "--clean")!, Value(args, "--dirty")!);
             if (args.Contains("--self-test-package-location")) return PackageLocationChecks.Run();
             if (args.Contains("--self-test-ownership")) return OwnershipChecks.Run(Value(args, "--package") ?? PackageLocation.Resolve());
+            if (args.Contains("--self-test-steam")) return SteamLayoutChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-flexible")) return FlexibleLayoutChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
             if (args.Contains("--self-test-installer-ux")) return InstallerUxChecks.Run();
             if (args.Contains("--check-settings-launch"))

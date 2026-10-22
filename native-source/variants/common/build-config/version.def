@@ -1,0 +1,19 @@
+LIBRARY version
+EXPORTS
+ GetFileVersionInfoA=gf2vr_version_0 @1
+ GetFileVersionInfoByHandle=gf2vr_version_1 @2
+ GetFileVersionInfoExA=gf2vr_version_2 @3
+ GetFileVersionInfoExW=gf2vr_version_3 @4
+ GetFileVersionInfoSizeA=gf2vr_version_4 @5
+ GetFileVersionInfoSizeExA=gf2vr_version_5 @6
+ GetFileVersionInfoSizeExW=gf2vr_version_6 @7
+ GetFileVersionInfoSizeW=gf2vr_version_7 @8
+ GetFileVersionInfoW=gf2vr_version_8 @9
+ VerFindFileA=gf2vr_version_9 @10
+ VerFindFileW=gf2vr_version_10 @11
+ VerInstallFileA=gf2vr_version_11 @12
+ VerInstallFileW=gf2vr_version_12 @13
+ VerLanguageNameA=gf2vr_version_13 @14
+ VerLanguageNameW=gf2vr_version_14 @15
+ VerQueryValueA=gf2vr_version_15 @16
+ VerQueryValueW=gf2vr_version_16 @17

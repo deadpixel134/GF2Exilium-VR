@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.2.0",
+  "tag": "v1.2.0",
+  "baseRelease": "1.1.6",
+  "native": {
+    "schemaVersion": 1,
+    "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
+    "commonCoreSha256": "8A63FB0FB878A80D7A27293F402924EA174D640BD2C08C62EE6C2652C36ABE16",
+    "variants": {
+      "Clean": {
+        "buildId": "GF2VR-CLEAN-130-002",
+        "dllSha256": "8E27C9F22C825F98F888E1BBF8A6093E796AAD2175067034E923CFC4AF2F385B"
+      },
+      "Dirty": {
+        "buildId": "GF2VR-DIRTY-130-ACT001",
+        "dllSha256": "5E3B52BDA6025DB2119DDAC065C8666D533ED3F699858B54384B5574AAEBFD67"
+      }
+    }
+  },
+  "archives": [
+    {
+      "entries": 16,
+      "name": "GF2VR-Native-SelfContained-Clean-1.2.0.zip",
+      "nativeSha256": "8E27C9F22C825F98F888E1BBF8A6093E796AAD2175067034E923CFC4AF2F385B",
+      "sha256": "642ABE7994C4526F03CF23532807C443617323A0A321741AB651C165A8755919",
+      "bytes": 93744229,
+      "flavor": "Clean"
+    },
+    {
+      "entries": 16,
+      "name": "GF2VR-Native-SelfContained-Dirty-1.2.0.zip",
+      "nativeSha256": "5E3B52BDA6025DB2119DDAC065C8666D533ED3F699858B54384B5574AAEBFD67",
+      "sha256": "B9FD2B0FA3F8C10FF05EAC2F4E0E4972D6F5B127F3FF36E384A937E63E2D63ED",
+      "bytes": 93788608,
+      "flavor": "Dirty"
+    }
+  ],
+  "changes": [
+    "Steam/Haoplay executable layouts and exact game-build profiles",
+    "Restore game-update hand/contact compatibility",
+    "Independent simultaneous supported Activity actors"
+  ],
+  "nativeBytesIdenticalToAcceptedProvider": true,
+  "internalNative130IdsRetained": true,
+  "offlineValidation": {
+    "layoutChecks": 122,
+    "variantChecks": 159,
+    "upgradeExactRollbackChecks": 11,
+    "updateSecurityChecks": 55,
+    "transportChecks": 11,
+    "unmodified116StageApplyRollbackBothFlavors": true,
+    "exactNativeSourceReproductionBothFlavors": true,
+    "sharedSourceFiles": 238,
+    "nativeObjectsEach": 15,
+    "configuratorChecks": [
+      725,
+      960
+    ],
+    "locales": [
+      "ko",
+      "en",
+      "ja"
+    ]
+  },
+  "runtimeAcceptance": {
+    "haoplayDirty": [
+      "Main hands/contact",
+      "Activity hands/contact/multiple supported actors"
+    ],
+    "steamDirty": [
+      "Main launch/stereo"
+    ],
+    "newCleanHmd": false,
+    "allSteamContexts": false
+  },
+  "userConfirmationRequired": true,
+  "loggingDefaultsAndOnExemptionPreserved": true,
+  "ownedFilesEach": 9,
+  "archiveEntriesEach": 16,
+  "gameAssetsIncluded": false,
+  "userConfigurationIncluded": false,
+  "credentialMaterialIncluded": false,
+  "liveInstallationsChanged": false
+}

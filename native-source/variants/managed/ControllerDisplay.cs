@@ -41,7 +41,7 @@ namespace GF2.Private
 
         private sealed class Context
         {
-            public int Kind; // 1 Main, 2 Dorm, 3 Activity; actual typed owner proof.
+            public int Kind; // 1 Main, 2 Dorm, 3 Activity, 4 legacy actor, 5 source with independent actors.
             public GameObject Root;
             public Camera OwnerCamera;
             public T0BGHelper Main;
@@ -73,12 +73,12 @@ namespace GF2.Private
             if (value == null || source == null || !source.gameObject.activeInHierarchy ||
                 value.Root == null || !value.Root.activeInHierarchy) return false;
             if (value.Kind == 1)
-                return Live(value.Main) && value.Main == T0BGHelper.GJCPFDLMCBO &&
+                return Live(value.Main) && value.Main == T0BGHelper.MJGPKADBALF &&
                     T0BGHelper.CurrActive && !value.Main.isGachaModel && value.OwnerCamera == source;
             if (value.Kind == 2)
             {
-                if (!Live(value.Dorm) || value.Dorm != LoungeHelper.GJCPFDLMCBO) return false;
-                LoungeFreeCameraControllerNew controller = LoungeHelper.JMABEJHEAOL;
+                if (!Live(value.Dorm) || value.Dorm != LoungeHelper.MJGPKADBALF) return false;
+                LoungeFreeCameraControllerNew controller = LoungeHelper.GCKKGOJLMGB;
                 return Live(controller) && controller.CameraObj != null &&
                     controller.CameraObj.Camera == source;
             }
@@ -86,7 +86,8 @@ namespace GF2.Private
                 return Live(value.Activity) &&
                     !value.Activity.isAmo3DSpecialPlot && !Lobby.World.LobbyHelper.isSceneReloading &&
                     !Lobby.World.LobbyHelper.isSceneDayNightSwitching && value.Activity.CameraMgr != null &&
-                    value.Activity.CameraMgr.FKPCEJCKNOJ == source;
+                    value.Activity.CameraMgr.EEMIJPMBCPJ == source;
+            if (value.Kind == 5) return value.OwnerCamera == source && value.Root == source.gameObject;
             if (value.Kind == 4) return ContextActorEligible(value, source);
             return false;
         }
@@ -97,25 +98,26 @@ namespace GF2.Private
         {
             if (source == null || !source.gameObject.activeInHierarchy) return "invalid-source";
             if (value.Root == null || !value.Root.activeInHierarchy) return "inactive-root";
+            if (value.Kind == 5) return Eligible(value, source) ? "eligible-multiple-actors" : "invalid-source";
             if (value.Kind == 4) return ContextActorEligible(value, source) ? "eligible" : "context-actor-invalid";
             if (value.Kind == 1)
             {
-                if (!Live(value.Main) || value.Main != T0BGHelper.GJCPFDLMCBO) return "inactive-owner";
+                if (!Live(value.Main) || value.Main != T0BGHelper.MJGPKADBALF) return "inactive-owner";
                 if (!T0BGHelper.CurrActive) return "CurrActive";
                 if (value.Main.isGachaModel) return "gacha";
                 return value.OwnerCamera != source ? "OwnerCamera-mismatch" : "eligible";
             }
             if (value.Kind == 2)
             {
-                if (!Live(value.Dorm) || value.Dorm != LoungeHelper.GJCPFDLMCBO) return "inactive-owner";
-                LoungeFreeCameraControllerNew controller = LoungeHelper.JMABEJHEAOL;
+                if (!Live(value.Dorm) || value.Dorm != LoungeHelper.MJGPKADBALF) return "inactive-owner";
+                LoungeFreeCameraControllerNew controller = LoungeHelper.GCKKGOJLMGB;
                 return !Live(controller) || controller.CameraObj == null || controller.CameraObj.Camera != source
                     ? "OwnerCamera-mismatch" : "eligible";
             }
             if (!Live(value.Activity)) return "inactive-owner";
             if (value.Activity.isAmo3DSpecialPlot) return "special-plot";
             if (Lobby.World.LobbyHelper.isSceneReloading || Lobby.World.LobbyHelper.isSceneDayNightSwitching) return "transition";
-            return value.Activity.CameraMgr == null || value.Activity.CameraMgr.FKPCEJCKNOJ != source
+            return value.Activity.CameraMgr == null || value.Activity.CameraMgr.EEMIJPMBCPJ != source
                 ? "OwnerCamera-mismatch" : "eligible";
         }
 
@@ -124,18 +126,18 @@ namespace GF2.Private
             Context selected = null;
             int matches = 0;
             selectKind = 0; selectReason = mainReject = dormReject = activityReject = "no-owner";
-            T0BGHelper main = T0BGHelper.GJCPFDLMCBO;
+            T0BGHelper main = T0BGHelper.MJGPKADBALF;
             if (main != null)
             {
                 // IJOKONJJNCN's getter is lazy and writes the game's cache.
                 // Read the exact existing field once instead. Null is rejected.
-                FieldInfo cameraField = typeof(T0BGHelper).GetField("FCNBALENHOK", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo cameraField = typeof(T0BGHelper).GetField("LGKDOCICKCP", BindingFlags.NonPublic | BindingFlags.Instance);
                 Camera camera = cameraField == null ? null : cameraField.GetValue(main) as Camera;
                 Context candidate = new Context { Kind = 1, Root = main.gameObject, Main = main, OwnerCamera = camera };
                 mainReject = ContactRejection(candidate, source);
                 if (Eligible(candidate, source)) { selected = candidate; ++matches; }
             }
-            LoungeHelper dorm = LoungeHelper.GJCPFDLMCBO;
+            LoungeHelper dorm = LoungeHelper.MJGPKADBALF;
             if (dorm != null)
             {
                 Context candidate = new Context { Kind = 2, Root = dorm.gameObject, Dorm = dorm };
@@ -153,7 +155,14 @@ namespace GF2.Private
                     if (Eligible(candidate, source)) { selected = candidate; ++matches; }
                 }
             else if (activities != null) { selectReason = activityReject = "owner-capacity"; return null; }
-            if (matches == 1) { selectKind = selected.Kind; selectReason = "eligible"; return selected; }
+            if (matches == 1)
+            {
+                // A Lobby helper is a camera owner, not a common parent for
+                // every character rendered by that camera.
+                if (selected.Kind == 3) selected = SelectContextActor(source);
+                if (selected != null) { selectKind = selected.Kind; selectReason = "eligible"; }
+                return selected;
+            }
             if (matches == 0)
             {
                 Context contextual = SelectContextActor(source);
@@ -164,9 +173,23 @@ namespace GF2.Private
             return null;
         }
 
+        // A broken optional game contact binding must not clear valid hand
+        // mesh/material resources. This cold wrapper also covers JIT binding
+        // failures before the contact core enters its own body.
+        private static void RetryContact(Camera source)
+        {
+            try { RetryContactCore(source); }
+            catch (Exception)
+            {
+                try { ClearContact(); } catch (Exception) { }
+                prepared = null;
+                selectReason = "contact-prepare-exception";
+            }
+        }
+
         // Native Prepare is called on source admission, then at most once per
         // second for this same tuple. Resource/eye state survives contact retries.
-        private static void RetryContact(Camera source)
+        private static void RetryContactCore(Camera source)
         {
             if (prepared != null && prepared.Kind == 4)
             {

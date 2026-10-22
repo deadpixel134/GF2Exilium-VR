@@ -2,6 +2,23 @@
 
 [한국어](README.ko.md) · [English](README.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
 
+## 1.2.0 — Steam支持与手部、接触兼容性修复
+
+支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。
+
+实机验证范围为Dirty在Haoplay Main、Activity的手部显示/接触，以及Steam Main的启动和立体显示。尚未单独确认Steam全部场景及新Clean DLL的HMD表现。请关闭游戏内抗锯齿。
+
+完整的受管理1.1.6安装可在设置GUI中批准更新通知，升级至1.2.0，无需GitHub CLI或登录，保留版本类型及用户设置。1.1.4及更早版本或无法检查更新的旧客户端，请将所需ZIP完整解压到新目录，运行附带的GF2VR.Installer.exe安装一次。请先关闭游戏。界面语言仍为韩语、英语和日语。
+
+发行版本为1.2.0。内部native构建ID中的130用于标识此前未公开候选中经过验证的同一DLL。常规安装程序不会静默覆盖手动替换或不属于本产品的文件。
+
+当前1.2.0 native构建使用variants下238项公共输入及每种版本的配置、生成桥接头文件。使用Zig0.16.0和Windows SDK10.0.26100.0运行以下命令，可精确重现发行DLL并生成配套desktop-metadata。根目录build-native.ps1保留历史1.0.2复现用途。重新生成托管桥需要已安装游戏的元数据，并校验game-reference-profiles.json中的精确Haoplay/Steam配置。仓库不包含游戏文件。
+
+```powershell
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+```
+
 ## 1.1.6 — 修复自动更新
 
 设置GUI启动时检查公开GitHub发行版。批准通知中的 **更新** 后，将下载、校验并安装。从1.1.6开始，无需GitHub CLI或登录。

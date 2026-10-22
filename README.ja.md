@@ -8,11 +8,21 @@ Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)
 
 GF2 Exilium を VR で楽しむための非公式 MOD です。
 
-**[正式版 1.1.6 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)**
+**[正式版 1.2.0 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
 
 1.1.6でGUIの更新確認・承認後のインストールを修正しました。1.1.4以前や旧GUIで更新確認ができない環境は、今回一度だけ新しいClean・Dirty ZIPのインストーラーで更新してください。以降はGitHub CLI・ログイン不要でGUIから更新できます。
+
+## 1.2.0 — Steam対応と手・接触の互換性修正
+
+Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応します。ゲーム更新後に白い手の表示とキャラクター接触が失われる互換性問題を修正しました。Dirtyは活動層で同時に見える対応キャラクターを個別に扱います。Cleanには接触変形を含みません。
+
+実機確認はDirtyのHaoplay Main・Activityの手表示/接触とSteam Mainの起動・立体表示です。Steamの全画面と新しいClean DLLのHMD動作は別途未確認です。ゲーム内アンチエイリアシングをオフにしてください。
+
+正常な管理下の1.1.6は設定GUIの通知を承認して1.2.0へ更新できます。GitHub CLI・ログインは不要で、種類とユーザー設定を保持します。1.1.4以前または更新確認できない旧版では、希望するZIP全体を新しいフォルダーに展開し、付属のGF2VR.Installer.exeで一度インストールしてください。先にゲームを終了してください。
+
+リリース版は1.2.0です。内部nativeビルドIDの130は以前の未公開候補で実機確認した同一DLLの識別子です。通常のインストーラーは手動交換・所有権のないファイルを無断で上書きしません。
 
 ## 1.1.6 — 自動更新の修正
 
@@ -60,8 +70,8 @@ Clean・Dirty共通で設定GUIに **診断 → ログを自動記録** を追�
 
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
-- [GF2VR-Native-SelfContained-Dirty-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
+- [GF2VR-Native-SelfContained-Clean-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
+- [GF2VR-Native-SelfContained-Dirty-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
 
 同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 

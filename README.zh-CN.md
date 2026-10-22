@@ -8,11 +8,21 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 用于以 VR 游玩 GF2 Exilium 的非官方模组。
 
-**[下载正式版 1.1.6](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)**
+**[下载正式版 1.2.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 1.1.6修复GUI更新检查和批准后安装流程。1.1.4及更早版本，或旧GUI无法检查更新的环境，请此次使用新Clean/Dirty ZIP安装程序更新一次。之后GUI更新无需GitHub CLI或登录。
+
+## 1.2.0 — Steam支持与手部、接触兼容性修复
+
+支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。
+
+实机验证范围为Dirty在Haoplay Main、Activity的手部显示/接触，以及Steam Main的启动和立体显示。尚未单独确认Steam全部场景及新Clean DLL的HMD表现。请关闭游戏内抗锯齿。
+
+完整的受管理1.1.6安装可在设置GUI中批准更新通知，升级至1.2.0，无需GitHub CLI或登录，保留版本类型及用户设置。1.1.4及更早版本或无法检查更新的旧客户端，请将所需ZIP完整解压到新目录，运行附带的GF2VR.Installer.exe安装一次。请先关闭游戏。界面语言仍为韩语、英语和日语。
+
+发行版本为1.2.0。内部native构建ID中的130用于标识此前未公开候选中经过验证的同一DLL。常规安装程序不会静默覆盖手动替换或不属于本产品的文件。
 
 ## 1.1.6 — 修复自动更新
 
@@ -60,8 +70,8 @@ Clean和Dirty均在设置GUI中新增 **诊断 → 自动记录日志**。默认
 
 两个版本的常规 VR 源码、版本和更新保持一致。只有 Dirty 包含接触变形代码；Clean 在构建时排除该实现，而不是仅将其关闭。
 
-- [GF2VR-Native-SelfContained-Clean-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
-- [GF2VR-Native-SelfContained-Dirty-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
+- [GF2VR-Native-SelfContained-Clean-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
+- [GF2VR-Native-SelfContained-Dirty-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
 
 一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
 

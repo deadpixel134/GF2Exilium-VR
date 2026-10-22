@@ -6,8 +6,18 @@ namespace GF2.Private
 {
     public static partial class ControllerDisplay
     {
-        // Source frustum in game world units; no scene, character, camera-name
-        // whitelist or arbitrary 32-world-unit range. Projection is not occlusion.
+        // Ownership comes from the native-admitted source. Each bound target
+        // separately proves its active Animator, parent, renderer, mesh and bone.
+        // No character is selected by helper ancestry or distance ranking.
+        private static Context SelectContextActor(Camera source)
+        {
+            return source != null && source.gameObject.activeInHierarchy
+                ? new Context { Kind = 5, Root = source.gameObject, OwnerCamera = source }
+                : null;
+        }
+
+        // Kept only for existing legacy Kind4 predicates; new source admission
+        // produces Kind5 and does not depend on an arbitrary anchor bone.
         private static bool ContextPoint(Camera source, Transform bone, out float distanceSquared)
         {
             distanceSquared = 0f;
@@ -36,75 +46,31 @@ namespace GF2.Private
                 ContextPoint(source, value.AnchorBone, out distance);
         }
 
-        // Optional fallback, cold at source admission and >=1s Prepare retry.
-        // Bind only actual configured skin bones belonging to the nearest live
-        // Animator. A scene name or hierarchy never grants contact ownership.
-        private static Context SelectContextActor(Camera source)
+        private static bool ContactPointInView(Camera camera, Vector3 point, int layer)
         {
-            try
-            {
-                if (source == null || !source.gameObject.activeInHierarchy) return null;
-                UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(typeof(SkinnedMeshRenderer));
-                if (objects == null || objects.Length > 2048) return null;
-                Context[] candidates = new Context[16];
-                float[] distances = new float[16];
-                int[] renderersPerActor = new int[16];
-                int count = 0, totalBones = 0;
-                for (int i = 0; i < objects.Length; ++i)
-                {
-                    SkinnedMeshRenderer skin = objects[i] as SkinnedMeshRenderer;
-                    if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || skin.sharedMesh == null ||
-                        (source.cullingMask & (1 << skin.gameObject.layer)) == 0) continue;
-                    Animator actor = skin.GetComponentInParent<Animator>();
-                    if (!Live(actor)) continue;
-                    Transform[] bones = skin.bones;
-                    if (bones == null) continue;
-                    if (bones.Length > 2048 || (totalBones += bones.Length) > 65536) return null;
-                    Transform anchor = null;
-                    float closest = Single.MaxValue;
-                    for (int j = 0; j < bones.Length; ++j)
-                    {
-                        Transform bone = bones[j];
-                        float distance;
-                        if (bone == null || bone.parent == null || !bone.gameObject.activeInHierarchy ||
-                            !bone.IsChildOf(actor.transform) || !ContactName(bone.name) ||
-                            !ContextPoint(source, bone, out distance)) continue;
-                        if (anchor == null || distance < closest) { anchor = bone; closest = distance; }
-                    }
-                    if (anchor == null) continue;
-                    int index = -1;
-                    for (int j = 0; j < count; ++j) if (candidates[j].ContextActor == actor) { index = j; break; }
-                    if (index < 0)
-                    {
-                        if (count == candidates.Length) return null;
-                        index = count++;
-                        candidates[index] = new Context { Kind = 4, Root = actor.gameObject, OwnerCamera = source,
-                            ContextActor = actor, ActorParent = actor.transform.parent };
-                        distances[index] = Single.MaxValue;
-                    }
-                    if (++renderersPerActor[index] > 64) return null;
-                    if (closest < distances[index])
-                    {
-                        distances[index] = closest;
-                        candidates[index].AnchorBone = anchor; candidates[index].AnchorSkin = skin;
-                        candidates[index].AnchorMesh = skin.sharedMesh;
-                    }
-                }
-                int best = -1;
-                float first = Single.MaxValue, second = Single.MaxValue;
-                for (int i = 0; i < count; ++i)
-                {
-                    float distance = distances[i];
-                    if (distance < first) { second = first; first = distance; best = i; }
-                    else if (distance < second) second = distance;
-                }
-                // Near ties fail closed; a confidently nearest actor may be
-                // chosen even with additional visible characters (R-P3-7).
-                if (best < 0 || (count > 1 && second - first <= Math.Max(.000001f, first * .01f))) return null;
-                Context selected = candidates[best];
-                return ContextActorEligible(selected, source) ? selected : null;
-            }
-            catch (Exception) { return null; } // optional contact failure preserves accepted display
+            if (camera == null || !Finite(point) || (camera.cullingMask & (1 << layer)) == 0) return false;
+            float near = camera.nearClipPlane, far = camera.farClipPlane;
+            if (!Finite(near) || !Finite(far) || near < 0f || far <= near) return false;
+            Vector3 view = camera.WorldToViewportPoint(point);
+            return Finite(view) && view.z >= near && view.z > 0f && view.z <= far &&
+                view.x >= 0f && view.x <= 1f && view.y >= 0f && view.y <= 1f;
+        }
+
+        // The most recently drawn eye pair belongs to this prepared generation;
+        // Clear() resets the pair table. A head/navigation move need not match
+        // the original authored camera frustum. Before the first valid Draw,
+        // admission falls back to that source, then refreshes on the cold path.
+        private static bool ContactVisiblePoint(Vector3 point, int layer)
+        {
+            int pair = -1;
+            long ticket = -1;
+            for (int i = 0; i < BuildContract.EyeCapacity; ++i)
+                if (lastPair[i] > ticket && leftEyes[i] != null && rightEyes[i] != null)
+                { pair = i; ticket = lastPair[i]; }
+            if (pair >= 0)
+                return ContactPointInView(leftEyes[pair], point, layer) ||
+                    ContactPointInView(rightEyes[pair], point, layer);
+            return ContactPointInView(preparedSource, point, layer);
         }
     }
 }

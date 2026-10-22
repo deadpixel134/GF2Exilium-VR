@@ -2,6 +2,16 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
+## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
+
+Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다. 게임 업데이트 후 흰색 손 표시와 캐릭터 접촉이 사라지던 호환성 문제를 수정했습니다. Dirty는 활동층에서 동시에 보이는 지원 캐릭터들을 각각 접촉 대상으로 처리합니다. Clean에는 접촉 변형이 포함되지 않습니다.
+
+실기 확인 범위는 Dirty의 Haoplay Main·Activity 손 표시/접촉과 Steam Main 실행·입체 화면입니다. Steam의 모든 화면과 Clean의 새 DLL 실기는 별도로 확인되지 않았습니다. 게임 내 안티앨리어싱은 OFF로 설정하세요.
+
+정상적인 1.1.6 관리 설치는 설정 GUI의 업데이트 알림에서 승인해 1.2.0으로 업데이트할 수 있습니다. GitHub CLI·로그인이 필요하지 않으며 Clean·Dirty 종류와 사용자 설정을 유지합니다. 1.1.4 이하 또는 구버전 업데이트 확인이 안 되는 환경은 원하는 ZIP 전체를 새 폴더에 풀고 포함된 GF2VR.Installer.exe로 한 번 설치하세요. 게임을 종료한 뒤 진행하세요.
+
+릴리즈 버전은 1.2.0입니다. 이전 미공개 후보의 내부 native 빌드 ID에 남은 130은 동일한 검증 DLL의 식별자입니다. 일반 설치 도구는 수동 교체되거나 소유권이 없는 파일을 자동 덮어쓰지 않습니다.
+
 ## 1.1.4
 
 [1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)

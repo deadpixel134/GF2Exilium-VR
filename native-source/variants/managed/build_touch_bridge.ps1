@@ -1,9 +1,9 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty',[string]$GameRoot='')
+param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty',[string]$GameRoot='',[ValidateSet('Auto','Haoplay','Steam')][string]$GameProfile='Auto')
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName Microsoft.CodeAnalysis.CSharp
 Add-Type -AssemblyName System.Reflection.Metadata
-$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../../..'))
+$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
 $folder=Join-Path $root 'vrmod/build/private/TOUCH-P3-006/managed'
 if ($OutputDirectory) { $folder=[IO.Path]::GetFullPath($OutputDirectory) }
 New-Item -ItemType Directory -Path $folder -Force|Out-Null
@@ -17,16 +17,19 @@ $sourceFiles+=$generated
 $sourceHashes=[ordered]@{}
 foreach($file in $sourceFiles) { $sourceHashes[$file]=(Get-FileHash -LiteralPath $file).Hash }
 if ($GameRoot) { $root=[IO.Path]::GetFullPath($GameRoot) }
-$cache=Join-Path $root 'GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.0.3936/Codes'
-$expected=@{
- 'Assembly-CSharp.dll.bytes'='C093192EF639AA9590850B0A85EFDF9C22BB9C71F098B2015D71E1DEEB38ECEC'
- 'Assembly-CSharp-firstpass.dll.bytes'='785E9D4B998411B8C33AE34BE5BA0DE283800A697B6E7D3C46B98F7BE973D8B7'
- 'mscorlib.dll.bytes'='C9955D65FDA5CAE9C66A0EF000168827B2D6D8863C98B7AF1E0212886738437B'
- 'System.dll.bytes'='D4DBBF0FB7519C526953A979BCDAFABE8C3EEC2A4C499A64C2C2DABEE5A5B220'
- 'System.Core.dll.bytes'='B02F22729B3CECA252F93BA4C82EBCFD7C24F944E658F16CB340660A74FB9331'
- 'UnityEngine.CoreModule.dll.bytes'='7ED87B8E18B4764246E6BBB10DA4F4BB8841D4777C517530448E596D77E058EC'
- 'UnityEngine.AnimationModule.dll.bytes'='889F21C06DF0FC0D1CCD25892CBA7551362EA2B31D51FCB672ED4F7C80A87D5F'
-}
+$gameFolders=@(@($root,(Join-Path $root 'GF2 Game'))|Where-Object {Test-Path -LiteralPath (Join-Path $_ 'GF2_Exilium.exe')})
+if($gameFolders.Count -ne 1){throw 'GameRoot must identify exactly one direct or launcher game directory'}
+$gameFolder=[IO.Path]::GetFullPath($gameFolders[0])
+$profileFile=Join-Path $PSScriptRoot 'game-reference-profiles.json'
+$profiles=Get-Content -LiteralPath $profileFile -Raw|ConvertFrom-Json
+if($profiles.schemaVersion -ne 1){throw 'Unsupported managed reference profile schema'}
+$gameSha=(Get-FileHash -LiteralPath (Join-Path $gameFolder 'GameAssembly.dll')).Hash
+$matches=@($profiles.profiles|Where-Object { $_.gameAssemblySha256 -ceq $gameSha -and ($GameProfile -eq 'Auto' -or $_.name -ceq $GameProfile) })
+if($matches.Count -ne 1){throw 'Game build is not an exact supported managed reference profile'}
+$referenceProfile=$matches[0]
+$cache=Join-Path $gameFolder $referenceProfile.codesRelativePath
+$expected=@{}
+foreach($property in $referenceProfile.references.PSObject.Properties){$expected[$property.Name]=[string]$property.Value}
 $refs=@(foreach($name in ($expected.Keys|Sort-Object)){
  $path=Join-Path $cache $name
  if((Get-FileHash $path).Hash -ne $expected[$name]){throw "Reference changed $name"}
@@ -132,6 +135,10 @@ foreach($name in $expected.Keys){if((Get-FileHash -LiteralPath (Join-Path $cache
 foreach($file in $sourceFiles) { if((Get-FileHash -LiteralPath $file).Hash -cne $sourceHashes[$file]) { throw 'Source changed during managed compilation' } }
 [ordered]@{
  result='PASS_OFFLINE_NOT_RUNTIME_ACCEPTANCE'
+ reference_profile=$referenceProfile.name
+ game_assembly_sha256=$gameSha
+ reference_profile_sha256=(Get-FileHash -LiteralPath $profileFile).Hash
+ codes_relative_path=$referenceProfile.codesRelativePath
  assembly='GF2.Private.TouchBridge'
  type='GF2.Private.ControllerDisplay'
  public_static_contract=$contract

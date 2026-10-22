@@ -33,6 +33,22 @@ internal static class NativeLayout
          Codes + "Cinemachine.dll.bytes", Codes + "Unity.RenderPipelines.Universal.Runtime.dll.bytes_HUDll.u",
          Codes + "Cinemachine.dll.bytes_HUDll.u", Codes + "Cinemachine.dll.bytes_AOT.u", Codes + "UnityEngine.CoreModule.dll.bytes"];
 
+    // Read-only reference descriptions may come from either supported game's
+    // Codes build. They never become payload paths or grant file ownership.
+    internal static string[] ReferenceGameFiles(string version) => version switch
+    {
+        "2.0.3936" => GameFiles,
+        "2.7.4330" => GameFiles.Select(p => p.Replace("/2.0.3936/Codes/", "/2.7.4330/Codes/", StringComparison.Ordinal)).ToArray(),
+        _ => throw new InstallError("incompletePackage")
+    };
+    internal static bool ValidGameReferences(PayloadFile[]? files)
+    {
+        if (files == null || files.Length != GameFiles.Length || files.Any(f => f == null)) return false;
+        var paths = files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal);
+        return paths.Count == GameFiles.Length && new[] { "2.0.3936", "2.7.4330" }
+            .Any(v => paths.SetEquals(ReferenceGameFiles(v)));
+    }
+
     internal static void Validate(string root, Package package, HashSet<string> files)
     {
         var native = package.Native;
@@ -66,11 +82,10 @@ internal static class NativeLayout
         if (!Paths.Equal(package.Files.Single(f => f.Path == "GF2 Game/version.dll").Sha256, native.DllSha256) ||
             !Paths.Equal(package.Files.Single(f => f.Path == "vrmod/runtime/openxr_loader.dll").Sha256, native.LoaderSha256))
             throw new InstallError("nativeBuild");
-        if (native.GameFiles == null || native.GameFiles.Length != GameFiles.Length ||
-            !native.GameFiles.Select(f => f?.Path).ToHashSet(StringComparer.Ordinal).SetEquals(GameFiles))
+        if (!ValidGameReferences(native.GameFiles))
             throw new InstallError("incompletePackage");
         // Known read-only prerequisites never grant ownership or installation permission.
-        foreach (var f in native.GameFiles)
+        foreach (var f in native.GameFiles!)
         {
             if (f == null || f.Bytes < 1) throw new InstallError("badPackage");
             Paths.HashText(f.Sha256);

@@ -34,7 +34,14 @@ internal static class UpdateChecks
         CopyPackage(candidate, pkg); CopyPackage(previous, old);
         var engine = new InstallationEngine(); Check(UpdateStaging.ManagedVersion(root) == null, "unmanaged install ineligible");
         string settings = Paths.Contained(root, "vrmod/config/render_quality.json"); byte[] settingsBytes = Encoding.UTF8.GetBytes("{\"schemaVersion\":1,\"eyeRenderScale\":0.6}"); Paths.WriteNew(settings, settingsBytes);
-        engine.Install(engine.Preview(root, old)); Check(UpdateStaging.ManagedVersion(root) == previousVersion, "receipt uses prior package version");
+        // A released predecessor owns its native allowlist. Use its real helper to
+        // establish the old receipt rather than asking the new helper to install
+        // an intentionally obsolete native profile before testing the update.
+        var previousStart = new ProcessStartInfo(Path.Combine(previous, "GF2VR.Installer.exe")) { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden };
+        foreach (string arg in new[] { "--install", "--root", root, "--package", old }) previousStart.ArgumentList.Add(arg);
+        using (var previousHelper = Process.Start(previousStart)!)
+            Check(previousHelper.WaitForExit(30000) && previousHelper.ExitCode == 0, "actual previous helper establishes old native receipt");
+        Check(UpdateStaging.ManagedVersion(root) == previousVersion, "receipt uses prior package version");
         string archive = Path.Combine(fixture, UpdatePolicy.ArchiveName(candidateVersion, flavor)); Directory.CreateDirectory(fixture);
         using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
         {

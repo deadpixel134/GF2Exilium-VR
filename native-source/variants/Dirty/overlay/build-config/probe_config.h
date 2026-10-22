@@ -1,0 +1,12 @@
+#define GF2VR_STEAM_COMPAT 1
+#line 1
+#define GF2VR_UNITY_TIMESTAMP 1654722592u
+#define GF2VR_UNITY_IMAGE_SIZE 27131904u
+#define GF2VR_ACCEPTED_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\BOOTSTRAP-FLEX-001.jsonl"
+
+#ifdef GF2VR_TOUCH_PRIVATE
+#define GF2VR_PORTABLE_LOG L"vrmod\\logs\\bootstrap\\GF2VR-DIRTY-130-ACT001.jsonl"
+#define GF2VR_HANDS_INVENTORY_TAIL L"vrmod\\logs\\bootstrap\\GF2VR-DIRTY-130-ACT001.inventory.jsonl"
+#else
+#define GF2VR_PORTABLE_LOG GF2VR_ACCEPTED_PORTABLE_LOG
+#endif

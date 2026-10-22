@@ -2,6 +2,23 @@
 
 [한국어](README.ko.md) | [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
+
+Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다. 게임 업데이트 후 흰색 손 표시와 캐릭터 접촉이 사라지던 호환성 문제를 수정했습니다. Dirty는 활동층에서 동시에 보이는 지원 캐릭터들을 각각 접촉 대상으로 처리합니다. Clean에는 접촉 변형이 포함되지 않습니다.
+
+실기 확인 범위는 Dirty의 Haoplay Main·Activity 손 표시/접촉과 Steam Main 실행·입체 화면입니다. Steam의 모든 화면과 Clean의 새 DLL 실기는 별도로 확인되지 않았습니다. 게임 내 안티앨리어싱은 OFF로 설정하세요.
+
+정상적인 1.1.6 관리 설치는 설정 GUI의 업데이트 알림에서 승인해 1.2.0으로 업데이트할 수 있습니다. GitHub CLI·로그인이 필요하지 않으며 Clean·Dirty 종류와 사용자 설정을 유지합니다. 1.1.4 이하 또는 구버전 업데이트 확인이 안 되는 환경은 원하는 ZIP 전체를 새 폴더에 풀고 포함된 GF2VR.Installer.exe로 한 번 설치하세요. 게임을 종료한 뒤 진행하세요.
+
+릴리즈 버전은 1.2.0입니다. 이전 미공개 후보의 내부 native 빌드 ID에 남은 130은 동일한 검증 DLL의 식별자입니다. 일반 설치 도구는 수동 교체되거나 소유권이 없는 파일을 자동 덮어쓰지 않습니다.
+
+현재 1.2.0 native 빌드는 variants의 공통 소스 238개와 종류별 설정·생성 브리지 헤더를 사용합니다. Zig 0.16.0과 Windows SDK 10.0.26100.0으로 아래 명령을 실행하면 배포 DLL과 정확히 일치하며, 두 빌드의 일치하는 desktop-metadata가 생성됩니다. 루트 build-native.ps1은 과거 1.0.2 재현용입니다. 관리 브리지를 다시 생성하려면 현재 설치된 게임의 메타데이터가 필요하며, game-reference-profiles.json의 정확한 Haoplay/Steam 프로필을 검사합니다. 게임 파일은 저장소에 포함하지 않습니다.
+
+```powershell
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+```
+
 ## 1.1.6 — 자동 업데이트 수정
 
 설정 GUI 실행 시 공개 GitHub 릴리즈를 자동 확인하고, 알림의 **업데이트**를 승인하면 다운로드·검증·설치합니다. 1.1.6부터 GitHub CLI 설치나 로그인이 필요하지 않습니다.

@@ -10,10 +10,7 @@ foreach($variant in $(if($Flavor -eq 'Both'){@('Clean','Dirty')}else{@($Flavor)}
  [IO.Directory]::CreateDirectory($materialized)|Out-Null
  Copy-Item -Path (Join-Path $PSScriptRoot 'common/*') -Destination $materialized -Recurse
  Copy-Item -Path (Join-Path $PSScriptRoot ($variant+'/overlay/*')) -Destination $materialized -Recurse -Force
- Copy-Item -LiteralPath (Join-Path $PSScriptRoot ($variant+'/build-config')) -Destination $materialized -Recurse
  Copy-Item -LiteralPath (Join-Path $PSScriptRoot ($variant+'/native-build.json')) -Destination $materialized
- Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../third_party') -Destination $materialized -Recurse
- Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../build-native.ps1') -Destination $materialized
  & (Join-Path $materialized 'build-native.ps1') -Zig $Zig -Kernel32Library $Kernel32Library -Output (Join-Path $Output ($variant+'/native')) -AllowSourceChanges:$AllowSourceChanges
  if(!$?){throw ('Failed '+$variant)}
 }

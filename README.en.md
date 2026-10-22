@@ -8,11 +8,21 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium in VR.
 
-**[Download release 1.1.6](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)**
+**[Download release 1.2.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 1.1.6 fixes GUI update checks and approved installation. For 1.1.4 or earlier, or an old GUI that cannot check updates, install once with the new Clean/Dirty ZIP installer. Subsequent GUI updates need neither GitHub CLI nor sign-in.
+
+## 1.2.0 — Steam support and hand/contact compatibility fixes
+
+Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
+
+Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Steam Main launch/stereo. All Steam contexts and the new Clean DLL have not received separate HMD acceptance. Turn OFF in-game anti-aliasing.
+
+An intact managed 1.1.6 installation can update to 1.2.0 by approving the Settings GUI notification, without GitHub CLI or sign-in. Flavor and user settings are preserved. For 1.1.4 or earlier, or old clients unable to check updates, extract the entire desired ZIP into a fresh folder and run its GF2VR.Installer.exe once. Close the game first.
+
+The release version is 1.2.0. Internal native build IDs retaining 130 identify the exact validated DLLs from an earlier unpublished candidate. The normal Installer does not silently overwrite manually replaced or unowned files.
 
 ## 1.1.6 — Automatic update fix
 
@@ -60,8 +70,8 @@ Contact works when the character's supported bones for that region are bound. Su
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-- [GF2VR-Native-SelfContained-Clean-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
-- [GF2VR-Native-SelfContained-Dirty-1.1.6.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.6)
+- [GF2VR-Native-SelfContained-Clean-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
+- [GF2VR-Native-SelfContained-Dirty-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
 
 Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 

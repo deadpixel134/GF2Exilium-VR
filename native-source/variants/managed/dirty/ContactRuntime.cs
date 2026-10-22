@@ -11,10 +11,10 @@ namespace GF2.Private
 {
     public static partial class ControllerDisplay
     {
-        private const int ContactCap = 64;
+        private const int ContactCap = 256;
         private struct ContactTarget
         {
-            internal Transform Bone, Parent, Actor, Child;
+            internal Transform Bone, Parent, Actor, ActorParent, Child;
             internal Animator Animator;
             internal SkinnedMeshRenderer Skin;
             internal Mesh Mesh;
@@ -185,7 +185,8 @@ namespace GF2.Private
             return target.Bone != null && target.Parent != null && target.Actor != null && target.Animator != null &&
                 target.Skin != null && target.Mesh != null && target.Bone.parent == target.Parent &&
                 target.Animator.isActiveAndEnabled && target.Animator.gameObject.activeInHierarchy &&
-                target.Animator.transform == target.Actor && target.Actor.IsChildOf(prepared.Root.transform) &&
+                target.Animator.transform == target.Actor && target.Actor.parent == target.ActorParent &&
+                (prepared.Kind == 5 || target.Actor.IsChildOf(prepared.Root.transform)) &&
                 (prepared.Kind != 4 || target.Animator == prepared.ContextActor) &&
                 target.Bone.IsChildOf(target.Actor) && target.Skin.transform.IsChildOf(target.Actor) &&
                 target.Skin.enabled && target.Skin.gameObject.activeInHierarchy &&
@@ -276,15 +277,23 @@ namespace GF2.Private
         {
             count = 0;
             ContactTarget[] selected = new ContactTarget[ContactCap];
-            SkinnedMeshRenderer[] renderers = prepared.Root.GetComponentsInChildren<SkinnedMeshRenderer>(false);
-            if (renderers == null || renderers.Length > 512) return selected;
+            SkinnedMeshRenderer[] renderers;
+            if (prepared.Kind == 5)
+            {
+                UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(typeof(SkinnedMeshRenderer));
+                if (objects == null || objects.Length > 2048) return selected;
+                renderers = new SkinnedMeshRenderer[objects.Length];
+                for (int i = 0; i < objects.Length; ++i) renderers[i] = objects[i] as SkinnedMeshRenderer;
+            }
+            else renderers = prepared.Root.GetComponentsInChildren<SkinnedMeshRenderer>(false);
+            if (renderers == null || renderers.Length > 2048) return selected;
             int scannedBones = 0;
             for (int i = 0; i < renderers.Length; ++i)
             {
                 SkinnedMeshRenderer skin = renderers[i];
                 if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || skin.sharedMesh == null) continue;
                 Animator animator = skin.GetComponentInParent<Animator>();
-                if (animator == null || !animator.isActiveAndEnabled || !animator.gameObject.activeInHierarchy || !animator.transform.IsChildOf(prepared.Root.transform)) continue;
+                if (animator == null || !animator.isActiveAndEnabled || !animator.gameObject.activeInHierarchy || (prepared.Kind != 5 && !animator.transform.IsChildOf(prepared.Root.transform))) continue;
                 if (prepared.Kind == 4 && animator != prepared.ContextActor) continue;
                 Transform[] bones = skin.bones;
                 if (bones == null) continue;
@@ -292,17 +301,28 @@ namespace GF2.Private
                 // and the complete lookup without treating repeats as unique
                 // targets; 42 renderers x typical skeletons remain usable.
                 scannedBones += bones.Length;
-                if (bones.Length > 2048 || scannedBones > 65536) { count = 0; return selected; }
+                if (bones.Length > 2048 || scannedBones > 262144) { count = 0; return selected; }
                 for (int j = 0; j < bones.Length; ++j)
                 {
                     Transform bone = bones[j];
-                    if (bone == null || bone.parent == null || !bone.gameObject.activeInHierarchy || !bone.IsChildOf(animator.transform) || !ContactName(bone.name)) continue;
-                    bool duplicate = false;
-                    for (int k = 0; k < count; ++k) if (selected[k].Bone == bone) { duplicate = true; break; }
-                    if (duplicate) continue;
+                    if (bone == null || bone.parent == null || !bone.gameObject.activeInHierarchy || !bone.IsChildOf(animator.transform) || bone.GetComponentInParent<Animator>() != animator || !ContactName(bone.name)) continue;
+                    if (prepared.Kind == 5 && !ContactVisiblePoint(bone.position, skin.gameObject.layer)) continue;
+                    int duplicate = -1;
+                    for (int k = 0; k < count; ++k) if (selected[k].Bone == bone) { duplicate = k; break; }
+                    if (duplicate >= 0)
+                    {
+                        // Several renderers can prove the same skeleton bone.
+                        // Prefer its still-present previous renderer so engine
+                        // enumeration order does not reset held contact.
+                        if (contactTargets != null) for (int k = 0; k < contactCount; ++k)
+                            if (contactTargets[k].Bone == bone && contactTargets[k].Skin == skin &&
+                                contactTargets[k].Mesh == skin.sharedMesh && contactTargets[k].Animator == animator)
+                            { selected[duplicate].Skin = skin; selected[duplicate].Mesh = skin.sharedMesh; break; }
+                        continue;
+                    }
                     if (count == ContactCap) { count = 0; return selected; }
                     selected[count].Bone = bone; selected[count].Parent = bone.parent;
-                    selected[count].Actor = animator.transform; selected[count].Animator = animator;
+                    selected[count].Actor = animator.transform; selected[count].ActorParent = animator.transform.parent; selected[count].Animator = animator;
                     selected[count].Skin = skin; selected[count].Mesh = skin.sharedMesh;
                     selected[count].Material = contactSettings.ForBone(bone.name);
                     selected[count].Child = bone.childCount>0?bone.GetChild(0):null;
@@ -314,10 +334,39 @@ namespace GF2.Private
             for (int i = count - 1; i >= 0; --i)
             {
                 bool descendant = false;
-                for (int j = 0; j < count; ++j) if (i != j && selected[i].Bone.IsChildOf(selected[j].Bone)) { descendant = true; break; }
+                for (int j = 0; j < count; ++j) if (i != j && selected[i].Actor == selected[j].Actor && selected[i].Bone.IsChildOf(selected[j].Bone)) { descendant = true; break; }
                 if (descendant) { --count; selected[i] = selected[count]; selected[count] = new ContactTarget(); }
             }
             return selected;
+        }
+
+        private static bool ContactSameBinding(ContactTarget a, ContactTarget b)
+        {
+            return a.Bone == b.Bone && a.Parent == b.Parent && a.Actor == b.Actor &&
+                a.ActorParent == b.ActorParent && a.Animator == b.Animator &&
+                a.Skin == b.Skin && a.Mesh == b.Mesh;
+        }
+
+        // Preserve independent spring/ownership state across scan order changes
+        // and other actors entering/leaving. Restore only removed/replaced bindings.
+        private static void ContactReconcile(ContactTarget[] selected, int count)
+        {
+            bool[] retained = new bool[contactCount];
+            bool changed = count != contactCount;
+            for (int i = 0; i < count; ++i)
+            {
+                int previous = -1;
+                for (int j = 0; j < contactCount; ++j)
+                    if (!retained[j] && ContactSameBinding(selected[i], contactTargets[j]))
+                    { previous = j; break; }
+                if (previous >= 0)
+                { retained[previous] = true; selected[i] = contactTargets[previous]; }
+                else changed = true;
+            }
+            for (int i = 0; i < contactCount; ++i) if (!retained[i])
+            { ContactRestoreOne(i); changed = true; }
+            contactTargets = selected; contactCount = count;
+            if (changed) ++contactBindings;
         }
 
         public static void ServiceContact(ref int status)
@@ -333,19 +382,14 @@ namespace GF2.Private
                 }
                 // A live binding needs no periodic hierarchy search. Callback
                 // validation schedules a cold rebind after target loss/swap.
-                if (!contactNeedsRebind && contactCount != 0) { status = contactStatus; return; }
+                if (prepared.Kind != 5 && !contactNeedsRebind && contactCount != 0) { status = contactStatus; return; }
                 long now = Stopwatch.GetTimestamp();
                 double elapsed = ((double)now - contactServiceStamp) / Stopwatch.Frequency;
-                if (contactServiceStamp != 0 && elapsed >= 0 && elapsed < .5) { status = contactStatus; return; }
+                if (contactServiceStamp != 0 && elapsed >= 0 && elapsed < (prepared.Kind == 5 ? 1.0 : .5)) { status = contactStatus; return; }
                 contactServiceStamp = now;
                 int count;
                 ContactTarget[] selected = ContactFind(out count);
-                bool same = count == contactCount && contactTargets != null;
-                if (same) for (int i = 0; i < count; ++i)
-                    if (selected[i].Bone != contactTargets[i].Bone || selected[i].Parent != contactTargets[i].Parent ||
-                        selected[i].Skin != contactTargets[i].Skin || selected[i].Mesh != contactTargets[i].Mesh || selected[i].Actor != contactTargets[i].Actor)
-                    { same = false; break; }
-                if (!same) { ContactRestoreAll(); contactTargets = selected; contactCount = count; ++contactBindings; }
+                ContactReconcile(selected, count);
                 contactNeedsRebind = false;
                 contactStatus = status = count == 0 ? 2 : 1;
             }
@@ -398,8 +442,9 @@ namespace GF2.Private
             text.Append(",\"mask0_decay_frames\":").Append(contactMaskZero.ToString(CultureInfo.InvariantCulture)).Append(",\"invalid_resets\":").Append(contactInvalid.ToString(CultureInfo.InvariantCulture));
             text.Append(",\"generation_resets\":").Append(contactGenerationReset.ToString(CultureInfo.InvariantCulture)).Append(",\"hard_expiry_resets\":").Append(contactHardExpiry.ToString(CultureInfo.InvariantCulture));
             text.Append(",\"dt_resets\":").Append(contactDtReset.ToString(CultureInfo.InvariantCulture)).Append(",\"release_impulses\":").Append(contactImpulses.ToString(CultureInfo.InvariantCulture));
+            text.Append(",\"reported_targets\":").Append(Math.Min(contactCount, 64));
             text.Append(",\"bound_bones\":[");
-            for (int i = 0; i < contactCount; ++i)
+            for (int i = 0; i < Math.Min(contactCount, 64); ++i)
             {
                 if (i != 0) text.Append(',');
                 ContactTarget target = contactTargets[i];
