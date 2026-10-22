@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "releaseVersion": "1.2.0",
+  "change": "SOURCE_ONLY_CONDITIONAL_WRAPPER_COLLAPSE",
+  "instructionRevision": 1,
+  "profiles": [
+    {
+      "flavor": "Clean",
+      "buildId": "GF2VR-CLEAN-130-002",
+      "dllSha256": "8E27C9F22C825F98F888E1BBF8A6093E796AAD2175067034E923CFC4AF2F385B",
+      "localExactMatch": true,
+      "publicExactMatch": true,
+      "unchangedObjects": 15,
+      "offReferenceSha256": "2FBB1A7F6A936EFB6B48BDB9B626D02CCD6709B4EEE00D5930A817D563692598",
+      "off_reference_is_accepted_dll": false
+    },
+    {
+      "flavor": "Dirty",
+      "buildId": "GF2VR-DIRTY-130-ACT001",
+      "dllSha256": "5E3B52BDA6025DB2119DDAC065C8666D533ED3F699858B54384B5574AAEBFD67",
+      "localExactMatch": true,
+      "publicExactMatch": true,
+      "unchangedObjects": 15,
+      "offReferenceSha256": "2FBB1A7F6A936EFB6B48BDB9B626D02CCD6709B4EEE00D5930A817D563692598",
+      "off_reference_is_accepted_dll": false
+    }
+  ],
+  "currentSourceIdentity": "B572B3A249C1D91839B1BDA08A83FACE518C6BD409285223794420D18BF21C95",
+  "originalReleaseSourceIdentity": "8A63FB0FB878A80D7A27293F402924EA174D640BD2C08C62EE6C2652C36ABE16",
+  "originalReleaseMetadataAndDesktopContractsUnchanged": true,
+  "installedNativeIdsPreserved": true,
+  "gameLaunches": 0,
+  "hmdRunRequired": false,
+  "reason": "Exact accepted DLL bytes reproduced from both local collapsed frozen source and public source; no behavior candidate created"
+}

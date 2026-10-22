@@ -8,7 +8,7 @@
 
 `src/`와 루트 `build-native.ps1`, `native-build.json`은 과거1.0.x `BOOTSTRAP-FLEX-001`(`6215CEAF…`)의 역사적 재현 전용입니다. 이 트리의 Haoplay 전용 상수(예: `src/stereo/stereo_hooks.h:48`)는 현재 빌드에서 사용되지 않으며, `variants/common/src/stereo/stereo_hooks.h`의 런타임 유도 대상으로 대체되었습니다. 바이트 재현을 위해 기존 소스는 수정하지 않습니다.
 
-`variants/common/`의 `GF2VR_STEAM_COMPAT` 래퍼는 과거 참조 해시 재현을 위한 것으로, `#else` 분기는 배포 DLL에 포함되지 않습니다.
+현재 소스는 Steam 대응 ON 본문을 고정한 평문 소스입니다. 두 DLL은1.2.0과 바이트 단위로 동일합니다. [collapsed 소스 manifest](../release/common-source-manifest-1.2.0-collapsed.txt)에 새 소스 식별자를 기록하며, 기존1.2.0 manifest와 설치된 데스크톱 계약은 유지합니다.
 
 ## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
 

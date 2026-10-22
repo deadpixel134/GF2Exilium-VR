@@ -8,7 +8,7 @@
 
 `src/`以及根目录的`build-native.ps1`、`native-build.json`仅用于历史1.0.x `BOOTSTRAP-FLEX-001`（`6215CEAF…`）的精确复现。旧Haoplay专用常量（如`src/stereo/stereo_hooks.h:48`）不用于当前构建，已由`variants/common/src/stereo/stereo_hooks.h`中的运行时推导目标替代。为保持字节复现，不修改历史源码。
 
-`variants/common/`中的`GF2VR_STEAM_COMPAT`包装用于复现历史参考哈希，发行DLL不包含其`#else`分支。
+当前源码已固定为Steam支持ON分支的普通源码。两个DLL均与1.2.0逐字节一致。[collapsed源码manifest](../release/common-source-manifest-1.2.0-collapsed.txt)记录新的源码标识；保留原始1.2.0 manifest及已安装桌面组件契约。
 
 ## 1.2.0 — Steam支持与手部、接触兼容性修复
 
