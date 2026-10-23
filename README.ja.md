@@ -6,13 +6,17 @@ Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-GF2 Exilium を VR で楽しむための非公式 MOD です。
+GF2 Exilium を VR ヘッドセットとコントローラーで楽しむための非公式 MOD です。通常のメニューは仮想スクリーン、対応する 3D シーンは立体 VR で表示します。
 
 **Haoplay版とSteam版の両方に対応しています。** 両プラットフォームで同じClean・Dirtyパッケージを使用します。
 
 **[正式版 1.2.0 をダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
+
+## できること
+
+頭の動きで見回し、スティックで移動・回転、ポインターでクリックやドラッグができます。元のゲーム画面を手元の補助パネルで開けます。画質・ワールドの大きさ・立体感・操作を設定でき、Dirty には対応キャラクターの胸・臀部への接触、振動・揺れの設定が加わります。
 
 ## 貢献者
 
@@ -22,9 +26,13 @@ GF2 Exilium を VR で楽しむための非公式 MOD です。
 
 Clean・Dirtyの両方が3DMigotoの既定wrapperモードに対応します（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。ゲームのwrapperを保持し、VRコピーとOpenXRには実際のD3D11デバイス/contextを使用します。DLLと一致する設定アプリ・インストーラーを同梱します。
 
-[System] の `hook` を省略またはコメントアウトした既定 wrapper モードを使用してください。`hook=recommended` と `hook=all` は対応範囲外です。`calls`・`crash` はログ/ダンプ用で、この修正に必須ではありません。スキンの INI 構文や重複ルール警告は別の問題です。
+[3DMigoto](docs/ja/3DMIGOTO_COMPATIBILITY.md)
 
-[3DMigoto](docs/ja/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](docs/ja/BUILD_VARIANT_METADATA.md)
+## 始める前の準備
+
+- 正常に起動する **Haoplay 版または Steam 版のゲーム**。ゲーム本体は含みません。
+- VR ヘッドセットとコントローラー、および接続済みの **SteamVR/OpenXR 環境**。
+- ゲーム内の **アンチエイリアスを OFF**。Quest 3・Galaxy XR で報告された左右の映像ずれの原因として確認されています。
 
 ## Clean と Dirty の違い
 
@@ -40,21 +48,30 @@ Clean・Dirtyの両方が3DMigotoの既定wrapperモードに対応します（[
 
 通常の VR のソース・バージョン・更新は両方で共通です。接触変形コードは Dirty のみで、Clean は単に機能をオフにしたものではなく実装を除外しています。
 
-- [GF2VR-Native-SelfContained-Clean-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
-- [GF2VR-Native-SelfContained-Dirty-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
-
 同時にインストールするのは一方だけです。どちらもゲーム実行ファイルの隣に同じ version.dll 一つを配置し、OpenXR ローダーや設定アプリなどの共通ファイルは vrmod 配下に配置します。元の GameAssembly.dll・UnityPlayer.dll・ゲームアセットは交換しません。両方ともゲームプロセス内で動くため、Clean という名称は非検知や安全を保証しません。
 
-## インストール・切替・削除
+## 初めてのインストール
 
-1. 希望する Clean または Dirty の ZIP 全体を新しいフォルダーに展開します。GitHub の Source code ZIP はインストーラーではありません。
-2. ゲーム・設定・インストーラーを終了し、新しい GF2VR.Installer.exe で GF2_Exilium.exe またはゲームフォルダーを選びます。パッケージは自動検出します。
-3. 種類とバージョンを確認してインストールします。Clean↔Dirty の切替も希望する ZIP のインストーラーで行います。
-4. 設定を開いて保存し、通常の方法でゲームを起動します。手の球表示は初期値オンで、「手の表示」から変更できます。
+1. [最新リリース](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)から **Clean または Dirty の ZIP を一つ**選び、新しいフォルダーにすべて展開します。`Source code` ZIP はインストール用ではありません。
+2. ゲームと既存の設定・インストーラーを終了します。展開した `GF2VR.Installer.exe` で `GF2_Exilium.exe` またはゲームフォルダーを選んでインストールします。
+3. **設定を開く**からオプションを保存します。SteamVR とヘッドセットを準備し、普段の方法でゲームを起動します。
 
-インストール・切替・削除ではユーザー設定を保持します。任意の touch_interaction.json は Dirty のみ使用します。削除時は記録された直前のインストールがあれば復元し、それ以外は所有ファイルだけを削除します。変更済み・所有権不明の DLL は上書きせず保持します。version.dll だけをコピーしたり、別パッケージのファイルを混ぜたりしないでください。
+[インストール・削除・復元](docs/ja/INSTALLATION.md) · [更新・種類の切り替え](docs/ja/UPDATE.md)
 
-## 検証範囲と制限
+## 基本操作
+
+| 操作 | 動作 |
+|---|---|
+| 左スティック | VR 視点の移動 |
+| 右スティック | 視野の回転。既定では一度に 30° ずつ回るスナップ方式 |
+| 右手のポインター | ゲーム画面の項目を指します。 |
+| 右手の Trigger または A | 指している項目をクリック |
+| 右手の B | 戻る・キャンセル |
+| 左手の Grip | 3D 画面で補助パネルを開閉 |
+
+[起動とすべての操作](docs/ja/USAGE.md) · [設定項目](docs/ja/SETTINGS.md)
+
+## 互換性と確認範囲
 
 実機確認はDirtyのHaoplay Main・Activityでの手表示と接触、およびSteam Mainでの起動と立体表示です。Steamの他の画面と新しいClean DLLのHMD動作は別途未確認です。
 
@@ -62,16 +79,18 @@ Clean・Dirtyの両方が3DMigotoの既定wrapperモードに対応します（[
 
 Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエイリアスが原因であると確認されました。VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。
 
-## ガイド
+## 詳しいガイド
 
-- [導入・削除・復元](docs/ja/INSTALLATION.md)
-- [操作](docs/ja/USAGE.md)
-- [設定](docs/ja/SETTINGS.md)
+- [インストール・削除・復元](docs/ja/INSTALLATION.md)
+- [起動とすべての操作](docs/ja/USAGE.md)
+- [設定項目](docs/ja/SETTINGS.md)
 - [更新](docs/ja/UPDATE.md)
-- [問題解決](docs/ja/TROUBLESHOOTING.md)
-- [変更履歴](docs/ja/RELEASE_NOTES.md)
-- [ダウンロード・内容](docs/ja/RELEASE_READINESS.md)
+- [トラブルシューティング](docs/ja/TROUBLESHOOTING.md)
+- [ダウンロードとファイル構成](docs/ja/RELEASE_READINESS.md)
 - [検証範囲](docs/ja/VERIFICATION.md)
+- [3DMigoto 互換性](docs/ja/3DMIGOTO_COMPATIBILITY.md)
+- [開発者向けビルド](docs/ja/BUILD_VARIANT_METADATA.md)
+- [変更履歴](docs/ja/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 - [ソース構成と利用条件](SOURCE_BOUNDARY.ja.md)
 
 > GF2VR は非公式ファンプロジェクトです。正規にインストールしたゲームが必要です。ゲームの商標・著作物の権利は各権利者に帰属します。

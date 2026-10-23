@@ -2,23 +2,22 @@
 
 [한국어](../ko/3DMIGOTO_COMPATIBILITY.md) | [English](../en/3DMIGOTO_COMPATIBILITY.md) | [日本語](../ja/3DMIGOTO_COMPATIBILITY.md) | [简体中文](../zh-CN/3DMIGOTO_COMPATIBILITY.md)
 
-1.1.3 は PR #1 の 3DMigoto 既定 wrapper モードとの互換性変更を Clean・Dirty の両方に反映します。ゲームの wrapper を保持し、VR コピーと OpenXR には実際の D3D11 デバイス/context を使用します。DLL と一致する設定アプリ・インストーラーを同梱します。
+[トップ](../../README.ja.md)
+
+Clean・Dirty ともに 3DMigoto の基本 wrapper モードに対応します。ゲーム wrapper は維持し、VR は実際の D3D11 device/context を使用します。VR だけの利用に 3DMigoto の追加導入は不要です。
 
 > **必須: VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。**
-
-## 1.2.0 — Steam対応と手・接触の互換性修正
-
-Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応します。ゲーム更新後に白い手の表示とキャラクター接触が失われる互換性問題を修正しました。Dirtyは活動層で同時に見える対応キャラクターを個別に扱います。Cleanには接触変形を含みません。
-
-実機確認はDirtyのHaoplay Main・Activityの手表示/接触とSteam Mainの起動・立体表示です。Steamの全画面と新しいClean DLLのHMD動作は別途未確認です。ゲーム内アンチエイリアシングをオフにしてください。
-
-正常な管理下の1.1.6は設定GUIの通知を承認して1.2.0へ更新できます。GitHub CLI・ログインは不要で、種類とユーザー設定を保持します。1.1.4以前または更新確認できない旧版では、希望するZIP全体を新しいフォルダーに展開し、付属のGF2VR.Installer.exeで一度インストールしてください。先にゲームを終了してください。
-
-リリース版は1.2.0です。内部nativeビルドIDの130は以前の未公開候補で実機確認した同一DLLの識別子です。通常のインストーラーは手動交換・所有権のないファイルを無断で上書きしません。
 
 ## 設定
 
 [System] の `hook` を省略またはコメントアウトした既定 wrapper モードを使用してください。`hook=recommended` と `hook=all` は対応範囲外です。`calls`・`crash` はログ/ダンプ用で、この修正に必須ではありません。スキンの INI 構文や重複ルール警告は別の問題です。
+
+## 確認範囲
+
+[rgbtl1248](https://github.com/rgbtl1248) による [PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1) に基づきます。Dirty 開発ビルドの VR・スキン同時実行報告と、パッケージの技術検証は区別します。全スキン・設定の組み合わせを保証しません。現在のゲーム/HMD 確認範囲は[検証案内](VERIFICATION.md)を参照してください。
+
+<details>
+<summary>開発者向け実装メモ</summary>
 
 ## 実装
 
@@ -30,10 +29,4 @@ Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応�
 
 DLL だけのコピーではデスクトップ側の整合性情報が一致しません。ZIP 全体を展開し、新しいインストーラーで更新してください。開発者は[メタデータ生成手順](BUILD_VARIANT_METADATA.md)を参照してください。診断 native_graphics_isolated=1 は wrapper/native のアドレス差、0 は一致を示し、互換性成功の判定ではありません。
 
-## 確認範囲
-
-PR 作者は Dirty 開発ビルドで 3 回連続起動し、VR とスキンの同時動作を確認したと報告しています。これは投稿者の記録であり、新しい 1.1.3 バイナリの HMD 受け入れ確認ではありません。本リリースでは両 native ビルド、実際の変更ソースを使う COM 同一性/失敗経路、デスクトップビルド、パッケージ整合性を検証します。新たなゲーム/HMD 実行は行っていません。
-
-Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエイリアスが原因であると確認されました。VR を使用する前に、ゲーム設定のアンチエイリアスをオフにしてください。
-
-貢献: [rgbtl1248](https://github.com/rgbtl1248)、[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)。
+</details>

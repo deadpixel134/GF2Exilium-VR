@@ -1,25 +1,16 @@
-# 変更した native ソースとデスクトップツールのビルド
+# 開発者向け native・デスクトップのビルド
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
-## 1.2.0 — Steam対応と手・接触の互換性修正
+[トップ](../../README.ja.md)
 
-Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応します。ゲーム更新後に白い手の表示とキャラクター接触が失われる互換性問題を修正しました。Dirtyは活動層で同時に見える対応キャラクターを個別に扱います。Cleanには接触変形を含みません。
+一般利用者は[完全インストール ZIP](RELEASE_READINESS.md)を使ってください。以下は DLL を再現・修正する開発者向けです。配布版の native ソースは `native-source/variants/common`、`native-source/src` は保存された旧ソースです。最初に[ソース構成](../../SOURCE_BOUNDARY.ja.md)を確認してください。
 
-実機確認はDirtyのHaoplay Main・Activityの手表示/接触とSteam Mainの起動・立体表示です。Steamの全画面と新しいClean DLLのHMD動作は別途未確認です。ゲーム内アンチエイリアシングをオフにしてください。
-
-正常な管理下の1.1.6は設定GUIの通知を承認して1.2.0へ更新できます。GitHub CLI・ログインは不要で、種類とユーザー設定を保持します。1.1.4以前または更新確認できない旧版では、希望するZIP全体を新しいフォルダーに展開し、付属のGF2VR.Installer.exeで一度インストールしてください。先にゲームを終了してください。
-
-リリース版は1.2.0です。内部nativeビルドIDの130は以前の未公開候補で実機確認した同一DLLの識別子です。通常のインストーラーは手動交換・所有権のないファイルを無断で上書きしません。
-
-## 1.1.4
-
-[1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)
-
+公開 1.2.0 の既存 native ビルド ID には 130 が残っています。配布 DLL と所有権を識別する既存 ID を変更しないでください。今後の新しい native 製品ビルドは予定公開版と ID を一致させ、対応するデスクトップ契約を再生成します。
 
 Configurator と Installer は native DLL のハッシュを厳密に検査します。検査を無効化せず、両 native ビルドが生成した同じメタデータを使用してください。Windows x64、PowerShell 7、Zig 0.16.0、Windows SDK が必要です。以下はリポジトリのルートで実行します。
 
-正式 1.1.4 ソースの既定ビルドは配布ハッシュの完全一致を要求します。意図的にソースを変更した開発時だけ -AllowSourceChanges を追加してください。新しい出力フォルダーで両方を一緒にビルドします。
+正式 1.2.0 ソースの既定ビルドは配布ハッシュの完全一致を要求します。意図的にソースを変更した開発時だけ -AllowSourceChanges を追加してください。新しい出力フォルダーで両方を一緒にビルドします。
 
 ```powershell
 ./native-source/variants/build-variants.ps1 -Flavor Both `
@@ -33,11 +24,11 @@ desktop-metadata に実 DLL の build ID/ハッシュを持つ VariantProfiles.g
 ```powershell
 $metadata = (Resolve-Path ./native-source/variants/build/desktop-metadata).Path
 $desktop = './desktop-source/vrmod/tools/build_desktop_private_runtime.ps1'
-& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.4 `
+& $desktop -Application Installer -BuildId SOURCE-INSTALLER-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata
-& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.4 `
+& $desktop -Application Configurator -BuildId SOURCE-CLEAN-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata -NativeFlavor Clean
-& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.4 `
+& $desktop -Application Configurator -BuildId SOURCE-DIRTY-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata -NativeFlavor Dirty
 ```
 

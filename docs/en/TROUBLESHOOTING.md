@@ -1,131 +1,37 @@
 # Troubleshooting
 
-[한국어](../ko/TROUBLESHOOTING.md) · [English](../en/TROUBLESHOOTING.md) · [日本語](../ja/TROUBLESHOOTING.md) · [简体中文](../zh-CN/TROUBLESHOOTING.md)
+[한국어](../ko/TROUBLESHOOTING.md) | [English](../en/TROUBLESHOOTING.md) | [日本語](../ja/TROUBLESHOOTING.md) | [简体中文](../zh-CN/TROUBLESHOOTING.md)
 
-## 1.2.0 — Steam support and hand/contact compatibility fixes
+[Home](../../README.en.md)
 
-Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
+## The eyes are misaligned or VR looks wrong
 
-Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Steam Main launch/stereo. All Steam contexts and the new Clean DLL have not received separate HMD acceptance. Turn OFF in-game anti-aliasing.
+First turn in-game **anti-aliasing OFF**. It caused reported eye misalignment on Quest 3 and Galaxy XR. Check SteamVR/OpenXR and the headset connection, fully close the game and launch it again.
 
-An intact managed 1.1.6 installation can update to 1.2.0 by approving the Settings GUI notification, without GitHub CLI or sign-in. Flavor and user settings are preserved. For 1.1.4 or earlier, or old clients unable to check updates, extract the entire desired ZIP into a fresh folder and run its GF2VR.Installer.exe once. Close the game first.
+## The game folder or installation package cannot be found
 
-The release version is 1.2.0. Internal native build IDs retaining 130 identify the exact validated DLLs from an earlier unpublished candidate. The normal Installer does not silently overwrite manually replaced or unowned files.
+Select `GF2_Exilium.exe` or its folder. Haoplay and Steam layouts are supported. Extract the full latest Clean/Dirty ZIP to a fresh folder and run its installer. A `Source code` ZIP or an installer copied on its own is not a complete package.
 
-## 1.1.6 — Automatic update fix
+## A file is modified or has no ownership record
 
-The settings GUI checks public GitHub releases at startup. Approve **Update** in the notification to download, verify and install. Starting with 1.1.6, GitHub CLI and sign-in are no longer required.
+The existing `version.dll` may differ from its installation record or belong to another mod. This is separate from a game-original hash error. An exact match to the incoming package can be adopted with a backup even without an old receipt, but different or unverified files remain protected. Keep files, records and backups; do not bypass integrity checks. Check the other mod’s removal instructions.
 
-Fixed rejection of new native builds by the old clients frozen allowlist. The client verifies release/file hashes, build flavor and current ownership; the verified incoming Installer owns final native validation, backups and installation. Clean/Dirty flavor and settings are preserved.
+## Input, the auxiliary panel or world grip does not work
 
-For 1.1.4 or earlier, extract the complete desired Clean/Dirty ZIP into a new folder and run its new GF2VR.Installer.exe once. Existing 1.1.5 installations with working update checks can use the GUI updater. Users whose old version lacks its required GitHub CLI also need this one-time ZIP installation. After installing 1.1.6, GUI updates need neither CLI nor sign-in.
+Focus the game window on the PC and check controller connections. Default left Grip toggles the 3D auxiliary panel; holding left Trigger uses WASD game control mode. Grip does not hide the normal 2D front panel. World grip defaults to OFF: enable it, choose an activation button and tracked hand, save and restart. See [full controls](USAGE.md).
 
-This release retains the exact 1.1.5 VR DLLs. Logging remains OFF by default; explicit ON and its permanent initial-cleanup exemption, panel and contact settings are preserved. Close the game and settings window before installation.
+## Saved settings, hands or contact do not take effect
 
-## 1.1.5 — Logging controls
+Save and restart the game. Importing a profile or restoring defaults also requires Save. Check hand visibility; contact requires Dirty and supported character bones. Toggling camera following with right-stick click changes the current session, not the saved startup value. See [settings](SETTINGS.md).
 
-Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
+## The image stutters or frame rate is low
 
-On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
+Check whether the PC view stalls too and which scenes trigger it. If it started after changing VR render scale, return to the last working value. Enable logs only for investigation and record the game, headset, connection and symptoms. A fixed frame rate is not guaranteed on every device.
 
-Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
+## Updating, Open settings or installation fails
 
-For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
+The current updater needs no CLI or login. For network or older-client problems, use the full-ZIP route in [updating](UPDATE.md). If Open settings is disabled, recheck the game location and complete package. Follow running-game/file-access messages. See [installation](INSTALLATION.md) for interrupted-operation recovery and previous-install restore.
 
-> **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
+## Information to include in a report
 
-1.1.3 delivers the default-wrapper 3DMigoto interoperability changes from PR #1 in both Clean and Dirty. Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
-
-## 1.1.1 — Clean / Dirty
-
-| Feature | Clean | Dirty |
-|---|---|---|
-| Ordinary VR, stereo, controller input and settings | Included | Included |
-| White spheres at both hand positions | Included | Included |
-| Character breast contact and deformation | Excluded | Included |
-
-Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
-
-Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
-
-The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
-
-The remaining detail is retained from earlier versions. Use the 1.1.1 download and verification scope above as current authority.
-
-
-First identify where the problem occurs. Settings saving, installation or updates, and the actual VR display or input each require different checks.
-
-## The game folder cannot be found
-
-Select the **folder containing GF2_Exilium.exe** or an installation folder containing it. The installer finds the executable through different folder names and nested layouts. If it finds several matches, select a narrower folder for the intended game. If the selected tree is too broad to search completely, choose a folder closer to the executable. Select only the game location in the installer. The extracted installation files are located automatically.
-
-## Package files are missing or installation is unavailable
-
-- Check that you have extracted the entire ZIP first.
-- Make sure you have not moved only the executable elsewhere.
-- Check that you are not using GitHub's source code ZIP as the installation package.
-- Use the installation ZIP from the [1.0.2 release](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.0.2). Original-game SHA-256, size or cache differences are nonblocking; corruption or hash mismatches in the product package still block installation.
-
-If files are missing or damaged, download the release ZIP again and fully extract it into a new folder. Do not modify files rejected by the installer to try to bypass its checks.
-
-## A file was modified or has no ownership record
-
-This is not an original-game version or SHA-256 error. The existing `version.dll` differs from its installation record, or has no record after a manual copy or lost receipt, so it was preserved. In 1.0.2, a file without a receipt can be installed over only when it exactly matches the current package's final installed file. It is backed up first and restored on removal. Different DLLs and modified files remain protected. Keep installation records and backups, and follow the existing mod's removal instructions. Receiptless files copied from an older release are not automatically adopted when their contents differ from the current package.
-
-## The headset view is missing or stutters periodically
-
-Check SteamVR/OpenXR and your headset connection, then fully close the game and restart it in your usual way. Checking whether the PC game view freezes at the same time can help narrow down the cause.
-
-If this began after increasing the quality scale, return to the last value that worked. Version 1.0.0 includes a fix for repeated camera-warning calls that caused periodic stuttering in Activity scenes. If it continues, report the scene, the interval between stutters, and whether the PC view, HMD or both are affected. A fixed frame rate is not guaranteed across devices.
-
-## The Open settings button is disabled
-
-A configurator matching the current game installation could not be found. Check the game folder and click **Refresh**. Copying only the configurator or installer separately may leave required companion files missing.
-
-If a launch path is provided, try opening it from that location. If the issue persists, check the error guidance rather than mixing program and package files.
-
-## Settings cannot be saved, or installation fails
-
-First make sure the game has fully closed. It may still be running even after its window has closed.
-
-For a numeric error, check that you have not entered units or other characters in the field. Use a period for decimals. If a value is too large or cannot be handled by the device, return to the previous value or default.
-
-For a file-access error, check that the displayed folder is correct and that another program is not using the file. If the operation stopped to protect modified files, back them up first and identify what changed.
-
-## Saved settings do not change the game
-
-Make sure you closed and restarted the game after saving. You must also click **Save** after importing a profile or selecting defaults.
-
-Camera following toggled with right stick click applies only to the current game session. Save it in the configurator to change the startup state for the next launch.
-
-## Auxiliary panel, clicking or stick controls behave unexpectedly
-
-1. Check that your controllers are connected correctly.
-2. Select the game window on your PC.
-3. Check whether you changed the movement/turning hands or panel/pointer hands in settings.
-4. If you are holding Trigger on the auxiliary-panel hand, release it. Holding it activates WASD game control mode.
-5. For snap turning, return the stick to the center before tilting it again.
-
-Use Grip on the panel hand to open and close the auxiliary panel in 3D scenes. This does not hide the front panel on normal 2D screens. See [Controls](USAGE.md).
-
-## World grip does not move the view
-
-The feature is off by default. Check that you enabled it, selected at least one activation button and at least one tracked hand, saved and restarted the game.
-
-If your combination gives priority to another panel or UI action, try the default right Grip and right-hand tracking. Release any button you were holding and press it again.
-
-## Updates cannot be checked
-
-Check your internet connection, GitHub CLI installation and login state, and whether a new official version actually exists. You can also download the ZIP directly from the public [releases page](https://github.com/deadpixel134/GF2Exilium-VR/releases) to update. The existing installation is retained if update checking fails. See [Updating](UPDATE.md).
-
-To upgrade from 1.0.0, download the 1.0.2 ZIP and use its included installer. If the old configurator rejects the package, this manual route preserves settings and installation records.
-
-## Installation was interrupted, or the new version has problems
-
-Close the game and reopen the installer with the same folder. Use **Recover interrupted operation** if an operation is pending. If problems appear after an update completes, check the instructions for restoring the previous version. See [Removal and recovery](INSTALLATION.md).
-
-## Reporting a problem
-
-Include the button you pressed, the sequence that caused the problem, the error message, your headset and connection method. For installation problems, the last entries in the operation log can help.
-
-Before sharing screenshots or files, check that they contain no account information or credentials. You do not need to send complete original game files.
+Include variant/version, Haoplay or Steam, headset/connection, affected screen, reproduction steps and exact error text. If needed, enable diagnostic logs and restart to collect them. Remove account/authentication information before sharing; do not send the entire game installation.

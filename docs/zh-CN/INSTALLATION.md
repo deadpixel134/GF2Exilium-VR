@@ -1,67 +1,35 @@
-# 安装、切换和移除
+# 安装、切换与卸载
 
 [한국어](../ko/INSTALLATION.md) | [English](../en/INSTALLATION.md) | [日本語](../ja/INSTALLATION.md) | [简体中文](../zh-CN/INSTALLATION.md)
 
-## 1.2.0 — Steam支持与手部、接触兼容性修复
+[首页](../../README.zh-CN.md)
 
-支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。
+## 开始前的准备
 
-实机验证范围为Dirty在Haoplay Main、Activity的手部显示/接触，以及Steam Main的启动和立体显示。尚未单独确认Steam全部场景及新Clean DLL的HMD表现。请关闭游戏内抗锯齿。
+- 可正常运行的 **Haoplay 或 Steam 版游戏**。不包含游戏本体。
+- VR 头显、控制器及已连接的 **SteamVR/OpenXR 环境**。
+- 游戏内**抗锯齿设为 OFF**。已确认其是 Quest 3、Galaxy XR 所报告双眼画面错位的原因。
 
-完整的受管理1.1.6安装可在设置GUI中批准更新通知，升级至1.2.0，无需GitHub CLI或登录，保留版本类型及用户设置。1.1.4及更早版本或无法检查更新的旧客户端，请将所需ZIP完整解压到新目录，运行附带的GF2VR.Installer.exe安装一次。请先关闭游戏。界面语言仍为韩语、英语和日语。
+## 选择安装包
 
-发行版本为1.2.0。内部native构建ID中的130用于标识此前未公开候选中经过验证的同一DLL。常规安装程序不会静默覆盖手动替换或不属于本产品的文件。
+在[最新发行版](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)的 **Assets** 中选择 Clean 或 Dirty 的完整 ZIP。常规 VR、输入和白色双手标记为两者共有；角色接触变形、接触振动仅 Dirty 包含。一次只安装一种。不要使用 GitHub 的 `Source code` ZIP。
 
-## 1.1.6 — 修复自动更新
+## 安装步骤
 
-设置GUI启动时检查公开GitHub发行版。批准通知中的 **更新** 后，将下载、校验并安装。从1.1.6开始，无需GitHub CLI或登录。
+1. 从[最新发行版](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)下载 **Clean 或 Dirty 的一个完整 ZIP**，全部解压到新文件夹。`Source code` ZIP 不是安装包。
+2. 关闭游戏及已有的设置程序、安装器。运行解压后的 `GF2VR.Installer.exe`，选择 `GF2_Exilium.exe` 或游戏文件夹并安装。
+3. 打开设置并保存选项。准备好 SteamVR 和头显后，按平常方式自行启动游戏。
 
-修复旧客户端使用固定白名单拒绝新构建的问题。客户端校验发行版与文件哈希、版本类型及当前文件归属，再由经过验证的新安装程序完成最终构建校验、备份和安装。保留Clean/Dirty类型与用户设置。
+## 安装的文件
 
-1.1.4及更早版本需要此次手动更新一次：将所选Clean/Dirty ZIP完整解压到新文件夹，并运行其中的新GF2VR.Installer.exe。更新检查正常的1.1.5环境可直接使用GUI更新。旧版所需GitHub CLI缺失的用户也需此次通过ZIP安装一次。安装1.1.6之后，GUI更新无需CLI或登录。
+`version.dll` 安装到游戏可执行文件旁，OpenXR 加载器、设置程序等公共文件放在 `vrmod` 下。不会替换原始 `GameAssembly.dll`、`UnityPlayer.dll` 或游戏资源。请保持完整安装包，不要单独移动程序、DLL 或混用不同安装包的文件。
 
-本版保留与1.1.5完全相同的VR DLL。保留日志默认关闭、明确开启设置及首次清理排除状态，以及面板和接触设置。安装前关闭游戏与设置窗口。界面语言仍为韩语、英语和日语。
+## 切换 Clean 与 Dirty
 
-## 1.1.5 — 日志记录设置
+将目标类型的最新完整 ZIP 解压到新文件夹，用其中的安装器选择相同游戏位置安装。不要叠加安装两种类型。兼容的用户设置会保留；Clean 不读取 Dirty 的可选 `touch_interaction.json`。
 
-Clean和Dirty均在设置GUI中新增 **诊断 → 自动记录日志**。默认 **关闭**，旧设置中缺少此项时也保持关闭。保存后重启游戏生效。设置程序的界面语言仍为韩语、英语和日语。
+## 卸载与恢复上一次安装
 
-首次更新安装时，仅为日志关闭的用户清理一次旧VR自动日志。**日志开启的用户保留已有日志，并排除在此次首次清理之外。** 之后改为关闭也不会延迟删除旧日志。保留设置、其他模组文件和手动收集的资料。
+关闭游戏，在安装器中选择相同游戏位置并查看卸载说明。有记录的上一次安装会被恢复，首次安装则只移除自有文件。用户设置和被修改或无法确认归属的文件会保留。不要先删除安装记录和备份。若有中断操作，请使用中断恢复。
 
-排查问题时再开启日志。开启后会继续追加到同一构建的日志文件，容量可能持续增加。
-
-更新1.1.5时，请将所选Clean或Dirty ZIP完整解压到新文件夹，并使用随附的新GF2VR.Installer.exe安装。旧设置程序可能拒绝新的native配置。保留已有设置。
-
-## 1.1.4
-
-更新至1.1.4：将Clean或Dirty ZIP完整解压到新文件夹，使用其中的GF2VR.Installer.exe选择现有游戏位置安装。旧版1.1.3设置程序无法验证新的native配置，因此此次请使用新ZIP内的安装程序。保留已有设置。请勿只复制DLL或混用包文件。
-
-两个版本均可设置辅助面板的朝向用户、位置、旋转、画面倾斜和最大尺寸。Dirty增加角色接触振动，以及胸部、臀部分别调整的晃动设置。
-
-
-> **使用 VR 前必须在游戏设置中关闭抗锯齿。**
-
-更新至 1.1.3：将完整的 Clean 或 Dirty ZIP 解压到新文件夹，使用其中的 GF2VR.Installer.exe 选择现有游戏位置安装。旧 1.1.2 设置程序无法验证新的 native 配置，因此会拒绝自动暂存并保留当前安装。请勿只复制 DLL 或混用包文件。
-
-1.1.3 将 PR #1 的 3DMigoto 默认 wrapper 模式兼容性修改同时提供给 Clean 和 Dirty。保留游戏 wrapper，VR 复制与 OpenXR 使用实际 D3D11 设备/context。DLL 随附匹配的设置程序与安装程序元数据。
-
-
-- [GF2VR-Native-SelfContained-Clean-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-- [GF2VR-Native-SelfContained-Dirty-1.1.3.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.1.3)
-
-| 功能 | Clean | Dirty |
-|---|---|---|
-| 常规 VR、立体画面、控制器输入和设置 | 包含 | 包含 |
-| 双手位置的白色球体 | 包含 | 包含 |
-| 角色胸部接触与变形 | 不包含 | 包含 |
-
-1. 将所需 Clean 或 Dirty ZIP 完整解压到新文件夹。GitHub 的 Source code ZIP 不是安装包。
-2. 关闭游戏、设置和安装程序。运行新文件夹中的 GF2VR.Installer.exe，选择 GF2_Exilium.exe 或游戏文件夹。程序会自动找到随附安装包。
-3. 确认版本类型和版本号后安装。Clean↔Dirty 切换也使用所需 ZIP 中的新安装程序。
-4. 打开设置并保存，然后按平时方式自行启动游戏。手部球体默认开启，可在手部显示页面修改。
-
-一次只安装一个版本。两者都在游戏可执行文件旁使用同一个 version.dll，OpenXR 加载器和设置程序等公共支持文件安装在 vrmod 下。不替换原有 GameAssembly.dll、UnityPlayer.dll 或游戏资源。两者均在游戏进程中运行，Clean 名称不代表不会被检测或保证安全。
-
-安装、切换和移除均保留用户设置。可选 touch_interaction.json 仅由 Dirty 使用。移除时如有记录的上一安装则恢复，否则仅删除本工具拥有的文件。已修改或归属不明的 DLL 会被保留并拒绝覆盖。不要单独复制 version.dll，也不要混用不同安装包的文件。
-
-已确认 Quest 3 和 Galaxy XR 所报告的左右画面错位由抗锯齿导致。使用 VR 前，请在游戏设置中关闭抗锯齿。
+[更新](UPDATE.md) · [故障排除](TROUBLESHOOTING.md)

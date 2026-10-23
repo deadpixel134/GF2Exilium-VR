@@ -1,76 +1,8 @@
 # Using the configurator
 
-[한국어](../ko/SETTINGS.md) · [English](../en/SETTINGS.md) · [日本語](../ja/SETTINGS.md) · [简体中文](../zh-CN/SETTINGS.md)
+[한국어](../ko/SETTINGS.md) | [English](../en/SETTINGS.md) | [日本語](../ja/SETTINGS.md) | [简体中文](../zh-CN/SETTINGS.md)
 
-## 1.2.0 — Steam support and hand/contact compatibility fixes
-
-Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
-
-Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Steam Main launch/stereo. All Steam contexts and the new Clean DLL have not received separate HMD acceptance. Turn OFF in-game anti-aliasing.
-
-An intact managed 1.1.6 installation can update to 1.2.0 by approving the Settings GUI notification, without GitHub CLI or sign-in. Flavor and user settings are preserved. For 1.1.4 or earlier, or old clients unable to check updates, extract the entire desired ZIP into a fresh folder and run its GF2VR.Installer.exe once. Close the game first.
-
-The release version is 1.2.0. Internal native build IDs retaining 130 identify the exact validated DLLs from an earlier unpublished candidate. The normal Installer does not silently overwrite manually replaced or unowned files.
-
-## 1.1.6 — Automatic update fix
-
-The settings GUI checks public GitHub releases at startup. Approve **Update** in the notification to download, verify and install. Starting with 1.1.6, GitHub CLI and sign-in are no longer required.
-
-Fixed rejection of new native builds by the old clients frozen allowlist. The client verifies release/file hashes, build flavor and current ownership; the verified incoming Installer owns final native validation, backups and installation. Clean/Dirty flavor and settings are preserved.
-
-For 1.1.4 or earlier, extract the complete desired Clean/Dirty ZIP into a new folder and run its new GF2VR.Installer.exe once. Existing 1.1.5 installations with working update checks can use the GUI updater. Users whose old version lacks its required GitHub CLI also need this one-time ZIP installation. After installing 1.1.6, GUI updates need neither CLI nor sign-in.
-
-This release retains the exact 1.1.5 VR DLLs. Logging remains OFF by default; explicit ON and its permanent initial-cleanup exemption, panel and contact settings are preserved. Close the game and settings window before installation.
-
-## 1.1.5 — Logging controls
-
-Added **Diagnostics → Automatically record logs** to the settings GUI in both Clean and Dirty. The default is **OFF**, including when older settings omit this option. Save and restart the game to apply.
-
-On the first update installation, previous automatic VR logs are cleaned once for users with logging OFF. **Users with logging ON keep their existing logs and are excluded from this initial cleanup.** Switching OFF later does not trigger a deferred deletion. Settings, other mods and manually collected evidence are preserved.
-
-Enable logging when troubleshooting. With logging ON, the same build log is appended and may grow over time.
-
-For 1.1.5, extract the entire desired Clean or Dirty ZIP into a new folder and use its new GF2VR.Installer.exe. Older settings programs may reject the new native profile. Existing settings are preserved.
-
-## 1.1.4
-
-### Auxiliary panel — common
-
-Choose Face the viewer and Apply manual angles while facing viewer independently. With manual-angle application off, yaw/pitch/roll and screen tilt apply only when Face the viewer is off; inactive values are retained. Position and maximum width/height always apply. The panel preserves its aspect ratio within both size limits.
-
-Defaults: Face the viewer ON, apply manual angles while facing OFF. Position X/Y/Z = 0 / -0.10 / 0.01m; pitch/yaw/roll = -67 / 3 / 0 degrees; screen tilt 45 degrees; maximum width and height 0.66m each.
-
-Position follows the controller local axes. In the observed held pose, +X is right / +Y forward / +Z up; the axes rotate with your hand. Screen tilt uses the final screen horizontal axis: positive upward, negative downward. Existing settings without an auxiliaryPanel object retain the previous layout until panel settings or defaults are applied.
-
-### Contact feedback — Dirty
-
-The Hands tab controls contact-vibration strength and duration. It pulses once at initial contact and rearms after full separation. Defaults are 15% / 30ms; zero disables vibration.
-
-The Contact jiggle tab provides separate breast/buttock controls. Values below are strength / duration / range / tilt / stretch.
-
-| Region | Defaults |
-|---|---|
-| Breasts | 40% / 0.4x / 75% / 50% / 45% |
-| Buttocks | 120% / 0.5x / 120% / 120% / 140% |
-
-Explicit saved values are preserved; regional values override legacy common values. Arbitrary upper limits are removed while finite-number, positive-duration and positive-compression-scale checks remain. Restart the game after saving.
-
-## 1.1.1 — Clean / Dirty
-
-| Feature | Clean | Dirty |
-|---|---|---|
-| Ordinary VR, stereo, controller input and settings | Included | Included |
-| White spheres at both hand positions | Included | Included |
-| Character breast contact and deformation | Excluded | Included |
-
-Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
-
-Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
-
-The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
-
-The remaining detail is retained from earlier versions. Use the 1.1.4 download and verification scope above as current authority.
-
+[Home](../../README.en.md)
 
 Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語** buttons at the bottom; your selection is remembered.
 
@@ -88,6 +20,23 @@ Changing a number in the settings window does not immediately apply it to a runn
 **VR render resolution scale** controls the resolution used to draw the VR view. Higher values can make it sharper, but increase performance and memory demands. Lower values can make it blurrier. This setting does not change the resolution of the PC screen or auxiliary panel.
 
 The default is 1.0. If a problem occurs, return to a value that previously worked. The same value may not work on every device. Visual effects use the game's defaults; individual effect on/off controls are not provided.
+
+## World scale
+
+**World scale multiplier** adjusts how large the world around you feels. **1 means 100%, 2 means 200%, and 0.5 means 50%.** Enter 2 for 200%.
+
+| Setting | Description |
+|---|---|
+| World scale multiplier | Adjusts the size of the world. Start with small changes from the default of 1. |
+| Link Stereo Depth to world scale | Automatically adjusts the in-game separation of the two eyes to match world scale. On by default. |
+| Stereo Depth / eye separation multiplier | Manually adjusts in-game eye separation, which controls stereo depth. While automatic linking is enabled, it only displays the current value and cannot be edited. |
+| Link movement speed to world scale | Makes movement proportionally faster when the world is larger and slower when it is smaller. On by default. |
+
+Turning off automatic eye-separation linking lets you adjust it manually, starting from the value calculated at that point. Turning it back on calculates it automatically from the current world scale. This setting does not replace your headset's physical eye-spacing adjustment.
+
+Turning off movement-speed linking preserves the base speed and manual multiplier in the **Movement and turning** tab. Only the automatic adjustment for world scale is removed.
+
+The **Head movement** readout at the bottom shows head movement compensated for world scale. It is not stick movement speed and is not a separate input field.
 
 ## Movement and turning
 
@@ -120,6 +69,31 @@ Select at least one activation button and at least one tracked hand. The default
 
 On the auxiliary-panel hand, Grip gives priority to opening and closing the panel, and Trigger is used for game control mode. On the pointer hand, Trigger gives priority to UI controls. The default right Grip combination is an easier starting point for learning how the feature works.
 
+## Hand markers
+
+White spherical markers for both hands are shared by Clean and Dirty and enabled by default. Adjust them in the hand display tab. Clean does not include character deformation.
+
+## Auxiliary panel — common
+
+Choose Face the viewer and Apply manual angles while facing viewer independently. With manual-angle application off, yaw/pitch/roll and screen tilt apply only when Face the viewer is off; inactive values are retained. Position and maximum width/height always apply. The panel preserves its aspect ratio within both size limits.
+
+Defaults: Face the viewer ON, apply manual angles while facing OFF. Position X/Y/Z = 0 / -0.10 / 0.01m; pitch/yaw/roll = -67 / 3 / 0 degrees; screen tilt 45 degrees; maximum width and height 0.66m each.
+
+Position follows the controller local axes. In the observed held pose, +X is right / +Y forward / +Z up; the axes rotate with your hand. Screen tilt uses the final screen horizontal axis: positive upward, negative downward. Existing settings without an auxiliaryPanel object retain the previous layout until panel settings or defaults are applied.
+
+## Contact feedback — Dirty
+
+The Hands tab controls contact-vibration strength and duration. It pulses once at initial contact and rearms after full separation. Defaults are 15% / 30ms; zero disables vibration.
+
+The Contact jiggle tab provides separate breast/buttock controls. Values below are strength / duration / range / tilt / stretch.
+
+| Region | Defaults |
+|---|---|
+| Breasts | 40% / 0.4x / 75% / 50% / 45% |
+| Buttocks | 120% / 0.5x / 120% / 120% / 140% |
+
+Explicit saved values are preserved; regional values override legacy common values. Arbitrary upper limits are removed while finite-number, positive-duration and positive-compression-scale checks remain. Restart the game after saving.
+
 ## Activity UI
 
 Turning off **Show Activity UI in the main view** hides the Activity UI overlaid on the main VR view. The 3D view and auxiliary panel showing the original game screen remain available.
@@ -137,22 +111,11 @@ Changing the panel hand also moves its panel Grip and game-control-mode Trigger 
 
 The **X/A → F, Y/B → Escape** inputs in game control mode are separate from the normal click/Back swap.
 
-## World scale
+## Diagnostics and logging
 
-**World scale multiplier** adjusts how large the world around you feels. **1 means 100%, 2 means 200%, and 0.5 means 50%.** Enter 2 for 200%.
+**Diagnostics → Automatic logging** defaults to OFF. Enable it when investigating an issue, save, and restart the game. With logging ON, files keep growing.
 
-| Setting | Description |
-|---|---|
-| World scale multiplier | Adjusts the size of the world. Start with small changes from the default of 1. |
-| Link Stereo Depth to world scale | Automatically adjusts the in-game separation of the two eyes to match world scale. On by default. |
-| Stereo Depth / eye separation multiplier | Manually adjusts in-game eye separation, which controls stereo depth. While automatic linking is enabled, it only displays the current value and cannot be edited. |
-| Link movement speed to world scale | Makes movement proportionally faster when the world is larger and slower when it is smaller. On by default. |
-
-Turning off automatic eye-separation linking lets you adjust it manually, starting from the value calculated at that point. Turning it back on calculates it automatically from the current world scale. This setting does not replace your headset's physical eye-spacing adjustment.
-
-Turning off movement-speed linking preserves the base speed and manual multiplier in the **Movement and turning** tab. Only the automatic adjustment for world scale is removed.
-
-The **Head movement** readout at the bottom shows head movement compensated for world scale. It is not stick movement speed and is not a separate input field.
+During an upgrade, eligible old automatic VR logs are cleaned once. An explicit ON setting preserves existing logs and permanently excludes them from that initial cleanup; switching OFF later does not delete those old logs. User settings, other mods and manually collected evidence are preserved.
 
 ## Save and profile buttons
 

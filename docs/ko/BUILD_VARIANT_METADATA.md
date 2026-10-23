@@ -1,25 +1,16 @@
-# 변경된 native 소스와 데스크톱 도구 빌드
+# 개발자용 native·데스크톱 빌드
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
-## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
+[처음으로](../../README.md)
 
-Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다. 게임 업데이트 후 흰색 손 표시와 캐릭터 접촉이 사라지던 호환성 문제를 수정했습니다. Dirty는 활동층에서 동시에 보이는 지원 캐릭터들을 각각 접촉 대상으로 처리합니다. Clean에는 접촉 변형이 포함되지 않습니다.
+일반 사용자는 [전체 설치 ZIP](RELEASE_READINESS.md)을 사용하세요. 아래는 DLL을 재현하거나 수정하는 개발자를 위한 절차입니다. 현재 배포판의 native 소스는 `native-source/variants/common`이며 `native-source/src`는 보존된 역사적 소스입니다. [소스 구성](../../SOURCE_BOUNDARY.md)을 먼저 확인하세요.
 
-실기 확인 범위는 Dirty의 Haoplay Main·Activity 손 표시/접촉과 Steam Main 실행·입체 화면입니다. Steam의 모든 화면과 Clean의 새 DLL 실기는 별도로 확인되지 않았습니다. 게임 내 안티앨리어싱은 OFF로 설정하세요.
-
-정상적인 1.1.6 관리 설치는 설정 GUI의 업데이트 알림에서 승인해 1.2.0으로 업데이트할 수 있습니다. GitHub CLI·로그인이 필요하지 않으며 Clean·Dirty 종류와 사용자 설정을 유지합니다. 1.1.4 이하 또는 구버전 업데이트 확인이 안 되는 환경은 원하는 ZIP 전체를 새 폴더에 풀고 포함된 GF2VR.Installer.exe로 한 번 설치하세요. 게임을 종료한 뒤 진행하세요.
-
-릴리즈 버전은 1.2.0입니다. 이전 미공개 후보의 내부 native 빌드 ID에 남은 130은 동일한 검증 DLL의 식별자입니다. 일반 설치 도구는 수동 교체되거나 소유권이 없는 파일을 자동 덮어쓰지 않습니다.
-
-## 1.1.4
-
-[1.1.4 native metadata](../../release/1.1.4-native-metadata.json) · [Source manifest](../../source-manifest.json)
-
+공개 1.2.0의 기존 native 빌드 ID에는 130이 남아 있습니다. 배포 DLL과 설치 소유권을 식별하는 기존 ID를 임의로 바꾸지 마세요. 이후 새 native 제품 빌드는 예정 공개 버전과 ID를 맞추고 데스크톱 계약도 함께 생성해야 합니다.
 
 Configurator와 Installer는 native DLL 해시를 엄격히 검사합니다. 검사 조건을 끄지 말고 두 native 빌드에서 생성한 동일한 메타데이터를 사용하세요. Windows x64, PowerShell 7, Zig 0.16.0과 Windows SDK가 필요합니다. 아래 명령은 저장소 루트에서 실행합니다.
 
-정식 1.1.4 소스의 기본 빌드는 배포 해시와 정확히 일치해야 합니다. 의도적으로 소스를 바꾼 개발 빌드에만 -AllowSourceChanges를 추가하세요. 새 출력 폴더를 사용하고 두 종류를 함께 빌드하세요.
+정식 1.2.0 소스의 기본 빌드는 배포 해시와 정확히 일치해야 합니다. 의도적으로 소스를 바꾼 개발 빌드에만 -AllowSourceChanges를 추가하세요. 새 출력 폴더를 사용하고 두 종류를 함께 빌드하세요.
 
 ```powershell
 ./native-source/variants/build-variants.ps1 -Flavor Both `
@@ -33,11 +24,11 @@ desktop-metadata에는 실제 DLL의 build ID/해시를 담은 VariantProfiles.g
 ```powershell
 $metadata = (Resolve-Path ./native-source/variants/build/desktop-metadata).Path
 $desktop = './desktop-source/vrmod/tools/build_desktop_private_runtime.ps1'
-& $desktop -Application Installer -BuildId SOURCE-INSTALLER-113 -ProductVersion 1.1.4 `
+& $desktop -Application Installer -BuildId SOURCE-INSTALLER-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata
-& $desktop -Application Configurator -BuildId SOURCE-CLEAN-113 -ProductVersion 1.1.4 `
+& $desktop -Application Configurator -BuildId SOURCE-CLEAN-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata -NativeFlavor Clean
-& $desktop -Application Configurator -BuildId SOURCE-DIRTY-113 -ProductVersion 1.1.4 `
+& $desktop -Application Configurator -BuildId SOURCE-DIRTY-120 -ProductVersion 1.2.0 `
     -NativeMetadataRoot $metadata -NativeFlavor Dirty
 ```
 

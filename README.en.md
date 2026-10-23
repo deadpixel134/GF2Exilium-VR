@@ -6,7 +6,7 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 [한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-An unofficial mod for playing GF2 Exilium in VR.
+An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
 **Compatible with both the Haoplay and Steam versions.** Both platforms use the same Clean/Dirty packages.
 
@@ -14,17 +14,25 @@ An unofficial mod for playing GF2 Exilium in VR.
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
+## What does it do?
+
+Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
+
 ## Contributors
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
 
 ## 3DMigoto compatibility
 
-Both Clean and Dirty support the default 3DMigoto wrapper mode ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)). Game wrappers remain intact; VR copies and OpenXR use the native D3D11 device/context. Matching Configurator and Installer metadata ships with the DLLs.
+Both Clean and Dirty support the default 3DMigoto wrapper mode ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
 
-Use the default wrapper mode, with the [System] `hook` entry omitted or commented out. `hook=recommended` and `hook=all` are outside the supported configuration. `calls` and `crash` control logging/dumps and are not required by this fix. Skin INI syntax and duplicate-rule warnings are separate issues.
+[3DMigoto](docs/en/3DMIGOTO_COMPATIBILITY.md)
 
-[3DMigoto](docs/en/3DMIGOTO_COMPATIBILITY.md) · [Build metadata](docs/en/BUILD_VARIANT_METADATA.md)
+## Before you start
+
+- A working **Haoplay or Steam installation** of the game. The game is not included.
+- A VR headset and controllers with a working **SteamVR/OpenXR connection**.
+- In-game **anti-aliasing OFF**. It was identified as the cause of reported eye misalignment on Quest 3 and Galaxy XR.
 
 ## Choose Clean or Dirty
 
@@ -40,21 +48,30 @@ Contact works when the character's supported bones for that region are bound. Su
 
 Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
 
-- [GF2VR-Native-SelfContained-Clean-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
-- [GF2VR-Native-SelfContained-Dirty-1.2.0.zip](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)
-
 Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
 
-## Install, switch and remove
+## First installation
 
-1. Fully extract the desired Clean or Dirty ZIP into a fresh folder. GitHub Source code archives are not installers.
-2. Close the game, Configurator and Installer. Run GF2VR.Installer.exe from the new folder and select GF2_Exilium.exe or the game folder. The bundled package is found automatically.
-3. Confirm the variant and version, then install. To switch Clean↔Dirty, use the Installer from the desired ZIP.
-4. Open Settings, save, and start the game through your normal route. Hand spheres default to enabled and can be changed in the Hands tab.
+1. Download **one Clean or Dirty ZIP** from the [latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest) and extract the entire archive to a fresh folder. The `Source code` ZIP is not an installer package.
+2. Close the game and any existing configurator/installer. Run the extracted `GF2VR.Installer.exe`, select `GF2_Exilium.exe` or the game folder, and install.
+3. Open settings and save your options. Prepare SteamVR and your headset, then launch the game through your usual method.
 
-Installation, switching and removal preserve user settings. Optional touch_interaction.json is used only by Dirty. Remove restores a recorded previous installation when available; otherwise it removes only owned files. Modified or unowned DLLs are preserved and refused. Do not copy version.dll alone or mix files from different packages.
+[Installation, removal and restore](docs/en/INSTALLATION.md) · [Updates and variant switching](docs/en/UPDATE.md)
 
-## Verification and limits
+## Default controls
+
+| Control | Action |
+|---|---|
+| Left stick | Move the VR viewpoint |
+| Right stick | Turn the view. The default is snap turning in 30° steps. |
+| Right-hand pointer | Point at items on the game screen. |
+| Right Trigger or A | Click the pointed item |
+| Right B | Back / cancel |
+| Left Grip | Open or close the auxiliary panel in 3D scenes |
+
+[Startup and full controls](docs/en/USAGE.md) · [Settings](docs/en/SETTINGS.md)
+
+## Compatibility and verification
 
 Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Dirty launch/stereo in Steam Main. Other Steam contexts and the new Clean DLL have not received separate HMD validation.
 
@@ -62,16 +79,18 @@ Previously tested setup: Meta Quest 2 · 4K monitor · Virtual Desktop.
 
 The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
 
-## Guides
+## Detailed guides
 
-- [Installation, removal and restoration](docs/en/INSTALLATION.md)
-- [Controls](docs/en/USAGE.md)
+- [Install, remove and restore](docs/en/INSTALLATION.md)
+- [Startup and full controls](docs/en/USAGE.md)
 - [Settings](docs/en/SETTINGS.md)
-- [Updates](docs/en/UPDATE.md)
+- [Updating](docs/en/UPDATE.md)
 - [Troubleshooting](docs/en/TROUBLESHOOTING.md)
-- [Release notes](docs/en/RELEASE_NOTES.md)
-- [Downloads and contents](docs/en/RELEASE_READINESS.md)
-- [Verification](docs/en/VERIFICATION.md)
+- [Downloads and package files](docs/en/RELEASE_READINESS.md)
+- [Verification scope](docs/en/VERIFICATION.md)
+- [3DMigoto compatibility](docs/en/3DMIGOTO_COMPATIBILITY.md)
+- [Developer build guide](docs/en/BUILD_VARIANT_METADATA.md)
+- [Release history](docs/en/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
 - [Source boundary and terms](SOURCE_BOUNDARY.en.md)
 
 > GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.
