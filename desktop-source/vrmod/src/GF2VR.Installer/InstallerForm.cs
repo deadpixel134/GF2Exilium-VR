@@ -3,6 +3,8 @@ namespace GF2VR.Installer;
 internal sealed class InstallerForm : Form
 {
     private readonly InstallationEngine engine = new();
+    private readonly bool settingsOnly;
+    private readonly Button protectSettings = new() { AutoSize = true, MinimumSize = new Size(115, 36), Tag = "protectSettings" };
     private readonly TextBox root = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right, ReadOnly = true };
     private readonly string packageRoot;
     private readonly Label bundleNotice = new() { Dock = DockStyle.Fill, AutoSize = false, TextAlign = ContentAlignment.MiddleLeft };
@@ -28,9 +30,9 @@ internal sealed class InstallerForm : Form
     private int progressTotal, progressCurrent, operationSerial;
     private string statusKey = "ready";
 
-    internal InstallerForm(string gameRoot, string? packageRoot, string? smokeFolder = null, bool verifyWorkflow = false)
+    internal InstallerForm(string gameRoot, string? packageRoot, string? smokeFolder = null, bool verifyWorkflow = false, bool settingsMaintenance = false)
     {
-        smoke = smokeFolder; smokeWorkflow = verifyWorkflow;
+        smoke = smokeFolder; smokeWorkflow = verifyWorkflow; settingsOnly = settingsMaintenance;
         if (verifyWorkflow && smokeFolder == null) throw new InvalidDataException("Workflow validation requires an inert GUI fixture");
         Font = new Font("Segoe UI", 10); ClientSize = new Size(1080, 860); MinimumSize = new Size(1000, 780);
         AutoScaleMode = AutoScaleMode.Dpi; StartPosition = FormStartPosition.CenterScreen; BackColor = Color.FromArgb(244, 247, 251); Icon = SystemIcons.Application;
@@ -66,7 +68,13 @@ internal sealed class InstallerForm : Form
         var advice = Label("policy"); advice.AutoSize = false; advice.Dock = DockStyle.Fill; advice.ForeColor = Color.FromArgb(71, 87, 110);
         advice.Font = new Font(Font.FontFamily, 9); advice.Margin = new Padding(4, 10, 4, 5); layout.Controls.Add(advice, 0, 6);
         var footer = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, WrapContents = false, Padding = new Padding(0, 8, 0, 0) };
-        texts.AddRange([install, remove, recover, openSettings]); operations.AddRange([install, remove, recover, openSettings]);
+        texts.AddRange([install, remove, recover, openSettings, protectSettings]); operations.AddRange([install, remove, recover, openSettings, protectSettings]);
+        protectSettings.Click += async (_, _) =>
+        {
+            string chosenRoot = root.Text;
+            if (!Confirm(InstallerText.Get("confirmProtectSettings"))) return;
+            await Run(() => engine.ReverifySettings(chosenRoot), "settingsVerified", 0);
+        };
         install.Click += async (_, _) =>
         {
             var chosen = plan;
@@ -89,7 +97,7 @@ internal sealed class InstallerForm : Form
             try { if (settings == null) throw new InstallError("settingsUnavailable"); SettingsLaunch.Open(settings, engine); SetStatus("settingsOpened"); }
             catch (Exception ex) { DisplayError(ex, true); Inspect(false); }
         };
-        footer.Controls.AddRange([install, remove, recover, openSettings, Button("inspect", (_, _) => Inspect())]);
+        footer.Controls.AddRange([install, remove, recover, openSettings, protectSettings, Button("inspect", (_, _) => Inspect())]);
         layout.Controls.Add(footer, 0, 7); layout.Controls.Add(status, 0, 8);
         FormClosing += (_, e) => { if (busy) e.Cancel = true; };
         Translate(); Inspect(); if (smoke != null) Shown += (_, _) => Smoke(details);
@@ -135,16 +143,17 @@ internal sealed class InstallerForm : Form
     private void RefreshDisplay()
     {
         bundleNotice.Text = InstallerText.Get("antiAliasingRequired") + Environment.NewLine +
-            InstallerText.Get(packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
+            InstallerText.Get(settingsOnly ? "settingsMaintenanceHelp" : packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
         summary.Text = InstallerText.Format("summary", plan == null ? InstallerText.Get("unavailable") : VariantVersion(plan.Package.Version, plan.Package.Native?.BuildFlavor), receipt == null ? InstallerText.Get("noReceipt") : VariantVersion(receipt.Version, receipt.BuildFlavor),
-            (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
+            settingsOnly ? InstallerText.Get("settingsMaintenanceScope") : (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
         files.Items.Clear(); foreach (var file in plan?.Package.Files ?? receipt?.Files ?? [])
             files.Items.Add(new ListViewItem([file.Path, InstallerText.Get(plan == null ? "ownedAction" : receipt == null ? "newAction" : "updateAction")]));
         install.Tag = receipt == null ? "install" : plan?.Package.Version == receipt.Version ? "reinstall" : "updateInstall";
         remove.Tag = hasPrevious ? "rollback" : "remove";
         install.Text = InstallerText.Get((string)install.Tag); remove.Text = InstallerText.Get((string)remove.Tag);
-        install.Enabled = !busy && !pending && plan != null; remove.Enabled = !busy && !pending && receiptHash != null;
-        recover.Enabled = !busy && pending; openSettings.Enabled = !busy && !pending && settings != null;
+        install.Enabled = !settingsOnly && !busy && !pending && plan != null; remove.Enabled = !settingsOnly && !busy && !pending && receiptHash != null;
+        protectSettings.Enabled = !busy && !pending && receipt != null;
+        recover.Enabled = !settingsOnly && !busy && pending; openSettings.Enabled = !settingsOnly && !busy && !pending && settings != null;
     }
     private static string VariantVersion(string version, string? flavor) => flavor == null ? version : version + " (" + flavor + ")";
     private void Inspect(bool setReady = true)
@@ -158,8 +167,8 @@ internal sealed class InstallerForm : Form
             if (receipt != null && !pending) { hasPrevious = engine.HasPreviousVersion(root.Text); receiptHash = engine.ReceiptHash(root.Text); }
             try { settings = SettingsLaunch.Resolve(root.Text, engine); } catch (Exception ex) { AppendLog(InstallerText.Error(ex)); }
             bool available = !packageIncomplete;
-            if (!pending && available) plan = engine.Preview(root.Text, packageRoot);
-            if (setReady) SetStatus(pending ? "pendingStatus" : available ? "ready" : "bundledPackageMissing");
+            if (!settingsOnly && !pending && available) plan = engine.Preview(root.Text, packageRoot);
+            if (setReady) SetStatus(pending ? "pendingStatus" : settingsOnly || available ? "ready" : "bundledPackageMissing");
         }
         catch (Exception ex)
         {
@@ -200,7 +209,8 @@ internal sealed class InstallerForm : Form
         progress.Style = total == 0 ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
         foreach (Control control in operations) control.Enabled = false; languages.Enabled = false;
         SetStatus("operationStarted");
-        try { var result = await Task.Run(work); progress.Style = ProgressBarStyle.Blocks; progress.Value = 100; Inspect(false); SetStatus(result.RestoredPrevious ? "restoredPrevious" : completed); }
+        try { var result = await Task.Run(work); progress.Style = ProgressBarStyle.Blocks; progress.Value = 100; Inspect(false); SetStatus(result.RestoredPrevious ? "restoredPrevious" : completed);
+            if (result.SettingsWarning) { status.Text = InstallerText.Get("settingsPreservedWarning"); AppendLog(status.Text); } }
         catch (Exception ex) { progress.Style = ProgressBarStyle.Blocks; DisplayError(ex, true); Inspect(false); }
         finally { busy = false; languages.Enabled = true; foreach (Control control in operations) control.Enabled = true; RefreshDisplay(); }
     }
@@ -233,7 +243,7 @@ internal sealed class InstallerForm : Form
         try
         {
             bool bundleAvailable = !packageIncomplete;
-            if ((plan == null && bundleAvailable) || (smokeWorkflow && !bundleAvailable))
+            if (!settingsOnly && ((plan == null && bundleAvailable) || (smokeWorkflow && !bundleAvailable)))
                 throw new InvalidDataException("Fixture package preview missing");
             if (File.ReadAllText(Paths.GameExecutable(root.Text)) != SelfTest.Inert) throw new InvalidDataException("Only inert GUI fixtures are supported");
             Directory.CreateDirectory(smoke!);
@@ -241,13 +251,22 @@ internal sealed class InstallerForm : Form
             {
                 ((Button)languages.Controls[i]).PerformClick(); PerformLayout();
                 VerifyPathRows();
-                if (InstallerText.LoadPreference(root.Text) != InstallerText.Languages[i] || install.Enabled != (plan != null && !pending) ||
-                    remove.Enabled != (receiptHash != null && !pending) || (plan?.Package.Files.Length ?? receipt?.Files.Length ?? 0) != files.Items.Count ||
+                if (InstallerText.LoadPreference(root.Text) != InstallerText.Languages[i] || install.Enabled != (!settingsOnly && plan != null && !pending) ||
+                    remove.Enabled != (!settingsOnly && receiptHash != null && !pending) || (plan?.Package.Files.Length ?? receipt?.Files.Length ?? 0) != files.Items.Count ||
                     bundleNotice.Text != InstallerText.Get("antiAliasingRequired") + Environment.NewLine +
-                        InstallerText.Get(bundleAvailable ? "bundledPackageHelp" : "bundledPackageMissing"))
+                        InstallerText.Get(settingsOnly ? "settingsMaintenanceHelp" : bundleAvailable ? "bundledPackageHelp" : "bundledPackageMissing"))
                     throw new InvalidDataException("GUI state/locale mismatch");
                 details.SelectedIndex = 0; using (var image = new Bitmap(Width, Height)) { DrawToBitmap(image, new Rectangle(0, 0, Width, Height)); image.Save(Path.Combine(smoke!, InstallerText.Language + ".png")); }
                 details.SelectedIndex = 1; using var logImage = new Bitmap(Width, Height); DrawToBitmap(logImage, new Rectangle(0, 0, Width, Height)); logImage.Save(Path.Combine(smoke!, "log-" + InstallerText.Language + ".png"));
+            }
+            if (settingsOnly)
+            {
+                byte[] before = File.ReadAllBytes(Paths.Contained(root.Text, UserSettings.PerformancePath));
+                if (!protectSettings.Enabled || install.Enabled || remove.Enabled) throw new InvalidDataException("Settings-only controls mismatch");
+                await Run(() => engine.ReverifySettings(root.Text), "settingsVerified", 0);
+                if (!before.SequenceEqual(File.ReadAllBytes(Paths.Contained(root.Text, UserSettings.PerformancePath)))) throw new InvalidDataException("Settings-only GUI changed existing bytes");
+                var protection = Contract.Read<SettingsProtectionReceipt>(File.ReadAllBytes(Paths.Contained(root.Text, UserSettings.ReceiptPath)));
+                if (protection.UserSettings[0].Warning && !log.Text.Contains(InstallerText.Get("settingsPreservedWarning"))) throw new InvalidDataException("Malformed settings warning missing from UI");
             }
             if (smokeWorkflow)
             {
@@ -271,7 +290,7 @@ internal sealed class InstallerForm : Form
                 ChangeLanguage(locale); VerifyPathRows();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smoke!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllBytes(Path.Combine(smoke!, "gui-validation.json"), Contract.Encode(new { passed = true, locales = InstallerText.Languages, previewFiles = files.Items.Count, pathRowsCenteredAndUnclipped = 1, gameBrowseButtons = 1, packageSelectorVisible = false, bundledPackageFound = bundleAvailable, incompleteExtractionGuidance = !bundleAvailable, layoutScaleStress = 1.5, referenceActions = true, settingsAvailable = openSettings.Enabled, removeAvailable = remove.Enabled, recoveryAvailable = recover.Enabled, progressBar = true, retainedLog = true, installAction = install.Tag as string, removeAction = remove.Tag as string, fixtureOperations = smokeWorkflow ? 2 : 0, realInstallWrites = 0, gameLaunches = 0 }));
+            File.WriteAllBytes(Path.Combine(smoke!, "gui-validation.json"), Contract.Encode(new { passed = true, locales = InstallerText.Languages, previewFiles = files.Items.Count, pathRowsCenteredAndUnclipped = 1, gameBrowseButtons = 1, packageSelectorVisible = false, bundledPackageFound = bundleAvailable, incompleteExtractionGuidance = !bundleAvailable, layoutScaleStress = 1.5, referenceActions = true, settingsAvailable = openSettings.Enabled, removeAvailable = remove.Enabled, recoveryAvailable = recover.Enabled, progressBar = true, retainedLog = true, installAction = install.Tag as string, removeAction = remove.Tag as string, fixtureOperations = settingsOnly ? 1 : smokeWorkflow ? 2 : 0, settingsOnlyMaintenance = settingsOnly, realInstallWrites = 0, gameLaunches = 0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smoke!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

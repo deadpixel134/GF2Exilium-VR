@@ -98,6 +98,10 @@ static void navigation_block_applied(const void *,const void *,const void *,cons
 #define GF2VR_NAVIGATION_BLOCK_APPLIED(i,a,p,t) navigation_block_applied(i,a,p,t)
 #endif
 static void stereo_local_tick(unsigned long long n);
+#ifdef GF2VR_PORTABLE_BINDING
+static unsigned performance_manual_flat;
+static void performance_xr_closed(void);
+#endif
 #ifdef GF2VR_ACTIVITY_INPUT_BOUNDARY_OBSERVE
 static void activity_input_boundary_report(const void *,unsigned,unsigned,unsigned,unsigned,unsigned,void *const *);
 #define GF2VR_TOPOLOGY_INPUT_REPORT(s,r,n,v,i,j,c) activity_input_boundary_report(s,r,n,v,i,j,c)
@@ -417,6 +421,13 @@ static unsigned stereo_panel_role_hand(void);
 static unsigned controller_game_drag_consumed(void);
 #endif
 #ifdef GF2VR_WORLD_DRAG
+#if defined(GF2VR_DYNAMIC_EYE_SCALE_OPTIN) && defined(GF2VR_RENDER_SCALE) && defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_PORTABLE_BINDING) && defined(GF2VR_THUMBSTICK_NAVIGATION)
+#define GF2VR_NAVIGATION_CONTINUITY
+#include "navigation_continuity.h"
+static NavigationContinuity stereo_navigation_continuity;
+static unsigned long long stereo_navigation_close_serial;
+static void stereo_navigation_continuity_pose(unsigned long long,unsigned long long);
+#endif
 #ifdef GF2VR_CAMERA_RETURN
 #include "camera_return_handoff.h"
 static CameraReturnHandoff stereo_camera_return;
@@ -477,6 +488,16 @@ static int controller_game_runtime_close(void);
 #include "xr_eye_output.h"
 #include "xr_eye_config.h"
 #include "xr_eye_size.h"
+#if defined(GF2VR_DYNAMIC_EYE_SCALE_OPTIN) && defined(GF2VR_RENDER_SCALE) && defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_PORTABLE_BINDING)
+#define GF2VR_DYNAMIC_EYE_SCALE_XR
+#include "dynamic_eye_scale.h"
+static DynamicEyeScaleXr stereo_dynamic;
+static DynamicEyeScaleBridge stereo_dynamic_bridge;
+static unsigned stereo_dynamic_immersive,stereo_dynamic_first_window;
+static void stereo_dynamic_main_busy(void) {
+    __atomic_store_n(&stereo_dynamic_bridge.generation,0,__ATOMIC_RELEASE);
+}
+#endif
 #ifdef GF2VR_RENDER_SCALE
 #include "render_scale_runtime.h"
 #endif
@@ -844,6 +865,9 @@ static void activity_viewport_boundary_report(void *context,void *camera,unsigne
 #include "eye_flight_backend.h"
 #include "async_throughput_observe.h"
 #include "stereo_hooks.h"
+#if defined(GF2VR_CAMERA_SPLIT_OBSERVE) && defined(GF2VR_MFO_ACTIVE)
+#include "camera_split_hooks.h"
+#endif
 #include "draw_runtime_contract.h"
 #if defined(GF2VR_SUBMISSION_OBSERVE) || defined(GF2VR_PREPARE_OBSERVE)
 #include "submit_commands_observer.h"
@@ -1038,6 +1062,9 @@ static void stereo_submit_forward(void *storage) {
     DWORD outgoing=GetLastError();
 #ifdef GF2VR_PRODUCER_SCOPE_OBSERVE
     if(selected)producer_scope_submit(0,context,match && !stereo_submit_scope.ambiguous);
+#endif
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    cs_submit_observe();
 #endif
     --stereo_submit_scope.submit_depth;
 #if defined(GF2VR_SUBMISSION_OBSERVE) || defined(GF2VR_PREPARE_OBSERVE)
@@ -1317,14 +1344,32 @@ static XrResult stereo_frame_wait(void *opaque,const XrFrameWaitInfo *wait,XrFra
         return XR_ERROR_RUNTIME_FAILURE;
     if(!xfd_owner(d) || d->api.prefetch.session!=p->session)return XR_ERROR_CALL_ORDER_INVALID;
     int r;
-    do {r=stereo_two_xr_sync();if(r==EFO_BUSY)Sleep(1);} while(r==EFO_BUSY);
+#ifdef GF2VR_MFO_ACTIVE
+    mfo_xr_tick();
+#endif
+    {
+#ifdef GF2VR_MFO_ACTIVE
+        MFO_XR_SCOPE(0); /* sync including its original BUSY Sleep */
+#endif
+        do {r=stereo_two_xr_sync();if(r==EFO_BUSY)Sleep(1);} while(r==EFO_BUSY);
+    }
     if(r!=EFO_OK)return XR_ERROR_RUNTIME_FAILURE;
     do {
 #ifdef GF2VR_BANK_COPY_SERVICE
-        if(stereo_bank_enabled && stereo_bank_copy_service(p)==EFO_REJECTED)
-            return XR_ERROR_RUNTIME_FAILURE;
+        {
+#ifdef GF2VR_MFO_ACTIVE
+            MFO_XR_SCOPE(1);
 #endif
-        r=stereo_two_xr_prefetch();if(r==EFO_BUSY)Sleep(1);
+            if(stereo_bank_enabled && stereo_bank_copy_service(p)==EFO_REJECTED)
+                return XR_ERROR_RUNTIME_FAILURE;
+        }
+#endif
+        {
+#ifdef GF2VR_MFO_ACTIVE
+            MFO_XR_SCOPE(2);
+#endif
+            r=stereo_two_xr_prefetch();if(r==EFO_BUSY)Sleep(1);
+        }
     } while(r==EFO_BUSY);
     if(r!=EFO_OK)return XR_ERROR_RUNTIME_FAILURE;
     *frame=d->prediction;
@@ -1600,6 +1645,9 @@ static int stereo_live_attach(SourceLiveOwner *o) {
 static int stereo_live_detach(void) {
     if(!stereo_live) return 1;
     if(GetCurrentThreadId()!=stereo_live->thread) return 0;
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    stereo_dynamic_main_busy();
+#endif
     stereo_source.enabled=0;main_test_revoke(&stereo_live->manual);
     source_generation_invalidate(&stereo_live->generation);
     if(stereo_live->pair_count==EFO_CAPACITY) {
@@ -1631,6 +1679,57 @@ static struct {
     void *method,*pipeline;
     void (*unpin)(unsigned);
 } stereo_start;
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+static void stereo_navigation_continuity_discard(unsigned reason) {
+    if(navigation_continuity_discard(&stereo_navigation_continuity))
+        event("navigation_continuity_discarded",reason,GetCurrentThreadId());
+}
+static NavigationContinuityOwner stereo_navigation_continuity_owner(void) {
+    SourceGeneration *g=stereo_source.generation;
+    return (NavigationContinuityOwner){(U64)stereo_source.pipeline,(U64)stereo_source.method,
+        g?(U64)g->identity.source:0,g?g->identity.instance_id:0};
+}
+static void stereo_navigation_continuity_check(U64 epoch,U64 now) {
+    if(!stereo_navigation_continuity.pending)return;
+    unsigned reason=navigation_continuity_invalid(&stereo_navigation_continuity,epoch,now,
+        __atomic_load_n(&stereo_navigation_close_serial,__ATOMIC_ACQUIRE));
+    if(reason)stereo_navigation_continuity_discard(reason);
+}
+static void stereo_navigation_continuity_pose(U64 epoch,U64 generation) {
+    if(!stereo_navigation_continuity.pending)return;
+    if(GetCurrentThreadId()!=stereo_pipeline.owner_thread||!stereo_live||!stereo_source.generation||
+       __atomic_load_n(&stereo_publication_generation,__ATOMIC_ACQUIRE)!=generation)return;
+    NavigationContinuityValues values;unsigned reason=0;
+    int result=navigation_continuity_take(&stereo_navigation_continuity,stereo_navigation_continuity_owner(),
+        generation,epoch,GetTickCount64(),__atomic_load_n(&stereo_navigation_close_serial,__ATOMIC_ACQUIRE),
+        &values,&reason);
+    if(result<0){event("navigation_continuity_discarded",reason,GetCurrentThreadId());return;}
+    if(!result)return;
+    /* Every input/arming/timing field begins neutral. Existing generation/reset
+       branches remain intact; no old raw mailbox or resource identity is used. */
+    navigation_continuity_seed(&values,epoch,generation,&stereo_stick_navigation,&stereo_navigation.offset);
+    stereo_navigation.epoch=epoch;stereo_navigation.generation=generation;
+    event("navigation_continuity_applied",generation,GetCurrentThreadId());
+}
+static void stereo_navigation_continuity_capture(void) {
+    if(stereo_navigation_continuity.pending)return;
+    U64 old=__atomic_load_n(&stereo_publication_generation,__ATOMIC_ACQUIRE);XrEyeInput packet={0};
+    if(!old||!stereo_source.enabled||!stereo_source.manual||stereo_source.manual->state!=MTG_ACTIVE||
+       !stereo_source.generation||stereo_source.generation->busy||stereo_source.generation->replacement_pending||
+       !xr_eye_mailbox_read(&stereo_eye_runtime.mailbox,&packet)||!packet.valid||!packet.reference_epoch)return;
+    NavigationContinuityValues values={0};
+    if(stereo_stick_navigation.epoch==packet.reference_epoch&&stereo_stick_navigation.generation==old) {
+        values.yaw=stereo_stick_navigation.yaw;values.pitch=stereo_stick_navigation.pitch;
+        for(unsigned i=0;i<3;++i)values.offset[i]=stereo_stick_navigation.offset[i];
+    }
+    if(stereo_navigation.epoch==packet.reference_epoch&&stereo_navigation.generation==old) {
+        values.drag[0]=stereo_navigation.offset.x;values.drag[1]=stereo_navigation.offset.y;values.drag[2]=stereo_navigation.offset.z;
+    }
+    if(navigation_continuity_capture(&stereo_navigation_continuity,stereo_navigation_continuity_owner(),
+        old,packet.reference_epoch,GetTickCount64(),__atomic_load_n(&stereo_navigation_close_serial,__ATOMIC_ACQUIRE),values))
+        event("navigation_continuity_captured",old,GetCurrentThreadId());
+}
+#endif
 #ifdef GF2VR_COMPOSITION_OBSERVE
 #include "composition_runtime_diag.h"
 #endif
@@ -1643,6 +1742,13 @@ static void stereo_start_capture(void *pipeline,void *method) {
        method!=stereo_start.method || !pipeline || !stereo_pipeline.render.active ||
        GetCurrentThreadId()!=stereo_pipeline.owner_thread || !sa.gchandle_new || !sa.gchandle_free) return;
     if(stereo_live && stereo_live->pipeline==pipeline && stereo_live->method==method) return;
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    if(stereo_navigation_continuity.pending&&((U64)pipeline!=stereo_navigation_continuity.owner.pipeline||
+       (U64)method!=stereo_navigation_continuity.owner.method))stereo_navigation_continuity_discard(2);
+#endif
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    stereo_dynamic_main_busy();
+#endif
     stereo_start.busy=1;
     stereo_start.root=sa.gchandle_new(pipeline,1);
     if(stereo_start.root) {stereo_start.pipeline=pipeline;stereo_start.unpin=sa.gchandle_free;}
@@ -1657,9 +1763,25 @@ static void stereo_start_tick(void) {
     if(GetCurrentThreadId()!=stereo_pipeline.owner_thread || stereo_start.busy || stereo_pipeline.render.active) return;
     DWORD saved=GetLastError();
     unsigned width=0,height=0;xr_eye_size_read(&stereo_xr_size,&width,&height);
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    if(stereo_navigation_continuity.pending) {
+        XrEyeInput continuity_packet={0};
+        (void)xr_eye_mailbox_read(&stereo_eye_runtime.mailbox,&continuity_packet);
+        stereo_navigation_continuity_check(continuity_packet.reference_epoch,GetTickCount64());
+    }
+    if(!stereo_start.requested||stereo_start.failed)stereo_navigation_continuity_discard(1);
+#endif
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    stereo_dynamic_main_busy();
+#endif
     stereo_start.busy=1;
     if(stereo_live && (!stereo_start.requested || stereo_start.root || !width ||
        stereo_live->width!=(int)width || stereo_live->height!=(int)height)) {
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+        if(stereo_start.requested&&!stereo_start.failed&&!stereo_start.root&&width&&height&&
+           stereo_live->pipeline==stereo_source.pipeline&&stereo_live->method==stereo_source.method&&
+           stereo_live->method==stereo_start.method)stereo_navigation_continuity_capture();
+#endif
         if(!stereo_live_detach()) goto end;
     }
     if(stereo_start_owner.thread && !stereo_live &&
@@ -1693,6 +1815,9 @@ end:
     stereo_start.busy=0;SetLastError(saved);
 }
 static void stereo_manual_revoke(void) {
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    stereo_navigation_continuity_discard(1);
+#endif
     if(stereo_source.manual) main_test_revoke(stereo_source.manual);
     if(stereo_source.generation && stereo_source.generation->owner_thread==GetCurrentThreadId())
         source_generation_invalidate(stereo_source.generation);
@@ -1724,6 +1849,11 @@ static void stereo_manual_tick(void) {
     if(stereo_manual_test_input) stereo_manual_test_input(&focused,&down);
 #endif
     unsigned before=stereo_source.manual->state;
+#ifdef GF2VR_PORTABLE_BINDING
+    /* Observe the existing focused/released F8 edge without consuming input
+       or changing the accepted source/auto-stereo intent policy. */
+    unsigned pc_pressed=focused&&down&&stereo_source.manual->key_released;
+#endif
 #ifdef GF2VR_AUTO_STEREO
     if(stereo_auto_enabled) {
         if(auto_stereo_intent_update(&stereo_auto_intent,stereo_source.manual,
@@ -1732,6 +1862,12 @@ static void stereo_manual_tick(void) {
     } else main_test_key(stereo_source.manual,focused,down);
 #else
     main_test_key(stereo_source.manual,focused,down);
+#endif
+#ifdef GF2VR_PORTABLE_BINDING
+    if(pc_pressed)performance_manual_flat=stereo_source.manual->state==MTG_OFF;
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    if(pc_pressed&&stereo_source.manual->state==MTG_OFF)stereo_navigation_continuity_discard(1);
+#endif
 #endif
     if(stereo_source.manual->state==MTG_OFF) {
         if(!stereo_source.manual->flat_tracking)stereo_manual_revoke();
@@ -1798,7 +1934,11 @@ static void stereo_pacing_record(U64 start,long long period,U64 wait,U64 copy,U6
 #endif
     static U64 tick,frames,wait_total,copy_total,end_total,loop_total,period_us,render_frames;
     static unsigned reports;
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    if(reports>=40&&!stereo_dynamic.policy.enabled)return;
+#else
     if(reports>=40)return;
+#endif
     U64 now=GetTickCount64();if(!tick)tick=start;
     if(now<start||now<tick||period<=0||period>1000000000LL)return;
     ++frames;wait_total+=wait;copy_total+=copy;end_total+=end;loop_total+=now-start;
@@ -1809,6 +1949,14 @@ static void stereo_pacing_record(U64 start,long long period,U64 wait,U64 copy,U6
     event("perf_xr_loop_end_ms",(loop_total<<32)|end_total,GetCurrentThreadId());
     event("perf_xr_period_us",period_us/frames,GetCurrentThreadId());
     event("perf_xr_fresh_render",(stereo_pacing_fresh<<32)|render_frames,GetCurrentThreadId());
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    /* First window may straddle the old session; never use it for policy. */
+    if(stereo_dynamic_first_window)stereo_dynamic_first_window=0;
+    else dynamic_eye_scale_xr_window(&stereo_dynamic,&stereo_xr_size,&stereo_dynamic_bridge,
+        &stereo_publication_generation,(unsigned)stereo_pacing_fresh,(unsigned)render_frames,now-tick,now,
+        stereo_dynamic_immersive,stereo_eye_runtime.owner.changing||stereo_eye_runtime.owner.retiring||
+        __atomic_load_n(&stereo_xr_config.state,__ATOMIC_ACQUIRE)!=XEC_READY);
+#endif
 #ifdef GF2VR_BANK_CAPACITY_READMIT
     event("perf_bank_capacity_readmit",stereo_two_xr.capacity_readmits,GetCurrentThreadId());
     stereo_two_xr.capacity_readmits=0;
@@ -2452,6 +2600,9 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
 #endif
     static unsigned previous_mode=~0u;
     unsigned mode=isolated?3u:(projected?(combined.layerCount>=2&&combined.layers[1]->type==XR_TYPE_COMPOSITION_LAYER_QUAD?2u:1u):0u);
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    stereo_dynamic_immersive=projected&&!isolated;
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
     touch_p2_mode(mode);
 #endif
@@ -2543,6 +2694,11 @@ static void stereo_output_xr_open(void *opaque,void *module) {
         (void)xr_eye_size_read(&stereo_xr_size,&width,&height);
         event("vr_render_scale_bits",requested.bits,GetCurrentThreadId());
         event("vr_render_extent",((U64)height<<32)|width,GetCurrentThreadId());}
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    dynamic_eye_scale_xr_open(&stereo_dynamic,get,state->instance,state->system,
+        status>0?scale:0,GetTickCount64());
+    stereo_dynamic_immersive=0;stereo_dynamic_first_window=1;
+#endif
 #else
     if(!xr_eye_size_open(&stereo_xr_size,get,state->instance,state->system))
         event("eye_size_unavailable",0,GetCurrentThreadId());
@@ -2604,6 +2760,10 @@ static void stereo_output_xr_invalidate(void *panel) {
     if(!stereo_two.enabled)(void)xr_eye_output_reclaim(&stereo_xr_output,panel);
 }
 static int stereo_output_xr_close(void *panel) {
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    /* XR invalidates only a scalar; main consumes/discards its own POD. */
+    __atomic_add_fetch(&stereo_navigation_close_serial,1,__ATOMIC_RELEASE);
+#endif
     while(!stereo_two_xr_close(panel))Sleep(1);
 #ifdef GF2VR_CONTROLLER_INPUT
     while(!controller_runtime_close())Sleep(10);
@@ -2628,6 +2788,10 @@ static int stereo_output_xr_close(void *panel) {
     aux_reset_visibility(&stereo_aux);
 #endif
     xr_eye_size_clear(&stereo_xr_size);
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    dynamic_eye_scale_xr_close(&stereo_dynamic);
+    stereo_dynamic_immersive=stereo_dynamic_first_window=0;
+#endif
     /* Returning to bootstrap would destroy the parent instance. Keep this XR
        worker/session alive while destinations may still be used; opaque fault
        quarantines here, with no game-thread join or timeout destruction. */
@@ -2637,6 +2801,9 @@ static int stereo_output_xr_close(void *panel) {
     } else
 #endif
         while(!xr_eye_config_close(&stereo_xr_config,&stereo_xr_output,panel)) Sleep(10);
+#ifdef GF2VR_PORTABLE_BINDING
+    performance_xr_closed();
+#endif
     return 1;
 }
 static int stereo_reserved_matches(const SourceRenderFrame *f) {
@@ -2926,6 +3093,9 @@ static RootIntervalTag rit_main_tag(void) {
 #include "ui_draw_boundary_runtime.h"
 #endif
 #include "producer_scope_observe.h"
+#if defined(GF2VR_CAMERA_SPLIT_BRIDGE) && defined(GF2VR_MFO_ACTIVE)
+#include "camera_split_bridge_runtime.h"
+#endif
 #endif
 static void stereo_frame_configure(SourceRenderFrame *f) {
     stereo_frame_description=(EyeGpuDescription){0};
@@ -3470,6 +3640,9 @@ static struct {
 } perf_root;
 #endif
 static void stereo_root_begin(U64 call,int sample) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_RENDER_WRAPPER);
+#endif
 #ifdef GF2VR_PRODUCER_PREPARE_OWNERSHIP
     /* Quiescent cold bridge preparation precedes camera_pipeline_begin and
        private reservation/borrow; per-frame Arm never performs installation. */
@@ -3554,6 +3727,9 @@ static void stereo_root_begin(U64 call,int sample) {
     }
 }
 static void stereo_root_end(int failed) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_RENDER_WRAPPER);
+#endif
     U64 serial=stereo_pipeline.render.serial;
     unsigned injected=stereo_pipeline.render.injected;
 #ifdef GF2VR_CAMERA_PLACEMENT_OBSERVE
@@ -3761,6 +3937,10 @@ static void stereo_forward_preserved(void *pipeline,void *context,void *cameras,
         pipeline==stereo_pipeline.pipeline && method==stereo_pipeline.method;
     unsigned dual=stereo_two_before_original(pipeline,context,cameras,method);
     if(dual)selected=1;
+#ifdef GF2VR_MFO_ACTIVE
+    MfoScope mfo_private __attribute__((cleanup(mfo_scope_end)))=
+        selected?mfo_scope(MFO_PRIVATE_RENDER):(MfoScope){0};
+#endif
     int dual_begin=EFO_OK;
     if(dual && !stereo_submit_scope.depth) {
         dual_begin=eye_flight_backend_begin(&stereo_two.backend,&stereo_two.owner,stereo_two.root_slot,
@@ -3776,6 +3956,12 @@ static void stereo_forward_preserved(void *pipeline,void *context,void *cameras,
         stereo_live->flights.slots[stereo_two.root_slot].scope.render.injected=0;
         cameras=stereo_two.original_cameras;selected=0;
     }
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    CameraBatch *cs_batch=dual&&stereo_live&&stereo_two.root_slot<EFO_CAPACITY?
+        &stereo_live->flights.slots[stereo_two.root_slot].scope.render.batch:&stereo_pipeline.render.batch;
+    CsSetScope cs_set __attribute__((cleanup(cs_set_scope_end)))=selected?
+        cs_set_scope(cs_batch->split_ids,cs_batch->split_count):(CsSetScope){0};
+#endif
 #ifdef GF2VR_SUBMISSION_OBSERVE
     if(stereo_hooks.ready && stereo_pipeline.render.active && method==stereo_start.method) selected=1;
 #endif
@@ -3834,6 +4020,13 @@ static void stereo_forward_preserved(void *pipeline,void *context,void *cameras,
         (void)composition_diag_begin(stereo_pipeline.render.serial,cameras,context);
 #endif
     SetLastError(stereo_forward_error);
+    {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ORIGINAL_RENDER);
+#endif
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    CsPipelineScope cs_call __attribute__((cleanup(cs_pipeline_scope_end)))=cs_pipeline_scope();
+#endif
 #ifdef GF2VR_ROOT_INTERVAL_TIMING_OBSERVE
     RootIntervalTag timing_tag=(dual && selected && stereo_submit_scope.depth==1 &&
         dual_begin==EFO_OK)?rit_main_tag():(RootIntervalTag){0};
@@ -3841,6 +4034,7 @@ static void stereo_forward_preserved(void *pipeline,void *context,void *cameras,
 #else
     stereo_render_original(pipeline,context,cameras,method);
 #endif
+    }
     DWORD outgoing=GetLastError();
     --stereo_submit_scope.depth;
 #ifdef GF2VR_PRODUCER_BORROW_RETURN_FIX
@@ -3871,6 +4065,9 @@ static void stereo_forward_preserved(void *pipeline,void *context,void *cameras,
     SetLastError(outgoing);
 }
 static void stereo_render_forward(void *pipeline,void *context,void *cameras,void *method) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_RENDER_WRAPPER);
+#endif
     DWORD incoming=GetLastError();
     DWORD thread=GetCurrentThreadId();
     if(thread!=stereo_pipeline.owner_thread) {
@@ -3901,7 +4098,14 @@ static void stereo_render_forward(void *pipeline,void *context,void *cameras,voi
             stereo_private_batch.private_seen=1;
             /* Forward the exact independent engine batch once. It cannot
                capture/admit/revoke a world, borrow or inject a stereo pair. */
-            SetLastError(incoming);stereo_render_original(pipeline,context,cameras,method);return;
+            SetLastError(incoming);
+#ifdef GF2VR_MFO_ACTIVE
+            MFO_SCOPE(MFO_ORIGINAL_RENDER);
+#endif
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+            CsPipelineScope cs_call __attribute__((cleanup(cs_pipeline_scope_end)))=cs_pipeline_scope();
+#endif
+            stereo_render_original(pipeline,context,cameras,method);return;
         }
     }
 #ifdef GF2VR_ACTIVITY_PRIVATE_ROOT_SCOPE
@@ -4125,6 +4329,9 @@ __declspec(dllexport) int reentry_fault_observation_test(void) {
 #ifdef GF2VR_TOUCH_PRIVATE
 #include "touch_p3_runtime.h"
 #endif
+#ifdef GF2VR_PORTABLE_BINDING
+#include "performance_runtime.h"
+#endif
 static void stereo_local_tick(U64 n) {
 #line 3644
 #ifdef GF2VR_ACTIVITY_CANVAS_SCOPE
@@ -4152,6 +4359,34 @@ static void stereo_local_tick(U64 n) {
     stereo_manual_tick();
     stereo_two_owner_tick();
     stereo_output_owner_tick();
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    /* Main sole owner: copy scalar readiness only after lifetime work. */
+    if(GetCurrentThreadId()==stereo_pipeline.owner_thread) {
+        stereo_dynamic_main_busy();
+        unsigned dw=0,dh=0;xr_eye_size_read(&stereo_xr_size,&dw,&dh);
+        if(!stereo_start.busy&&!stereo_start.root&&stereo_start.requested&&!stereo_start.failed&&
+           !stereo_pipeline.render.active&&!render_guard&&stereo_live&&stereo_live->ready&&
+           !stereo_live->busy&&!stereo_live->retiring&&stereo_source.generation&&
+           !stereo_source.generation->replacement_pending&&
+           stereo_live->width==(int)dw&&stereo_live->height==(int)dh) {
+            U64 dg=__atomic_load_n(&stereo_publication_generation,__ATOMIC_ACQUIRE);
+            __atomic_store_n(&stereo_dynamic_bridge.extent,((U64)dh<<32)|dw,__ATOMIC_RELEASE);
+            __atomic_store_n(&stereo_dynamic_bridge.generation,dg,__ATOMIC_RELEASE);
+        }
+    }
+#endif
+#ifdef GF2VR_PORTABLE_BINDING
+    /* PC output retains its mode through source retirement/requested states.
+       Only explicit F8 OFF or terminal start/XR close restores startup size;
+       source generation is not the owner of this session-scoped setting. */
+    if(GetCurrentThreadId()==stereo_pipeline.owner_thread&&!stereo_start.busy&&
+       !stereo_pipeline.render.active&&!render_guard) {
+        unsigned pc_eye_w=0,pc_eye_h=0;xr_eye_size_read(&stereo_xr_size,&pc_eye_w,&pc_eye_h);
+        performance_main_tick(stereo_live&&stereo_source.enabled&&stereo_source.manual&&
+            stereo_source.manual->state==MTG_ACTIVE&&pc_eye_w&&pc_eye_h,
+            performance_manual_flat||!pc_eye_w||!pc_eye_h||!stereo_start.requested||stereo_start.failed);
+    }
+#endif
     if(stereo_source.generation && GetCurrentThreadId()==stereo_source.generation->owner_thread) {
         if(!stereo_source.enabled) source_generation_invalidate(stereo_source.generation);
         (void)source_generation_collect(stereo_source.generation,GetCurrentThreadId());
@@ -4186,6 +4421,9 @@ static void stereo_local_tick(U64 n) {
 #endif
             } else stereo_hooks.attempted=1;
             event(stereo_hooks.ready?"stereo_hooks_ready":"stereo_hooks_unavailable",stereo_hooks.rollback_pending,GetCurrentThreadId());
+#if defined(GF2VR_CAMERA_SPLIT_OBSERVE) && defined(GF2VR_CAMERA_SPLIT_NATIVE_HOOK_OPTIN)
+            if(stereo_hooks.ready)cs_hooks_install();
+#endif
 #ifdef GF2VR_FOCUS_CORRECT
             if(stereo_hooks.ready) event("focus_projection_hook",focus_projection_install(),GetCurrentThreadId());
 #endif

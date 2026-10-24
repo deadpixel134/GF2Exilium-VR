@@ -20,6 +20,7 @@ function Compile([string[]]$Arguments,[string]$Name){
  if($LASTEXITCODE){throw ('Native build failed: '+$Name+'; see output log')}
 }
 $zigExe=(Get-Command $Zig -ErrorAction Stop).Source
+if($recipe.compilerSha256 -and (Get-FileHash -LiteralPath $zigExe).Hash -cne $recipe.compilerSha256){throw 'Release compiler SHA256 differs'}
 $zigHeaders=Join-Path ([IO.Path]::GetDirectoryName($zigExe)) 'lib/libc/include/any-windows-any'
 foreach($p in $recipe.units.PSObject.Properties){
  $src=Join-Path $root ('src/stereo/'+$p.Value+'.c');$obj=Join-Path $Output ($p.Name+'.obj')

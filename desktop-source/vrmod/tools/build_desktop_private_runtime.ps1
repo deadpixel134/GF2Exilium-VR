@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param([ValidateSet('Configurator','Installer')][string]$Application='Configurator',
     [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='FLEX-DESKTOP-001',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.0.1',
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.2.1',
     [string]$NativeMetadataRoot,
     [ValidateSet('Clean','Dirty')][string]$NativeFlavor)
 $ErrorActionPreference='Stop'
@@ -67,6 +67,8 @@ try {
         ('-p:GF2VRDesktopNotices='+$notices),
         '--configfile',(Join-Path $taskRoot 'vrmod/tools/desktop_runtime_nuget.config'),'--nologo','-v','minimal')
     $args+=('-p:Version='+$ProductVersion)
+    # Preserve the accepted 1.2.1 assembly informational version.
+    $args+='-p:SourceRevisionId=1de6a501f2f364cc3e6a0e600fa5ba2a50c9134f'
     if($NativeMetadataRoot){$args+=('-p:GF2VRVariantMetadataRoot='+$NativeMetadataRoot)}
     if($NativeFlavor){$args+=('-p:GF2VRBuildFlavor='+$NativeFlavor)}
     & $dotnet @args 2>&1 | Out-File -LiteralPath (Join-Path $evidence ($Application+'-publish.log')) -Encoding UTF8

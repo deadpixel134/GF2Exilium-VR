@@ -28,7 +28,7 @@ internal static class InstallerText
         return Resources["ko"].TryGetValue(key, out v) ? v : Resources["ko"]["unavailable"];
     }
     internal static string Format(string key, params object[] arguments) => string.Format(CultureInfo.InvariantCulture, Get(key), arguments);
-    internal static string Error(Exception ex) => ex is InstallError e ? Format(e.Key, e.Arguments) : Get("fileError") + "\n" + ex.Message;
+    internal static string Error(Exception ex) => (ex is InstallError e ? Format(e.Key, e.Arguments) : Get("fileError") + "\n" + ex.Message) + "\n\n" + Get("updateNextAction");
     internal static void Verify()
     {
         foreach (var r in Resources)

@@ -1,0 +1,66 @@
+[CmdletBinding()]
+param([Parameter(Mandatory)][string]$ReferenceDirectory,[Parameter(Mandatory)][string]$OutputFolder,[string]$HeaderOutput='')
+$ErrorActionPreference='Stop'
+Add-Type -AssemblyName Microsoft.CodeAnalysis.CSharp
+Add-Type -AssemblyName System.Reflection.Metadata
+$folder=[IO.Path]::GetFullPath($OutputFolder)
+New-Item -ItemType Directory -Path $folder -Force|Out-Null
+$source=Join-Path $PSScriptRoot 'CameraScopeBridge.cs'
+$cache=[IO.Path]::GetFullPath($ReferenceDirectory)
+$expected=@{
+ 'mscorlib.dll.bytes'='C9955D65FDA5CAE9C66A0EF000168827B2D6D8863C98B7AF1E0212886738437B'
+ 'UnityEngine.CoreModule.dll.bytes'='7ED87B8E18B4764246E6BBB10DA4F4BB8841D4777C517530448E596D77E058EC'
+ 'System.Core.dll.bytes'='B02F22729B3CECA252F93BA4C82EBCFD7C24F944E658F16CB340660A74FB9331'
+}
+$refs=@(foreach($name in ($expected.Keys|Sort-Object)){
+ $path=Join-Path $cache $name
+ if((Get-FileHash $path).Hash -ne $expected[$name]){throw "Reference changed $name"}
+ [Microsoft.CodeAnalysis.MetadataReference]::CreateFromFile($path)
+})
+$options=[Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions]::new([Microsoft.CodeAnalysis.OutputKind]::DynamicallyLinkedLibrary).
+ WithOptimizationLevel([Microsoft.CodeAnalysis.OptimizationLevel]::Release).WithDeterministic($true).
+ WithAssemblyIdentityComparer([Microsoft.CodeAnalysis.DesktopAssemblyIdentityComparer]::Default)
+$parse=[Microsoft.CodeAnalysis.CSharp.CSharpParseOptions]::Default.WithLanguageVersion([Microsoft.CodeAnalysis.CSharp.LanguageVersion]::CSharp7_3)
+$tree=[Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText((Get-Content $source -Raw),$parse,'CameraScopeBridge.cs')
+$compilation=[Microsoft.CodeAnalysis.CSharp.CSharpCompilation]::Create('GF2.Composition.CameraBridge',[Microsoft.CodeAnalysis.SyntaxTree[]]@($tree),[Microsoft.CodeAnalysis.MetadataReference[]]$refs,$options)
+$rawPath=Join-Path $folder 'GF2.Composition.CameraBridge.raw.dll'
+$stream=[IO.File]::Create($rawPath)
+try{$result=$compilation.Emit($stream)}finally{$stream.Dispose()}
+if(!$result.Success){throw ($result.Diagnostics -join "`n")}
+$diagnostics=@($result.Diagnostics|ForEach-Object {$_.ToString()})
+$bytes=[IO.File]::ReadAllBytes($rawPath);$encoded=[byte[]]$bytes.Clone();$touched=[bool[]]::new($bytes.Length)
+$stream=[IO.File]::OpenRead($rawPath);$pe=[Reflection.PortableExecutable.PEReader]::new($stream)
+$methods=@();$references=@()
+try{
+ $md=[Reflection.Metadata.PEReaderExtensions]::GetMetadataReader($pe)
+ if($md.GetString($md.GetAssemblyDefinition().Name) -ne 'GF2.Composition.CameraBridge'){throw 'Not owned bridge assembly'}
+ if(!$md.GetAssemblyDefinition().PublicKey.IsNil){throw 'Cannot encode signed image'}
+ foreach($h in $md.AssemblyReferences){$n=$md.GetString($md.GetAssemblyReference($h).Name);if($n -notin @('mscorlib','System.Core','UnityEngine.CoreModule')){throw "Unexpected dependency $n"};$references+=$n}
+ foreach($h in $md.MethodDefinitions){
+  $m=$md.GetMethodDefinition($h);if(!$m.RelativeVirtualAddress){continue}
+  $rva=$m.RelativeVirtualAddress;$offset=-1
+  foreach($s in $pe.PEHeaders.SectionHeaders){if($rva -ge $s.VirtualAddress -and $rva -lt $s.VirtualAddress+$s.SizeOfRawData){$offset=$s.PointerToRawData+$rva-$s.VirtualAddress;break}}
+  if($offset -lt 0){throw 'Unmapped method'}
+  $body=[Reflection.Metadata.PEReaderExtensions]::GetMethodBody($pe,$rva)
+  $il=$body.GetILBytes();$header=if(($bytes[$offset] -band 3) -eq 2){1}elseif(($bytes[$offset] -band 3) -eq 3){([BitConverter]::ToUInt16($bytes,$offset) -shr 12)*4}else{throw 'Invalid method header'}
+  $start=$offset+$header;$locals=0
+  if(!$body.LocalSignature.IsNil){$sig=$md.GetStandaloneSignature($body.LocalSignature);$reader=$md.GetBlobReader($sig.Signature);if($reader.ReadByte() -ne 7){throw 'Invalid local signature'};$locals=$reader.ReadCompressedInteger()}
+  $eh=$body.ExceptionRegions.Length;$lc=if($locals){$locals}else{2};$ec=if($eh){$eh}else{2}
+  [long]$product=[long]$il.Length*$lc*$ec
+  if($product -gt 0x7fffffff -or $start+$il.Length -gt $bytes.Length){throw 'Outside proven encoding bounds'}
+  $key=([long]($product*4294967297)).ToString([Globalization.CultureInfo]::InvariantCulture)
+  for($i=0;$i -lt $il.Length;$i++){
+   if($touched[$start+$i] -or $bytes[$start+$i] -ne $il[$i]){throw 'Body overlap or offset mismatch'}
+   $touched[$start+$i]=$true;$encoded[$start+$i]=$il[$i] -bxor [byte][char]$key[$i%$key.Length]
+  }
+  $methods+=@{token=[Reflection.Metadata.Ecma335.MetadataTokens]::GetToken([Reflection.Metadata.EntityHandle]$h);name=$md.GetString($m.Name);offset=$start;length=$il.Length;locals=$locals;eh=$eh;key=$key}
+ }
+}finally{$pe.Dispose();$stream.Dispose()}
+if(!$methods.Count){throw 'No bridge methods'}
+# Verify inverse transform against compiler output, including every untouched byte.
+$roundtrip=[byte[]]$encoded.Clone()
+foreach($m in $methods){for($i=0;$i -lt $m.length;$i++){$roundtrip[$m.offset+$i]=$encoded[$m.offset+$i] -bxor [byte][char]$m.key[$i%$m.key.Length]}}
+for($i=0;$i -lt $bytes.Length;$i++){if($roundtrip[$i] -ne $bytes[$i] -or (!$touched[$i] -and $encoded[$i] -ne $bytes[$i])){throw 'Packaging changed non-IL bytes or inverse mismatch'}}
+$out=Join-Path $folder 'GF2.Composition.CameraBridge.encoded.dll';[IO.File]::WriteAllBytes($out,$encoded)
+[ordered]@{result='PASS';source_sha256=(Get-FileHash $source).Hash;builder_sha256=(Get-FileHash $PSCommandPath).Hash;compiler=[Microsoft.CodeAnalysis.CSharp.CSharpCompilation].Assembly.FullName;compiler_diagnostics=$diagnostics;identity_policy='Roslyn DesktopAssemblyIdentityComparer for engine System.Core3.5/mscorlib2 references against cached4.0 metadata. Runtime binding is not proven by compiler unification.';reference_hashes=$expected;assembly_references=$references;raw_sha256=(Get-FileHash $rawPath).Hash;encoded_sha256=(Get-FileHash $out).Hash;methods=$methods;limits='Offline owned bridge only. Exact target assemblies used solely as compiler metadata. Encoded IL inverse and untouched bytes verified; not loaded into game or host. Camera marker producer only; native plan ownership, live delegate support, pass/resource capture and runtime acceptance remain unproved.'}|ConvertTo-Json -Depth 5|Set-Content (Join-Path $folder 'package-check.json') -Encoding utf8
+Write-Output "PASS: owned bridge compiled against exact game metadata; $($methods.Count) method bodies encoded with exact byte-for-byte inverse."

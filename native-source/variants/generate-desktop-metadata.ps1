@@ -20,6 +20,7 @@ $paths=[string[]]@($entries.Keys)
 [Array]::Sort($paths,[StringComparer]::Ordinal)
 $manifest="GF2VR-COMMON-SOURCE-MANIFEST-V1`n"
 $variants=[ordered]@{}
+$releaseRecipes=[ordered]@{}
 foreach($flavor in @('Clean','Dirty')){
  $resultPath=Join-Path $BuildOutput ($flavor+'/native/build-result.json')
  $result=Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json
@@ -37,10 +38,21 @@ foreach($flavor in @('Clean','Dirty')){
   }
  }
  $variants[$flavor]=[ordered]@{buildId=$result.build;dllSha256=$hash}
+ $releaseRecipes[$flavor]=@{exact=($hash -ceq $recipe.expectedDllSha256);core=$recipe.commonCoreSha256}
 }
 foreach($relative in $paths){$manifest+=$relative+"`t"+$entries[$relative]+"`n"}
 $utf8=[Text.UTF8Encoding]::new($false)
 $commonHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes($manifest)))
+# Release commonCore is the reviewed DLL-bound installation contract. The
+# public dependency-closure source manifest has a separate reproducible hash.
+$sourceManifestHash=$commonHash
+$commonAlgorithm='GF2VR-COMMON-SOURCE-MANIFEST-V1'
+if($releaseRecipes.Clean.exact -and $releaseRecipes.Dirty.exact -and
+   $releaseRecipes.Clean.core -cmatch '^[A-F0-9]{64}$' -and
+   $releaseRecipes.Clean.core -ceq $releaseRecipes.Dirty.core){
+ $commonHash=$releaseRecipes.Clean.core
+ $commonAlgorithm='RELEASE-NATIVE-003-DLL-BOUND'
+}
 $files=@('render_quality.json','stereo_depth.json','navigation.json','world_drag.json',
  'activity_ui.json','controller_input.json','world_scale.json','controller_hands.json')
 [IO.Directory]::CreateDirectory($metadata)|Out-Null
@@ -49,7 +61,7 @@ foreach($flavor in @('Clean','Dirty')){
  [IO.Directory]::CreateDirectory($folder)|Out-Null
  $contract=[ordered]@{schemaVersion=1;buildId=$variants[$flavor].buildId;dllSha256=$variants[$flavor].dllSha256;
   configurationRoot='INSTALL_ROOT/vrmod/config';files=$(if($flavor -eq 'Dirty'){@($files)+@('touch_interaction.json')}else{$files});apply='GAME_RESTART';buildFlavor=$flavor;commonCoreSha256=$commonHash}
- [IO.File]::WriteAllText((Join-Path $folder 'runtime-contract.json'),(($contract|ConvertTo-Json -Depth 4)+"`n"),$utf8)
+ [IO.File]::WriteAllText((Join-Path $folder 'runtime-contract.json'),((($contract|ConvertTo-Json -Depth 4).Replace("`r`n","`n"))+"`n"),$utf8)
 }
 $profiles=@"
 // Generated from a paired native source build; do not substitute frozen release hashes.
@@ -66,8 +78,8 @@ internal static class VariantProfiles
     internal static string? Flavor(string? id) => id == CleanBuild ? "Clean" : id == DirtyBuild ? "Dirty" : null;
 }
 "@
-[IO.File]::WriteAllText((Join-Path $metadata 'VariantProfiles.generated.cs'),($profiles.Replace("`r`n","`n")+"`n"),$utf8)
+[IO.File]::WriteAllText((Join-Path $metadata 'VariantProfiles.generated.cs'),(($profiles.Replace("`r`n","`n")+"`n").Replace("`n","`r`n")),$utf8)
 [IO.File]::WriteAllText((Join-Path $metadata 'common-source-manifest.txt'),$manifest,$utf8)
-$report=[ordered]@{schemaVersion=1;commonCoreAlgorithm='GF2VR-COMMON-SOURCE-MANIFEST-V1';commonCoreSha256=$commonHash;variants=$variants}
+$report=[ordered]@{schemaVersion=1;commonCoreAlgorithm=$commonAlgorithm;commonCoreSha256=$commonHash;publicSourceManifestSha256=$sourceManifestHash;variants=$variants}
 [IO.File]::WriteAllText((Join-Path $metadata 'metadata.json'),(($report|ConvertTo-Json -Depth 5)+"`n"),$utf8)
 Write-Output ('Paired native desktop metadata: '+$metadata)

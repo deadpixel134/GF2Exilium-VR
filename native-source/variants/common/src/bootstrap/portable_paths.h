@@ -11,6 +11,7 @@ typedef struct {
     unsigned short loader[GF2VR_PATH_CAPACITY];
     unsigned short log[GF2VR_PATH_CAPACITY];
     unsigned short render[GF2VR_PATH_CAPACITY];
+    unsigned short performance[GF2VR_PATH_CAPACITY];
     unsigned short depth[GF2VR_PATH_CAPACITY];
     unsigned short navigation[GF2VR_PATH_CAPACITY];
     unsigned short drag[GF2VR_PATH_CAPACITY];
@@ -107,6 +108,7 @@ static int gf2vr_paths_build(Gf2vrPaths *p,const unsigned short *module,
     if(!gf2vr_path_join(p->loader,p->root,rn,L"vrmod\\runtime\\openxr_loader.dll") ||
        !gf2vr_path_join(p->log,p->root,rn,log_name) ||
        !gf2vr_path_join(p->render,p->root,rn,L"vrmod\\config\\render_quality.json") ||
+       !gf2vr_path_join(p->performance,p->root,rn,L"vrmod\\config\\performance.json") ||
        !gf2vr_path_join(p->depth,p->root,rn,L"vrmod\\config\\stereo_depth.json") ||
        !gf2vr_path_join(p->navigation,p->root,rn,L"vrmod\\config\\navigation.json") ||
        !gf2vr_path_join(p->drag,p->root,rn,L"vrmod\\config\\world_drag.json") ||

@@ -368,6 +368,9 @@ internal static partial class SelfTest
         {
             store.SaveLanguage(lang); Assert(store.LoadLanguage() == lang, "locale persistence " + lang);
             Texts.Language = lang; Assert(Texts.Get("title").Length > 0 && Texts.Get("saved").Length > 0, "packaged strings " + lang);
+            foreach (string reason in new[] { "ownedMissing", "modified", "backupMissing" })
+                Assert(Texts.Format(reason, "GF2 Game/version.dll").Contains("GF2 Game/version.dll"), "localized refusal file/action " + lang + "/" + reason);
+            Assert(Texts.Get("updateDetails") != Texts.Get("unavailable"), "localized update details affordance " + lang);
             foreach (string key in new[] { "activityUiTab", "activityPrimaryUiEnabled", "activityUiSummary", "activityUiHelp" })
                 Assert(Texts.Get(key).Length > 0 && Texts.Get(key) != Texts.Get("unavailable"), "Activity locale text " + lang + "/" + key);
         }
@@ -485,6 +488,7 @@ internal static partial class SelfTest
         HapticChecks(store, root);
         LoggingChecks(store, root);
         PanelChecks(store, root);
+        PcOutputChecks(store, root);
         // Leave real GUI smoke and native-parser fixtures in a valid, representative current state.
         fixtureNew = Fields.Clone(store.Documents);
         fixtureNew["navigation.json"]["navigation"]!["locomotionHand"] = "left";

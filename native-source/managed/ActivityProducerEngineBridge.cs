@@ -12,6 +12,36 @@ namespace GF2.Performance
     public sealed class ProducerScopeBridge
     {
         private static ProducerScopeBridge instance;
+#if GF2VR_CAMERA_SPLIT_BRIDGE
+        // Observer only. Native reads these exact owned fields on the main owner.
+        public static long[] ring = new long[64 * 3];
+        public static int ringCount, ringOverflow;
+        public static long ringFrequency;
+        public static bool ringHighResolution;
+        private void RecordSplit(Camera camera, int kind)
+        {
+            try
+            {
+                if (!OnOwner()) { Interlocked.Increment(ref ringOverflow); return; }
+                long tick = System.Diagnostics.Stopwatch.GetTimestamp();
+                int id = camera.GetInstanceID();
+                int category = 0;
+                if (Interlocked.Read(ref serial) != 0 && groups != null && originalIds != null)
+                {
+                    int eye = Eye(id);
+                    category = eye != 0 ? eye : Original(id) ? 3 : 0;
+                }
+                int n = ringCount;
+                if (n < 0 || n >= 64 || ring == null || ring.Length != 64 * 3)
+                { Interlocked.Increment(ref ringOverflow); return; }
+                ring[n * 3] = tick;
+                ring[n * 3 + 1] = id;
+                ring[n * 3 + 2] = kind | (category << 8);
+                ringCount = n + 1;
+            }
+            catch (Exception) { Interlocked.Increment(ref ringOverflow); }
+        }
+#endif
         // Cold-install observation only. Never changes Install's result or
         // subscription cleanup. Read by the native owner once on failure.
         private static int installProgress;
@@ -56,6 +86,7 @@ namespace GF2.Performance
         private Camera[][] groups;
         private int[] progress;
 
+
         private ProducerScopeBridge()
         {
             owner = Thread.CurrentThread.ManagedThreadId;
@@ -77,6 +108,14 @@ namespace GF2.Performance
                 if (NativeNotify(callback.ToInt64(), 0, 0x50534231) != 0x50534231)
                 { installFailure = "Engine owner handshake rejected"; return 0; }
                 installProgress = 2;
+#if GF2VR_CAMERA_SPLIT_BRIDGE
+                try
+                {
+                    ringHighResolution = System.Diagnostics.Stopwatch.IsHighResolution;
+                    ringFrequency = System.Diagnostics.Stopwatch.Frequency;
+                }
+                catch (Exception) { ringHighResolution = false; ringFrequency = 0; }
+#endif
                 bridge = new ProducerScopeBridge();
                 instance = bridge;
                 installProgress = 3;
@@ -256,6 +295,9 @@ namespace GF2.Performance
 
         private void Begin(ScriptableRenderContext c, Camera camera)
         {
+#if GF2VR_CAMERA_SPLIT_BRIDGE
+            RecordSplit(camera, 1);
+#endif
             long epoch = Interlocked.Read(ref serial);
             if (epoch == 0 || !Enter(epoch, c, camera)) return;
             try
@@ -295,6 +337,9 @@ namespace GF2.Performance
         }
         private void End(ScriptableRenderContext c, Camera camera)
         {
+#if GF2VR_CAMERA_SPLIT_BRIDGE
+            RecordSplit(camera, 2);
+#endif
             long epoch = Interlocked.Read(ref serial);
             if (epoch == 0 || !Enter(epoch, c, camera)) return;
             try

@@ -294,7 +294,13 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
     EboU64 observe_start=ebo_stamp();
 #endif
     U64 runtime_start=GetTickCount64();
+#ifdef GF2VR_MFO_ACTIVE
+    MfoTime mfo_end_start=GF2VR_LOGGING_ALLOWED()?mfo_clock():0;
+#endif
     do {
+#ifdef GF2VR_MFO_ACTIVE
+        MfoTime mfo_busy_start=mfo_end_start?mfo_clock():0;
+#endif
 #ifdef GF2VR_BANK_END_OBSERVE
         if(ebo_active())++end_boundary_observation.attempts;
 #endif
@@ -306,7 +312,14 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
             if(allowed==EFO_REJECTED){attached=0;r=EFO_BUSY;}
         }
         if(r==EFO_BUSY)Sleep(1);
+#ifdef GF2VR_MFO_ACTIVE
+        if(r==EFO_BUSY&&mfo_busy_start){MfoTime now=mfo_clock();if(now>=mfo_busy_start){
+            ++mfo_xr.busy_count;mfo_xr.busy_ticks+=now-mfo_busy_start;}}
+#endif
     } while(r==EFO_BUSY);
+#ifdef GF2VR_MFO_ACTIVE
+    if(mfo_end_start){MfoTime now=mfo_clock();if(now>=mfo_end_start){mfo_xr.end_ticks+=now-mfo_end_start;++mfo_xr.end_count;}}
+#endif
 #ifdef GF2VR_BANK_END_OBSERVE
     ebo_driver(observe_start,ebo_stamp());
 #endif
@@ -420,6 +433,9 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
     stereo_aux.last_projection=projected && XR_SUCCEEDED(result);
     static unsigned prior=~0u;
     unsigned mode=projected?(combined.layerCount>=2 && combined.layers[1]->type==XR_TYPE_COMPOSITION_LAYER_QUAD?2u:1u):0u;
+#ifdef GF2VR_DYNAMIC_EYE_SCALE_XR
+    stereo_dynamic_immersive=projected!=0;
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
     touch_p2_mode(mode);
 #endif

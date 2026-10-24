@@ -37,37 +37,39 @@ static char *hexadecimal(char *p, U64 x) {
     for (int shift = 60; shift >= 0; shift -= 4) *p++ = digits[(x >> shift) & 15];
     *p++ = '"'; return p;
 }
+#include "event_line.h"
+#include "event_logger.h"
 static void event(const char *kind, U64 count, DWORD tid) {
     if(!GF2VR_LOGGING_ALLOWED()) return;
-    DWORD saved = GetLastError(), written;
-    HANDLE f = CreateFileW(GF2VR_PROBE_LOG, FILE_APPEND_DATA, 7, NULL, OPEN_ALWAYS, 128, NULL);
-    if (f != INVALID_HANDLE_VALUE) {
-        char line[512], *p = line;
-        p = literal(p, "{\"probe\":\"" GF2VR_OBSERVER_ID "\",\"event\":\"");
-        p = literal(p, kind); p = literal(p, "\",\"pid\":");
-        p = decimal(p, GetCurrentProcessId()); p = literal(p, ",\"tid\":");
-        p = decimal(p, tid); p = literal(p, ",\"count\":");
-        p = hexadecimal(p, count); p = literal(p, ",\"tick_ms\":");
-        p = hexadecimal(p, GetTickCount64()); p = literal(p, ",\"first_tid\":");
-        p = decimal(p, __atomic_load_n(&first_tid, __ATOMIC_ACQUIRE));
-        p = literal(p, ",\"unity_base\":"); p = hexadecimal(p, (U64)unity);
-        p = literal(p, GF2VR_ACTIVITY_FIELD);
-        WriteFile(f, line, (DWORD)(p - line), &written, NULL); CloseHandle(f);
-    }
-    SetLastError(saved);
+    DWORD saved=GetLastError();char line[512];
+    unsigned length=event_line(line,kind,count,tid,GetCurrentProcessId(),GetTickCount64(),
+        __atomic_load_n(&first_tid,__ATOMIC_ACQUIRE),(U64)unity);
+    (void)event_log_enqueue(line,length,0);SetLastError(saved);
 }
+#if defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_MAIN_FRAME_OBSERVE)
+#include "../stereo/main_frame_observe_runtime.h"
+#endif
 static U64 observe(void) {
     /* The original thunk ignores incoming args, sets RCX=0 and tail-jumps.
        Preserve its RAX result and Win32 last-error, and call it exactly once. */
+#if defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_MAIN_FRAME_OBSERVE)
+    mfo_callback_entry();
+#endif
     U64 result = original();
     DWORD saved = GetLastError(), tid = GetCurrentThreadId(), zero = 0;
     __atomic_compare_exchange_n(&first_tid, &zero, tid, 0, __ATOMIC_RELEASE, __ATOMIC_RELAXED);
+#if defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_MAIN_FRAME_OBSERVE)
+    MFO_SCOPE(MFO_CALLBACK);
+#endif
     U64 n = __atomic_add_fetch(&calls, 1, __ATOMIC_RELAXED);
     if (GF2VR_LOG_CALLBACK(n)) event("execute_tasks_return", n, tid);
     if (tid != __atomic_load_n(&first_tid, __ATOMIC_ACQUIRE) &&
         __atomic_add_fetch(&other_thread_calls, 1, __ATOMIC_RELAXED) <= 8)
         event("callback_thread_differs", n, tid);
     GF2VR_AFTER_RETURN(n);
+#if defined(GF2VR_CAMERA_SPLIT_BRIDGE) && defined(GF2VR_MFO_ACTIVE)
+    cs_bridge_drain(); /* existing main postprocessing/stage0, no render command */
+#endif
     SetLastError(saved);
     return result;
 }
@@ -84,6 +86,7 @@ static DWORD WINAPI worker(void *unused) {
     if (!GetModuleHandleExW(5, (const unsigned short *)&worker, &pinned)) return 0;
     gf2vr_logging_initialize();
     unity = (unsigned char *)GetModuleHandleW(L"UnityPlayer.dll");
+    event_log_initialize();
     if (!unity || !GetModuleHandleExW(5, (const unsigned short *)unity, &pinned)) return 0;
     DWORD pe = *(DWORD *)(unity + 0x3c);
     if (pe > 0x1000 || *(DWORD *)(unity + pe) != 0x4550 ||
@@ -132,7 +135,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
         SetLastError(saved);
     }
 #endif
-    /* No detach work, thread joins, engine calls, or unload during the process lifetime. */
+    /* Pinning prevents dynamic unload. At process termination other threads are
+       already gone; flush owned IO synchronously without joining any thread. */
+    if(reason==0 && reserved)event_log_close_process();
     return TRUE;
 }
 #ifdef BOUNDARY_TEST

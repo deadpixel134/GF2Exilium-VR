@@ -89,6 +89,9 @@ static int stereo_navigation_pose(const void *math,const void *input,const void 
 #define applied_settings stereo_navigation_settings
 #endif
     DWORD saved=GetLastError();U64 now=GetTickCount64();SetLastError(saved);
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    stereo_navigation_continuity_pose(i->reference_epoch,a->source_generation);
+#endif
     NavigationSample sample=navigation_read_for_pose(&stereo_navigation_input,i->reference_epoch,
         a->source_generation,now,i->display_time,stereo_navigation_settings);
 #ifdef GF2VR_NAVIGATION_BLOCK_OBSERVE

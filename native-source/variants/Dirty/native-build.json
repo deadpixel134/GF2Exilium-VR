@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "build": "GF2VR-DIRTY-130-ACT001",
-  "expectedDllSha256": "5E3B52BDA6025DB2119DDAC065C8666D533ED3F699858B54384B5574AAEBFD67",
+  "build": "GF2VR-DIRTY-121-003",
+  "expectedDllSha256": "F83E2711C166E4405315072AF5EE32FE792E77772B672682C3427664E91ABE64",
   "compiler": "zig0.16.0",
   "sdk": "Windows10SDK10.0.26100.0",
   "units": {
@@ -205,5 +205,7 @@
     "-DGF2VR_DIRTY_CONTACT=1",
     "-DGF2VR_OPTIONAL_LOGGING"
   ],
-  "scope": "Generated exact native closure. Owned generated managed package; no game binaries/assets."
+  "scope": "Generated exact native closure. Owned generated managed package; no game binaries/assets.",
+  "compilerSha256": "086CE9D47BA42F33A514E1A6E04EB1D4A8FA1D75E0868E0213CAAD447C91E864",
+  "commonCoreSha256": "6EDCB5FD041CCEB5BD596345E81D5A339FE1FBEA4BDB43391961D31AF23032AB"
 }

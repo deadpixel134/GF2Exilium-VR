@@ -34,6 +34,9 @@ internal static class UpdateChecks
         CopyPackage(candidate, pkg); CopyPackage(previous, old);
         var engine = new InstallationEngine(); Check(UpdateStaging.ManagedVersion(root) == null, "unmanaged install ineligible");
         string settings = Paths.Contained(root, "vrmod/config/render_quality.json"); byte[] settingsBytes = Encoding.UTF8.GetBytes("{\"schemaVersion\":1,\"eyeRenderScale\":0.6}"); Paths.WriteNew(settings, settingsBytes);
+        string performance = Paths.Contained(root, UserSettings.PerformancePath);
+        byte[] performanceBytes = Encoding.UTF8.GetBytes("{\"pcOutput\":{\"renderScale\":0.75},\"dynamicEyeScale\":{\"enabled\":false,\"future\":[1,null]},\"unknown\":true}");
+        Paths.WriteNew(performance, performanceBytes);
         // A released predecessor owns its native allowlist. Use its real helper to
         // establish the old receipt rather than asking the new helper to install
         // an intentionally obsolete native profile before testing the update.
@@ -42,6 +45,28 @@ internal static class UpdateChecks
         using (var previousHelper = Process.Start(previousStart)!)
             Check(previousHelper.WaitForExit(30000) && previousHelper.ExitCode == 0, "actual previous helper establishes old native receipt");
         Check(UpdateStaging.ManagedVersion(root) == previousVersion, "receipt uses prior package version");
+        // Diagnostic only: absence and changed bytes must still be refused.
+        string ownedDll = Paths.Contained(root, "GF2 Game/version.dll");
+        byte[] ownedBytes = File.ReadAllBytes(ownedDll);
+        string quarantine = Paths.Contained(fixture, "quarantine/version.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(quarantine)!);
+        File.Move(ownedDll, quarantine);
+        try
+        {
+            Check(UpdateStaging.ManagedVersion(root, out var absent) == null && absent?.Key == "ownedMissing" &&
+                absent.Arguments.SequenceEqual(new object[] { "GF2 Game/version.dll" }), "missing owned file is distinguished, not permitted");
+            Reject(() => engine.Preview(root, pkg), "missing owned DLL still rejects update");
+            Check(!File.Exists(ownedDll) && File.ReadAllBytes(quarantine).SequenceEqual(ownedBytes), "refusal preserves missing state and quarantine");
+        }
+        finally { File.Move(quarantine, ownedDll); }
+        File.WriteAllBytes(ownedDll, Encoding.UTF8.GetBytes("INERT MODIFIED OWNED DLL"));
+        try
+        {
+            Check(UpdateStaging.ManagedVersion(root, out var changed) == null && changed?.Key == "modified", "changed owned bytes retain modified reason");
+            Reject(() => engine.Preview(root, pkg), "changed owned DLL still rejects update");
+        }
+        finally { File.WriteAllBytes(ownedDll, ownedBytes); }
+        Check(UpdateStaging.ManagedVersion(root) == previousVersion, "verified original restores update eligibility");
         string archive = Path.Combine(fixture, UpdatePolicy.ArchiveName(candidateVersion, flavor)); Directory.CreateDirectory(fixture);
         using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
         {
@@ -103,7 +128,9 @@ internal static class UpdateChecks
         Check(ApplyChild()==0,"production staged helper applies after own parent exit");
         Check(UpdateStaging.ManagedVersion(root)==candidateVersion,"real helper receipt advanced");
         Check(File.ReadAllBytes(settings).SequenceEqual(settingsBytes),"0.6 user settings preserved");
+        Check(File.ReadAllBytes(performance).SequenceEqual(performanceBytes), "opaque performance settings survive staged update");
         var undo=engine.Remove(root,engine.ReceiptHash(root));Check(undo.RestoredPrevious && UpdateStaging.ManagedVersion(root)==previousVersion,"updater transaction rollback to previous");
+        Check(File.ReadAllBytes(performance).SequenceEqual(performanceBytes), "opaque performance settings survive updater rollback");
         File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory,"update-validation.json"),Contract.Encode(new {passed=true,checks,fixture,previousVersion,candidateVersion,candidateBuild=candidateManifest.Native!.BuildId,actualHelperProcesses=4,productionEngineUsed=true,gameLaunches=0,nativeDllsLoaded=0,userSettingsPreserved=true}));
         return 0;
     }

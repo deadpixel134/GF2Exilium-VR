@@ -383,6 +383,9 @@ static void primary_ui_generation_report(unsigned operation,int ok) {
     p=literal(p,"}\n");source_log(line,p);
 }
 static int primary_ui_generation_prepare(void *context,U64 generation) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     ActivitySourceGroup *a=context;
     if(!a || !a->source || a->source->owner_thread!=GetCurrentThreadId() || !generation || primary_ui_scope_disabled ||
        !activity_source_current(a,generation) || !primary_ui_current(a))return 0;
@@ -498,11 +501,17 @@ end:
     return ok;
 }
 static int primary_ui_capture(void *context,void *snapshot,const void *entry,const void *role) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     ActivitySourceGroup *a=context;ActivitySourceSnapshot *s=snapshot;
     return primary_ui_capture_source(a,&s->primary,&a->active.primary,entry,role);
 }
 #ifdef GF2VR_ACTIVITY_DIALOGUE_UI
 static int dialogue_ui_capture(void *context,void *snapshot,const void *entry,const void *role) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     ActivitySourceGroup *a=context;ActivitySourceSnapshot *s=snapshot;
     return primary_ui_capture_source(a,&s->dialogue,&a->active.dialogue,entry,role);
 }

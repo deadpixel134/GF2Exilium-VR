@@ -25,9 +25,13 @@ internal sealed class MainForm : Form
     private bool loading;
     private bool dirty;
     private bool panelConfigurationTouched;
+    private bool pcOutputConfigurationTouched;
+    private Label? pcOutputAvailability;
     private readonly Label updateStatus = new() { Dock = DockStyle.Fill, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.FromArgb(71, 87, 110) };
     private readonly CancellationTokenSource updateCancel = new();
     private string updateKey = "updateIdle";
+    private InstallError? updateRefusal;
+    private readonly ToolTip updateHint = new();
     private readonly Button updateButton = new() { AutoSize = true, MinimumSize = new Size(110, 34), Margin = new Padding(4), Text = "" };
     private (ReleaseCandidate Release, UpdateDescriptor Descriptor, byte[] Bytes, string Root)? readyUpdate;
     private string? updateVersion;
@@ -63,7 +67,7 @@ internal sealed class MainForm : Form
             string code = item.Item2; button.Click += (_, _) => SwitchLanguage(code); languages.Controls.Add(button);
         }
         layout.Controls.Add(tabs, 0, 1);
-        BuildPage("renderTab", Fields.All.Where(f => f.File == "render_quality.json"), "renderSummary");
+        BuildPage("renderTab", Fields.All.Where(f => f.File is "render_quality.json" or "performance.json"), "renderSummary");
         BuildPage("navigationTab", Fields.All.Where(f => f.File == "navigation.json"), "navigationSummary");
         BuildPage("dragTab", Fields.All.Where(f => f.File == "world_drag.json"), "conflictHelp");
         BuildPage("activityUiTab", Fields.All.Where(f => f.File == "activity_ui.json"), "activityUiSummary");
@@ -83,6 +87,7 @@ internal sealed class MainForm : Form
         {
             if (store == null) throw new SettingsError("rootError");
             var requested = ReadControls(); store.Save(requested); editing = Fields.Clone(store.Documents);
+            pcOutputConfigurationTouched = false; ApplyControls();
             dirty = false; SetStatus("saved"); UpdateSave();
         });
         actions.Controls.Add(save);
@@ -111,11 +116,16 @@ internal sealed class MainForm : Form
         statusRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45)); statusRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55));
         status.Height = updateStatus.Height = 24; statusRow.Controls.Add(status, 0, 0); statusRow.Controls.Add(updateStatus, 1, 0);
         layout.Controls.Add(statusRow, 0, 4);
+        updateStatus.Click += (_, _) =>
+        {
+            if (updateRefusal != null)
+                MessageBox.Show(this, Texts.UpdateError(updateRefusal), Texts.Get("updateDetails"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+        };
         FormClosing += (_, e) => { if (smokeFolder == null && !Discard()) e.Cancel = true; };
         LoadRoot(root); Translate();
         if (smoke != null) Shown += (_, _) => Smoke();
         else Shown += async (_, _) => await CheckUpdates();
-        FormClosed += (_, _) => updateCancel.Cancel();
+        FormClosed += (_, _) => { updateCancel.Cancel(); updateHint.Dispose(); };
     }
 
     private void SwitchLanguage(string locale)
@@ -125,14 +135,18 @@ internal sealed class MainForm : Form
         Run(() => { store?.SaveLanguage(Texts.Language); SetStatus("languageSaved"); });
     }
 
-    private void UpdateState(string key)
+    private void UpdateState(string key, InstallError? refusal = null)
     {
-        updateKey = key; updateStatus.Text = key == "updateAvailable" && updateVersion != null ? Texts.Format("updateAvailableVersion", updateVersion) : Texts.Get(key);
+        updateKey = key; updateRefusal = refusal;
+        updateStatus.Text = refusal != null ? Texts.Get("updateDetails") : key == "updateAvailable" && updateVersion != null ? Texts.Format("updateAvailableVersion", updateVersion) : Texts.Get(key);
+        updateStatus.Cursor = refusal == null ? Cursors.Default : Cursors.Hand;
+        updateStatus.AccessibleName = refusal == null ? updateStatus.Text : Texts.UpdateError(refusal);
+        updateHint.SetToolTip(updateStatus, refusal == null ? updateStatus.Text : Texts.UpdateError(refusal));
         updateButton.Text = Texts.Get("updateAction");
     }
     private async Task CheckUpdates()
     {
-        if (store == null) { UpdateState("updateUnmanaged"); return; }
+        if (store == null) { UpdateState("updateUnmanaged", new InstallError("settingsUnavailable")); return; }
         string root = store.Root;
         try
         {
@@ -145,7 +159,7 @@ internal sealed class MainForm : Form
             UpdateState("updateAvailable"); updateButton.Visible = true;
         }
         catch (OperationCanceledException) { }
-        catch { if (!IsDisposed) UpdateState("updateFailed"); }
+        catch (Exception ex) { if (!IsDisposed) UpdateState("updateFailed", ex as InstallError ?? new InstallError("updateInvalid")); }
     }
     private async Task ApplyUpdate()
     {
@@ -160,7 +174,7 @@ internal sealed class MainForm : Form
             UpdateStaging.Handoff(staged); dirty = false; Close();
         }
         catch (OperationCanceledException) { }
-        catch { if (!IsDisposed) UpdateState("updateFailed"); } // No raw auth/transport stderr in UI/log.
+        catch (Exception ex) { if (!IsDisposed) UpdateState("updateFailed", ex as InstallError ?? new InstallError("updateInvalid")); } // No raw auth/transport stderr in UI/log.
         finally { if (!IsDisposed) Enabled = true; }
     }
 
@@ -189,7 +203,7 @@ internal sealed class MainForm : Form
         int row = 1;
         foreach (Field f in fields)
         {
-            void Edited() { if (!loading && f.Group == "auxiliaryPanel") panelConfigurationTouched = true; Changed(); }
+            void Edited() { if (!loading && f.Group == "auxiliaryPanel") panelConfigurationTouched = true; if (!loading && f.File == "performance.json") pcOutputConfigurationTouched = true; Changed(); }
             table.Controls.Add(Label(f.Key), 0, row);
             Control input;
             if (f.Kind == "bool")
@@ -199,7 +213,7 @@ internal sealed class MainForm : Form
             }
             else if (f.Kind == "choice")
             {
-                var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 165 };
+                var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = f.Key == "pcOutputPreset" ? 230 : 165 };
                 combo.SelectedIndexChanged += (_, _) => Edited(); input = combo;
             }
             else
@@ -220,6 +234,7 @@ internal sealed class MainForm : Form
         }
         if (key == "navigationTab") { table.Controls.Add(effectiveSpeed, 0, row); table.SetColumnSpan(effectiveSpeed, 2); }
         if (key == "worldScaleTab") { table.Controls.Add(effectiveSpatial, 0, row); table.SetColumnSpan(effectiveSpatial, 2); }
+        if (key == "renderTab") { pcOutputAvailability = Label("pcOutputUnavailable"); table.Controls.Add(pcOutputAvailability, 0, row); table.SetColumnSpan(pcOutputAvailability, 2); }
     }
 
 #if GF2VR_DIRTY_CONTACT
@@ -238,14 +253,14 @@ internal sealed class MainForm : Form
     private void Translate()
     {
         Text = Texts.Get("title");
-        UpdateState(updateKey);
+        UpdateState(updateKey, updateRefusal);
         if (status.Tag is string state) status.Text = Texts.Get(state);
         foreach (Control c in localized) if (c.Tag is string key) c.Text = Texts.Get(key);
         foreach (Field f in Fields.All.Where(f => f.Kind == "choice"))
         {
             var combo = (ComboBox)inputs[f.Key]; int before = combo.SelectedIndex;
             bool wasLoading = loading; loading = true;
-            combo.Items.Clear(); combo.Items.AddRange(f.Choices!.Select(c => (object)Texts.Get(c)).ToArray());
+            combo.Items.Clear(); combo.Items.AddRange(Fields.ChoicesFor(editing, f).Select(c => (object)Fields.ChoiceText(f, c)).ToArray());
             combo.SelectedIndex = before; loading = wasLoading;
         }
         UpdateSave();
@@ -262,7 +277,7 @@ internal sealed class MainForm : Form
             // A damaged preference cannot replace valid runtime settings with defaults.
             string locale;
             try { locale = candidate.LoadLanguage(); } catch { locale = "ko"; }
-            store = candidate; rootBox.Text = candidate.Root; editing = Fields.Clone(candidate.Documents); panelConfigurationTouched = false;
+            store = candidate; rootBox.Text = candidate.Root; editing = Fields.Clone(candidate.Documents); panelConfigurationTouched = false; pcOutputConfigurationTouched = false;
             Texts.Language = locale;
             Translate(); ApplyControls(); dirty = false; SetStatus("loaded"); UpdateSave();
         }, failedLoad: true);
@@ -278,10 +293,19 @@ internal sealed class MainForm : Form
                 var value = Fields.Get(editing, f) ?? Fields.JsonSerializerNode(f.Default);
                 Control c = inputs[f.Key];
                 if (c is CheckBox cb) cb.Checked = value.GetValue<bool>();
-                else if (c is ComboBox combo) combo.SelectedIndex = Array.IndexOf(f.Choices!, value.GetValue<string>());
+                else if (c is ComboBox combo)
+                {
+                    if (f.File == "performance.json")
+                    {
+                        combo.Items.Clear(); combo.Items.AddRange(Fields.ChoicesFor(editing, f).Select(v => (object)Fields.ChoiceText(f, v)).ToArray());
+                    }
+                    combo.SelectedIndex = Array.IndexOf(Fields.ChoicesFor(editing, f), value.GetValue<string>());
+                }
                 else c.Text = value.ToJsonString();
                 c.Enabled = store != null && (!Fields.IsContactHaptic(f.Key) || store.ContactHapticsAvailable);
+                if (f.File == "performance.json") c.Enabled = store?.PcOutputAvailable == true;
             }
+            if (pcOutputAvailability != null) pcOutputAvailability.Visible = store != null && !store.PcOutputAvailable;
             manualDepthText = inputs["stereoDepthScale"].Text;
             depthWasLinked = ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked;
         }
@@ -293,9 +317,10 @@ internal sealed class MainForm : Form
         var result = Fields.Clone(editing);
         foreach (Field f in Fields.All)
         {
+            if (f.File == "performance.json" && (!pcOutputConfigurationTouched || store?.PcOutputAvailable != true)) continue;
             Control c = inputs[f.Key]; JsonNode val;
             if (c is CheckBox cb) val = JsonValue.Create(cb.Checked)!;
-            else if (c is ComboBox combo) val = JsonValue.Create(f.Choices![combo.SelectedIndex])!;
+            else if (c is ComboBox combo) val = JsonValue.Create(Fields.ChoicesFor(editing, f)[combo.SelectedIndex])!;
             else val = JsonValue.Create(SettingsStore.Number(f.Key == "stereoDepthScale" && ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked ? manualDepthText : c.Text, f.Key))!;
             Fields.Set(result, f, val);
         }
@@ -354,7 +379,8 @@ internal sealed class MainForm : Form
     private void ApplyDefaults()
     {
         // Reset known fields only. Compatible unknown fields remain intact.
-        foreach (var f in Fields.All) Fields.Set(editing, f, Fields.JsonSerializerNode(f.Default));
+        foreach (var f in Fields.All)
+            if (f.File != "performance.json" || store?.PcOutputAvailable == true) Fields.Set(editing, f, Fields.JsonSerializerNode(f.Default));
         ApplyControls(); dirty = true; SetStatus("defaultsPending");
     }
     private void Import(object? sender, EventArgs e)
@@ -366,7 +392,8 @@ internal sealed class MainForm : Form
         {
             var imported = SettingsStore.Import(dialog.FileName, editing);
             // Apply known settings; preserve installed unknown fields independently of imported unknown metadata.
-            foreach (var f in Fields.All) Fields.Set(editing, f, (Fields.Get(imported, f) ?? Fields.JsonSerializerNode(f.Default)).DeepClone());
+            foreach (var f in Fields.All)
+                if (f.File != "performance.json" || store?.PcOutputAvailable == true) Fields.Set(editing, f, (Fields.Get(imported, f) ?? Fields.JsonSerializerNode(f.Default)).DeepClone());
             ApplyControls(); dirty = true; SetStatus("importPending");
         });
     }
@@ -430,6 +457,9 @@ internal sealed class MainForm : Form
             updateVersion = "0.6.0"; UpdateState("updateAvailable"); updateButton.Visible = true;
             // Real forms/resources, no runtime writes. Exercise language, all field creation, initial config and persistence mapping.
             var initial = ReadControls(); SettingsStore.Validate(initial);
+            initial["performance.json"]["pcOutput"]!["renderScale"] = .875;
+            initial["performance.json"]["dynamicEyeScale"] = new JsonObject { ["enabled"] = false, ["futureHidden"] = 42 };
+            editing = Fields.Clone(initial); ApplyControls();
             if (initial["controller_input.json"].ContainsKey("auxiliaryPanel") != editing["controller_input.json"].ContainsKey("auxiliaryPanel"))
                 throw new InvalidDataException("Unrelated settings save activated a panel layout");
             for (int i = 0; i < Texts.Languages.Length; i++)
@@ -437,7 +467,43 @@ internal sealed class MainForm : Form
                 ((Button)languages.Controls[i]).PerformClick();
                 if (Texts.Language != Texts.Languages[i] || store?.LoadLanguage() != Texts.Languages[i])
                     throw new InvalidDataException("Language button did not select and persist its locale");
+                UpdateState("updateFailed", new InstallError("ownedMissing", "GF2 Game/version.dll"));
+                Translate();
+                if (updateStatus.Cursor != Cursors.Hand || updateStatus.Text != Texts.Get("updateDetails") ||
+                    updateHint.GetToolTip(updateStatus)?.Contains("GF2 Game/version.dll") != true ||
+                    updateStatus.AccessibleName?.Contains(Texts.Get("updateNextAction")) != true)
+                    throw new InvalidDataException("Localized update refusal lost condition, file, action or details affordance");
+                UpdateState("updateAvailable");
                 VerifyButtonGeometry();
+                tabs.SelectedIndex = 0;
+                var pcPreset = (ComboBox)inputs["pcOutputPreset"];
+                var pcScope = (CheckBox)inputs["pcOutputImmersiveOnly"];
+                if (store?.PcOutputAvailable == true)
+                {
+                    for (int option = 0; option < 5; ++option)
+                    {
+                        pcPreset.SelectedIndex = option;
+                        foreach (bool immersive in new[] { true, false })
+                        {
+                            pcScope.Checked = immersive;
+                            var values = ReadControls(); var pc = values["performance.json"]["pcOutput"]!;
+                            if (Fields.Get(values, Fields.All.Single(f => f.Key == "pcOutputPreset"))!.GetValue<string>() != new[] { "NATIVE", "3200x1800", "2560x1440", "1920x1080", "1280x720" }[option] ||
+                                pc["scope"]!.GetValue<string>() != (immersive ? "IMMERSIVE_ONLY" : "ALWAYS") ||
+                                pc["renderScale"]!.GetValue<double>() != .875 || values["performance.json"]["dynamicEyeScale"]!["futureHidden"]!.GetValue<int>() != 42)
+                                throw new InvalidDataException("PC GUI mapping changed hidden runtime settings");
+                        }
+                    }
+                    pcPreset.SelectedIndex = 4; pcScope.Checked = true;
+                }
+                else if (pcPreset.Enabled || pcScope.Enabled || !JsonNode.DeepEquals(ReadControls()["performance.json"], initial["performance.json"]))
+                    throw new InvalidDataException("Unsupported runtime exposed or rewrote PC controls");
+                PerformLayout(); tabs.SelectedTab!.PerformLayout();
+                using (var pcBitmap = new Bitmap(Width, Height))
+                {
+                    DrawToBitmap(pcBitmap, new Rectangle(0, 0, Width, Height));
+                    pcBitmap.Save(Path.Combine(smokeFolder!, "pc-output-" + Texts.Language + ".png"));
+                }
+                editing = Fields.Clone(initial); pcOutputConfigurationTouched = false; ApplyControls();
                 tabs.SelectedIndex = 1; PerformLayout(); tabs.SelectedTab!.PerformLayout();
                 var follow = (CheckBox)inputs["cameraFollowEnabled"]; bool oldFollow = follow.Checked;
                 foreach (bool enabled in new[] { false, true })

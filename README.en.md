@@ -10,13 +10,19 @@ An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Men
 
 **Compatible with both the Haoplay and Steam versions.** Both platforms use the same Clean/Dirty packages.
 
-**[Download release 1.2.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
+**[Download the latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
 ## What does it do?
 
 Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
+
+## PC output resolution
+
+Settings offers native/3200×1800/2560×1440/1920×1080/1280×720 PC output. Native is the default. We recommend 1280×720 to reduce GPU load, at the cost of a less sharp PC window and auxiliary panel. Eye quality and fixed eye scale remain separate. Choose VR-only or always-applied output, save, and restart the game.
+
+Updates and removal preserve an existing performance.json. Dynamic eye scaling remains disabled because measured throughput did not improve; PC 3D renderScale is also unsupported after showing no throughput benefit.
 
 ## Contributors
 

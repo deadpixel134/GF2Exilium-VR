@@ -119,6 +119,9 @@ static void producer_scope_callback(int id) {
     }SetLastError(saved);
 }
 static int producer_scope_issue(void *owner,PsnToken token) {
+#ifdef GF2VR_BRIDGE_TAIL_OBSERVE
+    BTO_SCOPE(6); /* synchronous producer/transfer issuance, not GPU completion */
+#endif
     ProducerScopeObservation *r=owner;
     if(!r || !psn_same(r->token,token) || r->issue_attempts || !stereo_interval_entry())return PSN_NOT_QUEUED;
     unsigned index=(unsigned)(r-producer_scope.rows);if(index>=PSO_CAPACITY)return PSN_NOT_QUEUED;
@@ -180,6 +183,9 @@ static void producer_scope_tail_log(ProducerScopeObservation *r) {
 #endif
 #ifdef GF2VR_PRODUCER_BORROW_RETURN_FIX
 static int producer_scope_tail_execute(ProducerScopeObservation *r,int camera) {
+#ifdef GF2VR_BRIDGE_TAIL_OBSERVE
+    BTO_SCOPE(5); /* includes deferred borrow-return execution */
+#endif
     PsnBarrierFacts facts={0};DrawQueueIdentity now={0};
     if(stereo_live && stereo_two.root_slot<EFO_CAPACITY) {
         SourceRenderFlight *s=&stereo_live->flights.slots[stereo_two.root_slot];
@@ -234,6 +240,9 @@ static void producer_scope_borrow_log(ProducerScopeObservation *r) {
 }
 #endif
 static int producer_scope_notify(long long serial,int operation,int camera) {
+#ifdef GF2VR_BRIDGE_TAIL_OBSERVE
+    BTO_SCOPE(bto_op_stage(operation)); /* includes canvas before/after handlers */
+#endif
     DWORD saved=GetLastError();int result=0;
 #ifdef GF2VR_ACTIVITY_CANVAS_SCOPE
     if(!primary_ui_canvas_before_notify((U64)serial,operation,camera)) {
@@ -433,6 +442,9 @@ static int producer_prepare_quiescent(void) {
         free_slots==EFO_CAPACITY && !generation && !epoch;
 }
 static int producer_prepare_install(void *context) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_PRODUCER);
+#endif
     (void)context;
     event("producer_prepare_begin",0,GetCurrentThreadId());
     int okay=producer_scope_setup();
@@ -474,6 +486,9 @@ static int producer_scope_camera_id(void *camera,int *id) {
     }sa.gchandle_free(root);return okay;
 }
 static void producer_scope_arm(void *context) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_PRODUCER_ARM);
+#endif
     DWORD saved=GetLastError();
     if(producer_scope.disabled || producer_scope.active ||
 #ifndef GF2VR_PRODUCER_TRANSFER
@@ -549,6 +564,9 @@ static void producer_scope_arm(void *context) {
 #endif
     int result=0;int called=pbi_invoke(&producer_scope.invoker,PBI_ARM,token.serial,0,(uintptr_t)context,
         s->scope.left,s->scope.right,stereo_two.original_cameras,0,&result);
+#ifdef GF2VR_MFO_ACTIVE
+    mfo_prepare_armed(token.serial);
+#endif
     producer_scope_stage(7,(called?1u:0u)|((unsigned)(result==1)<<1));
 #ifdef GF2VR_TOUCH_PRIVATE
     if(called && result==1)touch_p2_draw(s);

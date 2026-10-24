@@ -35,6 +35,7 @@ internal static class Texts
         return Resources["ko"]["unavailable"];
     }
     internal static string Format(string key, params object[] args) => string.Format(CultureInfo.InvariantCulture, Get(key), args);
+    internal static string UpdateError(GF2VR.Installer.InstallError error) => Format(error.Key, error.Arguments) + "\n\n" + Get("updateNextAction");
     internal static string Describe(Exception ex) => ex is SettingsError e ? Format(e.Key, e.Arguments) : Get("ioError") + "\n" + ex.Message;
     internal static void Verify()
     {

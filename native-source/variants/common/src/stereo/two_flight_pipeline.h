@@ -100,11 +100,17 @@ static int stereo_two_ui_drained(void *context) {
 }
 #endif
 static int stereo_two_arm(void) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_PRODUCER);
+#endif
     if(!stereo_live || stereo_live->pair_count!=EFO_CAPACITY || !stereo_two.enabled ||
        GetCurrentThreadId()!=stereo_live->thread || !stereo_pipeline.render.active ||
        stereo_prepare_attempted)return 0;
     /* Set BEFORE invoking any managed preparation; reentrant renders remain
        original-only and cannot reserve a second flight in the same root. */
+#ifdef GF2VR_MFO_ACTIVE
+    mfo_prepare_begin(stereo_pipeline.render.serial);
+#endif
     stereo_prepare_attempted=1;
 #ifdef GF2VR_TWO_FLIGHT_ROOT_OBSERVE
     ++two_root_note.arm_attempts;
