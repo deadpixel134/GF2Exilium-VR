@@ -54,6 +54,9 @@ static int pose_angles(const PoseMath *m,const double q[4],double angles[3]) {
 }
 static int pose_compose(const PoseMath *m,const UnityTrackingInput *input,
                          const PoseSourceAnchor *anchor,ManagedEyePose out[2]) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_POSE);
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
     touch_p3_begin();
 #endif

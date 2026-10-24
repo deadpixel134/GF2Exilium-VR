@@ -10,13 +10,19 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 **兼容Haoplay版本和Steam版本。** 两个平台使用相同的Clean/Dirty安装包。
 
-**[下载正式版 1.2.0](https://github.com/deadpixel134/GF2Exilium-VR/releases/tag/v1.2.0)**
+**[下载最新版本](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
 > **使用 VR 前必须在游戏设置中关闭抗锯齿。**
 
 ## 可以做什么？
 
 支持随头部动作环顾、摇杆移动与转向、指针点击和拖动，以及在手边打开原始游戏画面的辅助面板。可调整画质、世界大小、立体感和操作。Dirty 还提供对支持角色胸部、臀部的接触，以及振动和晃动设置。
+
+## PC 输出分辨率
+
+设置程序可选择原生／3200×1800／2560×1440／1920×1080／1280×720，默认保持原生分辨率。推荐使用1280×720来降低GPU负担，代价是PC窗口和辅助面板较模糊。眼睛画质和固定渲染倍率单独保持。选择仅在VR中或始终应用，保存后重启游戏。
+
+更新和移除会保留现有的performance.json。动态眼睛倍率和PC 3D renderScale在实测中未提升处理量，因此不支持。
 
 ## 贡献者
 

@@ -21,7 +21,7 @@ internal static class NativeLayout
     internal const string ToolRoot = "vrmod/bin/GF2VR.Configurator/";
     internal static readonly string[] ConfigFiles = ["render_quality.json", "stereo_depth.json", "navigation.json", "world_drag.json"];
     internal static readonly string[] StableConfigFiles =
-        [.. ConfigFiles, "activity_ui.json", "controller_input.json", "world_scale.json"];
+        [.. ConfigFiles, "activity_ui.json", "controller_input.json", "world_scale.json", "performance.json"];
     internal static readonly string[] VariantConfigFiles = [.. StableConfigFiles, "controller_hands.json"];
     internal static readonly string[] Files =
         ["GF2 Game/version.dll", "vrmod/runtime/openxr_loader.dll", "vrmod/runtime/openxr-LICENSE.txt", "vrmod/runtime/minhook-LICENSE.txt",
@@ -120,6 +120,12 @@ internal static class NativeLayout
             bool variant = VariantProfiles.IsVariant(package.Native?.BuildId);
             bool stable = package.Native?.BuildId == StablePortableBuild || IsFlexible(package);
             string[] configFiles = variant ? (package.Native?.BuildFlavor == "Dirty" ? [.. VariantConfigFiles, "touch_interaction.json"] : VariantConfigFiles) : stable ? StableConfigFiles : ConfigFiles;
+            // Older verified GUI providers did not consume performance.json.
+            // Retain their exact legacy set without granting payload ownership.
+            string[] legacyConfigFiles = configFiles.Where(f => f != "performance.json").ToArray();
+            bool validFiles = new[] { configFiles, legacyConfigFiles }.Any(expected =>
+                c.GetProperty("files").GetArrayLength() == expected.Length &&
+                c.GetProperty("files").EnumerateArray().Select(v => v.GetString()).ToHashSet(StringComparer.Ordinal).SetEquals(expected));
             string expectedHash = ExpectedHash(package);
             if (package.Native == null || !Paths.Equal(package.Native.DllSha256, expectedHash) ||
                 (!portable && package.Native.BuildId != BuildId) ||
@@ -135,8 +141,7 @@ internal static class NativeLayout
                     Path.TrimEndingDirectorySeparator(Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!))
                     .Equals(expectedRoot, StringComparison.OrdinalIgnoreCase)) ||
                 c.GetProperty("apply").GetString() != "GAME_RESTART" ||
-                c.GetProperty("files").GetArrayLength() != configFiles.Length ||
-                !c.GetProperty("files").EnumerateArray().Select(v => v.GetString()).ToHashSet(StringComparer.Ordinal).SetEquals(configFiles))
+                !validFiles)
                 throw new InstallError("configContract");
             if (portable)
             {

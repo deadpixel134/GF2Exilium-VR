@@ -90,6 +90,9 @@ static void stereo_world_drag_end(WorldDragFrame frame,int eligible,unsigned lon
    independent of current physical head pitch/roll. One distance consumption;
    repeated renders use the accumulated offset, never reconsume that distance. */
 static int stereo_world_drag_navigation(unsigned long long epoch,unsigned long long generation,const double rotation[4],float units,float output[3]) {
+#ifdef GF2VR_NAVIGATION_CONTINUITY
+    stereo_navigation_continuity_pose(epoch,generation);
+#endif
     if(stereo_navigation.epoch!=epoch||stereo_navigation.generation!=generation) {
         stereo_navigation.epoch=epoch;stereo_navigation.generation=generation;stereo_navigation.offset=(WorldDragVector){0};
     }

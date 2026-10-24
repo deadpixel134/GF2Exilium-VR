@@ -11,6 +11,9 @@ static PrimaryUiCanvasPlan primary_ui_canvas_plan;
 /* Producer member notifications retain their normal semantics and real drain
    checks. They no longer toggle a Canvas whose native batches live per frame. */
 static int primary_ui_canvas_prepare(U64 serial){
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
 #ifdef GF2VR_ACTIVITY_UI_NATIVE_REGISTER_OBSERVE
     acr_prepare(serial);
 #else
@@ -28,6 +31,9 @@ static int primary_ui_canvas_after_notify(U64 serial,int operation,int camera,in
     return result;
 }
 static int primary_ui_canvas_finish(U64 serial){
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
 #ifdef GF2VR_ACTIVITY_UI_NATIVE_REGISTER_OBSERVE
     acr_finish(serial);
 #else
@@ -36,6 +42,9 @@ static int primary_ui_canvas_finish(U64 serial){
     return 1;
 }
 static void primary_ui_canvas_owner_tick(void) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
 #ifdef GF2VR_ACTIVITY_UI_LIFETIME
     /* The original root can change between dialogue lines. A main idle tick
        is not GPU/copy drain: defer restoration to the UI transaction. */
@@ -75,6 +84,9 @@ static void primary_ui_canvas_report(unsigned operation,int ok,U64 serial,int ca
     p=literal(p,"}\n");source_log(line,p);
 }
 static int primary_ui_canvas_prepare(U64 serial) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     primary_ui_canvas_plan=(PrimaryUiCanvasPlan){0};
     if(primary_ui_canvas.scope.active)return 0;
     if(!stereo_live || stereo_two.root_slot>=EFO_CAPACITY || stereo_two.root_serial!=serial)return 1;
@@ -147,6 +159,9 @@ static int primary_ui_canvas_after_notify(U64 serial,int operation,int camera,in
     primary_ui_canvas_report(5,ok,serial,camera);return ok;
 }
 static int primary_ui_canvas_finish(U64 serial) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     int pending=primary_ui_canvas.scope.active && primary_ui_canvas.scope.serial==serial;
     if(pending && GetCurrentThreadId()!=primary_ui_canvas.scope.owner)return 0;
     if(pending)primary_ui_canvas.scope.failed=1; /* no End: this root is never successful */
@@ -162,6 +177,9 @@ static int primary_ui_canvas_finish(U64 serial) {
     return ok;
 }
 static void primary_ui_canvas_owner_tick(void) {
+#ifdef GF2VR_MFO_ACTIVE
+    MFO_SCOPE(MFO_ACTIVITY_UI);
+#endif
     if(primary_ui_canvas.scope.active && GetCurrentThreadId()==primary_ui_canvas.scope.owner &&
        !stereo_pipeline.render.active) {
         DWORD saved=GetLastError();(void)primary_ui_canvas_restore(GetCurrentThreadId());SetLastError(saved);

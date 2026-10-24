@@ -11,6 +11,8 @@ internal static class Fields
     internal static readonly Field[] All =
     [
         new("render_quality.json", null, "eyeRenderScale", "number", 1d, "renderHelp"),
+        new("performance.json", "pcOutput", "pcOutputPreset", "choice", "NATIVE", "pcOutputHelp", ["NATIVE", "3200x1800", "2560x1440", "1920x1080", "1280x720"]),
+        new("performance.json", "pcOutput", "pcOutputImmersiveOnly", "bool", true, "pcOutputScopeHelp"),
         new("stereo_depth.json", null, "stereoDepthScale", "number", 1d, "depthHelp"),
         new("world_scale.json", null, "worldScale", "number", 1d, "worldScaleHelp"),
         new("world_scale.json", null, "linkStereoDepthToWorldScale", "bool", true, "depthLinkHelp"),
@@ -65,6 +67,9 @@ internal static class Fields
     ];
 
     internal static string[] Files => All.Select(f => f.File).Distinct().ToArray();
+    // Configurator-owned registration; Installer.NativeLayout has a separate
+    // protected list owned by MS-IN-540 and must not change in this task.
+    internal static string[] StableConfigFiles => Files.Where(f => f != "touch_interaction.json").ToArray();
 
     internal static Dictionary<string, JsonObject> Defaults()
     {
@@ -78,6 +83,12 @@ internal static class Fields
     internal static JsonNode? Get(Dictionary<string, JsonObject> docs, Field f)
     {
         var owner = f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject;
+        if (f.File == "performance.json")
+        {
+            if (f.Key == "pcOutputImmersiveOnly") return JsonValue.Create((owner?["scope"]?.GetValue<string>() ?? "IMMERSIVE_ONLY") == "IMMERSIVE_ONLY");
+            string mode = owner?["mode"]?.GetValue<string>() ?? "NATIVE";
+            return JsonValue.Create(mode == "NATIVE" ? "NATIVE" : $"{(int)SettingsStore.Number(owner?["width"]?.ToJsonString() ?? "2560", f.Key)}x{(int)SettingsStore.Number(owner?["height"]?.ToJsonString() ?? "1440", f.Key)}");
+        }
 #if GF2VR_DIRTY_CONTACT
         // A present regional null is invalid, never legacy fallback. Reading
         // an old common value must not rewrite settings merely by loading.
@@ -104,6 +115,20 @@ internal static class Fields
 
     internal static bool IsPanelNumber(string key) => All.Any(f => f.Group == "auxiliaryPanel" && f.Kind == "number" && f.Key == key);
 
+    internal static string[] ChoicesFor(Dictionary<string, JsonObject> docs, Field f)
+    {
+        if (f.Key != "pcOutputPreset") return f.Choices!;
+        string current = Get(docs, f)!.GetValue<string>();
+        string[] choices = f.Choices!;
+        // A valid manually edited size remains visible/preserved; it is not an
+        // editable arbitrary-size input or an extra built-in preset.
+        return choices.Contains(current) ? choices : [.. choices, current];
+    }
+
+    internal static string ChoiceText(Field f, string value) => f.Key == "pcOutputPreset"
+        ? value == "NATIVE" ? Texts.Get("pcOutputNative") : f.Choices!.Contains(value) ? value.Replace("x", "×", StringComparison.Ordinal) : Texts.Format("pcOutputCustom", value.Replace("x", "×", StringComparison.Ordinal))
+        : Texts.Get(value);
+
     internal static void Set(Dictionary<string, JsonObject> docs, Field f, JsonNode value)
     {
         var doc = docs[f.File];
@@ -111,6 +136,26 @@ internal static class Fields
         {
             if (doc[f.Group] == null) doc[f.Group] = new JsonObject();
             doc = doc[f.Group]!.AsObject();
+        }
+        if (f.File == "performance.json")
+        {
+            if (f.Key == "pcOutputImmersiveOnly") doc["scope"] = value.GetValue<bool>() ? "IMMERSIVE_ONLY" : "ALWAYS";
+            else
+            {
+                string preset = value.GetValue<string>();
+                if (preset == "NATIVE") doc["mode"] = "NATIVE";
+                else
+                {
+                    var size = preset.Split('x');
+                    if (size.Length != 2 || !int.TryParse(size[0], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int width) ||
+                        !int.TryParse(size[1], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int height) ||
+                        width is < 1 or > 16384 || height is < 1 or > 16384) throw new SettingsError("formatError", f.File);
+                    doc["mode"] = "FIXED"; doc["width"] = width; doc["height"] = height;
+                }
+                if (!doc.ContainsKey("width")) doc["width"] = 2560;
+                if (!doc.ContainsKey("height")) doc["height"] = 1440;
+            }
+            return;
         }
         doc[JsonKey(f)] = value;
     }

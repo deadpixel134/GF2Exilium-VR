@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 
 namespace GF2VR.Installer;
 
@@ -60,6 +61,7 @@ internal sealed class InstallationEngine
         byte[] bytes = Paths.Bytes(Paths.Contained(packageRoot, "package-manifest.json"), 262144) ?? throw new InstallError("manifestMissing");
         var package = Contract.Read<Package>(bytes); Identity(package.SchemaVersion, package.Product, package.Version, package.Scope);
         ValidateFiles(package.Files); Paths.HashText(package.GameExecutableSha256);
+        UserSettings.ValidatePolicy(package.UserSettings);
         // Original game fingerprints describe the packaging baseline. They do
         // not authorize writes and are deliberately not installation gates.
         if (package.BoundGameRoot != null && !Path.TrimEndingDirectorySeparator(Path.GetFullPath(package.BoundGameRoot)).Equals(root, StringComparison.OrdinalIgnoreCase))
@@ -150,7 +152,8 @@ internal sealed class InstallationEngine
         Execute(plan.Root, id, changes, progress, plan.GameDirectory);
         if (plan.Package.Scope == "vrmod" && plan.Package.Native != null && Version.Parse(plan.Package.Version) >= new Version(1, 1, 5))
             _ = RuntimeLogCleanup.Apply(plan.Root, plan.Prior != null);
-        return new OperationResult(receipt.Version, false, id);
+        bool settingsWarning = plan.Package.Scope == "vrmod" && UserSettings.Apply(plan.Root, id, "install", true).Warning;
+        return new OperationResult(receipt.Version, false, id, settingsWarning);
     }
 
     private static Journal ReadJournal(string root, string id)
@@ -210,7 +213,18 @@ internal sealed class InstallationEngine
             var previous = ReadReceipt(root, priorState); _ = InstallationJournal(root, previous, priorState);
         }
         string id = Guid.NewGuid().ToString("N"); Execute(root, id, changes, progress, original.GameDirectory ?? "GF2 Game");
-        return new OperationResult(receipt.Version, priorState != null, id);
+        bool settingsWarning = receipt.Scope == "vrmod" && UserSettings.Apply(root, id, "remove", false).Warning;
+        return new OperationResult(receipt.Version, priorState != null, id, settingsWarning);
+    }
+
+    // Settings-only maintenance never grants authority to replace product files.
+    internal OperationResult ReverifySettings(string root)
+    {
+        root = Paths.Root(root); using var guard = new OperationLock(root); Stopped(); NoPending(root);
+        var receipt = Inspect(root) ?? throw new InstallError("notInstalled");
+        string id = Guid.NewGuid().ToString("N");
+        var result = UserSettings.Apply(root, id, "reverify", true);
+        return new OperationResult(receipt.Version, false, id, result.Warning);
     }
 
     private static void Execute(string root, string id, List<(string Path, byte[]? Before, byte[]? After)> requested, Action<string>? progress, string gameDirectory)
@@ -307,5 +321,75 @@ internal sealed class InstallationEngine
             if (!held) { mutex.Dispose(); throw new InstallError("busy"); }
         }
         public void Dispose() { mutex.ReleaseMutex(); mutex.Dispose(); }
+    }
+}
+
+// User data never enters product payload hashes or rollback ownership.
+internal sealed record UserSettingPolicy(string Path, string Policy, string Integrity);
+internal sealed record UserSettingResult(string Path, string Disposition, bool Warning);
+internal sealed record SettingsProtectionReceipt(int SchemaVersion, string Product, string Root,
+    string Operation, string OperationId, string? ProductReceiptSha256, UserSettingResult[] UserSettings);
+
+internal static class UserSettings
+{
+    internal const string PerformancePath = "vrmod/config/performance.json";
+    internal const string ReceiptPath = "vrmod/installer/settings-protection-receipt.json";
+    internal static readonly UserSettingPolicy[] Policies =
+        [new(PerformancePath, "PRESERVE_EXISTING_CREATE_IF_MISSING", "USER_DATA_NO_HASH")];
+    internal static readonly byte[] DefaultBytes = Encoding.UTF8.GetBytes(
+        "{\n  \"schemaVersion\": 1,\n  \"pcOutput\": { \"mode\": \"NATIVE\", \"scope\": \"IMMERSIVE_ONLY\" }\n}\n");
+
+    internal static void ValidatePolicy(UserSettingPolicy[]? policies)
+    {
+        // Legacy absence is accepted without granting any payload exemption.
+        if (policies == null) return;
+        if (policies.Length != 1 || policies[0] != Policies[0]) throw new InstallError("settingsPolicy");
+    }
+
+    internal static UserSettingResult Apply(string root, string id, string operation, bool createMissing)
+    {
+        string file = Paths.Contained(root, PerformancePath);
+        string disposition = "PRESERVED";
+        if (!File.Exists(file) && createMissing)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+            string stage = Paths.Contained(root, "vrmod/config/.performance-default-" + Guid.NewGuid().ToString("N") + ".tmp");
+            try
+            {
+                using (var stream = new FileStream(stage, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                { stream.Write(DefaultBytes); stream.Flush(true); }
+                InstallationEngine.Stopped();
+                try { File.Move(stage, Paths.Contained(root, PerformancePath), false); disposition = "CREATED_DEFAULT"; }
+                catch (IOException) when (File.Exists(Paths.Contained(root, PerformancePath))) { }
+            }
+            finally { if (File.Exists(stage)) File.Delete(stage); }
+        }
+        // Only JSON syntax is inspected for a warning. Never interpret keys or
+        // feature values. Oversize input is preserved without parsing it.
+        bool warning = false;
+        file = Paths.Contained(root, PerformancePath);
+        if (!File.Exists(file)) disposition = "ABSENT_PRESERVED";
+        else
+        {
+            using var input = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (input.Length > 1024 * 1024) warning = true;
+            else
+            {
+                try
+                {
+                    using var copy = new MemoryStream(); input.CopyTo(copy);
+                    var bytes = copy.ToArray().AsMemory();
+                    if (bytes.Span.StartsWith(new byte[] { 239, 187, 191 })) bytes = bytes[3..];
+                    using var json = JsonDocument.Parse(bytes);
+                    warning = json.RootElement.ValueKind != JsonValueKind.Object;
+                }
+                catch (JsonException) { warning = true; }
+            }
+        }
+        var result = new UserSettingResult(PerformancePath, disposition, warning);
+        var receipt = new SettingsProtectionReceipt(1, Contract.Product, root, operation, id,
+            Paths.FileHash(Paths.Contained(root, Contract.StatePath)), [result]);
+        Paths.Atomic(Paths.Contained(root, ReceiptPath), Contract.Encode(receipt));
+        return result;
     }
 }

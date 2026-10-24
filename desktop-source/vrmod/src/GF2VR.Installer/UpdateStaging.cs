@@ -6,14 +6,23 @@ namespace GF2VR.Installer;
 internal static class UpdateStaging
 {
     internal static string? ManagedVersion(string root)
+        => ManagedVersion(root, out _);
+    internal static string? ManagedVersion(string root, out InstallError? refusal)
     {
+        refusal = null;
         root = Paths.Root(root);
         var engine = new InstallationEngine();
-        if (engine.HasPending(root)) return null;
+        if (engine.HasPending(root)) { refusal = new InstallError("pending"); return null; }
         var receipt = engine.Inspect(root);
-        if (receipt?.Scope != "vrmod" || !receipt.Files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal).SetEquals(NativeLayout.Files)) return null;
+        if (receipt == null) { refusal = new InstallError("notInstalled"); return null; }
+        if (receipt.Scope != "vrmod" || !receipt.Files.Select(f => f.Path).ToHashSet(StringComparer.Ordinal).SetEquals(NativeLayout.Files))
+        { refusal = new InstallError("layoutChanged"); return null; }
         foreach (var f in receipt.Files)
-            if (!Paths.Equal(Paths.FileHash(Paths.Target(root, f.Path, receipt.GameDirectory ?? "GF2 Game")), f.Sha256)) return null;
+        {
+            string? hash = Paths.FileHash(Paths.Target(root, f.Path, receipt.GameDirectory ?? "GF2 Game"));
+            if (!Paths.Equal(hash, f.Sha256))
+            { refusal = new InstallError(hash == null ? "ownedMissing" : "modified", f.Path); return null; }
+        }
         _ = UpdatePolicy.VersionOf(receipt.Version); return receipt.Version;
     }
     internal static PreparedUpdate Extract(string root, string folder, string archive, byte[] descriptorBytes, UpdateDescriptor descriptor)

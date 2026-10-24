@@ -12,7 +12,8 @@ internal sealed class InstallError(string key, params object[] arguments) : Exce
 internal sealed record PayloadFile(string Path, string Sha256, long Bytes);
 internal sealed record Package(int SchemaVersion, string Product, string Version, string Scope,
     string GameExecutableSha256, string? BoundGameRoot, string? RequiresInstalledDllSha256,
-    PayloadFile[] Files, NativePackage? Native = null);
+    PayloadFile[] Files, NativePackage? Native = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] UserSettingPolicy[]? UserSettings = null);
 internal sealed record NativePackage(string BuildId, string DllSha256, string LoaderSha256, PayloadFile[] GameFiles,
     string? ResourceBinding = null, string? BuildFlavor = null, string? CommonCoreSha256 = null);
 internal sealed record CheckedPackage(string Root, string PackageRoot, Package Package, string ManifestHash, IReadOnlyDictionary<string, byte[]> Payload);
@@ -26,7 +27,7 @@ internal sealed record Pending(int SchemaVersion, string TransactionId);
 internal sealed record Plan(string Root, string PackageRoot, Package Package, string ManifestHash,
     Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload, string GameDirectory,
     IReadOnlyDictionary<string, string?> BeforeHashes);
-internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId);
+internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId, bool SettingsWarning = false);
 
 internal static class Contract
 {

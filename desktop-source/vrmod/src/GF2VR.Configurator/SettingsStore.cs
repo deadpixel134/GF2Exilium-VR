@@ -21,6 +21,7 @@ internal sealed class SettingsStore
     private readonly Dictionary<string, byte[]?> originals = [];
     private readonly bool fixture;
     internal Dictionary<string, JsonObject> Documents { get; private set; } = Fields.Defaults();
+    internal bool PcOutputAvailable { get; private set; }
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
     internal static Func<bool> GameRunning = () =>
     {
@@ -91,6 +92,7 @@ internal sealed class SettingsStore
             {
                 using var known = JsonDocument.Parse(File.ReadAllBytes(metadata));
                 ContactHapticsAvailable = known.RootElement.TryGetProperty("buildFlavor", out var flavor) && flavor.GetString() == "Dirty";
+                PcOutputAvailable = SupportsPcOutput(known.RootElement);
             }
         }
         if (!fixture)
@@ -100,14 +102,37 @@ internal sealed class SettingsStore
             using var j = JsonDocument.Parse(File.ReadAllBytes(manifest));
             var c = j.RootElement;
             ContactHapticsAvailable = c.TryGetProperty("buildFlavor", out var flavor) && flavor.GetString() == "Dirty";
+            PcOutputAvailable = SupportsPcOutput(c);
             string dll = Path.Combine(Path.GetDirectoryName(executable)!, "version.dll");
             if (c.GetProperty("schemaVersion").GetInt32() != 1 ||
                 !Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!).Equals(Config, StringComparison.OrdinalIgnoreCase) ||
                 !File.Exists(dll) ||
                 !Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(dll))).Equals(c.GetProperty("dllSha256").GetString(), StringComparison.OrdinalIgnoreCase) ||
-                !Fields.Files.ToHashSet(StringComparer.Ordinal).SetEquals(c.GetProperty("files").EnumerateArray().Select(e => e.GetString()!)))
+                !MatchesRuntimeFiles(c))
                 throw new SettingsError("runtimeError");
         }
+    }
+
+    // Keep the legacy eight-key portable contract usable by deployed updaters.
+    // Actual read/write ownership remains Fields.Files, including performance.
+    internal static bool MatchesRuntimeFiles(JsonElement contract)
+    {
+        string[] actual = contract.GetProperty("files").EnumerateArray().Select(e => e.GetString()!).ToArray();
+        return new[] { Fields.Files, Fields.Files.Where(f => f != "performance.json").ToArray() }
+            .Any(expected => actual.Length == expected.Length && actual.ToHashSet(StringComparer.Ordinal).SetEquals(expected));
+    }
+
+    internal static bool SupportsPcOutput(JsonElement contract)
+    {
+        if (contract.TryGetProperty("pcOutputSupported", out var explicitSupport)) return explicitSupport.GetBoolean();
+        if (!contract.TryGetProperty("buildId", out var id) || !contract.TryGetProperty("dllSha256", out var hash)) return false;
+        string? build = id.GetString(), digest = hash.GetString();
+        // These reviewed native003 profiles consume performance.json. Do not
+        // infer support from a future version number or an arbitrary contract.
+        return (build == "GF2VR-CLEAN-121-003" && build == GF2VR.Installer.VariantProfiles.CleanBuild &&
+                string.Equals(digest, GF2VR.Installer.VariantProfiles.CleanHash, StringComparison.OrdinalIgnoreCase)) ||
+               (build == "GF2VR-DIRTY-121-003" && build == GF2VR.Installer.VariantProfiles.DirtyBuild &&
+                string.Equals(digest, GF2VR.Installer.VariantProfiles.DirtyHash, StringComparison.OrdinalIgnoreCase));
     }
 
     // Reject reparse points on the exact write path; never enumerate the installation.
@@ -147,13 +172,15 @@ internal sealed class SettingsStore
     {
         if (!File.Exists(path)) return null;
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        if (stream.Length is < 1 or > 4096) throw new SettingsError("sizeError", Path.GetFileName(path));
+        if (stream.Length < 1 || stream.Length > FileLimit(Path.GetFileName(path))) throw new SettingsError("sizeError", Path.GetFileName(path));
         byte[] result = new byte[stream.Length]; stream.ReadExactly(result); return result;
     }
 
+    private static int FileLimit(string name) => name == "performance.json" ? 16384 : 4096;
+
     internal static JsonObject Parse(byte[] bytes, string name)
     {
-        if (bytes.Length is < 1 or > 4096) throw new SettingsError("sizeError", name);
+        if (bytes.Length < 1 || bytes.Length > FileLimit(name)) throw new SettingsError("sizeError", name);
         var span = bytes.AsSpan();
         if (span.StartsWith(new byte[] { 239, 187, 191 })) span = span[3..];
         try
@@ -164,14 +191,32 @@ internal sealed class SettingsStore
                 ?? throw new SettingsError("formatError", name);
             // Deployed Activity UI files predate the GUI and have no schema member.
             // Accept that exact legacy contract without changing the file during load.
-            bool legacyOptional = (name is "activity_ui.json" or "controller_input.json") && !doc.ContainsKey("schemaVersion");
+            bool legacyOptional = (name is "activity_ui.json" or "controller_input.json" or "performance.json") && !doc.ContainsKey("schemaVersion");
             if (!legacyOptional && (doc["schemaVersion"] is not JsonValue v || !v.TryGetValue<int>(out int version) || version != 1))
                 throw new SettingsError("schemaError", name);
             if (name == "render_quality.json" && (doc.Count != 2 || doc["eyeRenderScale"] == null))
                 throw new SettingsError("formatError", name); // Native reader rejects unknown keys.
+            if (name == "performance.json") ValidatePerformance(doc);
             return doc;
         }
         catch (JsonException) { throw new SettingsError("formatError", name); }
+    }
+
+    private static void ValidatePerformance(JsonObject doc)
+    {
+        if (!doc.ContainsKey("pcOutput")) return;
+        if (doc["pcOutput"] is not JsonObject pc) throw new SettingsError("formatError", "performance.json");
+        foreach (string key in new[] { "mode", "scope" })
+            if (pc.ContainsKey(key) && (pc[key] is not JsonValue v || !v.TryGetValue<string>(out var s) ||
+                !(key == "mode" ? s is "NATIVE" or "FIXED" : s is "IMMERSIVE_ONLY" or "ALWAYS")))
+                throw new SettingsError("formatError", "performance.json");
+        foreach (string key in new[] { "width", "height" })
+            if (pc.ContainsKey(key) && (pc[key] is not JsonValue v || v.GetValueKind() != JsonValueKind.Number ||
+                !double.TryParse(v.ToJsonString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var n) ||
+                !double.IsFinite(n) || n < 1 || n > 16384 || n != Math.Truncate(n)))
+                throw new SettingsError("formatError", "performance.json");
+        // renderScale, dynamicEyeScale and future members belong to runtime or
+        // deferred features: retain their entire JSON values without editing.
     }
 
     private static void CheckDuplicates(JsonElement e)
@@ -257,7 +302,7 @@ internal sealed class SettingsStore
             }
             if (value is not JsonValue val) throw new SettingsError("formatError", f.File);
             if (f.Kind == "bool" && !val.TryGetValue<bool>(out _)) throw new SettingsError("formatError", f.File);
-            if (f.Kind == "choice" && (!val.TryGetValue<string>(out var c) || !f.Choices!.Contains(c)))
+            if (f.Kind == "choice" && (!val.TryGetValue<string>(out var c) || !Fields.ChoicesFor(docs, f).Contains(c)))
                 throw new SettingsError("formatError", f.File);
             if (f.Kind == "number")
             {
@@ -369,19 +414,14 @@ internal sealed class SettingsStore
     internal static Dictionary<string, JsonObject> Import(string path, Dictionary<string, JsonObject>? current = null)
     {
         using var stream = File.OpenRead(path);
-#if GF2VR_DIRTY_CONTACT
-        // Nine documents of at most4096bytes plus bounded profile structure.
-        if (stream.Length > 40960) throw new SettingsError("profileError");
-#else
-        if (stream.Length > 32768) throw new SettingsError("profileError");
-#endif
+        if (stream.Length > (Fields.Files.Length - 1) * 4096 + 16384 + 4096) throw new SettingsError("profileError");
         using var doc = JsonDocument.Parse(stream, new JsonDocumentOptions { MaxDepth = 20 }); CheckDuplicates(doc.RootElement);
         var profile = JsonNode.Parse(doc.RootElement.GetRawText())!.AsObject();
         if (profile["schemaVersion"]?.ToJsonString() != "1" || profile["product"]?.GetValue<string>() != "GF2VR.Configurator" ||
             profile["configurations"] is not JsonObject config)
             throw new SettingsError("profileError");
         // Older four/five-document profiles cannot reset a newer UI/face choice.
-        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json", "controller_hands.json"
+        var missing = new[] { "activity_ui.json", "controller_input.json", "world_scale.json", "controller_hands.json", "performance.json"
 #if GF2VR_DIRTY_CONTACT
             , "touch_interaction.json"
 #endif

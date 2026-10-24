@@ -11,12 +11,19 @@ typedef struct {
     void (*unpin)(unsigned);
     void *(*invoke)(void *,void *,void **,void **);
 } CameraBatchApi;
-typedef struct { void *array; unsigned roots[4]; } CameraBatch;
+typedef struct { void *array; unsigned roots[4];
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    unsigned split_count;unsigned long long split_ids[34];
+#endif
+} CameraBatch;
 static void camera_batch_release(const CameraBatchApi *api,CameraBatch *batch) {
     for(unsigned i=4;i>0;--i) if(batch->roots[i-1]) {
         api->unpin(batch->roots[i-1]);batch->roots[i-1]=0;
     }
     batch->array=0;
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    batch->split_count=0;
+#endif
 }
 /* Destination must be empty. On any error, caller forwards the original array.
    The producer owns the disabled eye-camera configuration and generation; this
@@ -52,6 +59,10 @@ static int camera_batch_build_source(const CameraBatchApi *api,CameraBatch *batc
         /* IL2CPP reference parameters are the object pointer itself; scalar
            Int32 parameters are addresses. Runtime SetValue performs the GC barrier. */
         int index=(int)i;void *args[]={item,&index};
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+        /* Already-read reference numbers only; no diagnostic getter/pinning. */
+        batch->split_ids[i]=(unsigned long long)item;
+#endif
         exception=0;api->invoke(api->set_value,output,args,&exception);
         if(exception) goto failed;
     }
@@ -59,6 +70,9 @@ static int camera_batch_build_source(const CameraBatchApi *api,CameraBatch *batc
        not an earlier allCameras snapshot. Missing/ambiguous source is fallback.
        The producer retains its source root through this operation. */
     if(required_source && source_count!=1) goto failed;
+#ifdef GF2VR_CAMERA_SPLIT_OBSERVE
+    batch->split_count=count+2;
+#endif
     batch->array=output;return 1;
 failed:
     camera_batch_release(api,batch);return 0;

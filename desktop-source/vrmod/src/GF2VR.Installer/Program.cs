@@ -10,6 +10,7 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-performance-protection")) return PerformanceProtectionChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-public-transport")) return PublicTransportChecks.Run().GetAwaiter().GetResult();
             if (args.Contains("--check-public-update-source")) return PublicTransportChecks.CheckPublic().GetAwaiter().GetResult();
             if (args.Contains("--self-test-log-cleanup")) return RuntimeLogCleanupChecks.Run();
@@ -57,6 +58,10 @@ internal static class Program
             if (args.Contains("--self-test")) return SelfTest.Run(Value(args, "--package"));
             if (args.Contains("--verify-localization")) return 0;
             string root = Value(args, "--root") ?? FindRoot();
+            if (args.Contains("--reverify-settings"))
+            {
+                new InstallationEngine().ReverifySettings(root); return 0;
+            }
             if (args.Contains("--install") || args.Contains("--remove"))
             {
                 if (Value(args, "--root") == null || args.Contains("--install") == args.Contains("--remove")) throw new InstallError("path", root);
@@ -84,7 +89,7 @@ internal static class Program
                     Contract.Encode(new { passed = true, plan.ManifestHash, plan.Package.Version, files = plan.Package.Files.Length, installWrites = 0 }));
                 return 0;
             }
-            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"), args.Contains("--smoke-install-workflow"));
+            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"), args.Contains("--smoke-install-workflow"), args.Contains("--settings-maintenance"));
             Application.Run(form); return 0;
         }
         catch (Exception ex)
@@ -97,7 +102,7 @@ internal static class Program
                 MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
-            if (args.Contains("--install") || args.Contains("--remove") || args.Contains("--self-test-variants") || args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--self-test-steam") || args.Contains("--self-test-performance-protection") || args.Contains("--reverify-settings") || args.Contains("--install") || args.Contains("--remove") || args.Contains("--self-test-variants") || args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;

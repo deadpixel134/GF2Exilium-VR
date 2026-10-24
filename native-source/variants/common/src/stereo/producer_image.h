@@ -3,7 +3,16 @@
 #include "composition_bridge_image_binding.h"
 #ifdef GF2VR_PRODUCER_ENGINE_OBSERVE
 #ifdef GF2VR_ACTIVITY_STACK
+#ifdef GF2VR_CAMERA_SPLIT_BRIDGE
 #include "activity_producer_engine_bridge_package.h"
+/* Exact rebuilt observation package. Do not weaken on a mismatch. */
+_Static_assert(GF2_ACTIVITY_PRODUCER_BRIDGE_METHODS==24,"split bridge body count");
+_Static_assert(GF2_ACTIVITY_PRODUCER_BRIDGE_BYTES==9216,"split bridge package size");
+#else
+#include "activity_producer_engine_bridge_baseline_package.h"
+_Static_assert(GF2_ACTIVITY_PRODUCER_BRIDGE_METHODS==23,"product bridge body count");
+_Static_assert(GF2_ACTIVITY_PRODUCER_BRIDGE_BYTES==8704,"product bridge package size");
+#endif
 #else
 #include "producer_engine_bridge_package.h"
 #endif
@@ -20,6 +29,15 @@ static int producer_image_load(const CompositionImageApi *a,CompositionImage *s,
        !a->object_class || !a->assignable || !a->array_length ||
        !a->pin || !a->unpin || !a->invoke || !a->unbox ||
        !a->image_absent || !a->resolve_class)return 0;
+#if defined(GF2VR_PRODUCER_ENGINE_OBSERVE) && defined(GF2VR_ACTIVITY_STACK)
+    unsigned exact_hash=2166136261u;
+    for(size_t i=0;i<size;++i)exact_hash=(exact_hash^encoded[i])*16777619u;
+#ifdef GF2VR_CAMERA_SPLIT_BRIDGE
+    if(size!=9216||exact_hash!=1975618552u)return 0;
+#else
+    if(size!=8704||exact_hash!=627510109u)return 0;
+#endif
+#endif
     s->attempted=1;
     if(!a->image_absent(a->identity_context))return 0;
     void *array=a->array_new(a->byte_class,size);

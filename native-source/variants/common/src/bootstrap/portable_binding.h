@@ -29,6 +29,7 @@ static void gf2vr_native_initialize(HINSTANCE instance) {
 #define GF2VR_PROBE_LOG gf2vr_paths.log
 #define GF2VR_XR_LOADER gf2vr_paths.loader
 #define GF2VR_RENDER_QUALITY_CONFIG gf2vr_paths.render
+#define GF2VR_PERFORMANCE_CONFIG gf2vr_paths.performance
 #define GF2VR_STEREO_DEPTH_CONFIG gf2vr_paths.depth
 #define GF2VR_NAVIGATION_CONFIG gf2vr_paths.navigation
 #define GF2VR_WORLD_DRAG_CONFIG gf2vr_paths.drag
