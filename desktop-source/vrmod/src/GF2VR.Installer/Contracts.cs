@@ -26,8 +26,11 @@ internal sealed record Journal(int SchemaVersion, string Product, string Root, s
 internal sealed record Pending(int SchemaVersion, string TransactionId);
 internal sealed record Plan(string Root, string PackageRoot, Package Package, string ManifestHash,
     Receipt? Prior, string? PriorHash, IReadOnlyDictionary<string, byte[]> Payload, string GameDirectory,
-    IReadOnlyDictionary<string, string?> BeforeHashes);
-internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId, bool SettingsWarning = false);
+    IReadOnlyDictionary<string, string?> BeforeHashes, bool IsRepair = false, bool IncludeUnowned = false);
+internal sealed record RepairFile(string Path, string? BeforeHash, string AfterHash, bool Unowned, bool Selected);
+internal sealed record RepairPlan(Plan Plan, RepairFile[] Files)
+{ internal bool CanCommit => Files.All(f => f.Selected); }
+internal sealed record OperationResult(string Version, bool RestoredPrevious, string TransactionId, bool SettingsWarning = false, string[]? PendingPostprocess = null);
 
 internal static class Contract
 {

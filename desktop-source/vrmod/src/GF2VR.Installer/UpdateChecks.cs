@@ -45,7 +45,7 @@ internal static class UpdateChecks
         using (var previousHelper = Process.Start(previousStart)!)
             Check(previousHelper.WaitForExit(30000) && previousHelper.ExitCode == 0, "actual previous helper establishes old native receipt");
         Check(UpdateStaging.ManagedVersion(root) == previousVersion, "receipt uses prior package version");
-        // Diagnostic only: absence and changed bytes must still be refused.
+        // Only a genuinely absent owned file may be restored. Changed bytes still refuse.
         string ownedDll = Paths.Contained(root, "GF2 Game/version.dll");
         byte[] ownedBytes = File.ReadAllBytes(ownedDll);
         string quarantine = Paths.Contained(fixture, "quarantine/version.dll");
@@ -53,9 +53,8 @@ internal static class UpdateChecks
         File.Move(ownedDll, quarantine);
         try
         {
-            Check(UpdateStaging.ManagedVersion(root, out var absent) == null && absent?.Key == "ownedMissing" &&
-                absent.Arguments.SequenceEqual(new object[] { "GF2 Game/version.dll" }), "missing owned file is distinguished, not permitted");
-            Reject(() => engine.Preview(root, pkg), "missing owned DLL still rejects update");
+            Check(UpdateStaging.ManagedVersion(root, out var absent) == previousVersion && absent == null, "valid receipt permits absent owned file");
+            Check(engine.Preview(root, pkg).BeforeHashes["GF2 Game/version.dll"] == null && !File.Exists(ownedDll), "preview permits missing DLL without writing");
             Check(!File.Exists(ownedDll) && File.ReadAllBytes(quarantine).SequenceEqual(ownedBytes), "refusal preserves missing state and quarantine");
         }
         finally { File.Move(quarantine, ownedDll); }
@@ -100,7 +99,12 @@ internal static class UpdateChecks
         Check(UpdateStaging.ManagedVersion(root) == previousVersion, "rejected download preserved installation");
         string unsafeArchive = Path.Combine(fixture,"unsafe.zip"); File.Copy(archive,unsafeArchive);
         using(var unsafeZip=ZipFile.Open(unsafeArchive,ZipArchiveMode.Update)) { using var w=new StreamWriter(unsafeZip.CreateEntry("../escaped.txt").Open()); w.Write("REFUSE"); }
-        Reject(()=>UpdateStaging.Extract(root,rejected,unsafeArchive,meta,descriptor with { ArchiveSha256=Paths.FileHash(unsafeArchive)! }),"foreign/traversal ZIP entry");
+        var unsafeDescriptor = descriptor with { ArchiveSha256=Paths.FileHash(unsafeArchive)! };
+        string unsafeStage = Path.Combine(fixture, "unsafe-stage"); Directory.CreateDirectory(unsafeStage);
+        _ = UpdateStaging.Extract(root, unsafeStage, unsafeArchive, Contract.Encode(unsafeDescriptor), unsafeDescriptor);
+        Check(Directory.GetFiles(Path.Combine(unsafeStage,"package"),"*",SearchOption.AllDirectories).Length == 4,
+            "bootstrap extracts only helpers, not foreign entries");
+        Reject(()=>UpdateStaging.MaterializeForHelper(unsafeStage,unsafeDescriptor),"incoming helper rejects foreign/traversal ZIP entry");
         Check(!File.Exists(Path.Combine(fixture,"escaped.txt")),"no traversal write");
         string folder = Path.Combine(fixture, "stage"); Directory.CreateDirectory(folder);
         var staged = UpdateStaging.Extract(root, folder, archive, meta, descriptor); Check(staged.Version == candidateVersion, "verified stage no installation");

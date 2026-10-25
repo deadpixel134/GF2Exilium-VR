@@ -4,7 +4,7 @@ using GF2VR.Installer;
 
 namespace GF2VR.Configurator;
 
-internal sealed class MainForm : Form
+internal sealed partial class MainForm : Form
 {
     private SettingsStore? store;
     private Dictionary<string, JsonObject> editing = Fields.Defaults();
@@ -35,6 +35,8 @@ internal sealed class MainForm : Form
     private readonly Button updateButton = new() { AutoSize = true, MinimumSize = new Size(110, 34), Margin = new Padding(4), Text = "" };
     private (ReleaseCandidate Release, UpdateDescriptor Descriptor, byte[] Bytes, string Root)? readyUpdate;
     private string? updateVersion;
+    private readonly Button releasePage = new() { AutoSize = true, MinimumSize = new Size(110, 34), Margin = new Padding(4), Visible = false };
+    internal static Action<string> OpenReleasePage = url => { using var p = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); };
 
     internal MainForm(string root, string? smoke = null)
     {
@@ -61,7 +63,7 @@ internal sealed class MainForm : Form
         row.Controls.Add(folderLabel, 0, 0); row.Controls.Add(rootBox, 1, 0);
         row.Controls.Add(browse, 2, 0);
         layout.Controls.Add(row, 0, 0);
-        foreach (var item in new[] { ("한국어", "ko"), ("English", "en"), ("日本語", "ja") })
+        foreach (var item in new[] { ("한국어", "ko"), ("English", "en"), ("日本語", "ja"), ("简体中文", "zh-CN") })
         {
             var button = new Button { Text = item.Item1, AutoSize = true, MinimumSize = new Size(75, 34), Margin = new Padding(4), AccessibleName = "language-" + item.Item2 };
             string code = item.Item2; button.Click += (_, _) => SwitchLanguage(code); languages.Controls.Add(button);
@@ -83,17 +85,13 @@ internal sealed class MainForm : Form
         var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
         footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         footer.Controls.Add(languages, 0, 0); footer.Controls.Add(actions, 1, 0);
-        localized.Add(save); save.Click += (_, _) => Run(() =>
-        {
-            if (store == null) throw new SettingsError("rootError");
-            var requested = ReadControls(); store.Save(requested); editing = Fields.Clone(store.Documents);
-            pcOutputConfigurationTouched = false; ApplyControls();
-            dirty = false; SetStatus("saved"); UpdateSave();
-        });
+        localized.Add(save); save.Click += (_, _) => SaveSettings();
         actions.Controls.Add(save);
         actions.Controls.Add(Button("reload", (_, _) => { if (Discard()) LoadRoot(rootBox.Text); }));
         actions.Controls.Add(Button("reset", (_, _) => { if (Confirm("resetQuestion")) ApplyDefaults(); }));
         actions.Controls.Add(Button("export", Export)); actions.Controls.Add(Button("import", Import)); actions.Controls.Add(updateButton);
+        releasePage.Click += (_, _) => Run(() => { if (updateVersion != null) OpenReleasePage(UpdatePolicy.ReleasePage(updateVersion)); });
+        actions.Controls.Add(releasePage);
         // Measure against the available width, including margins and wrapped rows.
         // Unconstrained AutoSize on a wrapping FlowLayoutPanel reserves excess height.
         languages.MinimumSize = languages.GetPreferredSize(Size.Empty);
@@ -138,25 +136,40 @@ internal sealed class MainForm : Form
     private void UpdateState(string key, InstallError? refusal = null)
     {
         updateKey = key; updateRefusal = refusal;
-        updateStatus.Text = refusal != null ? Texts.Get("updateDetails") : key == "updateAvailable" && updateVersion != null ? Texts.Format("updateAvailableVersion", updateVersion) : Texts.Get(key);
+        updateStatus.Text = updateVersion != null && key == "updateManual" ? Texts.Format("updateManualVersion", updateVersion) :
+            key == "updateAvailable" && updateVersion != null ? Texts.Format("updateAvailableVersion", updateVersion) : refusal != null ? Texts.Get("updateDetails") : Texts.Get(key);
         updateStatus.Cursor = refusal == null ? Cursors.Default : Cursors.Hand;
-        updateStatus.AccessibleName = refusal == null ? updateStatus.Text : Texts.UpdateError(refusal);
-        updateHint.SetToolTip(updateStatus, refusal == null ? updateStatus.Text : Texts.UpdateError(refusal));
+        updateStatus.AccessibleName = updateStatus.Text + (refusal == null ? "" : "\n" + Texts.UpdateError(refusal));
+        updateHint.SetToolTip(updateStatus, updateStatus.AccessibleName);
         updateButton.Text = Texts.Get("updateAction");
+        releasePage.Text = Texts.Get("updateOpenRelease");
+        releasePage.Visible = updateVersion != null;
     }
     private async Task CheckUpdates()
     {
-        if (store == null) { UpdateState("updateUnmanaged", new InstallError("settingsUnavailable")); return; }
-        string root = store.Root;
+        string root = store?.Root ?? rootBox.Text;
         try
         {
             UpdateState("updateChecking"); var service = new UpdateService();
             var check = await service.Check(root, updateCancel.Token);
-            if (IsDisposed || store?.Root != root || updateCancel.IsCancellationRequested) return;
-            UpdateState(check.State);
-            if (check.Release == null || check.Descriptor == null || check.Bytes == null) return;
-            readyUpdate = (check.Release, check.Descriptor, check.Bytes, root); updateVersion = check.Release.Version;
-            UpdateState("updateAvailable"); updateButton.Visible = true;
+            if (IsDisposed || !string.Equals(rootBox.Text, root, StringComparison.OrdinalIgnoreCase) || updateCancel.IsCancellationRequested) return;
+            if (store == null && check.DiscoveredVersion != null)
+                check = check with { Release = null, Descriptor = null, Bytes = null, State = "updateManual", Refusal = new InstallError("settingsUnavailable") };
+            updateVersion = check.DiscoveredVersion; readyUpdate = null; updateButton.Visible = false;
+            if (check.Release != null && check.Descriptor != null && check.Bytes != null)
+            { readyUpdate = (check.Release, check.Descriptor, check.Bytes, root); updateButton.Visible = true; }
+            UpdateState(check.State, check.Refusal);
+            try
+            {
+                if (store != null && updateVersion != null && store.ShouldNotifyUpdate(updateVersion))
+                {
+                    store.MarkUpdateNotice(updateVersion, false);
+                    using var notice = new UpdateNoticeDialog(updateVersion, readyUpdate != null);
+                    notice.ShowDialog(this);
+                    if (notice.SkipVersion) store.MarkUpdateNotice(updateVersion, true);
+                }
+            }
+            catch (Exception) { updateHint.SetToolTip(updateStatus, updateStatus.AccessibleName + "\n" + Texts.Get("updateNoticeSaveFailed")); }
         }
         catch (OperationCanceledException) { }
         catch (Exception ex) { if (!IsDisposed) UpdateState("updateFailed", ex as InstallError ?? new InstallError("updateInvalid")); }
@@ -364,8 +377,25 @@ internal sealed class MainForm : Form
             double.TryParse(multiplier.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double m) && m >= 0 && worldMultiplier > 0 && double.IsFinite(s * m * worldMultiplier);
         effectiveSpeed.Text = valid ? Texts.Format("effectiveSpeed", (s * double.Parse(multiplier.Text, CultureInfo.InvariantCulture) * worldMultiplier).ToString("G6", CultureInfo.InvariantCulture)) : Texts.Get("invalidSpeed");
     }
-    private void SetStatus(string key) { status.Tag = key; status.Text = Texts.Get(key); }
-    private void UpdateSave() => save.Enabled = store != null;
+    private void SetStatus(string key)
+    {
+        status.Tag = key; status.ForeColor = key is "error" or "saveFailed" ? Color.Firebrick : Color.FromArgb(33, 78, 110);
+        updateHint.SetToolTip(status, null); UpdateSave();
+    }
+    private void UpdateSave()
+    {
+        save.Enabled = store != null;
+        Text = Texts.Get("title") + (dirty ? " *" : "");
+        if (status.Tag is string key)
+            status.Text = Texts.Get(key) + (dirty && key is not ("unsaved" or "saveFailed") ? " · " + Texts.Get("unsaved") : "");
+    }
+    private void SaveSettings() => Run(() =>
+    {
+        if (store == null) throw new SettingsError("rootError");
+        var requested = ReadControls(); store.Save(requested); editing = Fields.Clone(store.Documents);
+        pcOutputConfigurationTouched = false; ApplyControls();
+        dirty = false; SetStatus("saved");
+    }, failedSave: true);
     private bool Confirm(string key) => MessageBox.Show(this, Texts.Get(key), Texts.Get("title"),
         MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
     private bool Discard() => !dirty || Confirm("discardQuestion");
@@ -405,7 +435,7 @@ internal sealed class MainForm : Form
             SettingsStore.Export(dialog.FileName, ReadControls(), store?.Root); SetStatus("exported");
         });
     }
-    private void Run(Action action, bool failedLoad = false)
+    private void Run(Action action, bool failedLoad = false, bool failedSave = false)
     {
         try { action(); status.ForeColor = Color.FromArgb(33, 78, 110); }
         catch (Exception ex)
@@ -416,7 +446,7 @@ internal sealed class MainForm : Form
                 foreach (Control c in inputs.Values) c.Enabled = false;
                 save.Enabled = false;
             }
-            SetStatus("error"); status.ForeColor = Color.Firebrick;
+            SetStatus(failedSave ? "saveFailed" : "error"); updateHint.SetToolTip(status, Texts.Describe(ex));
             if (smokeFolder == null) MessageBox.Show(this, Texts.Describe(ex), Texts.Get("error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             else throw;
         }
@@ -475,6 +505,21 @@ internal sealed class MainForm : Form
                     throw new InvalidDataException("Localized update refusal lost condition, file, action or details affordance");
                 UpdateState("updateAvailable");
                 VerifyButtonGeometry();
+                var previousOpener = OpenReleasePage; string? opened = null;
+                try
+                {
+                    OpenReleasePage = url => opened = url;
+                    UpdateState("updateManual", new InstallError("layoutChanged")); updateButton.Visible = false;
+                    if (!updateStatus.Text.Contains(updateVersion!, StringComparison.Ordinal) || !releasePage.Visible || opened != null)
+                        throw new InvalidDataException("Manual update lost version or opened a page automatically");
+                    releasePage.PerformClick();
+                    if (opened != UpdatePolicy.ReleasePage(updateVersion!)) throw new InvalidDataException("Release Open button target");
+                    using var manual = new Bitmap(Width, Height); DrawToBitmap(manual, new Rectangle(0, 0, Width, Height)); manual.Save(Path.Combine(smokeFolder!, "update-manual-" + Texts.Language + ".png"));
+                    using var notice = new UpdateNoticeDialog(updateVersion!, false);
+                    notice.Show(); notice.Refresh();
+                    using var image = new Bitmap(notice.Width, notice.Height); notice.DrawToBitmap(image, new Rectangle(0, 0, image.Width, image.Height)); image.Save(Path.Combine(smokeFolder!, "update-notice-" + Texts.Language + ".png")); notice.Close();
+                }
+                finally { OpenReleasePage = previousOpener; UpdateState("updateAvailable"); updateButton.Visible = true; }
                 tabs.SelectedIndex = 0;
                 var pcPreset = (ComboBox)inputs["pcOutputPreset"];
                 var pcScope = (CheckBox)inputs["pcOutputImmersiveOnly"];
@@ -686,7 +731,7 @@ internal sealed class MainForm : Form
                 SwitchLanguage(locale); VerifyButtonGeometry();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smokeFolder!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=3, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, contactHapticStrengthDuration=true, dirtyOnlyHapticAvailability=true, liveSaves=0, gameLaunches=0 }));
+            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=Texts.Languages.Length, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, contactHapticStrengthDuration=true, dirtyOnlyHapticAvailability=true, liveSaves=0, gameLaunches=0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smokeFolder!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

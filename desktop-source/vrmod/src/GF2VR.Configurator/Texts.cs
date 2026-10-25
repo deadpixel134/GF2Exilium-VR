@@ -6,10 +6,10 @@ namespace GF2VR.Configurator;
 
 internal static class Texts
 {
-    internal static readonly string[] Languages = ["ko", "en", "ja"];
+    internal static readonly string[] Languages = ["ko", "en", "ja", "zh-CN"];
     private static readonly Dictionary<string, Dictionary<string, string>> Resources = Load();
-    internal static string Language = Normalize(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-    internal static string Normalize(string? locale) => locale != null && Languages.Contains(locale) ? locale : "ko";
+    internal static string Language = Normalize(CultureInfo.CurrentUICulture.Name);
+    internal static string Normalize(string? locale) => locale?.StartsWith("zh", StringComparison.OrdinalIgnoreCase) == true ? "zh-CN" : locale?.StartsWith("en", StringComparison.OrdinalIgnoreCase) == true ? "en" : locale?.StartsWith("ja", StringComparison.OrdinalIgnoreCase) == true ? "ja" : "ko";
 
     private static Dictionary<string, Dictionary<string, string>> Load()
     {

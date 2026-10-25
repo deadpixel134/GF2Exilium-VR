@@ -93,8 +93,14 @@ internal static class Paths
         if (!full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             throw new InstallError("path", relative);
         for (string? part = full; part != null; part = System.IO.Path.GetDirectoryName(part))
-            if ((File.Exists(part) || Directory.Exists(part)) && (File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0)
-                throw new InstallError("path", relative);
+        {
+            try
+            {
+                if ((File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0) throw new InstallError("path", relative);
+            }
+            catch (FileNotFoundException) { }
+            catch (DirectoryNotFoundException) { }
+        }
         if (Directory.Exists(full)) throw new InstallError("path", relative);
         return full;
     }
@@ -133,16 +139,24 @@ internal static class Paths
     internal static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
     internal static byte[]? Bytes(string path, int maximum = Contract.MaxFile)
     {
-        if (!File.Exists(path)) return null;
-        using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        if (file.Length > maximum) throw new InstallError("size", System.IO.Path.GetFileName(path));
-        byte[] bytes = new byte[file.Length]; file.ReadExactly(bytes); return bytes;
+        try
+        {
+            using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (file.Length > maximum) throw new InstallError("size", System.IO.Path.GetFileName(path));
+            byte[] bytes = new byte[file.Length]; file.ReadExactly(bytes); return bytes;
+        }
+        catch (FileNotFoundException) { return null; }
+        catch (DirectoryNotFoundException) { return null; }
     }
     internal static string? FileHash(string path)
     {
-        if (!File.Exists(path)) return null;
-        using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return Convert.ToHexString(SHA256.HashData(file));
+        try
+        {
+            using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return Convert.ToHexString(SHA256.HashData(file));
+        }
+        catch (FileNotFoundException) { return null; }
+        catch (DirectoryNotFoundException) { return null; }
     }
     internal static bool Equal(string? a, string? b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
     internal static string Transaction(string root, string id)

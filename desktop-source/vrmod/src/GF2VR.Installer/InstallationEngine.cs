@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace GF2VR.Installer;
 
-internal sealed class InstallationEngine
+internal sealed partial class InstallationEngine
 {
     internal static Func<bool> GameRunning = () =>
     {
@@ -14,7 +14,7 @@ internal sealed class InstallationEngine
     internal static void Stopped() { if (GameRunning()) throw new InstallError("running"); }
     private static void NoPending(string root)
     {
-        if (File.Exists(Paths.Contained(root, Contract.PendingPath))) throw new InstallError("pending");
+        if (Paths.Bytes(Paths.Contained(root, Contract.PendingPath), 4096) != null) throw new InstallError("pending");
     }
     private static byte[]? StateBytes(string root) => Paths.Bytes(Paths.Contained(root, Contract.StatePath), 262144);
     internal Receipt? Inspect(string root)
@@ -22,7 +22,7 @@ internal sealed class InstallationEngine
         root = Paths.Root(root); byte[]? bytes = StateBytes(root);
         return bytes == null ? null : ReadReceipt(root, bytes);
     }
-    internal bool HasPending(string root) => File.Exists(Paths.Contained(Paths.Root(root), Contract.PendingPath));
+    internal bool HasPending(string root) => Paths.Bytes(Paths.Contained(Paths.Root(root), Contract.PendingPath), 4096) != null;
     internal bool HasPreviousVersion(string root)
     {
         root = Paths.Root(root); byte[]? state = StateBytes(root);
@@ -89,7 +89,17 @@ internal sealed class InstallationEngine
         if (package.Scope == "vrmod") NativeLayout.ConfiguratorContract(root, package, payload);
         return new CheckedPackage(root, packageRoot, package, Paths.Hash(bytes), payload);
     }
-    internal Plan Preview(string root, string packageRoot)
+    internal Plan Preview(string root, string packageRoot) => PreviewCore(root, packageRoot, false, false);
+    internal RepairPlan PreviewRepair(string root, string packageRoot, bool includeUnowned = false)
+    {
+        var plan = PreviewCore(root, packageRoot, true, includeUnowned);
+        return new(plan, plan.Package.Files.Select(f =>
+        {
+            bool unowned = plan.Prior == null && plan.BeforeHashes[f.Path] != null && !Paths.Equal(plan.BeforeHashes[f.Path], Paths.Hash(plan.Payload[f.Path]));
+            return new RepairFile(f.Path, plan.BeforeHashes[f.Path], Paths.Hash(plan.Payload[f.Path]), unowned, !unowned || includeUnowned);
+        }).ToArray());
+    }
+    private Plan PreviewCore(string root, string packageRoot, bool repair, bool includeUnowned)
     {
         root = Paths.Root(root); NoPending(root); string gameDirectory = Paths.GameDirectory(root);
         var checkedPackage = CheckPayload(root, packageRoot);
@@ -112,21 +122,38 @@ internal sealed class InstallationEngine
                 // A missing receipt grants no authority over unknown files.
                 // Only exact, verified final installation bytes may be retained;
                 // the Configurator contract has already been bound by CheckPayload.
-                if (hash != null && !Paths.Equal(hash, Paths.Hash(checkedPackage.Payload[f.Path])))
+                if (!repair && hash != null && !Paths.Equal(hash, Paths.Hash(checkedPackage.Payload[f.Path])))
                     throw new InstallError("unowned", f.Path);
             }
-            else if (owned == null || !Paths.Equal(hash, owned.Sha256)) throw new InstallError("modified", f.Path);
+            else if (owned == null || (!repair && hash != null && !Paths.Equal(hash, owned.Sha256))) throw new InstallError("modified", f.Path);
             beforeHashes.Add(f.Path, hash);
         }
         return new Plan(root, checkedPackage.PackageRoot, package, checkedPackage.ManifestHash, prior,
-            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload, gameDirectory, beforeHashes);
+            priorBytes == null ? null : Paths.Hash(priorBytes), checkedPackage.Payload, gameDirectory, beforeHashes, repair, includeUnowned);
     }
 
-    internal OperationResult Install(Plan shown, Action<string>? progress = null)
+    internal OperationResult Install(Plan shown, Action<string>? progress = null, string? updateStage = null)
+    {
+        if (shown.IsRepair) throw new InstallError("repairConsent");
+        return InstallCore(shown, progress, updateStage);
+    }
+    internal OperationResult Repair(RepairPlan shown, bool userConfirmed, Action<string>? progress = null)
+    {
+        if (!userConfirmed || !shown.Plan.IsRepair || !shown.CanCommit) throw new InstallError("repairConsent");
+        return InstallCore(shown.Plan, progress, null);
+    }
+    private OperationResult InstallCore(Plan shown, Action<string>? progress, string? updateStage)
     {
         using var guard = new OperationLock(shown.Root); Stopped(); NoPending(shown.Root);
         // The selected immutable preview is revalidated at the actual write boundary.
-        Plan plan = Preview(shown.Root, shown.PackageRoot);
+        Plan plan;
+        if (shown.IsRepair)
+        {
+            var reviewed = PreviewRepair(shown.Root, shown.PackageRoot, shown.IncludeUnowned);
+            if (!reviewed.CanCommit) throw new InstallError("repairConsent");
+            plan = reviewed.Plan;
+        }
+        else plan = Preview(shown.Root, shown.PackageRoot);
         if (!string.Equals(plan.Root, shown.Root, StringComparison.OrdinalIgnoreCase) || plan.GameDirectory != shown.GameDirectory ||
             !Paths.Equal(plan.ManifestHash, shown.ManifestHash) || !Paths.Equal(plan.PriorHash, shown.PriorHash) ||
             plan.BeforeHashes.Count != shown.BeforeHashes.Count || plan.BeforeHashes.Any(f =>
@@ -149,11 +176,10 @@ internal sealed class InstallationEngine
         byte[]? priorState = StateBytes(plan.Root);
         if (!Paths.Equal(priorState == null ? null : Paths.Hash(priorState), plan.PriorHash)) throw new InstallError("previewChanged");
         changes.Add((Contract.StatePath, priorState, Contract.Encode(receipt)));
-        Execute(plan.Root, id, changes, progress, plan.GameDirectory);
-        if (plan.Package.Scope == "vrmod" && plan.Package.Native != null && Version.Parse(plan.Package.Version) >= new Version(1, 1, 5))
-            _ = RuntimeLogCleanup.Apply(plan.Root, plan.Prior != null);
-        bool settingsWarning = plan.Package.Scope == "vrmod" && UserSettings.Apply(plan.Root, id, "install", true).Warning;
-        return new OperationResult(receipt.Version, false, id, settingsWarning);
+        var post = NewPostprocess(plan.Root, id, plan.IsRepair ? "repair" : "install", receipt.Version, true,
+            plan.Package.Scope == "vrmod", !plan.IsRepair && plan.Package.Native != null && Version.Parse(plan.Package.Version) >= new Version(1, 1, 5), updateStage, plan.Prior != null);
+        Execute(plan.Root, id, changes, progress, plan.GameDirectory, post);
+        return CompletePostprocessing(post, false);
     }
 
     private static Journal ReadJournal(string root, string id)
@@ -212,9 +238,10 @@ internal sealed class InstallationEngine
         {
             var previous = ReadReceipt(root, priorState); _ = InstallationJournal(root, previous, priorState);
         }
-        string id = Guid.NewGuid().ToString("N"); Execute(root, id, changes, progress, original.GameDirectory ?? "GF2 Game");
-        bool settingsWarning = receipt.Scope == "vrmod" && UserSettings.Apply(root, id, "remove", false).Warning;
-        return new OperationResult(receipt.Version, priorState != null, id, settingsWarning);
+        string id = Guid.NewGuid().ToString("N");
+        var post = NewPostprocess(root, id, "remove", receipt.Version, false, receipt.Scope == "vrmod", false, null);
+        Execute(root, id, changes, progress, original.GameDirectory ?? "GF2 Game", post);
+        return CompletePostprocessing(post, priorState != null);
     }
 
     // Settings-only maintenance never grants authority to replace product files.
@@ -227,7 +254,7 @@ internal sealed class InstallationEngine
         return new OperationResult(receipt.Version, false, id, result.Warning);
     }
 
-    private static void Execute(string root, string id, List<(string Path, byte[]? Before, byte[]? After)> requested, Action<string>? progress, string gameDirectory)
+    private static void Execute(string root, string id, List<(string Path, byte[]? Before, byte[]? After)> requested, Action<string>? progress, string gameDirectory, PostprocessState postprocess)
     {
         string folder = Paths.Transaction(root, id); var changes = new List<Change>();
         for (int i = 0; i < requested.Count; i++)
@@ -242,6 +269,7 @@ internal sealed class InstallationEngine
         }
         var journal = new Journal(1, Contract.Product, root, id, "prepared", changes.ToArray(), gameDirectory);
         string journalFile = Paths.Contained(folder, "journal.json"); Paths.WriteNew(journalFile, Contract.Encode(journal));
+        Paths.WriteNew(Paths.Contained(folder, "postprocess.json"), Contract.Encode(postprocess));
         _ = ReadJournal(root, id); // Check durable backup and stage integrity before creating pending/write authority.
         foreach (var c in changes)
             if (!Paths.Equal(Paths.FileHash(Paths.Target(root, c.Path, gameDirectory)), c.BeforeHash)) throw new InstallError("previewChanged");
@@ -258,7 +286,6 @@ internal sealed class InstallationEngine
                 SetFile(dest, c.AfterFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.AfterFile)), c.AfterHash);
             }
             Paths.Atomic(journalFile, Contract.Encode(journal with { State = "committed" }));
-            File.Delete(pending);
         }
         catch
         {

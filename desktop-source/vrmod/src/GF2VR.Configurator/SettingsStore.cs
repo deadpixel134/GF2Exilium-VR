@@ -482,6 +482,30 @@ internal sealed class SettingsStore
     }
 
     internal void SaveLanguage(string language)
+        => SavePreference(doc => doc["language"] = Texts.Normalize(language));
+
+    private JsonObject ReadPreference()
+    {
+        string file = Path.Combine(Config, "configurator.json"); CheckPath(file);
+        byte[]? bytes = ReadBounded(file);
+        if (bytes == null) return new JsonObject { ["schemaVersion"] = 1 };
+        using var j = JsonDocument.Parse(bytes); CheckDuplicates(j.RootElement);
+        var doc = JsonNode.Parse(bytes)?.AsObject() ?? throw new SettingsError("schemaError", "configurator.json");
+        if (doc["schemaVersion"]?.ToJsonString() != "1") throw new SettingsError("schemaError", "configurator.json");
+        return doc;
+    }
+    internal bool ShouldNotifyUpdate(string version)
+    {
+        _ = GF2VR.Installer.UpdatePolicy.VersionOf(version);
+        var doc = ReadPreference();
+        return doc["lastNotifiedUpdate"]?.GetValue<string>() != version && doc["skippedUpdate"]?.GetValue<string>() != version;
+    }
+    internal void MarkUpdateNotice(string version, bool skip)
+    {
+        _ = GF2VR.Installer.UpdatePolicy.VersionOf(version);
+        SavePreference(doc => { doc["lastNotifiedUpdate"] = version; if (skip) doc["skippedUpdate"] = version; });
+    }
+    private void SavePreference(Action<JsonObject> change)
     {
         string file = Path.Combine(Config, "configurator.json"); CheckPath(file);
         Directory.CreateDirectory(Config);
@@ -490,7 +514,7 @@ internal sealed class SettingsStore
         if (raw != null) { using var j = JsonDocument.Parse(raw); CheckDuplicates(j.RootElement); }
         if (doc.ContainsKey("schemaVersion") && doc["schemaVersion"]?.ToJsonString() != "1")
             throw new SettingsError("schemaError", "configurator.json");
-        doc["schemaVersion"] = 1; doc["language"] = Texts.Normalize(language);
+        doc["schemaVersion"] = 1; change(doc);
         byte[] bytes = Encode(doc);
         if (bytes.Length > 4096) throw new SettingsError("sizeError", "configurator.json");
         if (!Same(raw, ReadBounded(file))) throw new SettingsError("conflictError");
