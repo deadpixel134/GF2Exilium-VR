@@ -64,6 +64,14 @@ Install one variant at a time. Both use the same single version.dll beside the g
 
 [Installation, removal and restore](docs/en/INSTALLATION.md) · [Updates and variant switching](docs/en/UPDATE.md)
 
+## Updates, repair and saving
+
+Confirm an available update in Settings to install it. If automatic installation is unavailable, the version and manual instructions remain visible; the release page opens only with Open. Notifications can be skipped per version.
+
+Missing or quarantined files with a valid installation record can be reinstalled. For changed files, choose **Repair** in the Installer from the latest ZIP, review the per-file plan and confirm. Originals are backed up first; files with unknown ownership are excluded by default. Installation records, settings, logs and backups are preserved. Unfinished final steps can be retried without reinstalling product files.
+
+Settings displays saved, failed-save and unsaved states and a title *****. Failed saves retain your edits, and closing with unsaved changes asks for confirmation. Close the game before saving, then restart it to apply changes.
+
 ## Default controls
 
 | Control | Action |

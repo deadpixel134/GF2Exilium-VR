@@ -8,6 +8,8 @@ internal static class Program
         ApplicationConfiguration.Initialize();
         try
         {
+            if (args.Contains("--self-test-update-discovery")) return UpdateDiscoveryChecks.Run(Value(args, "--package")!);
+            if (args.Contains("--self-test-save-state")) return MainForm.VerifySaveState();
             if (args.Contains("--self-test")) return SelfTest.Run();
             if (args.Contains("--verify-localization")) { Texts.Verify(); return 0; }
             string root = Value(args, "--root") ?? SettingsStore.FindRoot();
@@ -25,6 +27,8 @@ internal static class Program
         }
         catch (Exception ex)
         {
+            if (args.Contains("--self-test-update-discovery") || args.Contains("--self-test-save-state"))
+            { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--self-test") || args.Contains("--verify-localization") || args.Contains("--check-installation"))
             {
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());

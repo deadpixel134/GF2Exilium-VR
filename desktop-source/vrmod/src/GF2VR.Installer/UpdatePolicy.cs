@@ -15,6 +15,13 @@ internal sealed record PreparedUpdate(string Version, string Folder, string Root
 
 internal static class UpdatePolicy
 {
+    // Stable updater bootstrap v1 (docs/release-notes/update-bootstrap-contract.md):
+    // Clean/Dirty descriptors keep these eleven fields and one ZIP/ArchiveSha256.
+    // The fixed repository and exact per-flavor asset names below are protocol.
+    // ZIP-root HelperFiles are an independently executable, self-contained unit:
+    // never require a fifth helper/runtime file. Manifest/layout policy belongs to
+    // the incoming helper; changing this envelope requires a separately approved
+    // client/protocol migration, not a payload-schema exception in old clients.
     internal const string Repository = "deadpixel134/GF2Exilium-VR";
     internal const string Api = "repos/" + Repository + "/";
     internal const string DescriptorName = "GF2VR-update.json";
@@ -28,6 +35,25 @@ internal static class UpdatePolicy
     }
     internal static string ArchiveName(string version, string? flavor = null) => "GF2VR-Native-SelfContained-" + (flavor == null ? "" : flavor + "-") + version + ".zip";
     internal static string DescriptorFor(string? flavor) => flavor == null ? DescriptorName : "GF2VR-" + flavor + "-update.json";
+    internal static string ReleasePage(string version) { _ = VersionOf(version); return "https://github.com/" + Repository + "/releases/tag/v" + version; }
+    // Discovery needs only a published stable version. Applicability continues
+    // through the unchanged strict asset/descriptor policy in Select/Descriptor.
+    internal static string? DiscoverVersion(byte[] json, string installedVersion)
+    {
+        if (json.Length > 262144) throw new InstallError("updateInvalid");
+        using var doc = JsonDocument.Parse(json); Contract.Duplicates(doc.RootElement);
+        if (doc.RootElement.ValueKind != JsonValueKind.Array || doc.RootElement.GetArrayLength() > 20) throw new InstallError("updateInvalid");
+        Version current = VersionOf(installedVersion); Version? newest = null;
+        foreach (var r in doc.RootElement.EnumerateArray())
+        {
+            if (r.GetProperty("draft").GetBoolean() || r.GetProperty("prerelease").GetBoolean() || r.GetProperty("published_at").ValueKind != JsonValueKind.String) continue;
+            string tag = r.GetProperty("tag_name").GetString() ?? "";
+            if (!tag.StartsWith('v')) continue;
+            Version v; try { v = VersionOf(tag[1..]); } catch (InstallError) { continue; }
+            if (v > current && (newest == null || v > newest)) newest = v;
+        }
+        return newest?.ToString(3);
+    }
     internal static ReleaseCandidate? Select(byte[] json, string installedVersion, string? flavor = null)
     {
         if (json.Length > 262144) throw new InstallError("updateInvalid");

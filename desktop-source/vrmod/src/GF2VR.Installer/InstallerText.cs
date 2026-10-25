@@ -7,10 +7,10 @@ namespace GF2VR.Installer;
 
 internal static class InstallerText
 {
-    internal static readonly string[] Languages = ["ko", "en", "ja"];
+    internal static readonly string[] Languages = ["ko", "en", "ja", "zh-CN"];
     private static readonly Dictionary<string, Dictionary<string, string>> Resources = Load();
-    internal static string Language = Normalize(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-    internal static string Normalize(string? value) => value != null && Languages.Contains(value) ? value : "ko";
+    internal static string Language = Normalize(CultureInfo.CurrentUICulture.Name);
+    internal static string Normalize(string? value) => value?.StartsWith("zh", StringComparison.OrdinalIgnoreCase) == true ? "zh-CN" : value?.StartsWith("en", StringComparison.OrdinalIgnoreCase) == true ? "en" : value?.StartsWith("ja", StringComparison.OrdinalIgnoreCase) == true ? "ja" : "ko";
     private static Dictionary<string, Dictionary<string, string>> Load()
     {
         var assembly = Assembly.GetExecutingAssembly(); var resources = new Dictionary<string, Dictionary<string, string>>();
@@ -41,7 +41,7 @@ internal static class InstallerText
         {
             string path = Paths.Contained(Paths.Root(root), "vrmod/config/installer-ui.json");
             byte[]? raw = Paths.Bytes(path, 4096);
-            if (raw == null) return Normalize(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+            if (raw == null) return Normalize(CultureInfo.CurrentUICulture.Name);
             using var doc = JsonDocument.Parse(raw);
             Contract.Duplicates(doc.RootElement);
             if (doc.RootElement.GetProperty("schemaVersion").GetInt32() != 1) return "ko";

@@ -17,6 +17,9 @@ internal sealed class InstallerForm : Form
     private readonly Button install = new() { AutoSize = true, MinimumSize = new Size(115, 36), Tag = "install" };
     private readonly Button remove = new() { AutoSize = true, MinimumSize = new Size(115, 36), Tag = "remove" };
     private readonly Button recover = new() { AutoSize = true, MinimumSize = new Size(100, 36), Tag = "recover" };
+    private readonly Button repair = new() { AutoSize = true, MinimumSize = new Size(100, 36), Tag = "repair" };
+    private readonly Button retryPostprocess = new() { AutoSize = true, MinimumSize = new Size(115, 36), Tag = "retryPostprocess" };
+    private string? postprocessId;
     private readonly Button openSettings = new() { AutoSize = true, MinimumSize = new Size(115, 36), Tag = "openSettings" };
     private readonly List<Control> texts = [];
     private readonly List<Control> operations = [];
@@ -42,19 +45,20 @@ internal sealed class InstallerForm : Form
         InstallerText.Language = InstallerText.LoadPreference(gameRoot);
         var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(16), ColumnCount = 1, RowCount = 9 };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        foreach (int height in new[] { 50, 44, 112, 88, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
+        foreach (int height in new[] { 50, 44, 112, 116, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
         layout.RowStyles[1].SizeType = SizeType.AutoSize;
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         foreach (int height in new[] { 96, 52, 26 }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
         Controls.Add(layout);
         var heading = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
-        heading.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); heading.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 246));
+        heading.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); heading.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         var title = Label("title"); title.Font = new Font(Font.FontFamily, 16, FontStyle.Bold); heading.Controls.Add(title, 0, 0);
-        foreach (var item in new[] { ("한국어", "ko"), ("English", "en"), ("日本語", "ja") })
+        foreach (var item in new[] { ("한국어", "ko"), ("English", "en"), ("日本語", "ja"), ("简体中文", "zh-CN") })
         {
             var button = new Button { Text = item.Item1, AutoSize = true, MinimumSize = new Size(75, 34) };
             string code = item.Item2; button.Click += (_, _) => ChangeLanguage(code); languages.Controls.Add(button);
         }
+        languages.AutoSize = true; languages.MinimumSize = languages.GetPreferredSize(Size.Empty);
         heading.Controls.Add(languages, 1, 0); layout.Controls.Add(heading, 0, 0);
         layout.Controls.Add(GameFolderRow(), 0, 1);
         bundleNotice.Font = new Font(Font.FontFamily, 9, FontStyle.Bold); bundleNotice.ForeColor = Color.FromArgb(125, 59, 15);
@@ -67,8 +71,29 @@ internal sealed class InstallerForm : Form
         files.Columns.Add("", 680); files.Columns.Add("", 180); filesPage.Controls.Add(files); logPage.Controls.Add(log); layout.Controls.Add(details, 0, 5);
         var advice = Label("policy"); advice.AutoSize = false; advice.Dock = DockStyle.Fill; advice.ForeColor = Color.FromArgb(71, 87, 110);
         advice.Font = new Font(Font.FontFamily, 9); advice.Margin = new Padding(4, 10, 4, 5); layout.Controls.Add(advice, 0, 6);
-        var footer = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, WrapContents = false, Padding = new Padding(0, 8, 0, 0) };
-        texts.AddRange([install, remove, recover, openSettings, protectSettings]); operations.AddRange([install, remove, recover, openSettings, protectSettings]);
+        var footer = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, WrapContents = true, Padding = new Padding(0, 8, 0, 0) };
+        void FitFooter() { if (footer.ClientSize.Width > 0) layout.RowStyles[7].Height = footer.GetPreferredSize(new Size(footer.ClientSize.Width, 0)).Height; }
+        footer.Layout += (_, _) => FitFooter();
+        texts.AddRange([install, remove, recover, openSettings, protectSettings, repair, retryPostprocess]); operations.AddRange([install, remove, recover, openSettings, protectSettings, repair, retryPostprocess]);
+        repair.Click += async (_, _) =>
+        {
+            try
+            {
+                var shown = engine.PreviewRepair(root.Text, this.packageRoot);
+                using var dialog = new RepairDialog(shown);
+                if (dialog.ShowDialog(this) != DialogResult.Yes) return;
+                var approved = shown with { Plan = shown.Plan with { IncludeUnowned = dialog.IncludeUnowned },
+                    Files = shown.Files.Select(f => f with { Selected = !f.Unowned || dialog.IncludeUnowned }).ToArray() };
+                await Run(() => engine.Repair(approved, true, Progress), "repaired", approved.Plan.Package.Files.Length + 1);
+            }
+            catch (Exception ex) { DisplayError(ex, true); }
+        };
+        retryPostprocess.Click += async (_, _) =>
+        {
+            string? id = postprocessId; string selectedRoot = root.Text;
+            if (id != null && Confirm(InstallerText.Get("confirmRetryPostprocess")))
+                await Run(() => engine.RetryPostprocessing(selectedRoot, id), "postprocessComplete", 0);
+        };
         protectSettings.Click += async (_, _) =>
         {
             string chosenRoot = root.Text;
@@ -97,7 +122,7 @@ internal sealed class InstallerForm : Form
             try { if (settings == null) throw new InstallError("settingsUnavailable"); SettingsLaunch.Open(settings, engine); SetStatus("settingsOpened"); }
             catch (Exception ex) { DisplayError(ex, true); Inspect(false); }
         };
-        footer.Controls.AddRange([install, remove, recover, openSettings, protectSettings, Button("inspect", (_, _) => Inspect())]);
+        footer.Controls.AddRange([install, repair, remove, recover, retryPostprocess, openSettings, protectSettings, Button("inspect", (_, _) => Inspect())]);
         layout.Controls.Add(footer, 0, 7); layout.Controls.Add(status, 0, 8);
         FormClosing += (_, e) => { if (busy) e.Cancel = true; };
         Translate(); Inspect(); if (smoke != null) Shown += (_, _) => Smoke(details);
@@ -146,24 +171,28 @@ internal sealed class InstallerForm : Form
             InstallerText.Get(settingsOnly ? "settingsMaintenanceHelp" : packageIncomplete ? "bundledPackageMissing" : "bundledPackageHelp");
         summary.Text = InstallerText.Format("summary", plan == null ? InstallerText.Get("unavailable") : VariantVersion(plan.Package.Version, plan.Package.Native?.BuildFlavor), receipt == null ? InstallerText.Get("noReceipt") : VariantVersion(receipt.Version, receipt.BuildFlavor),
             settingsOnly ? InstallerText.Get("settingsMaintenanceScope") : (plan?.Package.Scope ?? receipt?.Scope) == "tools" ? InstallerText.Get("toolsScope") : plan?.Package.Scope == "vrmod" ? InstallerText.Get(NativeLayout.IsPortable(plan.Package) ? "portableScope" : "nativeScope") : InstallerText.Get("noRuntimeRelease"));
+        summary.Text += Environment.NewLine + InstallerText.Get("gameFingerprintInfo");
         files.Items.Clear(); foreach (var file in plan?.Package.Files ?? receipt?.Files ?? [])
             files.Items.Add(new ListViewItem([file.Path, InstallerText.Get(plan == null ? "ownedAction" : receipt == null ? "newAction" : "updateAction")]));
         install.Tag = receipt == null ? "install" : plan?.Package.Version == receipt.Version ? "reinstall" : "updateInstall";
         remove.Tag = hasPrevious ? "rollback" : "remove";
         install.Text = InstallerText.Get((string)install.Tag); remove.Text = InstallerText.Get((string)remove.Tag);
         install.Enabled = !settingsOnly && !busy && !pending && plan != null; remove.Enabled = !settingsOnly && !busy && !pending && receiptHash != null;
+        repair.Enabled = !settingsOnly && !busy && !pending && !packageIncomplete;
+        retryPostprocess.Enabled = !settingsOnly && !busy && postprocessId != null;
         protectSettings.Enabled = !busy && !pending && receipt != null;
         recover.Enabled = !settingsOnly && !busy && pending; openSettings.Enabled = !settingsOnly && !busy && !pending && settings != null;
     }
     private static string VariantVersion(string version, string? flavor) => flavor == null ? version : version + " (" + flavor + ")";
     private void Inspect(bool setReady = true)
     {
-        plan = null; receipt = null; receiptHash = null; settings = null; pending = false; hasPrevious = false;
+        plan = null; receipt = null; receiptHash = null; settings = null; pending = false; hasPrevious = false; postprocessId = null;
         packageIncomplete = !PackageLocation.IsAvailable(packageRoot);
         try
         {
             root.Text = Paths.Root(root.Text);
             pending = engine.HasPending(root.Text); receipt = engine.Inspect(root.Text);
+            postprocessId = engine.FindPendingPostprocessing(root.Text);
             if (receipt != null && !pending) { hasPrevious = engine.HasPreviousVersion(root.Text); receiptHash = engine.ReceiptHash(root.Text); }
             try { settings = SettingsLaunch.Resolve(root.Text, engine); } catch (Exception ex) { AppendLog(InstallerText.Error(ex)); }
             bool available = !packageIncomplete;
@@ -209,13 +238,18 @@ internal sealed class InstallerForm : Form
         progress.Style = total == 0 ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
         foreach (Control control in operations) control.Enabled = false; languages.Enabled = false;
         SetStatus("operationStarted");
-        try { var result = await Task.Run(work); progress.Style = ProgressBarStyle.Blocks; progress.Value = 100; Inspect(false); SetStatus(result.RestoredPrevious ? "restoredPrevious" : completed);
-            if (result.SettingsWarning) { status.Text = InstallerText.Get("settingsPreservedWarning"); AppendLog(status.Text); } }
+        try { var result = await Task.Run(work); progress.Style = ProgressBarStyle.Blocks; progress.Value = 100; Inspect(false);
+            SetStatus(result.PendingPostprocess is { Length: > 0 } ? "postprocessPending" : result.RestoredPrevious ? "restoredPrevious" : completed);
+            if (result.SettingsWarning) { status.Text += Environment.NewLine + InstallerText.Get("settingsPreservedWarning"); AppendLog(status.Text); } }
         catch (Exception ex) { progress.Style = ProgressBarStyle.Blocks; DisplayError(ex, true); Inspect(false); }
         finally { busy = false; languages.Enabled = true; foreach (Control control in operations) control.Enabled = true; RefreshDisplay(); }
     }
     private void VerifyPathRows()
     {
+        foreach (Control button in languages.Controls)
+            for (Control? parent = button.Parent; parent != null; parent = parent.Parent)
+                if (!parent.ClientRectangle.Contains(parent.RectangleToClient(button.Parent!.RectangleToScreen(button.Bounds))))
+                    throw new InvalidDataException("Installer language selector is clipped: " + button.Text);
         PerformLayout();
         if (texts.Count(control => control is Button && control.Tag as string == "browse") != 1 ||
             texts.Any(control => control.Tag as string == "packageFolder"))
@@ -224,6 +258,10 @@ internal sealed class InstallerForm : Form
             new Size(bundleNotice.ClientSize.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
         if (noticeSize.Height > bundleNotice.ClientSize.Height)
             throw new InvalidDataException("Bundled-package guidance is clipped");
+        var summarySize = TextRenderer.MeasureText(summary.Text, summary.Font,
+            new Size(summary.ClientSize.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
+        if (summarySize.Height > summary.ClientSize.Height || !summary.Text.Contains(InstallerText.Get("gameFingerprintInfo")))
+            throw new InvalidDataException("Informational game fingerprint guidance is clipped");
         foreach (TextBox value in new[] { root })
         {
             var browse = value.Parent!.Controls.OfType<Button>().Single();

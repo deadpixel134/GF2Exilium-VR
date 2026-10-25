@@ -67,7 +67,7 @@ internal static partial class SelfTest
         var defaults = Fields.Defaults()["controller_input.json"]["auxiliaryPanel"]!;
         File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "panel-defaults-native.json"), SettingsStore.Encode(Fields.Defaults()["controller_input.json"]));
         string priorPanelLanguage = Texts.Language;
-        foreach (string language in new[] { "ko", "en", "ja" }) {
+        foreach (string language in Texts.Languages) {
             Texts.Language = language;
             Assert(Texts.Get("panelOffsetHelp").Contains("-0.10") && Texts.Get("panelOffsetHelp").Contains("0.01"), "localized captured XYZ defaults");
             Assert(Texts.Get("panelTiltHelp").Contains("+5") && Texts.Get("panelScreenTilt") != Texts.Get("unavailable"), "localized upward tilt guide");

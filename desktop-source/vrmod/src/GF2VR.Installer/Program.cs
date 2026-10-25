@@ -10,6 +10,10 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-repair")) return RepairChecks.Run(Value(args, "--package")!);
+            if (args.Contains("--self-test-bootstrap-contract")) return BootstrapContractChecks.Run(Value(args, "--package")!);
+            if (args.Contains("--self-test-bootstrap")) return UpdateBootstrapChecks.Run(Value(args, "--package")!, Value(args, "--previous")!, Value(args, "--future-helper")!);
+            if (args.Contains("--bootstrap-parent-fixture")) return UpdateBootstrapChecks.Parent(Value(args, "--stage")!);
             if (args.Contains("--self-test-performance-protection")) return PerformanceProtectionChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-public-transport")) return PublicTransportChecks.Run().GetAwaiter().GetResult();
             if (args.Contains("--check-public-update-source")) return PublicTransportChecks.CheckPublic().GetAwaiter().GetResult();
@@ -46,10 +50,17 @@ internal static class Program
                 }
                 int result = UpdateStaging.Apply(folder);
                 if (updateFixture) return result;
+                if (UpdateStaging.LastApplyResult?.PendingPostprocess is { Length: > 0 })
+                {
+                    MessageBox.Show(InstallerText.Get("postprocessPending"), InstallerText.Get("title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return result;
+                }
                 var handoff = Contract.Read<UpdateHandoff>(File.ReadAllBytes(Paths.Contained(Path.GetFullPath(folder), "handoff.json")));
                 var start = new System.Diagnostics.ProcessStartInfo(Paths.Contained(handoff.Root, NativeLayout.ToolRoot + "GF2VR.Configurator.exe")) { UseShellExecute = false };
                 start.ArgumentList.Add("--root"); start.ArgumentList.Add(handoff.Root);
-                using var reopened = System.Diagnostics.Process.Start(start);
+                try { using var reopened = System.Diagnostics.Process.Start(start); if (reopened == null) throw new IOException(); }
+                catch (Exception ex) when (ex is IOException or System.ComponentModel.Win32Exception or UnauthorizedAccessException)
+                { MessageBox.Show(InstallerText.Get("reopenFailed"), InstallerText.Get("title"), MessageBoxButtons.OK, MessageBoxIcon.Warning); }
                 return result;
             }
             if (args.Contains("--self-test-desktop")) return DesktopDeploymentChecks.Run(Value(args, "--package") ?? throw new InstallError("manifestMissing"));
@@ -58,6 +69,20 @@ internal static class Program
             if (args.Contains("--self-test")) return SelfTest.Run(Value(args, "--package"));
             if (args.Contains("--verify-localization")) return 0;
             string root = Value(args, "--root") ?? FindRoot();
+            if (args.Contains("--repair-plan") || args.Contains("--repair") || args.Contains("--retry-postprocess"))
+            {
+                if (Value(args, "--root") == null) throw new InstallError("path", root);
+                var engine = new InstallationEngine();
+                if (args.Contains("--retry-postprocess"))
+                    Report(engine.RetryPostprocessing(root, Value(args, "--transaction") ?? throw new InstallError("badState")));
+                else
+                {
+                    var reviewed = engine.PreviewRepair(root, PackageLocation.Require(Value(args, "--package") ?? throw new InstallError("manifestMissing")), args.Contains("--include-unowned"));
+                    File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "repair-plan.json"), Contract.Encode(new { reviewed.Plan.Root, reviewed.Plan.ManifestHash, reviewed.Files, reviewed.CanCommit }));
+                    if (args.Contains("--repair")) Report(engine.Repair(reviewed, args.Contains("--confirm-repair")));
+                }
+                return 0;
+            }
             if (args.Contains("--reverify-settings"))
             {
                 new InstallationEngine().ReverifySettings(root); return 0;
@@ -66,8 +91,8 @@ internal static class Program
             {
                 if (Value(args, "--root") == null || args.Contains("--install") == args.Contains("--remove")) throw new InstallError("path", root);
                 var engine = new InstallationEngine();
-                if (args.Contains("--remove")) engine.Remove(root, engine.ReceiptHash(root));
-                else engine.Install(engine.Preview(root, PackageLocation.Require(Value(args, "--package") ?? throw new InstallError("manifestMissing"))));
+                if (args.Contains("--remove")) Report(engine.Remove(root, engine.ReceiptHash(root)));
+                else Report(engine.Install(engine.Preview(root, PackageLocation.Require(Value(args, "--package") ?? throw new InstallError("manifestMissing")))));
                 return 0;
             }
             string package = PackageLocation.Resolve(Value(args, "--package"));
@@ -94,19 +119,32 @@ internal static class Program
         }
         catch (Exception ex)
         {
+            if (args.Any(a => a is "--repair" or "--repair-plan" or "--retry-postprocess" or "--self-test-repair"))
+            { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
+            if (args.Contains("--self-test-bootstrap-contract"))
+            { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--self-test-public-transport") || args.Contains("--check-public-update-source"))
             { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--apply-confirmed-update"))
             {
-                if (updateFixture) return 1;
+                if (updateFixture)
+                { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
                 MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
-            if (args.Contains("--self-test-steam") || args.Contains("--self-test-performance-protection") || args.Contains("--reverify-settings") || args.Contains("--install") || args.Contains("--remove") || args.Contains("--self-test-variants") || args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
+            if (args.Contains("--self-test-bootstrap") || args.Contains("--bootstrap-parent-fixture") || args.Contains("--self-test-steam") || args.Contains("--self-test-performance-protection") || args.Contains("--reverify-settings") || args.Contains("--install") || args.Contains("--remove") || args.Contains("--self-test-variants") || args.Contains("--self-test-package-location") || args.Contains("--self-test-ownership") || args.Contains("--self-test-flexible") || args.Contains("--self-test-installer-ux") || args.Contains("--check-settings-launch") || args.Contains("--self-test") || args.Contains("--self-test-native") || args.Contains("--self-test-portable") || args.Contains("--self-test-desktop") || args.Contains("--self-test-updates") || args.Contains("--check-update-source") || args.Contains("--check-payload") || args.Contains("--check-package") || args.Contains("--smoke-gui") || args.Contains("--verify-localization"))
                 File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString());
             else MessageBox.Show(InstallerText.Error(ex), InstallerText.Get("errorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
+    }
+    private static void Report(OperationResult result)
+    {
+        // The product has already committed. A diagnostic export failure must not
+        // change its outcome or cause the caller to repeat the product install.
+        try { File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "operation-result.json"), Contract.Encode(result)); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        { MessageBox.Show(InstallerText.Get("operationReportUnavailable"), InstallerText.Get("title"), MessageBoxButtons.OK, MessageBoxIcon.Warning); }
     }
     private static string? Value(string[] args, string key)
     {
