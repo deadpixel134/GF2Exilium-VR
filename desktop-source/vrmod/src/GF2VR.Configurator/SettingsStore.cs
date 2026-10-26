@@ -204,6 +204,14 @@ internal sealed class SettingsStore
 
     private static void ValidatePerformance(JsonObject doc)
     {
+        // pose.lateRelocate: optional runtime bool (missing = native default ON).
+        // A present pose member must be an object and an explicit value must be a bool.
+        if (doc.ContainsKey("pose"))
+        {
+            if (doc["pose"] is not JsonObject pose) throw new SettingsError("formatError", "performance.json");
+            if (pose.ContainsKey("lateRelocate") && (pose["lateRelocate"] is not JsonValue late || !late.TryGetValue<bool>(out _)))
+                throw new SettingsError("formatError", "performance.json");
+        }
         if (!doc.ContainsKey("pcOutput")) return;
         if (doc["pcOutput"] is not JsonObject pc) throw new SettingsError("formatError", "performance.json");
         foreach (string key in new[] { "mode", "scope" })
@@ -298,6 +306,8 @@ internal sealed class SettingsStore
                     throw new SettingsError("formatError", f.File);
                 if (f.Key == "cameraFollowEnabled" && (docs[f.File][f.Group!] as JsonObject)?.ContainsKey(f.Key) == true)
                     throw new SettingsError("formatError", f.File);
+                if (f.Key == "lateRelocate" && (docs[f.File][f.Group!] as JsonObject)?.ContainsKey(f.Key) == true)
+                    throw new SettingsError("formatError", f.File); // Explicit null is not the native missing-key default.
                 continue;
             }
             if (value is not JsonValue val) throw new SettingsError("formatError", f.File);

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "GF2VR",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "scope": "vrmod",
   "gameExecutableSha256": "733A05AC0D028867EBF0313D68B3A7B43FBF5E6BD722910C5EBEC2211D4D43B5",
   "boundGameRoot": null,
@@ -29,17 +29,17 @@
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe",
-      "sha256": "D47C8AA7B781C1F1F51E5628556AD8965BCA9695A215D9AD0E75CFA8C6012609",
+      "sha256": "9413229854816C01A50EE1F01E6DF7B83D7A7087C90B236FA03E86C98C082E63",
       "bytes": 51597583
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.dll",
-      "sha256": "180E6DCD3ACAEBE5F2074B5D5C46B59C256793F76A5FE229935496F7D9B1C484",
-      "bytes": 453632
+      "sha256": "9775B6D5FCDAC4FA11EF9BF09F254F5C4A3A7A02441E7DD95D8E4194C115713D",
+      "bytes": 459776
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.deps.json",
-      "sha256": "4B09070A79B0148BB70152CE59927DE6FE1C028F81EB72BABCA7311284B7C577",
+      "sha256": "AA7AB9811610955C6146A4C214BDC5E351692DB02BFCB17FEC8651328E6DAA8F",
       "bytes": 31153
     },
     {

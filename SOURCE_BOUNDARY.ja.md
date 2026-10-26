@@ -2,9 +2,9 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-## 1.3.0 — 姿勢の再取得、ログ・インストールの改善
+## 1.3.1 — 姿勢の再取得の切り替え、ログ・インストールの改善
 
-目のレンダリング直前に頭の姿勢を読み直す late re-locate を既定で有効にします。`performance.json` の `pose.lateRelocate` を `false` にすると無効になります。ログの要約はカウンターが変化したときに最短1秒間隔で、変化がなくても10秒ごとに記録します。インストール・更新・修復インストールは内容が同じファイルの書き込みを省略します。Settings と Installer は新しい native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）に合わせて再ビルドしました。
+目のレンダリング直前に頭の姿勢を読み直す late re-locate を既定で有効にします。Settings の画質・立体感タブの切り替えで無効にでき、`performance.json` の `pose.lateRelocate` に保存されます。1.3.0 は切り替えのない状態で一時公開後に取り下げ、その内容は 1.3.1 に含まれます。ログの要約はカウンターが変化したときに最短1秒間隔で、変化がなくても10秒ごとに記録します。インストール・更新・修復インストールは内容が同じファイルの書き込みを省略します。Settings と Installer は新しい native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）に合わせて再ビルドしました。
 
 実機確認の範囲は Dirty の Haoplay Main・Activity・F8・補助パネルの回帰です。Clean 004 はホストテストと同一バイト再現のみを検証し、VR 機器では直接確認していません。Main 画面で頭を回したときの遅延・傾きの感覚は調査中です。
 

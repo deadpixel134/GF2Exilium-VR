@@ -13,6 +13,7 @@ internal static class Fields
         new("render_quality.json", null, "eyeRenderScale", "number", 1d, "renderHelp"),
         new("performance.json", "pcOutput", "pcOutputPreset", "choice", "NATIVE", "pcOutputHelp", ["NATIVE", "3200x1800", "2560x1440", "1920x1080", "1280x720"]),
         new("performance.json", "pcOutput", "pcOutputImmersiveOnly", "bool", true, "pcOutputScopeHelp"),
+        new("performance.json", "pose", "lateRelocate", "bool", true, "lateRelocateHelp"),
         new("stereo_depth.json", null, "stereoDepthScale", "number", 1d, "depthHelp"),
         new("world_scale.json", null, "worldScale", "number", 1d, "worldScaleHelp"),
         new("world_scale.json", null, "linkStereoDepthToWorldScale", "bool", true, "depthLinkHelp"),
@@ -83,7 +84,8 @@ internal static class Fields
     internal static JsonNode? Get(Dictionary<string, JsonObject> docs, Field f)
     {
         var owner = f.Group == null ? docs[f.File] : docs[f.File][f.Group] as JsonObject;
-        if (f.File == "performance.json")
+        // pose.lateRelocate is a plain runtime bool: a missing key is the native default (ON).
+        if (f.File == "performance.json" && f.Group == "pcOutput")
         {
             if (f.Key == "pcOutputImmersiveOnly") return JsonValue.Create((owner?["scope"]?.GetValue<string>() ?? "IMMERSIVE_ONLY") == "IMMERSIVE_ONLY");
             string mode = owner?["mode"]?.GetValue<string>() ?? "NATIVE";
@@ -137,7 +139,7 @@ internal static class Fields
             if (doc[f.Group] == null) doc[f.Group] = new JsonObject();
             doc = doc[f.Group]!.AsObject();
         }
-        if (f.File == "performance.json")
+        if (f.File == "performance.json" && f.Group == "pcOutput")
         {
             if (f.Key == "pcOutputImmersiveOnly") doc["scope"] = value.GetValue<bool>() ? "IMMERSIVE_ONLY" : "ALWAYS";
             else

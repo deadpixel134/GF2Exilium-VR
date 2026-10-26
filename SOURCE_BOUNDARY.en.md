@@ -2,9 +2,9 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-## 1.3.0 — Late pose re-acquisition, logging and installer improvements
+## 1.3.1 — Late pose re-acquisition toggle, logging and installer improvements
 
-Late re-locate re-reads the head pose right before eye rendering and is enabled by default; set `pose.lateRelocate` to `false` in `performance.json` to disable it. Log summaries are written at most once per second when counters change and every 10 seconds otherwise. Install, update and Repair skip writing files whose content is unchanged. Settings and Installer were rebuilt against native 004 (Clean `D0C0653D…`, Dirty `E3D3E92C…`).
+Late re-locate re-reads the head pose right before eye rendering and is enabled by default; a toggle on the Settings Image quality / stereo tab writes `pose.lateRelocate` in `performance.json`. 1.3.0 was briefly published without the toggle and withdrawn; its content is included in 1.3.1. Log summaries are written at most once per second when counters change and every 10 seconds otherwise. Install, update and Repair skip writing files whose content is unchanged. Settings and Installer were rebuilt against native 004 (Clean `D0C0653D…`, Dirty `E3D3E92C…`).
 
 Hardware validation covers the Dirty Haoplay Main/Activity/F8/auxiliary-panel regression path. Clean 004 was verified by host tests and byte-identical reproduction only, not on a VR headset. A reported lag/tilt sensation when turning the head on the Main screen is under investigation.
 

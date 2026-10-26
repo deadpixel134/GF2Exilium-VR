@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "1.3.1",
+  "nativeBaseline": "NATIVE-BASELINE-004",
+  "nativeManifestSha256": "C2120B4727E8C7CC665D3218925F3B09D86E561BC6E047AB30D89ECD94449063",
+  "commonCoreAlgorithm": "SHA256 of sorted common source path NUL uppercase SHA256 rows joined LF, no trailing LF (same as003)",
+  "commonCoreSources": "release/1.3.0-core-source-manifest.txt (526 common source rows; SHA256 of that file equals commonCoreSha256)",
+  "commonCoreSha256": "C97C8C72A82920CF35A17D4521E4F9218FB8AD09EB8D23B8D236951EC21430F9",
+  "publishedClosure": "native-source/variants: compile dependency closure of the paired build (common 233, Clean overlay 2, Dirty overlay 4); see release/common-source-manifest-1.3.0.txt",
+  "variants": {
+    "Clean": {
+      "buildId": "GF2VR-CLEAN-130-004",
+      "dllSha256": "D0C0653D5EE41EA15C6654D9258DD754CA805AA3AC7D9032EED85FA455AD0492"
+    },
+    "Dirty": {
+      "buildId": "GF2VR-DIRTY-130-004",
+      "dllSha256": "E3D3E92CE0D7493F088896D5D377D6FB4F92A1FAD9662A951E4F7B5E9A49872E"
+    }
+  },
+  "note": "Native 004 unchanged from the withdrawn 1.3.0; only Settings/Installer builds differ."
+}
