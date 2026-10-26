@@ -412,8 +412,20 @@ static void admission_transform(unsigned root,void *actual,void *expected);
 #endif
 #define GF2VR_RENDER_SOURCE_SNAPSHOT() ((void)0)
 #include "../bootstrap/xr_bootstrap.c"
+#ifdef GF2VR_LATE_RELOCATE
+static int stereo_late_close(void);
+static void stereo_late_invalidate(void);
+static void stereo_late_publish(void *,const void *);
+#define GF2VR_LATE_CLOSE() stereo_late_close()
+#define GF2VR_LATE_INVALIDATE() stereo_late_invalidate()
+#define GF2VR_LATE_PUBLISH(r,f) stereo_late_publish(r,f)
+#endif
 #include "../panel/panel_capture.h"
 #include "panel_eye_bridge.h"
+#ifdef GF2VR_LATE_RELOCATE
+#include "late_relocate_runtime.h"
+#define GF2VR_POSE_LATE(packet,generation) stereo_late_refresh(packet,generation)
+#endif
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
 static unsigned stereo_panel_role_hand(void);
 #endif

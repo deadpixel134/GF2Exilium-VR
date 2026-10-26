@@ -60,6 +60,9 @@ static int xbt_transfer(XrPresentationFlights *f,PanelXr *p,EyeFlightOwner *owne
         r=xfi_release(images,o,p,owner);if(r!=EFO_OK)return r;
         EyeFlightSnapshot proof;XrEyeInput pose;
         r=eye_pose_pool_read(poses,owner,token,&proof,&pose);if(r!=EFO_OK)return r;
+#ifdef GF2VR_LATE_RELOCATE
+        if(!stereo_late_submission(token.epoch,token.frame,token.generation,&pose))return EFO_BUSY;
+#endif
         if(!images->detached || images->fault || images->actual_released!=3 ||
            o->state!=XEO_IDLE || o->acquired[0] || o->acquired[1] ||
            !xr_eye_matches(&pose,token.epoch,token.frame,proof.display_time) ||
@@ -69,6 +72,9 @@ static int xbt_transfer(XrPresentationFlights *f,PanelXr *p,EyeFlightOwner *owne
         *receipt=(XrBankReceipt){.state=1,.proof=proof,.pose=pose,.session=p->session,.space=space,
             .chains={o->chains[0],o->chains[1]},.width=o->width,.height=o->height,
             .prepared_ms=bank->prepared_ms,.cancel_clock=cancel};
+#ifdef GF2VR_LATE_RELOCATE
+        stereo_late_cancel(token.epoch,token.frame,token.generation);
+#endif
     }
     if(receipt->cancel_clock!=__atomic_load_n(cancel_clock,__ATOMIC_ACQUIRE) ||
        receipt->space!=space || receipt->session!=p->session)return EFO_REJECTED;

@@ -127,11 +127,11 @@ internal sealed class SettingsStore
         if (contract.TryGetProperty("pcOutputSupported", out var explicitSupport)) return explicitSupport.GetBoolean();
         if (!contract.TryGetProperty("buildId", out var id) || !contract.TryGetProperty("dllSha256", out var hash)) return false;
         string? build = id.GetString(), digest = hash.GetString();
-        // These reviewed native003 profiles consume performance.json. Do not
-        // infer support from a future version number or an arbitrary contract.
-        return (build == "GF2VR-CLEAN-121-003" && build == GF2VR.Installer.VariantProfiles.CleanBuild &&
+        // Release profiles are generated from the reviewed paired native build.
+        // Do not infer support from a version number or an arbitrary contract.
+        return (build == GF2VR.Installer.VariantProfiles.CleanBuild &&
                 string.Equals(digest, GF2VR.Installer.VariantProfiles.CleanHash, StringComparison.OrdinalIgnoreCase)) ||
-               (build == "GF2VR-DIRTY-121-003" && build == GF2VR.Installer.VariantProfiles.DirtyBuild &&
+               (build == GF2VR.Installer.VariantProfiles.DirtyBuild &&
                 string.Equals(digest, GF2VR.Installer.VariantProfiles.DirtyHash, StringComparison.OrdinalIgnoreCase));
     }
 

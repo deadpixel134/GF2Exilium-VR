@@ -24,6 +24,10 @@
 
 기존 performance.json은 업데이트·제거 시 보존합니다. 동적 눈 배율은 실측 성능 이득이 확인되지 않아 비활성 상태이며, PC 3D renderScale도 성능 이득이 없어 지원하지 않습니다.
 
+## VR 포즈 갱신
+
+1.3.0부터 눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate가 기본으로 켜집니다. 재획득에 실패하면 기존 자세를 사용합니다. 끄려면 게임을 종료한 뒤 `vrmod/config/performance.json` 최상위에 `"pose": { "lateRelocate": false }`를 추가하고 게임을 다시 시작하세요. Settings 토글은 1.4에 추가할 예정입니다.
+
 ## 기여자
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 호환성 및 빌드 도구 개선 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).

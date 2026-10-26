@@ -10,6 +10,14 @@ typedef __UINT32_TYPE__ uint32_t;
 typedef __INT64_TYPE__ int64_t;
 typedef __UINT64_TYPE__ uint64_t;
 #include <openxr/openxr.h>
+#ifdef GF2VR_LATE_RELOCATE
+static int stereo_late_instance_retire(void);
+#endif
+#ifdef GF2VR_LATENCY_OBSERVE
+#include "../stereo/latency_observe_runtime.h"
+#elif defined(GF2VR_LATE_RELOCATE)
+#include "../stereo/xr_pose_clock.h"
+#endif
 
 enum BootstrapPhase { BS_COLD, BS_WAIT_RUNTIME, BS_WAIT_SYSTEM, BS_INSTANCE_SYSTEM_READY,
                      BS_RESTART_REQUIRED, BS_STOPPED, BS_LOADER_UNAVAILABLE, BS_WORKER_FAILED };
@@ -33,6 +41,11 @@ static void bs_zero(void *p, unsigned size) {
 }
 static void bs_retire(BootstrapState *s) {
     XrInstance instance=s->instance;
+#ifdef GF2VR_LATE_RELOCATE
+    /* Parent destruction also owns every child handle. Quarantine on an
+       outstanding main locate lease; never destroy underneath that call. */
+    if(instance && !stereo_late_instance_retire())return;
+#endif
     s->instance=XR_NULL_HANDLE; s->system=XR_NULL_SYSTEM_ID;
     if(instance) s->api.destroy(instance);
 }
@@ -55,13 +68,32 @@ static void bs_step(BootstrapState *s) {
         info.applicationInfo.engineVersion=1;
         info.applicationInfo.apiVersion=XR_MAKE_VERSION(1,0,0);
         info.enabledExtensionCount=1; info.enabledExtensionNames=&extension;
+#if defined(GF2VR_LATENCY_OBSERVE) || defined(GF2VR_LATE_RELOCATE)
+        const char *extensions[2]={extension,"XR_KHR_win32_convert_performance_counter_time"};
+        if(xr_pose_clock.extension){info.enabledExtensionCount=2;info.enabledExtensionNames=extensions;}
+#endif
         XrInstance instance=XR_NULL_HANDLE;
         s->result=s->api.create(&info,&instance);
+#if defined(GF2VR_LATENCY_OBSERVE) || defined(GF2VR_LATE_RELOCATE)
+        if((s->result==XR_ERROR_EXTENSION_NOT_PRESENT || s->result==XR_ERROR_FEATURE_UNSUPPORTED) && xr_pose_clock.extension){
+            xr_pose_clock.extension=0;xr_pose_clock.convert=0;
+#ifdef GF2VR_LATENCY_OBSERVE
+            event("latency_optional_extension_create_rejected",(U64)(long long)s->result,GetCurrentThreadId());
+#endif
+            /* Keep the original one-create-per-step/retry cadence. The next
+               existing retry uses the original D3D11-only extension list. */
+        }
+#endif
         if(s->result!=XR_SUCCESS || !instance) {
             if(s->result==XR_SUCCESS) s->result=XR_ERROR_RUNTIME_FAILURE;
             s->phase=BS_WAIT_RUNTIME; return;
         }
         s->instance=instance; ++s->generation;
+#ifdef GF2VR_LATENCY_OBSERVE
+        latency_created(instance);
+#elif defined(GF2VR_LATE_RELOCATE)
+        xr_pose_clock_created(instance);
+#endif
     }
     /* Limit per-tick event work, never the lifetime of the bootstrap. */
     for(unsigned i=0;i<32;++i) {

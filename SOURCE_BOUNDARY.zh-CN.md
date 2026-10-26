@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.0 — 姿态重新获取、日志与安装改进
+
+默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；将 `performance.json` 中的 `pose.lateRelocate` 设为 `false` 即可关闭。日志摘要在计数器变化时至少间隔1秒记录，无变化时每10秒记录一次。安装、更新和修复安装会跳过内容相同文件的写入。Settings 与 Installer 已针对新的 native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）重新构建。
+
+实机验证范围为 Dirty 的 Haoplay Main、Activity、F8 和辅助面板回归。Clean 004 仅经过主机测试和逐字节复现验证，未在 VR 设备上直接确认。Main 画面转头时的延迟、倾斜感正在调查中。
+
+公开的 native-source 是实际构建的编译依赖闭包（common 233 / Clean overlay 2 / Dirty overlay 4）。[release/1.3.0-native-metadata.json](release/1.3.0-native-metadata.json) 与 [release/1.3.0-core-source-manifest.txt](release/1.3.0-core-source-manifest.txt) 记录了用于计算发布 descriptor commonCoreSha256 的全部526个公共源文件的哈希。
+
 ## 1.2.0 — Steam支持与手部、接触兼容性修复
 
 支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。

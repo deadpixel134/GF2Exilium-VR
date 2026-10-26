@@ -207,6 +207,9 @@ static int xfi_complete(XrEyeFlightImages *f,XrEyeOutput *o,EyeFlightOwner *owne
     if(s.flags&(EFF_CANCELLED|EFF_FAULT|EFF_RECLAIMING))return EFO_REJECTED;
     if(!(s.flags&EFF_RENDER_DRAINED))return EFO_BUSY;
 #endif
+#ifdef GF2VR_LATENCY_OBSERVE
+    latency_mark(f->token.epoch,f->token.frame,f->token.generation,3);
+#endif
     unsigned state=__atomic_load_n(&o->state,__ATOMIC_ACQUIRE);
     if(state==XEO_DONE)return EFO_OK;
     if(state==XEO_IDLE && f->actual_released==3)return EFO_OK; /* retained projection retry */

@@ -54,6 +54,9 @@ static int xfd_stop_tick(XrEyeFrameDriver *d) {
 static int xfd_open(XrEyeFrameDriver *d,EyeFlightOwner *owner,EyePosePool *poses,XrEyeRuntime *eyes,
         XrSession session,PFN_xrWaitFrame wait,PFN_xrBeginFrame begin,PFN_xrEndFrame end) {
     if(!d || !owner || !poses || !eyes || d->thread || d->requested || d->current || d->predicted)return EFO_REJECTED;
+#ifdef GF2VR_LATENCY_OBSERVE
+    if(latency_on()){latency_original_end=end;end=latency_end;}
+#endif
     if(!xr_ordered_frames_open(&d->api,session,wait,begin,end))return EFO_REJECTED;
     d->owner=owner;d->poses=poses;d->eyes=eyes;d->thread=GetCurrentThreadId();
     d->stopping=d->fault=0;return EFO_OK;
@@ -107,7 +110,12 @@ static int xfd_offer(XrEyeFrameDriver *d,EyeFlightToken token,const XrFrameState
 #ifdef GF2VR_BANK_ADMISSION_OBSERVE
     bank_admission_observe_record(0,token.generation,token.epoch,26,token.frame,0,r);
 #endif
-    if(r==EFO_OK)*out=token;return r;
+    if(r==EFO_OK){
+        *out=token;
+#ifdef GF2VR_LATENCY_OBSERVE
+        latency_bind(token.epoch,token.frame,token.generation);
+#endif
+    }return r;
 }
 #ifdef GF2VR_ASYNC_READMIT
 /* A prefetch-time suppression is not a lifetime claim. Reconsider only BEFORE

@@ -24,6 +24,10 @@ Settings offers native/3200×1800/2560×1440/1920×1080/1280×720 PC output. Nat
 
 Updates and removal preserve an existing performance.json. Dynamic eye scaling remains disabled because measured throughput did not improve; PC 3D renderScale is also unsupported after showing no throughput benefit.
 
+## VR pose refresh
+
+Since 1.3.0, late re-locate re-reads the head pose right before eye rendering and is enabled by default. If re-acquisition fails, the previous pose is used. To disable it, close the game, add `"pose": { "lateRelocate": false }` at the top level of `vrmod/config/performance.json`, and restart the game. A Settings toggle is planned for 1.4.
+
 ## Contributors
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).

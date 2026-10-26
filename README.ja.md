@@ -24,6 +24,10 @@ GF2 Exilium を VR ヘッドセットとコントローラーで楽しむため�
 
 既存の performance.json は更新・削除時にも保持します。動的な目の倍率と PC 3D renderScale は実測で処理量の改善がなかったため対応していません。
 
+## VR 姿勢の更新
+
+1.3.0 から、目のレンダリング直前に頭の姿勢を読み直す late re-locate が既定で有効です。再取得に失敗した場合は従来の姿勢を使用します。無効にするにはゲームを終了し、`vrmod/config/performance.json` の最上位に `"pose": { "lateRelocate": false }` を追加してゲームを再起動してください。Settings のトグルは 1.4 で追加予定です。
+
 ## 貢献者
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 互換性とビルドツールの改善 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1))。

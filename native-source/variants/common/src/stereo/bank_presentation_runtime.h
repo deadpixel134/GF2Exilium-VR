@@ -324,6 +324,10 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
     ebo_driver(observe_start,ebo_stamp());
 #endif
     XrResult result=r==EFO_OK?d->end_result:XR_ERROR_RUNTIME_FAILURE;
+#ifdef GF2VR_LATENCY_OBSERVE
+    if(!fresh && projected)latency_submitted(stereo_bank_cache.token.epoch,
+        stereo_bank_cache.token.frame,stereo_bank_cache.token.generation,result==XR_SUCCESS,0);
+#endif
     stereo_pacing_runtime_end_ms+=GetTickCount64()-runtime_start;
 #ifdef GF2VR_ACTIVITY_DIALOGUE_RAY
     if(stereo_controller.mode_identity==2 && (!projected || !stereo_hold_focused ||
@@ -412,6 +416,9 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
         if(publish)(void)xpc_capture(&stereo_bank_cache,&stereo_banks,p,fresh_token,&projection,
             &stereo_completed_cancel_clock,cancel,result);
         if(publish)++stereo_pacing_fresh;
+#ifdef GF2VR_LATENCY_OBSERVE
+        latency_submitted(fresh_token.epoch,fresh_token.frame,fresh_token.generation,publish,1);
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
         if(publish)touch_p2_fresh();
 #endif
@@ -422,6 +429,9 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
 #endif
     }
     if(result!=XR_SUCCESS)stereo_bank_cache.valid=0;
+#ifdef GF2VR_LATENCY_OBSERVE
+    latency_window();
+#endif
 #ifdef GF2VR_BANK_COPY_AFTER_END
     /* A render submission can become visible while the actual End executes,
        AFTER the earlier copy scan. Service the now-detached banks once on the

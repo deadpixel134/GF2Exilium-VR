@@ -10,6 +10,7 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-unchanged")) return UnchangedWriteChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-repair")) return RepairChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-bootstrap-contract")) return BootstrapContractChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-bootstrap")) return UpdateBootstrapChecks.Run(Value(args, "--package")!, Value(args, "--previous")!, Value(args, "--future-helper")!);
@@ -119,7 +120,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            if (args.Any(a => a is "--repair" or "--repair-plan" or "--retry-postprocess" or "--self-test-repair"))
+            if (args.Any(a => a is "--repair" or "--repair-plan" or "--retry-postprocess" or "--self-test-repair" or "--self-test-unchanged"))
             { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--self-test-bootstrap-contract"))
             { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }

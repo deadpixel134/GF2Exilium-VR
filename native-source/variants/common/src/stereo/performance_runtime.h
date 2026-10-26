@@ -59,6 +59,9 @@ static int performance_screen_set(void *context,int w,int h,int mode) {
 static void performance_bind(void) {
     performance_runtime.initialized=1;
     performance_runtime.config=performance_config_load(GF2VR_PERFORMANCE_CONFIG);
+#ifdef GF2VR_LATE_RELOCATE
+    stereo_late_config(performance_runtime.config.late_relocate);
+#endif
     /* One cold event, including exactly one failure diagnostic per file. */
     event("performance_config_state",performance_runtime.config.invalid,GetCurrentThreadId());
     HINSTANCE module=GetModuleHandleW(L"GameAssembly.dll");
