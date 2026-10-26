@@ -155,6 +155,8 @@
   "pcOutputScopeHelp": "勾选：仅沉浸模式应用，返回平面时恢复启动分辨率。不勾选：整个游戏会话应用。生效时机：重启游戏 (GAME_RESTART)。",
   "pcOutputUnavailable": "连接的运行时不支持 PC 输出更改，相关控件不可用。",
   "pcOutputCustom": "{0}（文件中保存的值）",
+  "lateRelocate": "眼睛渲染前重新读取头部姿态",
+  "lateRelocateHelp": "默认开启。在渲染眼睛之前再读取一次头部姿态，以更新的姿态进行渲染。重新获取失败时使用原有姿态。关闭后恢复 1.2.2 及更早版本的行为。生效时机：重启游戏 (GAME_RESTART)。",
   "backupMissing": "备份或暂存文件缺失或损坏，现有文件已保留：{0}",
   "badHash": "文件哈希格式无效。",
   "badPackage": "不支持的安装包类型、版本或格式。",

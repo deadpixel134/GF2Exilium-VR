@@ -2,9 +2,9 @@
 
 [한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-## 1.3.0 — 포즈 재획득, 로그·설치 개선
+## 1.3.1 — 포즈 재획득 토글, 로그·설치 개선
 
-눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate를 기본으로 켭니다. `performance.json`의 `pose.lateRelocate`를 `false`로 두면 꺼집니다. 로그 요약은 카운터가 바뀔 때 최소 1초 간격으로, 변화가 없어도 10초마다 기록합니다. 설치·업데이트·복구 설치는 내용이 같은 파일의 쓰기를 생략합니다. Settings와 Installer는 새 native 004(Clean `D0C0653D…`, Dirty `E3D3E92C…`)에 맞춰 다시 빌드했습니다.
+눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate를 기본으로 켭니다. Settings의 화질·입체감 탭 토글로 끌 수 있으며 `performance.json`의 `pose.lateRelocate`에 기록됩니다. 1.3.0은 토글 없이 잠시 공개됐다가 철회됐고 그 내용은 1.3.1에 포함됩니다. 로그 요약은 카운터가 바뀔 때 최소 1초 간격으로, 변화가 없어도 10초마다 기록합니다. 설치·업데이트·복구 설치는 내용이 같은 파일의 쓰기를 생략합니다. Settings와 Installer는 새 native 004(Clean `D0C0653D…`, Dirty `E3D3E92C…`)에 맞춰 다시 빌드했습니다.
 
 실기 확인 범위는 Dirty의 Haoplay Main·Activity·F8·보조 패널 회귀입니다. Clean 004는 호스트 테스트와 동일 바이트 재생산만 검증했으며 VR 기기로 직접 확인하지 않았습니다. Main 화면에서 고개를 돌릴 때의 지연·기울어짐 느낌은 조사 중입니다.
 

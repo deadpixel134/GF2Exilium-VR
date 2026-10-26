@@ -26,7 +26,7 @@
 
 ## VR 포즈 갱신
 
-1.3.0부터 눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate가 기본으로 켜집니다. 재획득에 실패하면 기존 자세를 사용합니다. 끄려면 게임을 종료한 뒤 `vrmod/config/performance.json` 최상위에 `"pose": { "lateRelocate": false }`를 추가하고 게임을 다시 시작하세요. Settings 토글은 1.4에 추가할 예정입니다.
+1.3.1부터 눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate가 기본으로 켜집니다. 재획득에 실패하면 기존 자세를 사용합니다. Settings의 화질·입체감 탭에서 **눈 렌더 직전 머리 자세 재획득** 체크를 해제하고 저장한 뒤 게임을 다시 시작하면 꺼집니다(`performance.json`의 `pose.lateRelocate`).
 
 ## 기여자
 

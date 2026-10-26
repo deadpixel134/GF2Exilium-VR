@@ -26,7 +26,7 @@ Updates and removal preserve an existing performance.json. Dynamic eye scaling r
 
 ## VR pose refresh
 
-Since 1.3.0, late re-locate re-reads the head pose right before eye rendering and is enabled by default. If re-acquisition fails, the previous pose is used. To disable it, close the game, add `"pose": { "lateRelocate": false }` at the top level of `vrmod/config/performance.json`, and restart the game. A Settings toggle is planned for 1.4.
+Since 1.3.1, late re-locate re-reads the head pose right before eye rendering and is enabled by default. If re-acquisition fails, the previous pose is used. To disable it, uncheck **Re-read head pose right before eye rendering** on the Image quality / stereo tab in Settings, save, and restart the game (`pose.lateRelocate` in `performance.json`).
 
 ## Contributors
 

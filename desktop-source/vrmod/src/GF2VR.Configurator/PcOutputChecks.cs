@@ -35,8 +35,11 @@ internal static partial class SelfTest
         Assert(!ContractFiles(), "missing required legacy runtime file rejected");
         contract["files"]!.AsArray().Add("render_quality.json"); Assert(!ContractFiles(), "duplicate cannot substitute missing file");
         Assert(Fields.Files.Contains(file) && Fields.Defaults().ContainsKey(file), "legacy metadata does not change saved file ownership");
-        Assert(Fields.All.Count(f => f.File == file) == 2 && !Fields.All.Any(f => f.Key is "renderScale" or "dynamicEyeScale"), "only supported PC controls exposed");
+        var late = Fields.All.Single(f => f.Key == "lateRelocate");
+        Assert(Fields.All.Count(f => f.File == file) == 3 && !Fields.All.Any(f => f.Key is "renderScale" or "dynamicEyeScale"), "only supported PC/pose controls exposed");
         Assert(Fields.Get(Fields.Defaults(), preset)!.GetValue<string>() == "NATIVE" && Fields.Get(Fields.Defaults(), scope)!.GetValue<bool>(), "NATIVE immersive-only defaults");
+        Assert(late.Group == "pose" && late.Kind == "bool" && late.Default.Equals(true) && Fields.JsonKey(late) == "lateRelocate", "late relocate field is pose.lateRelocate bool default ON");
+        LateRelocateChecks(store, root, late);
         File.Delete(path); store.Load();
         Assert(!File.Exists(path) && Fields.Get(store.Documents, preset)!.GetValue<string>() == "NATIVE", "missing file read is NATIVE and creates nothing");
         store.Save(Fields.Clone(store.Documents));
@@ -80,7 +83,7 @@ internal static partial class SelfTest
         Assert(Fields.Get(SettingsStore.Import(profile), preset)!.GetValue<string>() == "NATIVE", "old profile without current uses NATIVE");
         Reject(() => SettingsStore.Export(path, store.Documents), "performance export cannot overwrite live settings");
         byte[] good = File.ReadAllBytes(path);
-        foreach (string bad in new[] { "{", "[]", "{\"schemaVersion\":2}", "{\"pcOutput\":null}", "{\"pcOutput\":[]}", "{\"pcOutput\":{\"mode\":\"bad\"}}", "{\"pcOutput\":{\"scope\":null}}", "{\"pcOutput\":{\"scope\":\"bad\"}}", "{\"pcOutput\":{\"width\":0}}", "{\"pcOutput\":{\"height\":16385}}", "{\"pcOutput\":{\"width\":12.5}}", "{\"pcOutput\":{\"width\":\"1280\"}}", "{\"pcOutput\":{\"mode\":\"NATIVE\",\"mode\":\"FIXED\"}}" })
+        foreach (string bad in new[] { "{", "[]", "{\"schemaVersion\":2}", "{\"pcOutput\":null}", "{\"pcOutput\":[]}", "{\"pcOutput\":{\"mode\":\"bad\"}}", "{\"pcOutput\":{\"scope\":null}}", "{\"pcOutput\":{\"scope\":\"bad\"}}", "{\"pcOutput\":{\"width\":0}}", "{\"pcOutput\":{\"height\":16385}}", "{\"pcOutput\":{\"width\":12.5}}", "{\"pcOutput\":{\"width\":\"1280\"}}", "{\"pcOutput\":{\"mode\":\"NATIVE\",\"mode\":\"FIXED\"}}", "{\"pose\":null}", "{\"pose\":[]}", "{\"pose\":{\"lateRelocate\":null}}", "{\"pose\":{\"lateRelocate\":\"false\"}}", "{\"pose\":{\"lateRelocate\":0}}" })
         {
             byte[] bytes = Encoding.UTF8.GetBytes(bad); File.WriteAllBytes(path, bytes);
             Reject(() => new SettingsStore(root, true).Load(), "invalid performance rejected " + bad);
@@ -108,6 +111,57 @@ internal static partial class SelfTest
         Texts.Language = language;
         foreach (var f in Fields.All.Where(f => f.File == file)) Fields.Set(store.Documents, f, Fields.JsonSerializerNode(f.Default));
         Assert(store.Documents[file]["dynamicEyeScale"]!.ToJsonString() == dynamicJson && store.Documents[file]["pcOutput"]!["renderScale"]!.GetValue<double>() == .875, "reset known PC fields retains deferred/unsupported settings");
+        Assert(store.Documents[file]["pose"]!["lateRelocate"]!.GetValue<bool>(), "reset writes explicit pose.lateRelocate=true");
+        store.Save(original);
+    }
+
+    private static void LateRelocateChecks(SettingsStore store, string root, Field late)
+    {
+        const string file = "performance.json";
+        string path = Path.Combine(root, "vrmod", "config", file);
+        var original = Fields.Clone(store.Documents);
+        // Missing pose/key: GUI shows the native default (ON) without writing anything on load.
+        var absent = Fields.Clone(store.Documents); absent[file].Remove("pose");
+        SettingsStore.Validate(absent);
+        Assert(Fields.Get(absent, late) == null, "missing pose.lateRelocate reads as runtime default without synthesis");
+        // Hidden runtime members under pose and at the root survive a toggle round trip.
+        var hidden = Fields.Clone(store.Documents);
+        hidden[file]["pose"] = JsonNode.Parse("""{"lateRelocate":true,"futurePose":{"keep":[1,"two",null]}}""")!.AsObject();
+        hidden[file]["futureRootPose"] = 7;
+        store.Save(hidden);
+        string futurePose = store.Documents[file]["pose"]!["futurePose"]!.ToJsonString();
+        var unrelated = Fields.Files.Where(f => f != file).ToDictionary(f => f, f => File.ReadAllBytes(Path.Combine(root, "vrmod", "config", f)));
+        foreach (bool enabled in new[] { false, true, false })
+        {
+            var request = Fields.Clone(store.Documents);
+            Fields.Set(request, late, JsonValue.Create(enabled)!);
+            store.Save(request); var reloaded = new SettingsStore(root, true); reloaded.Load();
+            var doc = reloaded.Documents[file];
+            Assert(doc["pose"]!["lateRelocate"]!.GetValue<bool>() == enabled && Fields.Get(reloaded.Documents, late)!.GetValue<bool>() == enabled, "pose.lateRelocate roundtrip " + enabled);
+            Assert(doc["pose"]!["futurePose"]!.ToJsonString() == futurePose && doc["futureRootPose"]!.GetValue<int>() == 7, "hidden pose/root members preserved");
+            Assert(doc["pcOutput"] is JsonObject, "toggle keeps pcOutput ownership");
+            foreach (var p in unrelated) Assert(p.Value.SequenceEqual(File.ReadAllBytes(Path.Combine(root, "vrmod", "config", p.Key))), "pose edit changed unrelated " + p.Key);
+        }
+        // Creating pose on a file that never had it adds only the explicit bool.
+        var fresh = Fields.Clone(store.Documents); fresh[file].Remove("pose");
+        Fields.Set(fresh, late, JsonValue.Create(false)!);
+        Assert(fresh[file]["pose"]!.AsObject().Count == 1 && !fresh[file]["pose"]!["lateRelocate"]!.GetValue<bool>(), "first explicit OFF creates minimal pose object");
+        foreach (JsonNode? invalid in new JsonNode?[] { null, JsonValue.Create("true"), JsonValue.Create(1), new JsonArray() })
+        {
+            var bad = Fields.Clone(original); bad[file]["pose"] = new JsonObject { ["lateRelocate"] = invalid?.DeepClone() };
+            Reject(() => SettingsStore.Validate(bad), "invalid typed pose.lateRelocate");
+        }
+        string profile = Path.Combine(root, "pose-profile.json");
+        SettingsStore.Export(profile, store.Documents);
+        Assert(JsonNode.DeepEquals(SettingsStore.Import(profile)[file], store.Documents[file]), "pose profile roundtrip");
+        string language = Texts.Language;
+        foreach (string locale in Texts.Languages)
+        {
+            Texts.Language = locale;
+            Assert(Texts.Get(late.Key) != Texts.Get("unavailable") && Texts.Get(late.Help).Contains("GAME_RESTART"), "late relocate label/help packaged " + locale);
+        }
+        Texts.Language = language;
+        File.Delete(profile);
         store.Save(original);
     }
 }

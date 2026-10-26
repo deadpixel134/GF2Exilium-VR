@@ -539,8 +539,18 @@ internal sealed partial class MainForm : Form
                         }
                     }
                     pcPreset.SelectedIndex = 4; pcScope.Checked = true;
+                    var lateToggle = (CheckBox)inputs["lateRelocate"];
+                    if (!lateToggle.Checked) throw new InvalidDataException("Late relocate default must display ON when the key is absent");
+                    foreach (bool enabled in new[] { false, true })
+                    {
+                        lateToggle.Checked = enabled;
+                        var values = ReadControls();
+                        if (values["performance.json"]["pose"]!["lateRelocate"]!.GetValue<bool>() != enabled ||
+                            values["performance.json"]["pcOutput"]!["renderScale"]!.GetValue<double>() != .875 || values["performance.json"]["dynamicEyeScale"]!["futureHidden"]!.GetValue<int>() != 42)
+                            throw new InvalidDataException("Late relocate toggle did not map to pose.lateRelocate or changed hidden settings");
+                    }
                 }
-                else if (pcPreset.Enabled || pcScope.Enabled || !JsonNode.DeepEquals(ReadControls()["performance.json"], initial["performance.json"]))
+                else if (pcPreset.Enabled || pcScope.Enabled || inputs["lateRelocate"].Enabled || !JsonNode.DeepEquals(ReadControls()["performance.json"], initial["performance.json"]))
                     throw new InvalidDataException("Unsupported runtime exposed or rewrote PC controls");
                 PerformLayout(); tabs.SelectedTab!.PerformLayout();
                 using (var pcBitmap = new Bitmap(Width, Height))

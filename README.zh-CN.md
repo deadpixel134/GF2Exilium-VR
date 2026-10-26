@@ -26,7 +26,7 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 ## VR 姿态刷新
 
-自 1.3.0 起，默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；重新获取失败时使用原有姿态。如需关闭，请退出游戏，在 `vrmod/config/performance.json` 顶层添加 `"pose": { "lateRelocate": false }`，然后重新启动游戏。Settings 中的开关计划在 1.4 提供。
+自 1.3.1 起，默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；重新获取失败时使用原有姿态。如需关闭，请在 Settings 的画质·立体感标签页取消勾选 **眼睛渲染前重新读取头部姿态**，保存后重新启动游戏（即 `performance.json` 中的 `pose.lateRelocate`）。
 
 ## 贡献者
 

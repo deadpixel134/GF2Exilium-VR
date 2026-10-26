@@ -155,6 +155,8 @@
   "pcOutputScopeHelp": "Checked: apply only in immersive mode and restore the startup resolution on return to flat. Unchecked: apply throughout the game session. Apply timing: restart the game (GAME_RESTART).",
   "pcOutputUnavailable": "The connected runtime does not support PC output changes. These controls are unavailable.",
   "pcOutputCustom": "{0} (value saved in file)",
+  "lateRelocate": "Re-read head pose right before eye rendering",
+  "lateRelocateHelp": "Default ON. Reads the head pose once more just before the eyes are rendered so a fresher pose is used. If re-acquisition fails, the previous pose is used. Off restores the behavior of 1.2.2 and earlier. Apply timing: restart the game (GAME_RESTART).",
   "backupMissing": "Backup/staged file is missing or corrupt. Existing files were preserved: {0}",
   "badHash": "File hash format is invalid.",
   "badPackage": "Unsupported package type, version or format.",

@@ -2,9 +2,9 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
-## 1.3.0 — 姿态重新获取、日志与安装改进
+## 1.3.1 — 姿态重新获取开关、日志与安装改进
 
-默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；将 `performance.json` 中的 `pose.lateRelocate` 设为 `false` 即可关闭。日志摘要在计数器变化时至少间隔1秒记录，无变化时每10秒记录一次。安装、更新和修复安装会跳过内容相同文件的写入。Settings 与 Installer 已针对新的 native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）重新构建。
+默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；可在 Settings 的画质·立体感标签页通过开关关闭，设置保存为 `performance.json` 中的 `pose.lateRelocate`。1.3.0 曾在没有开关的情况下短暂发布并撤回，其内容均包含在 1.3.1 中。日志摘要在计数器变化时至少间隔1秒记录，无变化时每10秒记录一次。安装、更新和修复安装会跳过内容相同文件的写入。Settings 与 Installer 已针对新的 native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）重新构建。
 
 实机验证范围为 Dirty 的 Haoplay Main、Activity、F8 和辅助面板回归。Clean 004 仅经过主机测试和逐字节复现验证，未在 VR 设备上直接确认。Main 画面转头时的延迟、倾斜感正在调查中。
 
