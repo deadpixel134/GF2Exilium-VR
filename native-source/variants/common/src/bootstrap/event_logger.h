@@ -30,13 +30,20 @@ static struct {
     HANDLE file;
     unsigned batch_bytes,batch_written,operation_start;
     U64 batch_end;
+    U64 summary_ms,summary_drops,summary_failures;
+    unsigned summary_sent,finalized;
     EventLogOverlapped overlap;
 } event_logger;
+#ifdef GF2VR_LOGGER_EXIT_OBSERVE
+#include "event_logger_exit.h"
+#else
+#define event_log_exit_marker(stage) ((void)(stage))
+#endif
 /* Sequence-tagged bounded ring: a stalled producer cannot publish a later
    record before its reserved predecessor. Full queues drop the new line. */
-static int event_log_enqueue(const char *bytes,unsigned length,U64 *ticket) {
+static int event_log_enqueue_owned(const char *bytes,unsigned length,U64 *ticket,unsigned final) {
     if(!__atomic_load_n(&event_logger.ready,__ATOMIC_ACQUIRE)||
-       __atomic_load_n(&event_logger.closing,__ATOMIC_ACQUIRE))return 0;
+       (!final && __atomic_load_n(&event_logger.closing,__ATOMIC_ACQUIRE)))return 0;
     if(!length||length>EVENT_LOG_LINE_BYTES){__atomic_fetch_add(&event_logger.drops,1,__ATOMIC_RELAXED);return 0;}
     U64 pos=__atomic_load_n(&event_logger.head,__ATOMIC_RELAXED);EventLogSlot *s;
     for(;;) {
@@ -51,6 +58,9 @@ static int event_log_enqueue(const char *bytes,unsigned length,U64 *ticket) {
     for(unsigned i=0;i<length;++i)s->bytes[i]=bytes[i];s->length=length;
     if(ticket)*ticket=pos;
     __atomic_store_n(&s->sequence,pos+1,__ATOMIC_RELEASE);return 1;
+}
+static int event_log_enqueue(const char *bytes,unsigned length,U64 *ticket) {
+    return event_log_enqueue_owned(bytes,length,ticket,0);
 }
 static void event_log_commit_batch(void) {
     U64 pos=event_logger.tail;
@@ -81,7 +91,14 @@ static int event_log_write_batch(void) {
         event_logger.operation_start=event_logger.batch_written;
         BOOL ok=WriteFile(event_logger.file,event_logger.storage->batch+event_logger.batch_written,
             event_logger.batch_bytes-event_logger.batch_written,0,&event_logger.overlap);
-        if(!ok&&GetLastError()!=997) {__atomic_fetch_add(&event_logger.io_failures,1,__ATOMIC_RELAXED);return 0;}
+        if(!ok&&GetLastError()!=997) {
+            /* No pending operation owns this batch. Do not query an invalid
+               OVERLAPPED on the next flush; release this failed queue batch. */
+            event_logger.overlap.internal=0xc0000001u;
+            __atomic_fetch_add(&event_logger.io_failures,1,__ATOMIC_RELAXED);
+            __atomic_fetch_add(&event_logger.drops,event_logger.batch_end-event_logger.tail,__ATOMIC_RELAXED);
+            event_log_commit_batch();return 0;
+        }
         if(!event_log_complete_io())return 0;
     }
     event_log_commit_batch();return 1;
@@ -105,20 +122,53 @@ static void event_log_flush(void) {
         if(!event_log_write_batch())return;
     }
 }
-static void event_log_summary(void) {
+static void event_log_summary_due(unsigned final) {
+    U64 now=GetTickCount64(),drops=__atomic_load_n(&event_logger.drops,__ATOMIC_RELAXED),
+        failures=__atomic_load_n(&event_logger.io_failures,__ATOMIC_RELAXED);
+    U64 elapsed=now>=event_logger.summary_ms?now-event_logger.summary_ms:10000;
+    /* Counter changes coalesce to at most 1Hz; unchanged counters still get a
+       ten-second heartbeat. Process termination may omit DLL detach entirely,
+       so only the periodic path is a product contract, not a final-pair promise. */
+    if(!final && ((drops==event_logger.summary_drops && failures==event_logger.summary_failures && elapsed<10000) ||
+       (event_logger.summary_sent && elapsed<1000)))return;
+    event_logger.summary_ms=now;event_logger.summary_drops=drops;
+    event_logger.summary_failures=failures;event_logger.summary_sent=1;
     char line[512];unsigned n=event_line(line,"event_log_drop_count",
-        __atomic_load_n(&event_logger.drops,__ATOMIC_RELAXED),GetCurrentThreadId(),GetCurrentProcessId(),
+        drops,GetCurrentThreadId(),GetCurrentProcessId(),
         GetTickCount64(),__atomic_load_n(&first_tid,__ATOMIC_ACQUIRE),(U64)unity);
-    (void)event_log_enqueue(line,n,0);
-    n=event_line(line,"event_log_io_failures",__atomic_load_n(&event_logger.io_failures,__ATOMIC_RELAXED),
+    (void)event_log_enqueue_owned(line,n,0,final);
+    n=event_line(line,"event_log_io_failures",failures,
         GetCurrentThreadId(),GetCurrentProcessId(),GetTickCount64(),__atomic_load_n(&first_tid,__ATOMIC_ACQUIRE),(U64)unity);
-    (void)event_log_enqueue(line,n,0);
+    (void)event_log_enqueue_owned(line,n,0,final);
+}
+static void event_log_summary(void) {event_log_summary_due(0);}
+/* Sole worker on orderly closing, or detach AFTER all other threads exited.
+   Final summaries bypass only the closing enqueue gate, never IO ownership. */
+static void event_log_finish(void) {
+    event_log_exit_marker("finish_before");
+    if(event_logger.finalized){event_log_exit_marker("finish_after");return;}
+    event_log_flush();
+    /* Only closing owns this recovery: process detach has no live producer.
+       A thread terminated after reserving head cannot publish its slot now.
+       Count/discard that incomplete line, preserving all complete successors.
+       Never discard a batch that still owns an outstanding IO receipt. */
+    while(!event_logger.batch_bytes && event_logger.tail<event_logger.head) {
+        U64 pos=event_logger.tail;EventLogSlot *s=&event_logger.storage->slots[pos&(EVENT_LOG_CAPACITY-1)];
+        if(__atomic_load_n(&s->sequence,__ATOMIC_ACQUIRE)!=pos+1) {
+            __atomic_fetch_add(&event_logger.drops,1,__ATOMIC_RELAXED);
+            __atomic_store_n(&s->sequence,pos+EVENT_LOG_CAPACITY,__ATOMIC_RELEASE);
+            __atomic_store_n(&event_logger.tail,pos+1,__ATOMIC_RELEASE);
+        } else {event_log_flush();if(event_logger.tail==pos)break;}
+    }
+    event_log_summary_due(1);event_log_flush();event_logger.finalized=1;
+    event_log_exit_marker("finish_after");
 }
 static void WINAPI event_log_worker(void *instance,void *context) {
     (void)instance;(void)context;
     while(!__atomic_load_n(&event_logger.closing,__ATOMIC_ACQUIRE)) {
         Sleep(200);event_log_flush();event_log_summary();event_log_flush();
     }
+    event_log_finish();
 }
 static void event_log_initialize(void) {
     if(!GF2VR_LOGGING_ALLOWED())return;
@@ -127,6 +177,7 @@ static void event_log_initialize(void) {
     if(!event_logger.storage){SetLastError(saved);return;}
     for(U64 i=0;i<EVENT_LOG_CAPACITY;++i)event_logger.storage->slots[i].sequence=i;
     event_logger.overlap.internal=0xc0000001u;
+    event_logger.summary_ms=GetTickCount64();
     event_logger.file=CreateFileW(GF2VR_PROBE_LOG,FILE_APPEND_DATA,7,0,OPEN_ALWAYS,128|0x40000000u,0);
     if(event_logger.file!=INVALID_HANDLE_VALUE) {
         if(TrySubmitThreadpoolCallback(event_log_worker,0,0))__atomic_store_n(&event_logger.ready,1,__ATOMIC_RELEASE);
@@ -140,8 +191,8 @@ static void event_log_close_process(void) {
     DWORD saved=GetLastError();
     /* This is process termination, not an ordinary source/XR retirement. The
        module is pinned, so no dynamic detach with a live worker is supported. */
-    event_log_flush();event_log_summary();event_log_flush();
     __atomic_store_n(&event_logger.closing,1,__ATOMIC_RELEASE);
+    event_log_finish();
     CloseHandle(event_logger.file);event_logger.ready=0;
     VirtualFree(event_logger.storage,0,0x8000u);event_logger.storage=0;SetLastError(saved);
 }

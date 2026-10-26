@@ -117,6 +117,9 @@ static DWORD WINAPI worker(void *unused) {
 }
 BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved) {
     (void)instance; (void)reserved;
+#ifdef GF2VR_LOGGER_EXIT_OBSERVE
+    if(reason==0){event_exit_reason=reason;event_exit_reserved=(U64)reserved;event_log_exit_marker("detach_enter");}
+#endif
 #ifdef GF2VR_PORTABLE_BINDING
     if (reason == DLL_PROCESS_ATTACH) {
         DWORD saved = GetLastError();

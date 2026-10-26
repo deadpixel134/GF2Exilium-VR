@@ -7,10 +7,10 @@ typedef struct {
     unsigned enabled,low_windows,high_windows,min_interval_ms;
     double floor,step,low_fresh_per_second,high_fresh_per_second;
 } PerformanceDynamicConfig;
-typedef struct { PcOutputConfig pc; PerformanceDynamicConfig dynamic; unsigned invalid; } PerformanceConfig;
-enum { PERFORMANCE_BAD_PC=1, PERFORMANCE_BAD_DYNAMIC=2, PERFORMANCE_BAD_FILE=4 };
+typedef struct { PcOutputConfig pc; PerformanceDynamicConfig dynamic; unsigned invalid,late_relocate; } PerformanceConfig;
+enum { PERFORMANCE_BAD_PC=1, PERFORMANCE_BAD_DYNAMIC=2, PERFORMANCE_BAD_FILE=4, PERFORMANCE_BAD_POSE=8 };
 static PerformanceConfig performance_config_default(void) {
-    return (PerformanceConfig){{0,2560,1440,0},{0,2,5,10000,0.6,0.15,70,80},0};
+    return (PerformanceConfig){{0,2560,1440,0},{0,2,5,10000,0.6,0.15,70,80},0,1};
 }
 typedef struct { const char *p,*end; } PerformanceJson;
 static void pj_ws(PerformanceJson *j) { while(j->p<j->end && (*j->p==' '||*j->p=='\t'||*j->p=='\r'||*j->p=='\n'))++j->p; }
@@ -113,6 +113,17 @@ static int performance_dynamic_parse(PerformanceJson j,PerformanceDynamicConfig 
         d.low_fresh_per_second<10||d.high_fresh_per_second>200||d.low_fresh_per_second>=d.high_fresh_per_second)return 0;
     *out=d;return 1;
 }
+static int performance_pose_parse(PerformanceJson j,unsigned *out){
+    unsigned value=1,seen=0;if(!pj_char(&j,'{'))return 0;
+    if(!pj_char(&j,'}'))do{
+        char key[64];if(!pj_string(&j,key,sizeof(key))||!pj_char(&j,':'))return 0;pj_ws(&j);
+        if(pj_equal(key,"lateRelocate")){
+            if(seen++)return 0;if(pj_word(&j,"true"))value=1;else if(pj_word(&j,"false"))value=0;else return 0;
+        }else if(!pj_value(&j,0))return 0;
+        if(pj_char(&j,'}'))break;if(!pj_char(&j,','))return 0;
+    }while(1);
+    pj_ws(&j);if(j.p!=j.end)return 0;*out=value;return 1;
+}
 static PerformanceConfig performance_config_parse(const char *text,unsigned size) {
     PerformanceConfig c=performance_config_default();unsigned seen=0,schema=1;
     if(!text||!size||size>16384)goto bad;
@@ -126,12 +137,15 @@ static PerformanceConfig performance_config_parse(const char *text,unsigned size
         else if(pj_equal(key,"dynamicEyeScale")){bit=2;if(!pj_span(&j,&value))goto bad;
             if((seen&bit)||!performance_dynamic_parse(value,&c.dynamic))c.invalid|=PERFORMANCE_BAD_DYNAMIC;}
         else if(pj_equal(key,"schemaVersion")){bit=4;if((seen&bit)||!pj_uint(&j,&schema,1))goto bad;}
+        else if(pj_equal(key,"pose")){bit=8;if(!pj_span(&j,&value))goto bad;
+            if((seen&bit)||!performance_pose_parse(value,&c.late_relocate))c.invalid|=PERFORMANCE_BAD_POSE;}
         else if(!pj_value(&j,0))goto bad;
         seen|=bit;if(pj_char(&j,'}'))break;if(!pj_char(&j,','))goto bad;
     }while(1);
     pj_ws(&j);if(j.p!=j.end)goto bad;
     if(c.invalid&PERFORMANCE_BAD_PC)c.pc=performance_config_default().pc;
     if(c.invalid&PERFORMANCE_BAD_DYNAMIC)c.dynamic=performance_config_default().dynamic;
+    if(c.invalid&PERFORMANCE_BAD_POSE)c.late_relocate=performance_config_default().late_relocate;
     return c;
 bad:c=performance_config_default();c.invalid=PERFORMANCE_BAD_FILE;return c;
 }

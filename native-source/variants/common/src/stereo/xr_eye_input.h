@@ -61,7 +61,14 @@ static int xr_eye_locate(PFN_xrLocateViews locate,XrSession session,XrSpace spac
     XrViewState state={0};state.type=XR_TYPE_VIEW_STATE;
     XrView views[2]={0};views[0].type=views[1].type=XR_TYPE_VIEW;
     uint32_t count=0;
+#ifdef GF2VR_LATENCY_OBSERVE
+    LatU64 latency_before=latency_on()?latency_clock():0;
+#endif
     XrResult result=locate(session,&info,&state,2,&count,views);
+#ifdef GF2VR_LATENCY_OBSERVE
+    LatU64 latency_after=latency_on()?latency_clock():0;
+    latency_located(epoch,frame_id,info.displayTime,latency_before,latency_after,result==XR_SUCCESS && count==2);
+#endif
     /* Loss-pending is success-class in XR but cannot seed new eye work here. */
     XrViewStateFlags required=XR_VIEW_STATE_ORIENTATION_VALID_BIT|XR_VIEW_STATE_POSITION_VALID_BIT;
     if(result!=XR_SUCCESS || count!=2 || (state.viewStateFlags&required)!=required) return 0;

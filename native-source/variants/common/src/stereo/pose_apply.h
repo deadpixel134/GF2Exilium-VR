@@ -32,7 +32,11 @@ static int pose_apply(const PoseMath *math,XrEyeMailbox *mailbox,const PoseSourc
     if(!mailbox || !anchor || !api) return 0;
     XrEyeInput packet;UnityTrackingInput tracking;ManagedEyePose poses[2];
     GF2VR_PREPARE_STEP(521);
-    if(!xr_eye_mailbox_read(mailbox,&packet) ||
+    if(!xr_eye_mailbox_read(mailbox,&packet))return 0;
+#ifdef GF2VR_POSE_LATE
+    (void)GF2VR_POSE_LATE(&packet,anchor->source_generation);
+#endif
+    if(
        (GF2VR_PREPARE_STEP(522),!xr_eye_unity_tracking(&packet,&tracking)) ||
        (GF2VR_PREPARE_STEP(523),!pose_compose(math,&tracking,anchor,poses)) ||
        (GF2VR_PREPARE_STEP(524),!xr_eye_mailbox_current(mailbox,&packet))) return 0;
@@ -43,6 +47,9 @@ static int pose_apply(const PoseMath *math,XrEyeMailbox *mailbox,const PoseSourc
     GF2VR_PREPARE_STEP(526);
     if(!xr_eye_mailbox_current(mailbox,&packet)) {eyes->matrices_ready=0;return 0;}
     *ticket=(PoseAppliedTicket){packet.reference_epoch,packet.frame_id,anchor->source_generation,packet.display_time};
+#ifdef GF2VR_LATENCY_OBSERVE
+    latency_mark(ticket->reference_epoch,ticket->frame_id,ticket->source_generation,1);
+#endif
 #ifdef GF2VR_NAVIGATION_BLOCK_APPLIED
     GF2VR_NAVIGATION_BLOCK_APPLIED(&tracking,anchor,poses,ticket);
 #endif

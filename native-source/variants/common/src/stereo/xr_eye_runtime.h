@@ -12,6 +12,9 @@ typedef struct {
     unsigned long long published_frame;
 } XrEyeRuntime;
 static int xr_eye_runtime_close(XrEyeRuntime *r) {
+#ifdef GF2VR_LATE_CLOSE
+    if(!GF2VR_LATE_CLOSE())return 0;
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
     touch_p2_lifetime(0);
 #endif
@@ -42,7 +45,11 @@ static int xr_eye_runtime_predict(XrEyeRuntime *r,unsigned long long frame_id,
     if(!r || !r->owner.epoch || r->owner.changing || r->owner.retiring ||
        r->owner.calibration_request ||
        r->owner.head_reference_epoch!=r->owner.epoch)return 0;
-    return xr_eye_owner_capture(&r->owner,frame_id,frame,out);
+    int captured=xr_eye_owner_capture(&r->owner,frame_id,frame,out);
+#ifdef GF2VR_LATE_PUBLISH
+    if(captured)GF2VR_LATE_PUBLISH(r,frame);
+#endif
+    return captured;
 }
 /* Publish exactly once when the predicted frame actually becomes current.
    Invalid/future/stale publication must fail closed for the current mailbox.
@@ -58,6 +65,9 @@ static int xr_eye_runtime_publish_prediction(XrEyeRuntime *r,const XrEyeInput *p
        r->owner.head_reference_epoch!=r->owner.epoch ||
        !xr_eye_matches(packet,r->owner.epoch,current_frame,frame->predictedDisplayTime))return 0;
     if(!xr_eye_mailbox_publish(&r->mailbox,packet))return 0;
+#ifdef GF2VR_LATE_PUBLISH
+    GF2VR_LATE_PUBLISH(r,frame);
+#endif
     r->published_frame=current_frame;return 1;
 }
 static int xr_eye_runtime_capture(XrEyeRuntime *r,unsigned long long frame_id,const XrFrameState *frame) {
@@ -72,6 +82,9 @@ static int xr_eye_runtime_capture(XrEyeRuntime *r,unsigned long long frame_id,co
 }
 static int xr_eye_runtime_change(XrEyeRuntime *r,const XrEventDataReferenceSpaceChangePending *event) {
     if(!xr_eye_owner_change(&r->owner,event)) return 0;
+#ifdef GF2VR_LATE_INVALIDATE
+    GF2VR_LATE_INVALIDATE();
+#endif
 #ifdef GF2VR_TOUCH_PRIVATE
     touch_p2_lifetime(0);
 #endif

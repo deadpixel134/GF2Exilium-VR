@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.0 — 姿勢の再取得、ログ・インストールの改善
+
+目のレンダリング直前に頭の姿勢を読み直す late re-locate を既定で有効にします。`performance.json` の `pose.lateRelocate` を `false` にすると無効になります。ログの要約はカウンターが変化したときに最短1秒間隔で、変化がなくても10秒ごとに記録します。インストール・更新・修復インストールは内容が同じファイルの書き込みを省略します。Settings と Installer は新しい native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）に合わせて再ビルドしました。
+
+実機確認の範囲は Dirty の Haoplay Main・Activity・F8・補助パネルの回帰です。Clean 004 はホストテストと同一バイト再現のみを検証し、VR 機器では直接確認していません。Main 画面で頭を回したときの遅延・傾きの感覚は調査中です。
+
+公開している native-source は実際のビルドのコンパイル依存閉包（common 233 / Clean overlay 2 / Dirty overlay 4）です。[release/1.3.0-native-metadata.json](release/1.3.0-native-metadata.json) と [release/1.3.0-core-source-manifest.txt](release/1.3.0-core-source-manifest.txt) に、配布 descriptor の commonCoreSha256 を計算した共通ソース526件のハッシュを記録しています。
+
 ## 1.2.0 — Steam対応と手・接触の互換性修正
 
 Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応します。ゲーム更新後に白い手の表示とキャラクター接触が失われる互換性問題を修正しました。Dirtyは活動層で同時に見える対応キャラクターを個別に扱います。Cleanには接触変形を含みません。

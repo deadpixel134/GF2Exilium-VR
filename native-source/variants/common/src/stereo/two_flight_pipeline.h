@@ -385,6 +385,10 @@ static void stereo_two_root_finished(U64 serial,int failed) {
     rit_record(timing_tag,RIT_FINISH_ENTER,!failed);
 #endif
     int cpu=source_render_flight_finish(s,GetCurrentThreadId(),serial,!failed);
+#ifdef GF2VR_LATENCY_OBSERVE
+    if(cpu && !failed)latency_mark(token.epoch,token.frame,token.generation,2);
+    else latency_cancel(token.epoch,token.frame,token.generation);
+#endif
 #ifdef GF2VR_ROOT_INTERVAL_TIMING_OBSERVE
     rit_record(timing_tag,RIT_FINISH_RETURN,cpu!=0);
 #endif
@@ -599,6 +603,9 @@ static void stereo_two_owner_tick(void) {
         bank_admission_observe_record(n.ticket.serial,t.generation,t.epoch,24,t.frame,n.flags,retired);
 #endif
         if(retired!=EFO_OK)continue;
+#ifdef GF2VR_LATE_RELOCATE
+        stereo_late_cancel(t.epoch,t.frame,t.generation);
+#endif
         async_throughput_record(5,t,n.ticket.serial,n.flags,EFO_OK,0);
         two_root_retired(i,t.frame);
         __builtin_memset(&stereo_two.slots[i],0,sizeof(stereo_two.slots[i]));
@@ -677,6 +684,9 @@ static void stereo_two_retire_ready(int from_tail) {
         bank_admission_observe_record(n.ticket.serial,t.generation,t.epoch,24,t.frame,n.flags,retired);
 #endif
         if(retired!=EFO_OK)continue;
+#ifdef GF2VR_LATE_RELOCATE
+        stereo_late_cancel(t.epoch,t.frame,t.generation);
+#endif
         async_throughput_record(5,t,n.ticket.serial,n.flags,EFO_OK,0);
         if(from_tail)++stereo_two_tail_retired;
         two_root_retired(i,t.frame);

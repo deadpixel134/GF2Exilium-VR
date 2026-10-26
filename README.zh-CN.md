@@ -24,6 +24,10 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 更新和移除会保留现有的performance.json。动态眼睛倍率和PC 3D renderScale在实测中未提升处理量，因此不支持。
 
+## VR 姿态刷新
+
+自 1.3.0 起，默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；重新获取失败时使用原有姿态。如需关闭，请退出游戏，在 `vrmod/config/performance.json` 顶层添加 `"pose": { "lateRelocate": false }`，然后重新启动游戏。Settings 中的开关计划在 1.4 提供。
+
 ## 贡献者
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 改进 3DMigoto 兼容性与构建工具（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。

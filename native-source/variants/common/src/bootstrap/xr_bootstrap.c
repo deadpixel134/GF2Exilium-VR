@@ -60,6 +60,11 @@ static DWORD WINAPI bootstrap_worker(void *unused) {
                 loader_error=GetLastError(); state.phase=BS_LOADER_UNAVAILABLE;
                 state.result=XR_ERROR_RUNTIME_UNAVAILABLE;
             } else {
+#ifdef GF2VR_LATENCY_OBSERVE
+                latency_extensions(module);
+#elif defined(GF2VR_LATE_RELOCATE)
+                xr_pose_clock_extensions(module);
+#endif
                 state.api.create=(PFN_xrCreateInstance)GetProcAddress(module,"xrCreateInstance");
                 state.api.destroy=(PFN_xrDestroyInstance)GetProcAddress(module,"xrDestroyInstance");
                 state.api.get_system=(PFN_xrGetSystem)GetProcAddress(module,"xrGetSystem");

@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.0 — 포즈 재획득, 로그·설치 개선
+
+눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate를 기본으로 켭니다. `performance.json`의 `pose.lateRelocate`를 `false`로 두면 꺼집니다. 로그 요약은 카운터가 바뀔 때 최소 1초 간격으로, 변화가 없어도 10초마다 기록합니다. 설치·업데이트·복구 설치는 내용이 같은 파일의 쓰기를 생략합니다. Settings와 Installer는 새 native 004(Clean `D0C0653D…`, Dirty `E3D3E92C…`)에 맞춰 다시 빌드했습니다.
+
+실기 확인 범위는 Dirty의 Haoplay Main·Activity·F8·보조 패널 회귀입니다. Clean 004는 호스트 테스트와 동일 바이트 재생산만 검증했으며 VR 기기로 직접 확인하지 않았습니다. Main 화면에서 고개를 돌릴 때의 지연·기울어짐 느낌은 조사 중입니다.
+
+공개 native-source는 실제 빌드의 컴파일 의존 폐포(common 233 / Clean overlay 2 / Dirty overlay 4)입니다. [release/1.3.0-native-metadata.json](release/1.3.0-native-metadata.json)과 [release/1.3.0-core-source-manifest.txt](release/1.3.0-core-source-manifest.txt)는 배포 descriptor의 commonCoreSha256을 계산한 전체 공통 소스 526개의 해시를 기록합니다.
+
 ## 1.2.0 — Steam 지원 및 손·접촉 호환성 수정
 
 Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다. 게임 업데이트 후 흰색 손 표시와 캐릭터 접촉이 사라지던 호환성 문제를 수정했습니다. Dirty는 활동층에서 동시에 보이는 지원 캐릭터들을 각각 접촉 대상으로 처리합니다. Clean에는 접촉 변형이 포함되지 않습니다.

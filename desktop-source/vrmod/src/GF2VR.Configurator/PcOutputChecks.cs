@@ -22,9 +22,12 @@ internal static partial class SelfTest
         Assert(ContractFiles(), "full runtime file set remains accepted");
         contract["files"] = new JsonArray(Fields.Files.Where(f => f != file).Select(f => (JsonNode?)JsonValue.Create(f)).ToArray());
         Assert(ContractFiles(), "legacy runtime set accepted without dropping performance ownership");
-        Assert(PcSupported(), "reviewed Clean003 legacy contract enables PC output without extra contract key");
+        Assert(PcSupported(), "generated reviewed Clean profile enables PC output without extra contract key");
         contract["buildId"] = GF2VR.Installer.VariantProfiles.DirtyBuild; contract["dllSha256"] = GF2VR.Installer.VariantProfiles.DirtyHash;
-        Assert(PcSupported(), "reviewed Dirty003 legacy contract enables PC output");
+        Assert(PcSupported(), "generated reviewed Dirty profile enables PC output");
+        contract["buildId"] = "GF2VR-DIRTY-999-UNKNOWN";
+        Assert(!PcSupported(), "unknown build with known hash cannot enable PC controls");
+        contract["buildId"] = GF2VR.Installer.VariantProfiles.DirtyBuild;
         contract["dllSha256"] = new string('0', 64); Assert(!PcSupported(), "unknown native hash never enables PC controls");
         contract["buildId"] = "GF2VR-DIRTY-130-ACT001"; Assert(!PcSupported(), "old native not assumed to consume performance");
         contract["files"]!.AsArray().Add("unexpected.json"); Assert(!ContractFiles(), "extra runtime file rejected");

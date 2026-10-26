@@ -6,6 +6,8 @@ namespace GF2VR.Installer;
 
 internal sealed partial class InstallationEngine
 {
+    // Fixture observation only; never replaces the target write or its guards.
+    internal static Action<string>? TargetWriteObserved = null;
     internal static Func<bool> GameRunning = () =>
     {
         var processes = Process.GetProcessesByName("GF2_Exilium");
@@ -276,14 +278,37 @@ internal sealed partial class InstallationEngine
         Stopped();
         string pending = Paths.Contained(root, Contract.PendingPath);
         Paths.WriteNew(pending, Contract.Encode(new Pending(1, id)));
+        var writeStatus = changes.Select(c => new TargetWriteEntry(c.Path, false, "not-attempted")).ToArray();
+        SaveTargetWriteStatus(root, id, writeStatus);
         try
         {
-            foreach (var c in changes)
+            for (int index = 0; index < changes.Count; ++index)
             {
+                var c = changes[index];
                 Stopped(); progress?.Invoke(c.Path);
                 string dest = Paths.Target(root, c.Path, gameDirectory);
                 if (!Paths.Equal(Paths.FileHash(dest), c.BeforeHash)) throw new InstallError("modified", c.Path);
-                SetFile(dest, c.AfterFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.AfterFile)), c.AfterHash);
+                // Keep every image/change/receipt entry. Only Install/Repair's
+                // forward target write is optional; Remove/Recover/RollBack keep
+                // their existing restoration behavior and authority checks.
+                if (postprocess.Operation is "install" or "repair" && Paths.Equal(c.BeforeHash, c.AfterHash))
+                {
+                    writeStatus[index] = new(c.Path, false, "unchanged");
+                    continue;
+                }
+                try
+                {
+                    TargetWriteObserved?.Invoke(dest);
+                    SetFile(dest, c.AfterFile == null ? null : Paths.Bytes(Paths.Contained(folder, c.AfterFile)), c.AfterHash);
+                    writeStatus[index] = new(c.Path, true, "written");
+                }
+                catch
+                {
+                    // False here means no completed forward write, not proof
+                    // of zero partial I/O. Recovery uses the journal, never this.
+                    writeStatus[index] = new(c.Path, false, "write-not-completed");
+                    throw;
+                }
             }
             Paths.Atomic(journalFile, Contract.Encode(journal with { State = "committed" }));
         }
@@ -293,6 +318,20 @@ internal sealed partial class InstallationEngine
             catch { throw new InstallError("recoveryNeeded", folder); }
             throw;
         }
+        finally { SaveTargetWriteStatus(root, id, writeStatus); }
+    }
+    private sealed record TargetWriteEntry(string Path, bool Written, string Reason);
+    private sealed record TargetWriteStatus(int SchemaVersion, string TransactionId, TargetWriteEntry[] Changes);
+    private static void SaveTargetWriteStatus(string root, string id, TargetWriteEntry[] changes)
+    {
+        // Optional diagnostics outside the strict, legacy-compatible journal.
+        // Absence/corruption is harmless: no installation/recovery path reads it.
+        try
+        {
+            Paths.Atomic(Paths.Contained(Paths.Transaction(root, id), "write-status.json"),
+                Contract.Encode(new TargetWriteStatus(1, id, changes)));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InstallError or System.Security.SecurityException) { }
     }
     private static void SetFile(string dest, byte[]? bytes, string? expected)
     {

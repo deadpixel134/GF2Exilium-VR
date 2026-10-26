@@ -19,13 +19,15 @@ internal static class UpdateDiscoveryChecks
         SettingsStore.WriteNew(Create(Path.Combine(root, "GF2 Game/GF2_Exilium.exe")), Encoding.UTF8.GetBytes("INERT INSTALLER FIXTURE — NEVER EXECUTE AS A GAME"));
         var engine = new InstallationEngine(); engine.Install(engine.Preview(root, candidate));
         var prior = engine.Inspect(root)!; string before = engine.ReceiptHash(root);
-        var d = new UpdateDescriptor(1, "GF2VR", UpdatePolicy.Repository, "1.2.3", "stable", UpdatePolicy.ArchiveName("1.2.3", prior.BuildFlavor), new string('A',64), new string('B',64),
+        var installedVersion = Version.Parse(prior.Version);
+        string offeredVersion = new Version(installedVersion.Major, installedVersion.Minor, installedVersion.Build + 1).ToString();
+        var d = new UpdateDescriptor(1, "GF2VR", UpdatePolicy.Repository, offeredVersion, "stable", UpdatePolicy.ArchiveName(offeredVersion, prior.BuildFlavor), new string('A',64), new string('B',64),
             UpdatePolicy.HelperFiles.Select(n => new PayloadFile(n, new string('C',64), 10)).ToArray(), prior.BuildFlavor, prior.CommonCoreSha256);
         byte[] meta = Contract.Encode(d); string mode = "valid";
         JsonObject Asset(long id, string name, long size, string hash) => new() { ["id"] = id, ["name"] = name, ["size"] = size, ["state"] = "uploaded", ["digest"] = "sha256:" + hash,
-            ["url"] = "https://api.github.com/" + UpdatePolicy.Api + "releases/assets/" + id, ["browser_download_url"] = "https://github.com/" + UpdatePolicy.Repository + "/releases/download/v1.2.3/" + name };
+            ["url"] = "https://api.github.com/" + UpdatePolicy.Api + "releases/assets/" + id, ["browser_download_url"] = "https://github.com/" + UpdatePolicy.Repository + "/releases/download/v" + offeredVersion + "/" + name };
         var descriptorAsset = Asset(102, UpdatePolicy.DescriptorFor(prior.BuildFlavor), meta.Length, Paths.Hash(meta));
-        byte[] Catalog() => Contract.Encode(new JsonArray(new JsonObject { ["id"] = 101, ["draft"] = false, ["prerelease"] = false, ["published_at"] = "2026-10-25T00:00:00Z", ["tag_name"] = mode == "same" ? "v"+prior.Version : "v1.2.3",
+        byte[] Catalog() => Contract.Encode(new JsonArray(new JsonObject { ["id"] = 101, ["draft"] = false, ["prerelease"] = false, ["published_at"] = "2026-10-25T00:00:00Z", ["tag_name"] = mode == "same" ? "v"+prior.Version : "v"+offeredVersion,
             ["assets"] = mode == "manual" ? new JsonArray() : new JsonArray(descriptorAsset.DeepClone(), Asset(103, d.ArchiveName, 100, d.ArchiveSha256)) }));
         HttpResponseMessage Response(HttpRequestMessage r)
         {
@@ -39,18 +41,18 @@ internal static class UpdateDiscoveryChecks
         }
         using var http = new HttpClient(new Handler(Response)); var service = new UpdateService(new GithubOwnerClient(http));
         var good = service.Check(root, default).GetAwaiter().GetResult();
-        Check(good.DiscoveredVersion == "1.2.3" && good.State == "updateAvailable" && good.Release != null, "discovery and applicability");
+        Check(good.DiscoveredVersion == offeredVersion && good.State == "updateAvailable" && good.Release != null, "discovery and applicability");
         mode = "manual"; var manual = service.Check(root,default).GetAwaiter().GetResult();
-        Check(manual.DiscoveredVersion == "1.2.3" && manual.State == "updateManual" && manual.Release == null && manual.PageUrl == UpdatePolicy.ReleasePage("1.2.3"), "unsupported assets retain version/manual page");
+        Check(manual.DiscoveredVersion == offeredVersion && manual.State == "updateManual" && manual.Release == null && manual.PageUrl == UpdatePolicy.ReleasePage(offeredVersion), "unsupported assets retain version/manual page");
         mode = "valid"; string dll = Path.Combine(root, "GF2 Game/version.dll"); byte[] bytes = File.ReadAllBytes(dll);
         File.WriteAllText(dll, "INERT MODIFIED");
-        try { var changed = service.Check(root, default).GetAwaiter().GetResult(); Check(changed.DiscoveredVersion == "1.2.3" && changed.Refusal?.Key == "modified", "modified install still discovers version"); }
+        try { var changed = service.Check(root, default).GetAwaiter().GetResult(); Check(changed.DiscoveredVersion == offeredVersion && changed.Refusal?.Key == "modified", "modified install still discovers version"); }
         finally { File.WriteAllBytes(dll, bytes); }
         File.Move(dll, dll+".quarantine");
-        try { var missing = service.Check(root,default).GetAwaiter().GetResult(); Check(missing.DiscoveredVersion == "1.2.3" && missing.State == "updateAvailable" && missing.Refusal == null, "verified receipt with absent file remains eligible without writing"); }
+        try { var missing = service.Check(root,default).GetAwaiter().GetResult(); Check(missing.DiscoveredVersion == offeredVersion && missing.State == "updateAvailable" && missing.Refusal == null, "verified receipt with absent file remains eligible without writing"); }
         finally { File.Move(dll+".quarantine",dll); }
         string receiptPath=Path.Combine(root,"vrmod/installer/install-state.json");byte[] realReceipt=File.ReadAllBytes(receiptPath);File.WriteAllText(receiptPath,"{");
-        try { var invalid=service.Check(root,default).GetAwaiter().GetResult(); Check(invalid.DiscoveredVersion=="1.2.3"&&invalid.State=="updateManual"&&invalid.Refusal?.Key=="badState","invalid receipt still discovers version without application"); }
+        try { var invalid=service.Check(root,default).GetAwaiter().GetResult(); Check(invalid.DiscoveredVersion==offeredVersion&&invalid.State=="updateManual"&&invalid.Refusal?.Key=="badState","invalid receipt still discovers version without application"); }
         finally { File.WriteAllBytes(receiptPath,realReceipt); }
         mode="same"; Check(service.Check(root,default).GetAwaiter().GetResult().DiscoveredVersion == null,"same version has no notification");
         mode="offline"; bool refused=false; try { service.Check(root,default).GetAwaiter().GetResult(); } catch(HttpRequestException) {refused=true;} Check(refused,"offline leaves installation usable");

@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.0 — Late pose re-acquisition, logging and installer improvements
+
+Late re-locate re-reads the head pose right before eye rendering and is enabled by default; set `pose.lateRelocate` to `false` in `performance.json` to disable it. Log summaries are written at most once per second when counters change and every 10 seconds otherwise. Install, update and Repair skip writing files whose content is unchanged. Settings and Installer were rebuilt against native 004 (Clean `D0C0653D…`, Dirty `E3D3E92C…`).
+
+Hardware validation covers the Dirty Haoplay Main/Activity/F8/auxiliary-panel regression path. Clean 004 was verified by host tests and byte-identical reproduction only, not on a VR headset. A reported lag/tilt sensation when turning the head on the Main screen is under investigation.
+
+The published native-source is the compile dependency closure of the paired build (common 233 / Clean overlay 2 / Dirty overlay 4). [release/1.3.0-native-metadata.json](release/1.3.0-native-metadata.json) and [release/1.3.0-core-source-manifest.txt](release/1.3.0-core-source-manifest.txt) record the hashes of all 526 common sources from which the descriptor commonCoreSha256 is computed.
+
 ## 1.2.0 — Steam support and hand/contact compatibility fixes
 
 Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.
