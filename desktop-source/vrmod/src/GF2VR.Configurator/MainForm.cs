@@ -37,6 +37,17 @@ internal sealed partial class MainForm : Form
     private string? updateVersion;
     private readonly Button releasePage = new() { AutoSize = true, MinimumSize = new Size(110, 34), Margin = new Padding(4), Visible = false };
     internal static Action<string> OpenReleasePage = url => { using var p = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); };
+    internal static Action<string> OpenLogFolder = path => { using var p = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true }); };
+    private Button? logFolderButton;
+    private Label? logFolderLocation;
+    private string logFolderClick = "notRun";
+    // Native runtime_logging.h creates these only while logging is ON; the GUI never creates them.
+    internal static string LogFolder(string root) => Path.Combine(root, "vrmod", "logs");
+    internal static string? ExistingLogFolder(string root)
+    {
+        string logs = LogFolder(root), bootstrap = Path.Combine(logs, "bootstrap");
+        return Directory.Exists(bootstrap) ? bootstrap : Directory.Exists(logs) ? logs : null;
+    }
 
     internal MainForm(string root, string? smoke = null)
     {
@@ -248,7 +259,31 @@ internal sealed partial class MainForm : Form
         if (key == "navigationTab") { table.Controls.Add(effectiveSpeed, 0, row); table.SetColumnSpan(effectiveSpeed, 2); }
         if (key == "worldScaleTab") { table.Controls.Add(effectiveSpatial, 0, row); table.SetColumnSpan(effectiveSpatial, 2); }
         if (key == "renderTab") { pcOutputAvailability = Label("pcOutputUnavailable"); table.Controls.Add(pcOutputAvailability, 0, row); table.SetColumnSpan(pcOutputAvailability, 2); }
+        if (key == "diagnosticsTab")
+        {
+            table.Controls.Add(Label("logFolder"), 0, row);
+            logFolderButton = Button("openLogFolder", OpenLogs); logFolderButton.AccessibleName = "openLogFolder"; logFolderButton.Margin = new Padding(8, 4, 8, 6);
+            logFolderLocation = new Label { AutoSize = true, ForeColor = Color.FromArgb(86, 101, 123), MaximumSize = new Size(495, 0), Margin = new Padding(4, 0, 4, 8) };
+            var logs = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, FlowDirection = FlowDirection.TopDown, WrapContents = false, Margin = new Padding(3, 4, 3, 4) };
+            logs.Controls.Add(logFolderButton); logs.Controls.Add(logFolderLocation);
+            logs.SizeChanged += (_, _) => logFolderLocation.MaximumSize = new Size(Math.Max(120, logs.ClientSize.Width - 8), 0);
+            table.Controls.Add(logs, 1, row);
+        }
     }
+
+    private void OpenLogs(object? sender, EventArgs e) => Run(() =>
+    {
+        if (store == null) throw new SettingsError("rootError");
+        string? folder = ExistingLogFolder(store.Root);
+        if (folder == null)
+        {
+            logFolderClick = "missing"; SetStatus("logFolderMissing");
+            if (smokeFolder == null)
+                MessageBox.Show(this, Texts.Format("logFolderMissingDetail", Path.Combine(LogFolder(store.Root), "bootstrap")), Texts.Get("title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+        logFolderClick = "opened"; OpenLogFolder(folder);
+    });
 
 #if GF2VR_DIRTY_CONTACT
     private TabControl? jiggleRegions;
@@ -269,6 +304,7 @@ internal sealed partial class MainForm : Form
         UpdateState(updateKey, updateRefusal);
         if (status.Tag is string state) status.Text = Texts.Get(state);
         foreach (Control c in localized) if (c.Tag is string key) c.Text = Texts.Get(key);
+        if (logFolderLocation != null) logFolderLocation.Text = store == null ? "" : Texts.Format("logFolderLocation", Path.Combine(LogFolder(store.Root), "bootstrap"));
         foreach (Field f in Fields.All.Where(f => f.Kind == "choice"))
         {
             var combo = (ComboBox)inputs[f.Key]; int before = combo.SelectedIndex;
@@ -319,6 +355,7 @@ internal sealed partial class MainForm : Form
                 if (f.File == "performance.json") c.Enabled = store?.PcOutputAvailable == true;
             }
             if (pcOutputAvailability != null) pcOutputAvailability.Visible = store != null && !store.PcOutputAvailable;
+            if (logFolderButton != null) logFolderButton.Enabled = store != null;
             manualDepthText = inputs["stereoDepthScale"].Text;
             depthWasLinked = ((CheckBox)inputs["linkStereoDepthToWorldScale"]).Checked;
         }
@@ -445,6 +482,8 @@ internal sealed partial class MainForm : Form
                 store = null;
                 foreach (Control c in inputs.Values) c.Enabled = false;
                 save.Enabled = false;
+                if (logFolderButton != null) logFolderButton.Enabled = false;
+                if (logFolderLocation != null) logFolderLocation.Text = "";
             }
             SetStatus(failedSave ? "saveFailed" : "error"); updateHint.SetToolTip(status, Texts.Describe(ex));
             if (smokeFolder == null) MessageBox.Show(this, Texts.Describe(ex), Texts.Get("error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -719,6 +758,38 @@ internal sealed partial class MainForm : Form
                     using var diagnostics = new Bitmap(Width, Height); DrawToBitmap(diagnostics, new Rectangle(0, 0, Width, Height));
                     diagnostics.Save(Path.Combine(smokeFolder!, "logging-" + (enabled ? "on-" : "off-") + Texts.Language + ".png"));
                 }
+                var openLogs = logFolderButton!;
+                if (openLogs.Parent?.Parent?.Parent != tabs.SelectedTab || !openLogs.Visible || !openLogs.Enabled || openLogs.Text != Texts.Get("openLogFolder"))
+                    throw new InvalidDataException("Log folder button missing from diagnostics tab");
+                var logBounds = tabs.SelectedTab.RectangleToClient(openLogs.RectangleToScreen(openLogs.ClientRectangle));
+                if (!tabs.SelectedTab.ClientRectangle.Contains(logBounds) || openLogs.Width < openLogs.GetPreferredSize(Size.Empty).Width)
+                    throw new InvalidDataException("Log folder button clipped");
+                if (!logFolderLocation!.Text.Contains(Path.Combine(store!.Root, "vrmod", "logs", "bootstrap"), StringComparison.Ordinal))
+                    throw new InvalidDataException("Log folder location text");
+                var beforeLogs = ReadControls(); bool dirtyBeforeLogs = dirty; var previousLogOpener = OpenLogFolder; string? openedLogs = null;
+                try
+                {
+                    OpenLogFolder = path => openedLogs = path;
+                    string? expectedLogs = ExistingLogFolder(store.Root);
+                    openLogs.PerformClick();
+                    if (openedLogs != expectedLogs || logFolderClick != (expectedLogs == null ? "missing" : "opened") ||
+                        (expectedLogs == null && (string?)status.Tag != "logFolderMissing"))
+                        throw new InvalidDataException("Log folder button target");
+                    var afterLogs = ReadControls();
+                    if (dirty != dirtyBeforeLogs || afterLogs.Keys.Any(k => !JsonNode.DeepEquals(afterLogs[k], beforeLogs[k])))
+                        throw new InvalidDataException("Log folder button changed settings");
+                    // Resolver contract on a scratch root; the real root is never created or written.
+                    string scratch = Path.Combine(smokeFolder!, "log-root-" + Texts.Language), scratchLogs = Path.Combine(scratch, "vrmod", "logs");
+                    if (Directory.Exists(scratch)) Directory.Delete(scratch, true);
+                    if (ExistingLogFolder(scratch) != null) throw new InvalidDataException("Missing log folder resolved");
+                    Directory.CreateDirectory(scratchLogs);
+                    if (ExistingLogFolder(scratch) != scratchLogs) throw new InvalidDataException("Log root fallback");
+                    Directory.CreateDirectory(Path.Combine(scratchLogs, "bootstrap"));
+                    if (ExistingLogFolder(scratch) != Path.Combine(scratchLogs, "bootstrap")) throw new InvalidDataException("Bootstrap log folder preference");
+                }
+                finally { OpenLogFolder = previousLogOpener; }
+                using (var logFolderBitmap = new Bitmap(Width, Height))
+                { DrawToBitmap(logFolderBitmap, new Rectangle(0, 0, Width, Height)); logFolderBitmap.Save(Path.Combine(smokeFolder!, "log-folder-" + Texts.Language + ".png")); }
                 editing = Fields.Clone(initial); panelConfigurationTouched = false; ApplyControls();
             }
             ((TextBox)inputs["eyeRenderScale"]).Text = "2.5";
@@ -741,7 +812,7 @@ internal sealed partial class MainForm : Form
                 SwitchLanguage(locale); VerifyButtonGeometry();
                 using var scaled = new Bitmap(Width, Height); DrawToBitmap(scaled, new Rectangle(0, 0, Width, Height)); scaled.Save(Path.Combine(smokeFolder!, "scaled150-" + locale + ".png"));
             }
-            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=Texts.Languages.Length, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, contactHapticStrengthDuration=true, dirtyOnlyHapticAvailability=true, liveSaves=0, gameLaunches=0 }));
+            File.WriteAllText(Path.Combine(smokeFolder!, "gui-validation.json"), System.Text.Json.JsonSerializer.Serialize(new { passed=true, locales=Texts.Languages, fields=Fields.All.Length, languageButtons=Texts.Languages.Length, buttonBoundsAndPathAlignment=true, layoutScaleStress=1.5, cameraFollowStartupOnOff=true, activityUiOnOff=true, faceExchange=true, pairedHandRoles=true, worldScaleLinks=true, commonHandsOnOff=true, contactHapticStrengthDuration=true, dirtyOnlyHapticAvailability=true, logFolderButton=true, logFolderClick, liveSaves=0, gameLaunches=0 }));
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(smokeFolder!, "gui-error.txt"), ex.ToString()); Environment.ExitCode = 1; }
         finally { Close(); }

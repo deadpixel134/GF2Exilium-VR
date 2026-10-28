@@ -28,6 +28,10 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 自 1.3.1 起，默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；重新获取失败时使用原有姿态。由于在主线程等待之后重新读取，转头时画面跟随头部的延迟会相应减少（一次实机测量中，提交的姿态在 Main 约新 12ms，在 Activity 约新 27ms）。帧率或实际显示延迟的改善未经确认。如需关闭，请在 Settings 的画质·立体感标签页取消勾选 **眼睛渲染前重新读取头部姿态**，保存后重新启动游戏（即 `performance.json` 中的 `pose.lateRelocate`）。
 
+## VR 连接自动恢复
+
+从 1.3.3 起，游戏运行中 VR 会话因错误断开时，会每隔 10 秒、最多 6 次以新会话重新连接。在 SteamVR 等中退出应用或关闭游戏时不会重新连接。如果仍无法恢复，请参阅 [保存与发送日志](docs/zh-CN/LOGS.md) 发送日志。
+
 ## 贡献者
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 改进 3DMigoto 兼容性与构建工具（[PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)）。
@@ -104,6 +108,7 @@ Clean与Dirty均兼容3DMigoto默认wrapper模式（[PR #1](https://github.com/d
 - [设置项目](docs/zh-CN/SETTINGS.md)
 - [更新](docs/zh-CN/UPDATE.md)
 - [故障排除](docs/zh-CN/TROUBLESHOOTING.md)
+- [保存与发送日志](docs/zh-CN/LOGS.md)
 - [下载与文件组成](docs/zh-CN/RELEASE_READINESS.md)
 - [验证范围](docs/zh-CN/VERIFICATION.md)
 - [3DMigoto 兼容性](docs/zh-CN/3DMIGOTO_COMPATIBILITY.md)

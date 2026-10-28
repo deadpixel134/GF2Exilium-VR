@@ -28,6 +28,10 @@ Updates and removal preserve an existing performance.json. Dynamic eye scaling r
 
 Since 1.3.1, late re-locate re-reads the head pose right before eye rendering and is enabled by default. If re-acquisition fails, the previous pose is used. Because the pose is re-read after the main-thread wait, the image lags your head by that much less when you turn it (in one HMD measurement the submitted pose was about 12 ms more recent in Main and 27 ms in Activity). No frame-rate or actual display-latency improvement has been confirmed. To disable it, uncheck **Re-read head pose right before eye rendering** on the Image quality / stereo tab in Settings, save, and restart the game (`pose.lateRelocate` in `performance.json`).
 
+## Automatic VR reconnection
+
+From 1.3.3, if the VR session fails while the game is running, the mod reconnects with a new session up to 6 times, 10 seconds apart. It does not reconnect after you exit the app from SteamVR or similar, or when you close the game. If VR still does not recover, please send a log as described in [Saving and sending logs](docs/en/LOGS.md).
+
 ## Contributors
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
@@ -104,6 +108,7 @@ The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be
 - [Settings](docs/en/SETTINGS.md)
 - [Updating](docs/en/UPDATE.md)
 - [Troubleshooting](docs/en/TROUBLESHOOTING.md)
+- [Saving and sending logs](docs/en/LOGS.md)
 - [Downloads and package files](docs/en/RELEASE_READINESS.md)
 - [Verification scope](docs/en/VERIFICATION.md)
 - [3DMigoto compatibility](docs/en/3DMIGOTO_COMPATIBILITY.md)

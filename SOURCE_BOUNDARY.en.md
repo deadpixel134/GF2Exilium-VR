@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.3 — Automatic VR reconnection, log folder button
+
+When a VR session that was already running ends with an error (frame/image/swapchain call error, session loss, event error), the session is cleaned up and a new session is created up to 6 times, 10 seconds apart. A runtime exit request (EXITING), game shutdown, a changed game graphics device and a session that could not be cleaned up are not reconnected. Native 006 (Clean `0FCFDDED…`, Dirty `CE0AB541…`) differs from 004 only by the change to `panel/panel_xr.h` and the new `panel/panel_xr_retry.h`. Settings gains an Open log folder button on the Diagnostics tab; Settings and Installer were rebuilt for native 006. 1.3.2 was an internal candidate that was withdrawn and never published.
+
+Native 006 was verified by exact byte reproduction, retry-policy host tests and the 24 existing native test suites; it has not been run in the game on a VR device.
+
+The published native-source is the compile dependency closure of the paired build (common 234 / Clean overlay 2 / Dirty overlay 4). [release/1.3.3-native-metadata.json](release/1.3.3-native-metadata.json) and [release/1.3.3-core-source-manifest.txt](release/1.3.3-core-source-manifest.txt) record the hashes of all 528 common sources used to compute the descriptor's commonCoreSha256.
+
 ## 1.3.1 — Late pose re-acquisition toggle, logging and installer improvements
 
 Late re-locate re-reads the head pose right before eye rendering and is enabled by default; a toggle on the Settings Image quality / stereo tab writes `pose.lateRelocate` in `performance.json`. 1.3.0 was briefly published without the toggle and withdrawn; its content is included in 1.3.1. Log summaries are written at most once per second when counters change and every 10 seconds otherwise. Install, update and Repair skip writing files whose content is unchanged. Settings and Installer were rebuilt against native 004 (Clean `D0C0653D…`, Dirty `E3D3E92C…`).

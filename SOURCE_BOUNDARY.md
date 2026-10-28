@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) | [English](SOURCE_BOUNDARY.en.md) | [日本語](SOURCE_BOUNDARY.ja.md) | [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.3 — VR 연결 자동 복구, 로그 폴더 버튼
+
+이미 실행 중이던 VR 세션이 오류로 끝나면(프레임·이미지·스왑체인 호출 오류, 세션 손실, 이벤트 오류) 세션을 정리하고 10초 간격으로 최대 6번 새 세션을 만듭니다. 런타임의 종료 요청(EXITING), 게임 종료, 게임 그래픽 장치 변경, 정리하지 못한 세션은 다시 연결하지 않습니다. native 006(Clean `0FCFDDED…`, Dirty `CE0AB541…`)은 004에서 `panel/panel_xr.h` 변경과 새 `panel/panel_xr_retry.h`만 다릅니다. Settings 진단 탭에 로그 폴더 열기 버튼을 추가했고, Settings와 Installer는 native 006에 맞춰 다시 빌드했습니다. 1.3.2는 내부 후보로 철회되어 공개되지 않았습니다.
+
+native 006은 동일 바이트 재생산, 재시도 정책 호스트 테스트와 기존 네이티브 테스트 24종으로 검증했으며 게임·VR 기기에서 직접 실행하지 않았습니다.
+
+공개 native-source는 실제 빌드의 컴파일 의존 폐포(common 234 / Clean overlay 2 / Dirty overlay 4)입니다. [release/1.3.3-native-metadata.json](release/1.3.3-native-metadata.json)과 [release/1.3.3-core-source-manifest.txt](release/1.3.3-core-source-manifest.txt)는 배포 descriptor의 commonCoreSha256을 계산한 전체 공통 소스 528개의 해시를 기록합니다.
+
 ## 1.3.1 — 포즈 재획득 토글, 로그·설치 개선
 
 눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate를 기본으로 켭니다. Settings의 화질·입체감 탭 토글로 끌 수 있으며 `performance.json`의 `pose.lateRelocate`에 기록됩니다. 1.3.0은 토글 없이 잠시 공개됐다가 철회됐고 그 내용은 1.3.1에 포함됩니다. 로그 요약은 카운터가 바뀔 때 최소 1초 간격으로, 변화가 없어도 10초마다 기록합니다. 설치·업데이트·복구 설치는 내용이 같은 파일의 쓰기를 생략합니다. Settings와 Installer는 새 native 004(Clean `D0C0653D…`, Dirty `E3D3E92C…`)에 맞춰 다시 빌드했습니다.

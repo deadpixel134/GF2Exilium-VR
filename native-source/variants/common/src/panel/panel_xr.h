@@ -68,9 +68,10 @@ typedef struct {
     XrSwapchain swapchain;
     XrSwapchainImageD3D11KHR images[16];
     unsigned image_count,width,height,format,index,released_index;
-    BOOL running,acquired,waited,have_image;
-    U64 latest_tick,frames;
+    BOOL running,acquired,waited,have_image,exiting;
+    U64 latest_tick,frames,began_tick;
 } PanelXr;
+#include "panel_xr_retry.h"
 static BOOL panel_xr_check(XrResult result,const char *stage) {
     if(XR_SUCCEEDED(result)) return TRUE;
     event(stage,(unsigned)result,GetCurrentThreadId()); return 0;
@@ -182,12 +183,13 @@ static int panel_stop_failed_loop(PanelXr *p,BootstrapState *state) {
     }
 }
 static void panel_ready_run(void *opaque,void *module) {
-    static unsigned disabled;
     static PanelXr panel;
-    if(disabled || !__atomic_load_n(&panel_device_ready,__ATOMIC_ACQUIRE) || __atomic_load_n(&panel_device_changed,__ATOMIC_ACQUIRE)) return;
+    PanelXrRetry *retry=&panel_xr_retry;
+    if(panel_xr_retry_wait(retry,GetTickCount64()) || !__atomic_load_n(&panel_device_ready,__ATOMIC_ACQUIRE) || __atomic_load_n(&panel_device_changed,__ATOMIC_ACQUIRE)) return;
     unsigned w,h,source_format; panel_dimensions(&w,&h,&source_format);
     unsigned format=panel_format(source_format);
     if(!w || !h || !format) return;
+    if(retry->attempts) event("xr_session_retry_attempt",retry->attempts,GetCurrentThreadId());
     BootstrapState *state=(BootstrapState *)opaque; PanelXr *p=&panel; bs_zero(p,sizeof(*p));
 #ifdef BOUNDARY_TEST
     if(panel_test_api_enabled) {
@@ -196,21 +198,21 @@ static void panel_ready_run(void *opaque,void *module) {
     else
 #endif
     {
-#define LOAD_FN(name) p->api.name=(PFN_xr##name)GetProcAddress(module,"xr" #name); if(!p->api.name) { event("xr_panel_api_missing",0,GetCurrentThreadId()); disabled=1; return; }
+#define LOAD_FN(name) p->api.name=(PFN_xr##name)GetProcAddress(module,"xr" #name); if(!p->api.name) { event("xr_panel_api_missing",0,GetCurrentThreadId()); panel_xr_retry_setup_failed(retry,GetTickCount64()); return; }
     PANEL_XR_CORE(LOAD_FN)
 #undef LOAD_FN
     PFN_xrGetInstanceProcAddr get=(PFN_xrGetInstanceProcAddr)GetProcAddress(module,"xrGetInstanceProcAddr");
-    if(!get || get(state->instance,"xrGetD3D11GraphicsRequirementsKHR",(PFN_xrVoidFunction *)&p->api.requirements)!=XR_SUCCESS || !p->api.requirements) { disabled=1; return; }
+    if(!get || get(state->instance,"xrGetD3D11GraphicsRequirementsKHR",(PFN_xrVoidFunction *)&p->api.requirements)!=XR_SUCCESS || !p->api.requirements) { panel_xr_retry_setup_failed(retry,GetTickCount64()); return; }
     }
-    if(!panel_xr_device(&p->api,state)) { disabled=1; return; }
+    if(!panel_xr_device(&p->api,state)) { panel_xr_retry_setup_failed(retry,GetTickCount64()); return; }
     XrEnvironmentBlendMode blends[8]; uint32_t count=0; BOOL opaque_blend=0;
-    if(p->api.EnumerateEnvironmentBlendModes(state->instance,state->system,XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO,8,&count,blends)!=XR_SUCCESS) { disabled=1; return; }
+    if(p->api.EnumerateEnvironmentBlendModes(state->instance,state->system,XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO,8,&count,blends)!=XR_SUCCESS) { panel_xr_retry_setup_failed(retry,GetTickCount64()); return; }
     for(unsigned i=0;i<count;++i) if(blends[i]==XR_ENVIRONMENT_BLEND_MODE_OPAQUE) opaque_blend=1;
-    if(!opaque_blend) { disabled=1; event("xr_opaque_blend_unavailable",0,GetCurrentThreadId()); return; }
+    if(!opaque_blend) { panel_xr_retry_setup_failed(retry,GetTickCount64()); event("xr_opaque_blend_unavailable",0,GetCurrentThreadId()); return; }
     XrGraphicsBindingD3D11KHR binding; bs_zero(&binding,sizeof(binding));
     binding.type=XR_TYPE_GRAPHICS_BINDING_D3D11_KHR; binding.device=(ID3D11Device *)panel_device;
     XrSessionCreateInfo create; bs_zero(&create,sizeof(create)); create.type=XR_TYPE_SESSION_CREATE_INFO; create.next=&binding; create.systemId=state->system;
-    if(!panel_xr_check(p->api.CreateSession(state->instance,&create,&p->session),"xr_session_create_failed")) { disabled=1; return; }
+    if(!panel_xr_check(p->api.CreateSession(state->instance,&create,&p->session),"xr_session_create_failed")) { panel_xr_retry_setup_failed(retry,GetTickCount64()); return; }
     GF2VR_EYE_OPEN(state->instance,p->session,module);
     GF2VR_OUTPUT_OPEN(state,module);
     XrReferenceSpaceCreateInfo space; bs_zero(&space,sizeof(space)); space.type=XR_TYPE_REFERENCE_SPACE_CREATE_INFO;
@@ -234,11 +236,16 @@ static void panel_ready_run(void *opaque,void *module) {
                 if(change->state==XR_SESSION_STATE_READY) {
                     XrSessionBeginInfo begin; bs_zero(&begin,sizeof(begin)); begin.type=XR_TYPE_SESSION_BEGIN_INFO; begin.primaryViewConfigurationType=XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
                     good=panel_xr_check(p->api.BeginSession(p->session,&begin),"xr_begin_session_failed"); p->running=good;
+                    if(good && !p->began_tick) p->began_tick=GetTickCount64();
                 } else if(change->state==XR_SESSION_STATE_STOPPING) {
                     GF2VR_EYE_INVALIDATE();
                     good=panel_end_session(p);
                     if(exit_requested) good=0;
-                } else if(change->state==XR_SESSION_STATE_EXITING || change->state==XR_SESSION_STATE_LOSS_PENDING) { good=0; }
+                } else if(change->state==XR_SESSION_STATE_EXITING || change->state==XR_SESSION_STATE_LOSS_PENDING) {
+                    /* EXITING asks the app to end its XR experience: never auto-restart.
+                       LOSS_PENDING allows a new session. */
+                    p->exiting=change->state==XR_SESSION_STATE_EXITING; good=0;
+                }
             }
         }
         if(!good || __atomic_load_n(&panel_device_changed,__ATOMIC_ACQUIRE)) break;
@@ -360,7 +367,11 @@ static void panel_ready_run(void *opaque,void *module) {
     if(p->space) p->api.DestroySpace(p->space);
     BOOL eye_closed=GF2VR_OUTPUT_CLOSE(p) && GF2VR_EYE_CLOSE();
     GF2VR_PANEL_CLOSE();
-    if(p->session && eye_closed) p->api.DestroySession(p->session);
+    BOOL destroyed=0;
+    if(p->session && eye_closed) { p->api.DestroySession(p->session); destroyed=1; }
     else if(p->session) event("eye_session_quarantined",p->frames,GetCurrentThreadId());
-    disabled=1; event("panel_session_retired",p->frames,GetCurrentThreadId());
+    event("panel_session_retired",p->frames,GetCurrentThreadId());
+    BOOL eligible=destroyed && !p->exiting && !__atomic_load_n(&stop_requested,__ATOMIC_ACQUIRE) &&
+                  !__atomic_load_n(&panel_device_changed,__ATOMIC_ACQUIRE);
+    panel_xr_retry_end(retry,eligible,p->began_tick,GetTickCount64(),p->frames);
 }

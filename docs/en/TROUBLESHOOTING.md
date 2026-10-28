@@ -34,4 +34,4 @@ The current updater needs no CLI or login. For network or older-client problems,
 
 ## Information to include in a report
 
-Include variant/version, Haoplay or Steam, headset/connection, affected screen, reproduction steps and exact error text. If needed, enable diagnostic logs and restart to collect them. Remove account/authentication information before sharing; do not send the entire game installation.
+Include variant/version, Haoplay or Steam, headset/connection, affected screen, reproduction steps and exact error text. If needed, follow [Saving and sending logs](LOGS.md) to enable diagnostic logs, restart, and send the collected log. Remove account/authentication information before sharing; do not send the entire game installation.
