@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.3 — VR 连接自动恢复、日志文件夹按钮
+
+已经在运行的 VR 会话因错误结束时（帧、图像、交换链调用错误，会话丢失，事件错误），会清理该会话，并每隔 10 秒、最多 6 次创建新会话。运行时的退出请求（EXITING）、游戏关闭、游戏图形设备变化以及未能清理的会话不会重新连接。native 006（Clean `0FCFDDED…`，Dirty `CE0AB541…`）与 004 的区别仅为 `panel/panel_xr.h` 的修改和新增的 `panel/panel_xr_retry.h`。Settings 的诊断选项卡新增打开日志文件夹按钮；Settings 与 Installer 已针对 native 006 重新构建。1.3.2 是已撤回的内部候选版本，未公开发布。
+
+native 006 通过逐字节复现、重试策略主机测试和现有 24 套原生测试验证，尚未在游戏和 VR 设备上直接运行。
+
+公开的 native-source 是实际构建的编译依赖闭包（common 234 / Clean overlay 2 / Dirty overlay 4）。[release/1.3.3-native-metadata.json](release/1.3.3-native-metadata.json) 和 [release/1.3.3-core-source-manifest.txt](release/1.3.3-core-source-manifest.txt) 记录了用于计算发布 descriptor 中 commonCoreSha256 的全部 528 个公共源文件的哈希。
+
 ## 1.3.1 — 姿态重新获取开关、日志与安装改进
 
 默认启用在眼睛渲染前重新读取头部姿态的 late re-locate；可在 Settings 的画质·立体感标签页通过开关关闭，设置保存为 `performance.json` 中的 `pose.lateRelocate`。1.3.0 曾在没有开关的情况下短暂发布并撤回，其内容均包含在 1.3.1 中。日志摘要在计数器变化时至少间隔1秒记录，无变化时每10秒记录一次。安装、更新和修复安装会跳过内容相同文件的写入。Settings 与 Installer 已针对新的 native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）重新构建。

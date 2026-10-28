@@ -28,6 +28,10 @@
 
 1.3.1부터 눈 렌더링 직전에 머리 자세를 다시 읽는 late re-locate가 기본으로 켜집니다. 재획득에 실패하면 기존 자세를 사용합니다. 메인 스레드 대기 뒤에 다시 읽으므로 고개를 돌릴 때 화면이 머리를 따라오는 지연이 그만큼 줄어듭니다(실기 측정 1회 기준 제출 자세가 Main 약 12ms, Activity 약 27ms 더 최신). 프레임 수나 실제 화면 표시 지연의 개선은 확인되지 않았습니다. Settings의 화질·입체감 탭에서 **눈 렌더 직전 머리 자세 재획득** 체크를 해제하고 저장한 뒤 게임을 다시 시작하면 꺼집니다(`performance.json`의 `pose.lateRelocate`).
 
+## VR 연결 자동 복구
+
+1.3.3부터 게임 실행 중 VR 세션이 오류로 끊기면 10초 간격으로 최대 6번 새 세션으로 다시 연결합니다. SteamVR 등에서 앱을 직접 종료했거나 게임을 끄는 경우에는 다시 연결하지 않습니다. 계속 복구되지 않으면 [로그 저장과 전달](docs/ko/LOGS.md)을 참고해 로그를 보내 주세요.
+
 ## 기여자
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 호환성 및 빌드 도구 개선 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
@@ -104,6 +108,7 @@ Quest 3와 Galaxy XR에서 보고된 양안 영상 어긋남은 안티앨리어�
 - [설정 항목](docs/ko/SETTINGS.md)
 - [업데이트](docs/ko/UPDATE.md)
 - [문제 해결](docs/ko/TROUBLESHOOTING.md)
+- [로그 저장과 전달](docs/ko/LOGS.md)
 - [다운로드·파일 구성](docs/ko/RELEASE_READINESS.md)
 - [검증 범위](docs/ko/VERIFICATION.md)
 - [3DMigoto 호환성](docs/ko/3DMIGOTO_COMPATIBILITY.md)

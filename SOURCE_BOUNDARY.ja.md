@@ -2,6 +2,14 @@
 
 [한국어](SOURCE_BOUNDARY.md) · [English](SOURCE_BOUNDARY.en.md) · [日本語](SOURCE_BOUNDARY.ja.md) · [简体中文](SOURCE_BOUNDARY.zh-CN.md)
 
+## 1.3.3 — VR 接続の自動復旧、ログフォルダーボタン
+
+すでに実行中だった VR セッションがエラーで終了した場合(フレーム・イメージ・スワップチェーン呼び出しのエラー、セッション喪失、イベントエラー)、セッションを片付けて 10 秒間隔で最大 6 回新しいセッションを作ります。ランタイムの終了要求(EXITING)、ゲームの終了、ゲームのグラフィックスデバイスの変更、片付けられなかったセッションは再接続しません。native 006(Clean `0FCFDDED…`、Dirty `CE0AB541…`)と 004 の違いは `panel/panel_xr.h` の変更と新しい `panel/panel_xr_retry.h` だけです。Settings の診断タブにログフォルダーを開くボタンを追加し、Settings と Installer は native 006 に合わせて再ビルドしました。1.3.2 は内部候補として取り下げられ、公開されていません。
+
+native 006 はバイト単位の再現、再試行ポリシーのホストテストと既存のネイティブテスト 24 種で検証しており、ゲームと VR 機器で直接実行していません。
+
+公開している native-source は実際のビルドのコンパイル依存閉包（common 234 / Clean overlay 2 / Dirty overlay 4）です。[release/1.3.3-native-metadata.json](release/1.3.3-native-metadata.json) と [release/1.3.3-core-source-manifest.txt](release/1.3.3-core-source-manifest.txt) は、配布 descriptor の commonCoreSha256 を計算した共通ソース 528 個のハッシュを記録しています。
+
 ## 1.3.1 — 姿勢の再取得の切り替え、ログ・インストールの改善
 
 目のレンダリング直前に頭の姿勢を読み直す late re-locate を既定で有効にします。Settings の画質・立体感タブの切り替えで無効にでき、`performance.json` の `pose.lateRelocate` に保存されます。1.3.0 は切り替えのない状態で一時公開後に取り下げ、その内容は 1.3.1 に含まれます。ログの要約はカウンターが変化したときに最短1秒間隔で、変化がなくても10秒ごとに記録します。インストール・更新・修復インストールは内容が同じファイルの書き込みを省略します。Settings と Installer は新しい native 004（Clean `D0C0653D…`、Dirty `E3D3E92C…`）に合わせて再ビルドしました。

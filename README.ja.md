@@ -28,6 +28,10 @@ GF2 Exilium を VR ヘッドセットとコントローラーで楽しむため�
 
 1.3.1 から、目のレンダリング直前に頭の姿勢を読み直す late re-locate が既定で有効です。再取得に失敗した場合は従来の姿勢を使用します。メインスレッドの待機後に読み直すため、頭を回したときに映像が頭に追従する遅れがその分だけ減ります（実機測定1回では送出される姿勢が Main で約12ms、Activity で約27ms 新しくなりました）。フレームレートや実際の表示遅延の改善は確認されていません。無効にするには Settings の画質・立体感タブで **目の描画直前に頭の姿勢を再取得** のチェックを外して保存し、ゲームを再起動してください（`performance.json` の `pose.lateRelocate`）。
 
+## VR 接続の自動復旧
+
+1.3.3 から、ゲーム実行中に VR セッションがエラーで切れた場合、10 秒間隔で最大 6 回新しいセッションで再接続します。SteamVR などでアプリを終了した場合やゲームを終了する場合は再接続しません。それでも復旧しない場合は [ログの保存と送付](docs/ja/LOGS.md) を参照してログを送ってください。
+
 ## 貢献者
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 互換性とビルドツールの改善 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1))。
@@ -104,6 +108,7 @@ Quest 3 と Galaxy XR で報告された左右映像のずれは、アンチエ�
 - [設定項目](docs/ja/SETTINGS.md)
 - [更新](docs/ja/UPDATE.md)
 - [トラブルシューティング](docs/ja/TROUBLESHOOTING.md)
+- [ログの保存と送付](docs/ja/LOGS.md)
 - [ダウンロードとファイル構成](docs/ja/RELEASE_READINESS.md)
 - [検証範囲](docs/ja/VERIFICATION.md)
 - [3DMigoto 互換性](docs/ja/3DMIGOTO_COMPATIBILITY.md)

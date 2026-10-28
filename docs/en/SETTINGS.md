@@ -115,6 +115,8 @@ The **X/A → F, Y/B → Escape** inputs in game control mode are separate from 
 
 **Diagnostics → Automatic logging** defaults to OFF. Enable it when investigating an issue, save, and restart the game. With logging ON, files keep growing.
 
+From 1.3.3, **Open log folder** on the same tab opens the folder where logs are saved, and the location is shown below the button. To send logs, see [Saving and sending logs](LOGS.md).
+
 During an upgrade, eligible old automatic VR logs are cleaned once. An explicit ON setting preserves existing logs and permanently excludes them from that initial cleanup; switching OFF later does not delete those old logs. User settings, other mods and manually collected evidence are preserved.
 
 ## Save and profile buttons
