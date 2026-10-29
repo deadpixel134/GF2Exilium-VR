@@ -18,20 +18,6 @@ An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Men
 
 Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
 
-## PC output resolution
-
-Settings offers native/3200×1800/2560×1440/1920×1080/1280×720 PC output. Native is the default. We recommend 1280×720 to reduce GPU load, at the cost of a less sharp PC window and auxiliary panel. Eye quality and fixed eye scale remain separate. Choose VR-only or always-applied output, save, and restart the game.
-
-Updates and removal preserve an existing performance.json. Dynamic eye scaling remains disabled because measured throughput did not improve; PC 3D renderScale is also unsupported after showing no throughput benefit.
-
-## VR pose refresh
-
-Since 1.3.1, late re-locate re-reads the head pose right before eye rendering and is enabled by default. If re-acquisition fails, the previous pose is used. Because the pose is re-read after the main-thread wait, the image lags your head by that much less when you turn it (in one HMD measurement the submitted pose was about 12 ms more recent in Main and 27 ms in Activity). No frame-rate or actual display-latency improvement has been confirmed. To disable it, uncheck **Re-read head pose right before eye rendering** on the Image quality / stereo tab in Settings, save, and restart the game (`pose.lateRelocate` in `performance.json`).
-
-## Automatic VR reconnection
-
-From 1.3.3, if the VR session fails while the game is running, the mod reconnects with a new session up to 6 times, 10 seconds apart. It does not reconnect after you exit the app from SteamVR or similar, or when you close the game. If VR still does not recover, please send a log as described in [Saving and sending logs](docs/en/LOGS.md).
-
 ## Contributors
 
 - [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
