@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "buildId": "GF2VR-CLEAN-133-006",
-  "dllSha256": "0FCFDDED88A5F73E52F9E91C7D49BB4D6044ACAD24FC2303542E59979FA2D0B8",
+  "buildId": "GF2VR-DIRTY-134-007",
+  "dllSha256": "45506FC737EA3CA418D6804BF4D1A974F3FBB14B9468229C22D71221C1A0E4B7",
   "configurationRoot": "INSTALL_ROOT/vrmod/config",
   "files": [
     "render_quality.json",
@@ -11,9 +11,10 @@
     "activity_ui.json",
     "controller_input.json",
     "world_scale.json",
-    "controller_hands.json"
+    "controller_hands.json",
+    "touch_interaction.json"
   ],
   "apply": "GAME_RESTART",
-  "buildFlavor": "Clean",
-  "commonCoreSha256": "18182F3346F5AA6C60CDB468BA66C18F08837E63656A493AA96E485A6C44FE3B"
+  "buildFlavor": "Dirty",
+  "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837"
 }

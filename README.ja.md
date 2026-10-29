@@ -8,7 +8,7 @@ Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)
 
 GF2 Exilium を VR ヘッドセットとコントローラーで楽しむための非公式 MOD です。通常のメニューは仮想スクリーン、対応する 3D シーンは立体 VR で表示します。
 
-**Haoplay版とSteam版の両方に対応しています。** 両プラットフォームで同じClean・Dirtyパッケージを使用します。
+HaoplayとSteamを対象としています。現在の3.0対応ビルドは静的・自動検証済みですが、実際のゲーム・HMDでの動作は未確認です。
 
 **[最新リリースをダウンロード](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 

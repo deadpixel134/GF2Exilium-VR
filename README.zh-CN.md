@@ -8,7 +8,7 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 通过 VR 头显和控制器游玩 GF2 Exilium 的非官方模组。普通菜单显示在虚拟屏幕上，支持的 3D 场景以立体 VR 显示。
 
-**兼容Haoplay版本和Steam版本。** 两个平台使用相同的Clean/Dirty安装包。
+面向Haoplay和Steam。当前3.0兼容版本已通过静态和自动检查，实际游戏及HMD运行情况尚未验证。
 
 **[下载最新版本](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 

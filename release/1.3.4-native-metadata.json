@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "1.3.4",
+  "nativeBaseline": "NATIVE-BASELINE-007",
+  "nativeManifestSha256": "7C1C71E9B3391FA599E89AC2F1A15673C8075579B0BF7C483B255E8980C2CCBE",
+  "commonCoreAlgorithm": "SHA256 of sorted common source path NUL uppercase SHA256 rows joined LF, no trailing LF (same as003)",
+  "commonCoreSources": "release/1.3.4-core-source-manifest.txt (530 canonical source rows)",
+  "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
+  "variants": {
+    "Clean": {
+      "buildId": "GF2VR-CLEAN-134-007",
+      "dllSha256": "C8E71A58640E2F1017F4E4C56C69768244BD2E175FCDD9DED784337B16606E9C"
+    },
+    "Dirty": {
+      "buildId": "GF2VR-DIRTY-134-007",
+      "dllSha256": "45506FC737EA3CA418D6804BF4D1A974F3FBB14B9468229C22D71221C1A0E4B7"
+    }
+  },
+  "note": "006 plus verified Haoplay 3.0.5388 / Steam 3.0.5400 API-name profiles; game/HMD not run. Existing game-independent Installer contract retained."
+}

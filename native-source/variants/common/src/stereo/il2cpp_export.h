@@ -5,7 +5,7 @@
 #define GF2VR_IL2CPP_EXPORT_EVENT(kind,count) event(kind,count,GetCurrentThreadId())
 #endif
 typedef void *(*Il2cppSymbolFn)(void *module,const char *name);
-enum {IL2CPP_PROFILE_UNKNOWN=-1,IL2CPP_PROFILE_PLAIN=0,IL2CPP_PROFILE_STEAM=1};
+enum {IL2CPP_PROFILE_UNKNOWN=-1,IL2CPP_PROFILE_PLAIN=0,IL2CPP_PROFILE_STEAM=1,IL2CPP_PROFILE_HAOPLAY30=2,IL2CPP_PROFILE_STEAM30=3};
 /* Binding is serialized by the attributed owner/main callback, never concurrent
    loader/worker calls. Modules are process-pinned. Atomic publication does not
    authorize concurrent binding or reuse of an unloaded module handle. */
@@ -41,7 +41,11 @@ static int il2cpp_export_profile_select(Il2cppSymbolFn sym,void *module) {
     if(sym(module,"il2cpp_init"))profile=IL2CPP_PROFILE_PLAIN;
     else {
         int i=il2cpp_export_index("il2cpp_init");
-        if(i>=0 && sym(module,il2cpp_export_names[i].steam))profile=IL2CPP_PROFILE_STEAM;
+        if(i>=0) {
+            if(sym(module,il2cpp_export_names[i].steam))profile=IL2CPP_PROFILE_STEAM;
+            else if(sym(module,il2cpp_export_names[i].haoplay30))profile=IL2CPP_PROFILE_HAOPLAY30;
+            else if(sym(module,il2cpp_export_names[i].steam30))profile=IL2CPP_PROFILE_STEAM30;
+        }
     }
     __atomic_store_n(&il2cpp_profile_cache.profile,profile,__ATOMIC_RELAXED);
     __atomic_store_n(&il2cpp_profile_cache.module,module,__ATOMIC_RELEASE);
@@ -57,9 +61,12 @@ static void *il2cpp_export_with(Il2cppSymbolFn sym,void *module,const char *plai
     static unsigned unknown_count;
     if(!sym || !module || !il2cpp_export_name_valid(plain))return 0;
     void *found=sym(module,plain);if(found)return found;
-    if(il2cpp_export_profile_select(sym,module)!=IL2CPP_PROFILE_STEAM)return 0;
+    int profile=il2cpp_export_profile_select(sym,module);
+    if(profile!=IL2CPP_PROFILE_STEAM && profile!=IL2CPP_PROFILE_HAOPLAY30 && profile!=IL2CPP_PROFILE_STEAM30)return 0;
     int index=il2cpp_export_index(plain);
-    found=index<0?0:sym(module,il2cpp_export_names[index].steam);
+    const char *mapped=index<0?0:(profile==IL2CPP_PROFILE_STEAM?il2cpp_export_names[index].steam:
+        profile==IL2CPP_PROFILE_HAOPLAY30?il2cpp_export_names[index].haoplay30:il2cpp_export_names[index].steam30);
+    found=mapped?sym(module,mapped):0;
     if(!found) {
         if(index>=0) {
             if(!missing_logged[index]) {

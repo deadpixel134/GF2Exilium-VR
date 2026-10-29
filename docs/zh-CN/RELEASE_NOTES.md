@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.4 — 游戏更新兼容性修复
+
+适配Haoplay 3.0.5388和Steam 3.0.5400更新后的内部API名称。游戏更新后，旧映射无法找到VR初始化所需的API，此版本修复了该映射问题。
+
+尚未进行实际游戏或HMD运行验证。已通过静态分析核对两个版本的游戏DLL，并完成API查找、Hook安全性、构建和安装包自动检查。仍可能存在其他运行时兼容性问题。
+
+[1.3.4](../release-notes/1.3.4.zh-CN.md)
+
 ## 1.2.0 — Steam支持与手部、接触兼容性修复
 
 支持Steam可执行文件目录及现有Haoplay目录结构。修复游戏更新后白色手部标记和角色接触消失的兼容性问题。Dirty独立处理活动层中同时可见的受支持角色；Clean不包含接触变形。

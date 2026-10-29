@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.4 — Game update compatibility
+
+Adds API-name bindings for Haoplay 3.0.5388 and Steam 3.0.5400. The updated games renamed internal APIs, so the previous bindings could no longer find APIs required for VR initialization.
+
+The actual game/HMD has NOT been tested. Bindings were checked against both game DLLs through static analysis, with automated API lookup, hook safety, build and package checks. Additional runtime compatibility issues may remain.
+
+[1.3.4](../release-notes/1.3.4.en.md)
+
 ## 1.2.0 — Steam support and hand/contact compatibility fixes
 
 Supports the Steam executable folder and existing Haoplay layout. Fixes compatibility after the game update that removed white hand indicators and character contact. Dirty handles each simultaneously visible supported Activity character independently. Clean excludes contact deformation.

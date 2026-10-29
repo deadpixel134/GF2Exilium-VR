@@ -8,7 +8,7 @@
 
 소녀전선 2: 망명(GF2 Exilium)을 VR 헤드셋과 컨트롤러로 즐기기 위한 비공식 모드입니다. 일반 메뉴는 가상 화면으로, 지원되는 3D 장면은 입체 화면으로 표시합니다.
 
-**Haoplay 버전과 Steam 버전 모두 호환됩니다.** 두 플랫폼에서 같은 Clean·Dirty 패키지를 사용합니다.
+Haoplay와 Steam을 대상으로 합니다. 현재 3.0 업데이트 대응 빌드는 정적·자동 검증을 완료했으며, 실제 게임/HMD 동작은 아직 확인하지 않았습니다.
 
 **[최신 릴리스 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
