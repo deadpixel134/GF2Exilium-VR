@@ -1,27 +1,27 @@
 {
   "schemaVersion": 2,
   "product": "GF2VR",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "scope": "PAIRED_NATIVE_DESKTOP_SOURCE_AND_FOUR_LANGUAGE_PLAYER_DOCS",
   "repository": "deadpixel134/GF2Exilium-VR",
   "nativeSourceReproduction": "EXACT_PAIRED_RELEASE_REPRODUCTION",
   "nativeVariants": [
     {
       "flavor": "Clean",
-      "buildId": "GF2VR-CLEAN-133-006",
-      "dllSha256": "0FCFDDED88A5F73E52F9E91C7D49BB4D6044ACAD24FC2303542E59979FA2D0B8",
-      "commonCoreSha256": "18182F3346F5AA6C60CDB468BA66C18F08837E63656A493AA96E485A6C44FE3B",
-      "nativeProofSha256": "BC9917E71B2371124425C905F758C604B37E951C03C9CDF7C6C495E9B7FC2547"
+      "buildId": "GF2VR-CLEAN-134-007",
+      "dllSha256": "C8E71A58640E2F1017F4E4C56C69768244BD2E175FCDD9DED784337B16606E9C",
+      "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
+      "nativeProofSha256": "ADF9F2695D13B701FAD4287B15AD142A793709BEA049C261BE590A930A50FC66"
     },
     {
       "flavor": "Dirty",
-      "buildId": "GF2VR-DIRTY-133-006",
-      "dllSha256": "CE0AB541E864F93545BA8F65E6710B989249109F2F5B18026F1C7D0C95031647",
-      "commonCoreSha256": "18182F3346F5AA6C60CDB468BA66C18F08837E63656A493AA96E485A6C44FE3B",
-      "nativeProofSha256": "39440AC572EE98F405DFABA1C387FAF0B0DB05116BF9A3D220F4F0467F881A42"
+      "buildId": "GF2VR-DIRTY-134-007",
+      "dllSha256": "45506FC737EA3CA418D6804BF4D1A974F3FBB14B9468229C22D71221C1A0E4B7",
+      "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
+      "nativeProofSha256": "AD3C456D83A6473AB490E19EE15BB5E4BDFE1E1582D929038C6C91D22D4B8276"
     }
   ],
-  "commonCoreSha256": "18182F3346F5AA6C60CDB468BA66C18F08837E63656A493AA96E485A6C44FE3B",
+  "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
   "gameAssetsIncluded": false,
   "userConfigurationIncluded": false,
   "credentialMaterialIncluded": false,
@@ -143,8 +143,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/runtime-contract.json",
-      "sha256": "D509A04F6276618E2F8EC0C5644704FDC10B7A72243B0B2C2227BEDA6A4FF1BB",
-      "bytes": 578
+      "sha256": "2D7DC1B21A281B5E42F67347DB5933D03F19FD77B4D1EF07A829A06EEB772A3D",
+      "bytes": 609
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/SelfTest.cs",
@@ -368,7 +368,7 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/VariantProfiles.generated.cs",
-      "sha256": "5A8E5D3E653C60A147451924EAC8E29258996B0365DB17A9BDA6ACDB8FF1B959",
+      "sha256": "130049176D85666876DAB1FC4D7CA02909CC5F910DD9E44C5EA2987DF8D6D9B0",
       "bytes": 810
     },
     {
@@ -413,8 +413,8 @@
     },
     {
       "path": "docs/en/RELEASE_NOTES.md",
-      "sha256": "0EE5B3752A313F1FD56456F24BB0ABBB5AF35020C9774D6239AE945685EE753C",
-      "bytes": 6720
+      "sha256": "1FAE12047B1795834F3C8D390BE9AC9C08C10FF84B524AD2EEF9EDD85ACDDE04",
+      "bytes": 7218
     },
     {
       "path": "docs/en/RELEASE_READINESS.md",
@@ -468,8 +468,8 @@
     },
     {
       "path": "docs/ja/RELEASE_NOTES.md",
-      "sha256": "8B9CA3A32692F2FCFA0E0A7991A61B566CD80EACF3F1972F75A9792097A8C19A",
-      "bytes": 8079
+      "sha256": "F438A90290651A6CDAD1F7A5604761F4C261EEE3CF5800E03F977198B2F5053C",
+      "bytes": 8682
     },
     {
       "path": "docs/ja/RELEASE_READINESS.md",
@@ -523,8 +523,8 @@
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
-      "sha256": "51F29C8E6921A0E2B9826C2D177F9D78B3CD1D1A599C520E9AA4362EDB57CD57",
-      "bytes": 7755
+      "sha256": "B4023B22D2E7A2814D3DF48917B27B27B5E8D0D6DF7CD84B762B2969531DDC13",
+      "bytes": 8360
     },
     {
       "path": "docs/ko/RELEASE_READINESS.md",
@@ -642,6 +642,26 @@
       "bytes": 2772
     },
     {
+      "path": "docs/release-notes/1.3.4.en.md",
+      "sha256": "4E18F98BD465B73D614C6F026E3D2933F79A6CE9BDB38D30BE77A5B2AF5B9072",
+      "bytes": 848
+    },
+    {
+      "path": "docs/release-notes/1.3.4.ja.md",
+      "sha256": "A7AAC2C77A158AF9AFAA258C84AC27FF919C70BF36B6EB830D65992031ADA153",
+      "bytes": 1061
+    },
+    {
+      "path": "docs/release-notes/1.3.4.ko.md",
+      "sha256": "FB6B63E7BB8A631372F9789ADD4E6C1B3C06CF577C5FD625FF0CB762A97E28FF",
+      "bytes": 1062
+    },
+    {
+      "path": "docs/release-notes/1.3.4.zh-CN.md",
+      "sha256": "C343CB7B98D6D6961D1695643A584083554E66D36AD4C142E647970155882760",
+      "bytes": 808
+    },
+    {
       "path": "docs/release-notes/update-bootstrap-contract.md",
       "sha256": "B1942148DB5AB5F5D3BD0389F75B39097074B7D9C1FCC23ADF73845D392A32C2",
       "bytes": 5086
@@ -668,8 +688,8 @@
     },
     {
       "path": "docs/zh-CN/RELEASE_NOTES.md",
-      "sha256": "CB2C7A9E106FC08166E852C306204AD2EC6432C97789538EEDCC6CE8A8319FCF",
-      "bytes": 6143
+      "sha256": "1D1FB8270BF877B9305C10C7C46A7407A3E6EE04EDBFDD7E8964E9D45CD6A8CE",
+      "bytes": 6618
     },
     {
       "path": "docs/zh-CN/RELEASE_READINESS.md",
@@ -837,14 +857,14 @@
       "bytes": 1506
     },
     {
-      "path": "native-source/src/bootstrap/xr_bootstrap_state.h",
-      "sha256": "F22115C35FBC17B4420B9CA8525F3D6B07F35C0815C18C34802DC1704E047BAA",
-      "bytes": 4200
-    },
-    {
       "path": "native-source/src/bootstrap/xr_bootstrap.c",
       "sha256": "FF35895F7F4728EEB9A3FF8E48D24DF433D44DF5635863A7FF2AEF1711038CAA",
       "bytes": 5907
+    },
+    {
+      "path": "native-source/src/bootstrap/xr_bootstrap_state.h",
+      "sha256": "F22115C35FBC17B4420B9CA8525F3D6B07F35C0815C18C34802DC1704E047BAA",
+      "bytes": 4200
     },
     {
       "path": "native-source/src/panel/panel_capture.h",
@@ -867,14 +887,14 @@
       "bytes": 2039
     },
     {
-      "path": "native-source/src/stereo/activity_canvas_scope_runtime.h",
-      "sha256": "1357BB2D6FBE591DE4C0564EAAEB0348D215407EB5CB47FD8DDEE7F08CB9A66E",
-      "bytes": 8355
-    },
-    {
       "path": "native-source/src/stereo/activity_canvas_scope.h",
       "sha256": "522680EB1D3BFDB2C5D6A6CD83F1DE200E72A081EC8EDFCDFE52AEF3BBF8096A",
       "bytes": 3068
+    },
+    {
+      "path": "native-source/src/stereo/activity_canvas_scope_runtime.h",
+      "sha256": "1357BB2D6FBE591DE4C0564EAAEB0348D215407EB5CB47FD8DDEE7F08CB9A66E",
+      "bytes": 8355
     },
     {
       "path": "native-source/src/stereo/activity_eye_group.h",
@@ -952,14 +972,14 @@
       "bytes": 6805
     },
     {
-      "path": "native-source/src/stereo/activity_ui_transition_group.h",
-      "sha256": "BC2C42FFA847FCCA40C7463E20808C2C0320798EAA588FCFADFBA490F4EB425C",
-      "bytes": 2045
-    },
-    {
       "path": "native-source/src/stereo/activity_ui_transition.h",
       "sha256": "69F93300409A896B15FB0A28F68CBDB5149523642A4A0C6180124EE3138CB555",
       "bytes": 3324
+    },
+    {
+      "path": "native-source/src/stereo/activity_ui_transition_group.h",
+      "sha256": "BC2C42FFA847FCCA40C7463E20808C2C0320798EAA588FCFADFBA490F4EB425C",
+      "bytes": 2045
     },
     {
       "path": "native-source/src/stereo/activity_viewport.h",
@@ -1012,14 +1032,14 @@
       "bytes": 11471
     },
     {
-      "path": "native-source/src/stereo/camera_data_settings_binding.h",
-      "sha256": "29BC01986D0C3FA101A2EA2D77D8CC37FBD07193C55B4BFCC6F9D9B2C726CC5D",
-      "bytes": 2173
-    },
-    {
       "path": "native-source/src/stereo/camera_data_settings.h",
       "sha256": "69A695B6ADE55E34B50E611FFAFAD5DFD06828A671FAEAE40AABA440CFD67389",
       "bytes": 5067
+    },
+    {
+      "path": "native-source/src/stereo/camera_data_settings_binding.h",
+      "sha256": "29BC01986D0C3FA101A2EA2D77D8CC37FBD07193C55B4BFCC6F9D9B2C726CC5D",
+      "bytes": 2173
     },
     {
       "path": "native-source/src/stereo/camera_follow_config.h",
@@ -1087,24 +1107,24 @@
       "bytes": 469
     },
     {
-      "path": "native-source/src/stereo/composition_bridge_image_binding.h",
-      "sha256": "5DAF18C1177CE0F68395C5FE2C368910274511B3C50AB7A778FF6C36B3BACDB6",
-      "bytes": 3211
-    },
-    {
       "path": "native-source/src/stereo/composition_bridge_image.h",
       "sha256": "BFAD10BF33B0D78339E6FF89FCD33AA624643AFE199160BE3C5A1DD118C27C05",
       "bytes": 3551
     },
     {
-      "path": "native-source/src/stereo/composition_camera_plan_binding.h",
-      "sha256": "63B4D066615584E0D40ED894EDA6661E905C99519A31867D71CF7B6ECA64D443",
-      "bytes": 1676
+      "path": "native-source/src/stereo/composition_bridge_image_binding.h",
+      "sha256": "5DAF18C1177CE0F68395C5FE2C368910274511B3C50AB7A778FF6C36B3BACDB6",
+      "bytes": 3211
     },
     {
       "path": "native-source/src/stereo/composition_camera_plan.h",
       "sha256": "39DC828EA3C6B8BBE61564146CBD221F75CEF6E64A9AC1DA5600A8EA800639C1",
       "bytes": 2326
+    },
+    {
+      "path": "native-source/src/stereo/composition_camera_plan_binding.h",
+      "sha256": "63B4D066615584E0D40ED894EDA6661E905C99519A31867D71CF7B6ECA64D443",
+      "bytes": 1676
     },
     {
       "path": "native-source/src/stereo/controller_actions.h",
@@ -1227,6 +1247,11 @@
       "bytes": 3883
     },
     {
+      "path": "native-source/src/stereo/eye_event_notice.h",
+      "sha256": "9F446800C9713A62D2FADECE20F0C739071AE11D001DD53ABD615F4CB887C1F9",
+      "bytes": 5582
+    },
+    {
       "path": "native-source/src/stereo/eye_event_notice_integration.c",
       "sha256": "6E1DF411FE8A4322FE87EFE3CC4749C5AA3687D43F48E87C99BA1FD9E840B8EF",
       "bytes": 2131
@@ -1235,11 +1260,6 @@
       "path": "native-source/src/stereo/eye_event_notice_native.c",
       "sha256": "8A0EA9877C197B766525DC3E15F8606B3FF736F281C5F210B65ECC871A19B92D",
       "bytes": 716
-    },
-    {
-      "path": "native-source/src/stereo/eye_event_notice.h",
-      "sha256": "9F446800C9713A62D2FADECE20F0C739071AE11D001DD53ABD615F4CB887C1F9",
-      "bytes": 5582
     },
     {
       "path": "native-source/src/stereo/eye_flight_backend.c",
@@ -1327,6 +1347,16 @@
       "bytes": 1709
     },
     {
+      "path": "native-source/src/stereo/eye_upright.h",
+      "sha256": "59477728B032F6D00AA23DAAEA05CF127682AB6A0CC3FE52CC4660ABFB639860",
+      "bytes": 3938
+    },
+    {
+      "path": "native-source/src/stereo/eye_upright.hlsl",
+      "sha256": "FE74DF55974FBE8D7E7FEEB697013FEA2D23C44C69E0F14FA6DCAA3CDCA8E0FE",
+      "bytes": 507
+    },
+    {
       "path": "native-source/src/stereo/eye_upright_ps_uint.h",
       "sha256": "3CA0C25C28D4EBD90047E1A047FEBB3708AF5EDEF50BA47EFC8721A06B3E8CEA",
       "bytes": 5631
@@ -1340,16 +1370,6 @@
       "path": "native-source/src/stereo/eye_upright_vs.h",
       "sha256": "CF7F704DD50A42162D91A7E10092833C360D7B5D2C00C1A3E7E6B39CB6792DEF",
       "bytes": 4735
-    },
-    {
-      "path": "native-source/src/stereo/eye_upright.h",
-      "sha256": "59477728B032F6D00AA23DAAEA05CF127682AB6A0CC3FE52CC4660ABFB639860",
-      "bytes": 3938
-    },
-    {
-      "path": "native-source/src/stereo/eye_upright.hlsl",
-      "sha256": "FE74DF55974FBE8D7E7FEEB697013FEA2D23C44C69E0F14FA6DCAA3CDCA8E0FE",
-      "bytes": 507
     },
     {
       "path": "native-source/src/stereo/focus_capture.h",
@@ -1367,14 +1387,14 @@
       "bytes": 7221
     },
     {
-      "path": "native-source/src/stereo/focus_projection_runtime.h",
-      "sha256": "20F9C0B9AA96557057889B31F8C209A9812146A80A937469686EC437681DB4ED",
-      "bytes": 7741
-    },
-    {
       "path": "native-source/src/stereo/focus_projection.h",
       "sha256": "66DAE406F150EC66DC1395F69D2B16A47BB112D1C5D0AD57AAF55880278AF924",
       "bytes": 1768
+    },
+    {
+      "path": "native-source/src/stereo/focus_projection_runtime.h",
+      "sha256": "20F9C0B9AA96557057889B31F8C209A9812146A80A937469686EC437681DB4ED",
+      "bytes": 7741
     },
     {
       "path": "native-source/src/stereo/initial_pose_key.h",
@@ -1452,6 +1472,11 @@
       "bytes": 1690
     },
     {
+      "path": "native-source/src/stereo/numeric_residency.h",
+      "sha256": "CDA6114A0C64C5DDB7EB828B8B63DB42659A61BAD74F6F56FB7A2665951BABCE",
+      "bytes": 1217
+    },
+    {
       "path": "native-source/src/stereo/numeric_residency_log.h",
       "sha256": "42C9E167799E65D45A7BC77BE82B5BF9084F8CF7221D3D7EAA5D270DD1A3A7DB",
       "bytes": 1467
@@ -1460,11 +1485,6 @@
       "path": "native-source/src/stereo/numeric_residency_persist.h",
       "sha256": "B9E41D8496E2B615D243E48E57A4FD0BA9842EE8D18C204E1427F97A9ADF880A",
       "bytes": 6915
-    },
-    {
-      "path": "native-source/src/stereo/numeric_residency.h",
-      "sha256": "CDA6114A0C64C5DDB7EB828B8B63DB42659A61BAD74F6F56FB7A2665951BABCE",
-      "bytes": 1217
     },
     {
       "path": "native-source/src/stereo/panel_eye_bridge.h",
@@ -1687,6 +1707,11 @@
       "bytes": 5181
     },
     {
+      "path": "native-source/src/stereo/world_drag.h",
+      "sha256": "E649E78382581B728983078BC4E3B70FAAB693E608106A11634E2A173F031940",
+      "bytes": 6856
+    },
+    {
       "path": "native-source/src/stereo/world_drag_actions.h",
       "sha256": "8BE6AA76569D256DE2F008F652FBFE7412CF6AFB8FAA52F5E466612E671A1D91",
       "bytes": 5077
@@ -1705,11 +1730,6 @@
       "path": "native-source/src/stereo/world_drag_runtime.h",
       "sha256": "7C79EA6D657A59D434B9AB90FFC909A1F90C165B2C3CE51334118F32C27021F4",
       "bytes": 7072
-    },
-    {
-      "path": "native-source/src/stereo/world_drag.h",
-      "sha256": "E649E78382581B728983078BC4E3B70FAAB693E608106A11634E2A173F031940",
-      "bytes": 6856
     },
     {
       "path": "native-source/src/stereo/world_scale_config.h",
@@ -1897,9 +1917,9 @@
       "bytes": 3759
     },
     {
-      "path": "native-source/third_party/openxr/include/openxr/openxr_platform_defines.h",
-      "sha256": "7DC30AD27F1082A71F84F5F5ADF10762558FC9FE57FDC7628D796D22BE3B0DBE",
-      "bytes": 4026
+      "path": "native-source/third_party/openxr/include/openxr/openxr.h",
+      "sha256": "17E8E334A7AD0C6933B31143330D4771010E393DF5D5D9D08566EB15BB171A15",
+      "bytes": 694129
     },
     {
       "path": "native-source/third_party/openxr/include/openxr/openxr_platform.h",
@@ -1907,9 +1927,9 @@
       "bytes": 35203
     },
     {
-      "path": "native-source/third_party/openxr/include/openxr/openxr.h",
-      "sha256": "17E8E334A7AD0C6933B31143330D4771010E393DF5D5D9D08566EB15BB171A15",
-      "bytes": 694129
+      "path": "native-source/third_party/openxr/include/openxr/openxr_platform_defines.h",
+      "sha256": "7DC30AD27F1082A71F84F5F5ADF10762558FC9FE57FDC7628D796D22BE3B0DBE",
+      "bytes": 4026
     },
     {
       "path": "native-source/third_party/openxr/LICENSE.txt",
@@ -1933,12 +1953,12 @@
     },
     {
       "path": "native-source/variants/Clean/native-build.json",
-      "sha256": "E71F3C99A8FF1D171BBDFB56B6F46BB6174787B0362E60706A6F4CD07EEC5589",
-      "bytes": 7002
+      "sha256": "66F693B903981E96B0A14951547902AF0FDD9842E810979D54EB9D5A2E415FCA",
+      "bytes": 7212
     },
     {
       "path": "native-source/variants/Clean/overlay/build-config/probe_config.h",
-      "sha256": "C48CC9337CC0937A61E1F64528278F543655D186A0558F9B3ACF4D4AA57A8963",
+      "sha256": "F56F0FCBDEC8FF3DAFBC401190D99C86F7C02DE743176DA51C71B1F58263ED0F",
       "bytes": 740
     },
     {
@@ -1987,6 +2007,11 @@
       "bytes": 6092
     },
     {
+      "path": "native-source/variants/common/src/bootstrap/runtime_logging.h",
+      "sha256": "07E1F7FC2D3847D7665A99CA00C1967DD666FFBF912078F8DDC0FF8273F771D2",
+      "bytes": 1302
+    },
+    {
       "path": "native-source/variants/common/src/bootstrap/runtime_logging_config.h",
       "sha256": "E1BAE9CF20FD78CD494C54B65925E90877E9AB455B3D4D228B6ECCC4148F788D",
       "bytes": 1568
@@ -1995,11 +2020,6 @@
       "path": "native-source/variants/common/src/bootstrap/runtime_logging_state.h",
       "sha256": "E430355C3AFA5CEAEF635078D314357DA27F53A767C9D7D1DC7D19E0125AB4E5",
       "bytes": 467
-    },
-    {
-      "path": "native-source/variants/common/src/bootstrap/runtime_logging.h",
-      "sha256": "07E1F7FC2D3847D7665A99CA00C1967DD666FFBF912078F8DDC0FF8273F771D2",
-      "bytes": 1302
     },
     {
       "path": "native-source/variants/common/src/bootstrap/version_proxy.c",
@@ -2012,14 +2032,14 @@
       "bytes": 1506
     },
     {
-      "path": "native-source/variants/common/src/bootstrap/xr_bootstrap_state.h",
-      "sha256": "F8A6ABE847B0E9882F0E179EEC675228E7A7B9E1F3C9443B7E80B1328DBFEB24",
-      "bytes": 5675
-    },
-    {
       "path": "native-source/variants/common/src/bootstrap/xr_bootstrap.c",
       "sha256": "62013A74C1B65EDC7AD2A31EA41E379C380F1EA6BF048BE6457D574ADB3C5D30",
       "bytes": 6113
+    },
+    {
+      "path": "native-source/variants/common/src/bootstrap/xr_bootstrap_state.h",
+      "sha256": "F8A6ABE847B0E9882F0E179EEC675228E7A7B9E1F3C9443B7E80B1328DBFEB24",
+      "bytes": 5675
     },
     {
       "path": "native-source/variants/common/src/panel/panel_capture.h",
@@ -2032,14 +2052,14 @@
       "bytes": 1156
     },
     {
-      "path": "native-source/variants/common/src/panel/panel_xr_retry.h",
-      "sha256": "5E884B866431BDF9A327095AEC4688DB0B35B87ED29306460A91D002A89AC2DF",
-      "bytes": 1935
-    },
-    {
       "path": "native-source/variants/common/src/panel/panel_xr.h",
       "sha256": "E352019D2F2C3DE16E983C9A1FAD56480EFD47A251D77E04F360946711C7AA17",
       "bytes": 21892
+    },
+    {
+      "path": "native-source/variants/common/src/panel/panel_xr_retry.h",
+      "sha256": "5E884B866431BDF9A327095AEC4688DB0B35B87ED29306460A91D002A89AC2DF",
+      "bytes": 1935
     },
     {
       "path": "native-source/variants/common/src/stereo/activity_canvas_scale.h",
@@ -2047,14 +2067,14 @@
       "bytes": 2039
     },
     {
-      "path": "native-source/variants/common/src/stereo/activity_canvas_scope_runtime.h",
-      "sha256": "24F959B2CCD6788DD85B3EFA4ACE757A600D62120E944FC583B27498E0D6F51E",
-      "bytes": 8733
-    },
-    {
       "path": "native-source/variants/common/src/stereo/activity_canvas_scope.h",
       "sha256": "522680EB1D3BFDB2C5D6A6CD83F1DE200E72A081EC8EDFCDFE52AEF3BBF8096A",
       "bytes": 3068
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_canvas_scope_runtime.h",
+      "sha256": "24F959B2CCD6788DD85B3EFA4ACE757A600D62120E944FC583B27498E0D6F51E",
+      "bytes": 8733
     },
     {
       "path": "native-source/variants/common/src/stereo/activity_eye_group.h",
@@ -2132,14 +2152,14 @@
       "bytes": 6805
     },
     {
-      "path": "native-source/variants/common/src/stereo/activity_ui_transition_group.h",
-      "sha256": "BC2C42FFA847FCCA40C7463E20808C2C0320798EAA588FCFADFBA490F4EB425C",
-      "bytes": 2045
-    },
-    {
       "path": "native-source/variants/common/src/stereo/activity_ui_transition.h",
       "sha256": "69F93300409A896B15FB0A28F68CBDB5149523642A4A0C6180124EE3138CB555",
       "bytes": 3324
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/activity_ui_transition_group.h",
+      "sha256": "BC2C42FFA847FCCA40C7463E20808C2C0320798EAA588FCFADFBA490F4EB425C",
+      "bytes": 2045
     },
     {
       "path": "native-source/variants/common/src/stereo/activity_viewport.h",
@@ -2157,6 +2177,11 @@
       "bytes": 697
     },
     {
+      "path": "native-source/variants/common/src/stereo/aux_panel.h",
+      "sha256": "693294659717762BB38C31E672A3CAAD782D8330B34DCB70470874AAD566EACB",
+      "bytes": 23347
+    },
+    {
       "path": "native-source/variants/common/src/stereo/aux_panel_config.h",
       "sha256": "59394783B2314F20638E87E88C576BEA3FCE62D9760F08001310B047D8109317",
       "bytes": 2765
@@ -2165,11 +2190,6 @@
       "path": "native-source/variants/common/src/stereo/aux_panel_placement.h",
       "sha256": "7F18D8E0430BB12EDF80175D7897701AB2E5ACB89591F8B45FF3055F273C9190",
       "bytes": 5592
-    },
-    {
-      "path": "native-source/variants/common/src/stereo/aux_panel.h",
-      "sha256": "693294659717762BB38C31E672A3CAAD782D8330B34DCB70470874AAD566EACB",
-      "bytes": 23347
     },
     {
       "path": "native-source/variants/common/src/stereo/bank_fence_observe.h",
@@ -2197,14 +2217,14 @@
       "bytes": 11495
     },
     {
-      "path": "native-source/variants/common/src/stereo/camera_data_settings_binding.h",
-      "sha256": "9A39FDC93950542D33263C821992E6A5500891C9D1D7AF6252701FBA8F59742D",
-      "bytes": 2198
-    },
-    {
       "path": "native-source/variants/common/src/stereo/camera_data_settings.h",
       "sha256": "69A695B6ADE55E34B50E611FFAFAD5DFD06828A671FAEAE40AABA440CFD67389",
       "bytes": 5067
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/camera_data_settings_binding.h",
+      "sha256": "9A39FDC93950542D33263C821992E6A5500891C9D1D7AF6252701FBA8F59742D",
+      "bytes": 2198
     },
     {
       "path": "native-source/variants/common/src/stereo/camera_follow_config.h",
@@ -2272,24 +2292,24 @@
       "bytes": 469
     },
     {
-      "path": "native-source/variants/common/src/stereo/composition_bridge_image_binding.h",
-      "sha256": "9A7848E2C1DFA530C374B182FE7DC50473007A6BCC001058C42EBBF3018221CB",
-      "bytes": 3233
-    },
-    {
       "path": "native-source/variants/common/src/stereo/composition_bridge_image.h",
       "sha256": "BFAD10BF33B0D78339E6FF89FCD33AA624643AFE199160BE3C5A1DD118C27C05",
       "bytes": 3551
     },
     {
-      "path": "native-source/variants/common/src/stereo/composition_camera_plan_binding.h",
-      "sha256": "3013019BB92F5035A44308F492245E498A0C391A61D640635DD273BBC659E1CB",
-      "bytes": 1701
+      "path": "native-source/variants/common/src/stereo/composition_bridge_image_binding.h",
+      "sha256": "9A7848E2C1DFA530C374B182FE7DC50473007A6BCC001058C42EBBF3018221CB",
+      "bytes": 3233
     },
     {
       "path": "native-source/variants/common/src/stereo/composition_camera_plan.h",
       "sha256": "39DC828EA3C6B8BBE61564146CBD221F75CEF6E64A9AC1DA5600A8EA800639C1",
       "bytes": 2326
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/composition_camera_plan_binding.h",
+      "sha256": "3013019BB92F5035A44308F492245E498A0C391A61D640635DD273BBC659E1CB",
+      "bytes": 1701
     },
     {
       "path": "native-source/variants/common/src/stereo/controller_actions.h",
@@ -2402,6 +2422,11 @@
       "bytes": 3883
     },
     {
+      "path": "native-source/variants/common/src/stereo/eye_event_notice.h",
+      "sha256": "9F446800C9713A62D2FADECE20F0C739071AE11D001DD53ABD615F4CB887C1F9",
+      "bytes": 5582
+    },
+    {
       "path": "native-source/variants/common/src/stereo/eye_event_notice_integration.c",
       "sha256": "6E1DF411FE8A4322FE87EFE3CC4749C5AA3687D43F48E87C99BA1FD9E840B8EF",
       "bytes": 2131
@@ -2410,11 +2435,6 @@
       "path": "native-source/variants/common/src/stereo/eye_event_notice_native.c",
       "sha256": "8A0EA9877C197B766525DC3E15F8606B3FF736F281C5F210B65ECC871A19B92D",
       "bytes": 716
-    },
-    {
-      "path": "native-source/variants/common/src/stereo/eye_event_notice.h",
-      "sha256": "9F446800C9713A62D2FADECE20F0C739071AE11D001DD53ABD615F4CB887C1F9",
-      "bytes": 5582
     },
     {
       "path": "native-source/variants/common/src/stereo/eye_flight_backend.c",
@@ -2502,6 +2522,11 @@
       "bytes": 1709
     },
     {
+      "path": "native-source/variants/common/src/stereo/eye_upright.h",
+      "sha256": "59477728B032F6D00AA23DAAEA05CF127682AB6A0CC3FE52CC4660ABFB639860",
+      "bytes": 3938
+    },
+    {
       "path": "native-source/variants/common/src/stereo/eye_upright_ps_uint.h",
       "sha256": "3CA0C25C28D4EBD90047E1A047FEBB3708AF5EDEF50BA47EFC8721A06B3E8CEA",
       "bytes": 5631
@@ -2517,9 +2542,9 @@
       "bytes": 4735
     },
     {
-      "path": "native-source/variants/common/src/stereo/eye_upright.h",
-      "sha256": "59477728B032F6D00AA23DAAEA05CF127682AB6A0CC3FE52CC4660ABFB639860",
-      "bytes": 3938
+      "path": "native-source/variants/common/src/stereo/focus_projection.h",
+      "sha256": "4B261E85604BC060CC201EFA13A5BC159B24B19F7C9B16D41A012633CB83E9FD",
+      "bytes": 2189
     },
     {
       "path": "native-source/variants/common/src/stereo/focus_projection_runtime.h",
@@ -2527,19 +2552,14 @@
       "bytes": 7767
     },
     {
-      "path": "native-source/variants/common/src/stereo/focus_projection.h",
-      "sha256": "4B261E85604BC060CC201EFA13A5BC159B24B19F7C9B16D41A012633CB83E9FD",
-      "bytes": 2189
+      "path": "native-source/variants/common/src/stereo/il2cpp_export.h",
+      "sha256": "5335E0DBD73E59A3F9716537F8F7EBDD79479E02056495AEF4741EE4CB555A52",
+      "bytes": 4754
     },
     {
       "path": "native-source/variants/common/src/stereo/il2cpp_export_profiles.h",
-      "sha256": "4C114C2C6D3A8A7E192FBDEF84FC358ABB90CD35D7AF6534F045971AD1FADB92",
-      "bytes": 14888
-    },
-    {
-      "path": "native-source/variants/common/src/stereo/il2cpp_export.h",
-      "sha256": "F9DD294FE74A16EAF588A9311412B05C93BCE7DD2C623D2F95083F3A237CF94B",
-      "bytes": 4102
+      "sha256": "65DC6EF6CDB88E6B63FC9E9A3729EB957F7AB4D63A781299E9F7E1A00B7D479D",
+      "bytes": 28026
     },
     {
       "path": "native-source/variants/common/src/stereo/initial_pose_key.h",
@@ -2547,14 +2567,14 @@
       "bytes": 463
     },
     {
-      "path": "native-source/variants/common/src/stereo/late_relocate_runtime.h",
-      "sha256": "7A2EE3E6399946987C6A5551E36AF5BA0C9ACD371FDBC63A9B0AFD798CFC4030",
-      "bytes": 2698
-    },
-    {
       "path": "native-source/variants/common/src/stereo/late_relocate.h",
       "sha256": "FF65DC76F3D685042E19A9740D81FE35C28B3893E8BA611E47FB97822903862A",
       "bytes": 6088
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/late_relocate_runtime.h",
+      "sha256": "7A2EE3E6399946987C6A5551E36AF5BA0C9ACD371FDBC63A9B0AFD798CFC4030",
+      "bytes": 2698
     },
     {
       "path": "native-source/variants/common/src/stereo/main_multicamera_observe.h",
@@ -2627,6 +2647,11 @@
       "bytes": 1690
     },
     {
+      "path": "native-source/variants/common/src/stereo/numeric_residency.h",
+      "sha256": "CDA6114A0C64C5DDB7EB828B8B63DB42659A61BAD74F6F56FB7A2665951BABCE",
+      "bytes": 1217
+    },
+    {
       "path": "native-source/variants/common/src/stereo/numeric_residency_log.h",
       "sha256": "42C9E167799E65D45A7BC77BE82B5BF9084F8CF7221D3D7EAA5D270DD1A3A7DB",
       "bytes": 1467
@@ -2635,11 +2660,6 @@
       "path": "native-source/variants/common/src/stereo/numeric_residency_persist.h",
       "sha256": "D0640D3AE99F743EB4A9B9B2DEC12E0A3241D84A3BF0B13DA1EB6057A1519F89",
       "bytes": 7000
-    },
-    {
-      "path": "native-source/variants/common/src/stereo/numeric_residency.h",
-      "sha256": "CDA6114A0C64C5DDB7EB828B8B63DB42659A61BAD74F6F56FB7A2665951BABCE",
-      "bytes": 1217
     },
     {
       "path": "native-source/variants/common/src/stereo/panel_eye_bridge.h",
@@ -2665,6 +2685,21 @@
       "path": "native-source/variants/common/src/stereo/performance_runtime.h",
       "sha256": "5754085DBE156B1E1FBCAD9884A71775F8AC42060339F271FEDA59A7FE9E22D9",
       "bytes": 7267
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/platform/haoplay_30_il2cpp_api_block.json",
+      "sha256": "5AB12FA364E0B5818B64B950A1FBB2196AA773CBD9D6828AFC638CF6F6A3F88C",
+      "bytes": 13769
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/platform/steam_30_il2cpp_api_block.json",
+      "sha256": "33958E5A66B6E0E06DAAEF72AE8F88E290D29FB8AED0B79B31A52AD159B606D3",
+      "bytes": 13769
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/platform/steam_il2cpp_api_block.json",
+      "sha256": "8C144C61B03E902287027BCF4778C96DB8BCE6D96BD3FE3D2FE0E34AB219407B",
+      "bytes": 13767
     },
     {
       "path": "native-source/variants/common/src/stereo/pose_apply.h",
@@ -2857,11 +2892,6 @@
       "bytes": 6855
     },
     {
-      "path": "native-source/variants/common/src/stereo/touch_p3_runtime.h",
-      "sha256": "1A222607BC5ECC79DFF1F686D4347A754C1B863649D3935D9D6A47A585CEAB9E",
-      "bytes": 47984
-    },
-    {
       "path": "native-source/variants/common/src/stereo/touch2_capacity.h",
       "sha256": "C65AA0427C466AF0BD50576DC0542E20F3FB191EDA48B36B4C83878C7BC615FA",
       "bytes": 344
@@ -2880,6 +2910,11 @@
       "path": "native-source/variants/common/src/stereo/touch3_alignment.h",
       "sha256": "6EB902E14572132E0B06CB5606AC135BFBAD6AC2ADBE2A45D03E20AFB0F67779",
       "bytes": 4683
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/touch_p3_runtime.h",
+      "sha256": "1A222607BC5ECC79DFF1F686D4347A754C1B863649D3935D9D6A47A585CEAB9E",
+      "bytes": 47984
     },
     {
       "path": "native-source/variants/common/src/stereo/transition_hold.h",
@@ -2902,6 +2937,11 @@
       "bytes": 5181
     },
     {
+      "path": "native-source/variants/common/src/stereo/world_drag.h",
+      "sha256": "E649E78382581B728983078BC4E3B70FAAB693E608106A11634E2A173F031940",
+      "bytes": 6856
+    },
+    {
       "path": "native-source/variants/common/src/stereo/world_drag_actions.h",
       "sha256": "8BE6AA76569D256DE2F008F652FBFE7412CF6AFB8FAA52F5E466612E671A1D91",
       "bytes": 5077
@@ -2920,11 +2960,6 @@
       "path": "native-source/variants/common/src/stereo/world_drag_runtime.h",
       "sha256": "4016186D7851999B95FF13542710FCDBE17176583087C6DC37EA1A05CC04F2DF",
       "bytes": 7171
-    },
-    {
-      "path": "native-source/variants/common/src/stereo/world_drag.h",
-      "sha256": "E649E78382581B728983078BC4E3B70FAAB693E608106A11634E2A173F031940",
-      "bytes": 6856
     },
     {
       "path": "native-source/variants/common/src/stereo/world_scale_config.h",
@@ -3117,9 +3152,9 @@
       "bytes": 3759
     },
     {
-      "path": "native-source/variants/common/third_party/openxr/include/openxr/openxr_platform_defines.h",
-      "sha256": "7DC30AD27F1082A71F84F5F5ADF10762558FC9FE57FDC7628D796D22BE3B0DBE",
-      "bytes": 4026
+      "path": "native-source/variants/common/third_party/openxr/include/openxr/openxr.h",
+      "sha256": "17E8E334A7AD0C6933B31143330D4771010E393DF5D5D9D08566EB15BB171A15",
+      "bytes": 694129
     },
     {
       "path": "native-source/variants/common/third_party/openxr/include/openxr/openxr_platform.h",
@@ -3127,9 +3162,9 @@
       "bytes": 35203
     },
     {
-      "path": "native-source/variants/common/third_party/openxr/include/openxr/openxr.h",
-      "sha256": "17E8E334A7AD0C6933B31143330D4771010E393DF5D5D9D08566EB15BB171A15",
-      "bytes": 694129
+      "path": "native-source/variants/common/third_party/openxr/include/openxr/openxr_platform_defines.h",
+      "sha256": "7DC30AD27F1082A71F84F5F5ADF10762558FC9FE57FDC7628D796D22BE3B0DBE",
+      "bytes": 4026
     },
     {
       "path": "native-source/variants/common/third_party/openxr/LICENSE.txt",
@@ -3148,12 +3183,12 @@
     },
     {
       "path": "native-source/variants/Dirty/native-build.json",
-      "sha256": "A97AF37D05F6E6C58A5F8734932AFEBFE85DA05BDD911FB3BE42F63D8A167D43",
-      "bytes": 7033
+      "sha256": "F599F059CB3493E37C5C0B035D016176988BE834D0F86CBA0906E723982E692B",
+      "bytes": 7244
     },
     {
       "path": "native-source/variants/Dirty/overlay/build-config/probe_config.h",
-      "sha256": "7ED887F06D39D900A09E4CE53EBD4A9E6485F8EBD108222B3B07618BBE45D3BD",
+      "sha256": "D57AD700C1F605509179D1DB6753162C6961AD53A6F190E33A8A22B13EF80A21",
       "bytes": 740
     },
     {
@@ -3253,23 +3288,23 @@
     },
     {
       "path": "README.en.md",
-      "sha256": "C27844E0DE5071BB3D8B35E91D537184B8878C646D16129ABB660FF494211A75",
-      "bytes": 7872
+      "sha256": "DCB70D17CB841B2FA306CD9194A690EB455EAD29F94E189BAF4B0AE4FD393576",
+      "bytes": 6327
     },
     {
       "path": "README.ja.md",
-      "sha256": "713A3917EB9E78C424C5E27177C3D0C47E048A3F36ACFF944AA7EBE2F31A3A36",
-      "bytes": 9476
+      "sha256": "01D9F73B61497C6D607CA2D731EFC2751B6C4D068F7EC0C9080EFCABB9E5E5DD",
+      "bytes": 7605
     },
     {
       "path": "README.md",
-      "sha256": "610DDA38A5C1EFB7B013B7237A4BA006BFCE20CBFDACF8E23CCC0DB02423F399",
-      "bytes": 8715
+      "sha256": "921C8B0C40E489CBC328DC5E8436F56B763B6146621C47A6BC3F0385111EF1EE",
+      "bytes": 6950
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "56200E18F46E829C09A7BB4BCED3778E62C00540F19BEC9FBFB4A258737BB4AF",
-      "bytes": 7323
+      "sha256": "D5E63EB203EC90C8CAE118E32CF21469E7E28F7EB4C022EE085423B705E1634E",
+      "bytes": 5972
     },
     {
       "path": "release/1.0.0.json",
@@ -3407,6 +3442,26 @@
       "bytes": 1149
     },
     {
+      "path": "release/1.3.4-Clean-native-proof.json",
+      "sha256": "ADF9F2695D13B701FAD4287B15AD142A793709BEA049C261BE590A930A50FC66",
+      "bytes": 330
+    },
+    {
+      "path": "release/1.3.4-core-source-manifest.txt",
+      "sha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
+      "bytes": 53298
+    },
+    {
+      "path": "release/1.3.4-Dirty-native-proof.json",
+      "sha256": "AD3C456D83A6473AB490E19EE15BB5E4BDFE1E1582D929038C6C91D22D4B8276",
+      "bytes": 330
+    },
+    {
+      "path": "release/1.3.4-native-metadata.json",
+      "sha256": "E62677DA1DF923CF3A06738A40D99A29B6C22000D2AB273DFC70AB079135B8E6",
+      "bytes": 996
+    },
+    {
       "path": "release/CHECKSUMS-1.1.1.sha256",
       "sha256": "0E42A44020859BFE131E7F43A4242F13F74C165BAD11DD3F007A59567D74EFEF",
       "bytes": 398
@@ -3457,13 +3512,18 @@
       "bytes": 398
     },
     {
+      "path": "release/CHECKSUMS-1.3.4.sha256",
+      "sha256": "9CD22964323CA93FAC06ED065A053FC55447DEEE34D4AEA896AD2A780BCA749D",
+      "bytes": 398
+    },
+    {
       "path": "release/CHECKSUMS.sha256",
-      "sha256": "1CF3052441E00C396441928BCA3DE845617FD9753E4513367139C40B61C9ADD8",
+      "sha256": "9CD22964323CA93FAC06ED065A053FC55447DEEE34D4AEA896AD2A780BCA749D",
       "bytes": 398
     },
     {
       "path": "release/Clean-package-manifest.json",
-      "sha256": "F96BE6FF2DB38985ADAB128D45E110985DAC0D1D76314AA09E497B2182D0A16C",
+      "sha256": "4618299A4D9B66E4E1C95646B211E1FE9A44AC7DFD1D91A6231CB405C9D44298",
       "bytes": 4683
     },
     {
@@ -3503,17 +3563,17 @@
     },
     {
       "path": "release/Dirty-package-manifest.json",
-      "sha256": "3E48AEF3EEED6A0A1ADFDDEA79F5DF5D2A35C5D70FD8A2899368870703FC6D07",
+      "sha256": "AF206258CF525C7BD42C584E1B55B4AAC006E6B094EF9C45D4989DA31B75804A",
       "bytes": 4683
     },
     {
       "path": "release/GF2VR-Clean-update.json",
-      "sha256": "5334D6FCB31A3A5124A60A7C4521CDA8380B8FAEEE39DD50DE13FB9B2754E649",
+      "sha256": "2FC96FE4A759E8AF9A1908298306FF4B83EE9D97F8CA353DCC59D1BCC11A6974",
       "bytes": 1201
     },
     {
       "path": "release/GF2VR-Dirty-update.json",
-      "sha256": "111E1C1D0D41E7B1DFC6C55E1C8469C5F5E65EFBB7E290801665E683A61838EC",
+      "sha256": "1A18117CCE14AA82A38D84B8EEC63EEB43C7141DAB8CD17F7A2D9F12F2A124A3",
       "bytes": 1201
     },
     {
@@ -3613,12 +3673,10 @@
     }
   },
   "currentNativeSourceIdentity": {
-    "algorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
-    "commonCoreSha256": "B572B3A249C1D91839B1BDA08A83FACE518C6BD409285223794420D18BF21C95",
-    "manifest": "release/common-source-manifest-1.2.0-collapsed.txt",
-    "nativeBytesUnchanged": true,
-    "installedDesktopContractsAndOriginalReleaseMetadataUnchanged": true,
-    "originalReleaseSourceManifest": "release/common-source-manifest-1.2.0.txt",
-    "proof": "release/1.2.0-collapsed-source-proof.json"
+    "algorithm": "SHA256 of sorted common source path NUL uppercase SHA256 rows joined LF, no trailing LF (same as003)",
+    "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837",
+    "manifest": "release/1.3.4-core-source-manifest.txt",
+    "nativeBytesUnchanged": false,
+    "runtimeAcceptance": "NOT_RUN"
   }
 }

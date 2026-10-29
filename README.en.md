@@ -8,7 +8,7 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
-**Compatible with both the Haoplay and Steam versions.** Both platforms use the same Clean/Dirty packages.
+Targets Haoplay and Steam. The current 3.0 compatibility build has passed static and automated checks; actual game/HMD operation has not yet been verified.
 
 **[Download the latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
