@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.5 — Crewdeck scene-transition cleanup fix
+
+Fixes blocked camera-group retirement after scene unloading destroys private VR UI cameras, as observed in the Steam/Darkwinter Crewdeck failure log. A failed disable call is tolerated only for the exact object verified destroyed. Live/unknown safety checks and existing settings are preserved.
+
+Actual Crewdeck recovery has not yet been confirmed in the game/HMD. Validation includes 27 modeled regression checks plus Clean/Dirty build and package checks.
+
+[1.3.5](../release-notes/1.3.5.en.md)
+
 ## 1.3.4 — Game update compatibility
 
 Adds API-name bindings for Haoplay 3.0.5388 and Steam 3.0.5400. The updated games renamed internal APIs, so the previous bindings could no longer find APIs required for VR initialization.

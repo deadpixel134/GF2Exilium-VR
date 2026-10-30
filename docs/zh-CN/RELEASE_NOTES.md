@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.5 — 修复Crewdeck场景切换清理问题
+
+修复场景卸载后已销毁的VR UI相机清理阻塞、导致下一组VR相机无法启用的问题，对应Steam/Darkwinter Crewdeck失败日志。仅对确认销毁的对象允许清理继续；存活或状态未知的安全检查及用户设置保持不变。
+
+尚未在实际游戏/HMD中确认Crewdeck问题已解决。已通过27项模拟回归检查及Clean/Dirty构建和安装包验证。
+
+[1.3.5](../release-notes/1.3.5.zh-CN.md)
+
 ## 1.3.4 — 游戏更新兼容性修复
 
 适配Haoplay 3.0.5388和Steam 3.0.5400更新后的内部API名称。游戏更新后，旧映射无法找到VR初始化所需的API，此版本修复了该映射问题。
