@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.5 — Crewdeckのシーン切替時の解放処理を修正
+
+シーン切替で破棄されたVR UIカメラの解放処理が停止し、次のVRカメラを受け入れられない問題を修正しました。Steam/DarkwinterのCrewdeck失敗ログで確認した経路への修正です。破棄済みと確認できたオブジェクトだけが対象で、生存中・状態不明の保護条件とユーザー設定を維持します。
+
+実際のゲーム・HMDでのCrewdeck修復は未確認です。27件のモデル回帰検査とClean/Dirtyのビルド・パッケージ検証を完了しました。
+
+[1.3.5](../release-notes/1.3.5.ja.md)
+
 ## 1.3.4 — ゲーム更新への互換性対応
 
 Haoplay 3.0.5388およびSteam 3.0.5400で変更された内部API名に対応しました。従来の接続情報ではVR初期化に必要なAPIを取得できなかった問題を修正しています。

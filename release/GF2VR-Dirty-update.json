@@ -2,33 +2,33 @@
   "schemaVersion": 1,
   "product": "GF2VR",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "channel": "stable",
-  "archiveName": "GF2VR-Native-SelfContained-Dirty-1.3.4.zip",
-  "archiveSha256": "878FA386E5FDFABCD78EC405F3CC65A284FE346EC584C1BDDC2C9D4765D41DC4",
-  "packageManifestSha256": "AF206258CF525C7BD42C584E1B55B4AAC006E6B094EF9C45D4989DA31B75804A",
+  "archiveName": "GF2VR-Native-SelfContained-Dirty-1.3.5.zip",
+  "archiveSha256": "B1C8947832DEB193AD07391F7F3FD083C7629B7CFD79DA2D48892BA826E4A86C",
+  "packageManifestSha256": "882B61AB390ACE665FF7B9BB64CB4029719D158EABE10D15A6DB2AC38A1A9CCD",
   "installerFiles": [
     {
-      "path": "GF2VR.Installer.exe",
-      "sha256": "C981AE25910E8F42F8A0AD73FF41CA3D2CCA81C9811E2C14B914152FDCCFB805",
-      "bytes": 51597583
+      "sha256": "AFC8FC2C9C7A8614923A7F76E9BDB9D9B83BF210C09992F65DFD2A4D4D3EC58E",
+      "bytes": 51597583,
+      "path": "GF2VR.Installer.exe"
     },
     {
-      "path": "GF2VR.Installer.dll",
-      "sha256": "9B5E523F401613D2B5259871B65A05BD8548E8A3118BC16351BAE5DE5E5FC5E2",
-      "bytes": 523776
+      "sha256": "31F880C263A08F464CE913A243085E2223106BB59AF597F082419C543C70273E",
+      "bytes": 523776,
+      "path": "GF2VR.Installer.dll"
     },
     {
-      "path": "GF2VR.Installer.deps.json",
-      "sha256": "E36CAD150BDD1AAA2A56A296643BA57555A1EAFE0E19685368D5621F125B0AD3",
-      "bytes": 31144
+      "sha256": "4DEAD16FB64B1AF14CFA31D37FB6F59189CF413E45A2AEBDFB6461EE19996FEA",
+      "bytes": 31144,
+      "path": "GF2VR.Installer.deps.json"
     },
     {
-      "path": "GF2VR.Installer.runtimeconfig.json",
       "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3",
-      "bytes": 529
+      "bytes": 529,
+      "path": "GF2VR.Installer.runtimeconfig.json"
     }
   ],
   "buildFlavor": "Dirty",
-  "commonCoreSha256": "F25F2877E742D43AB5A000839D34C715F31E65848B6D8A9CA80DE8E9E8587837"
+  "commonCoreSha256": "3F7BA42C7A956ED617AAF18AD2E69FF9F0D081FEC962723652E02426B71EFC4F"
 }

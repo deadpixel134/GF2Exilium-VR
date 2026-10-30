@@ -1,0 +1,9 @@
+{
+  "build_id": "GF2VR-CLEAN-135-008",
+  "flavor": "Clean",
+  "dll_sha256": "1A3D744F880879EA73675FBF726F997BCE99B0BBDD993C2A1A73E5561C13C579",
+  "exactMatch": true,
+  "collapsed_manifest_sha256": "5A52CD76CCB9756B37708070649BF24853E7C862040D1D72BD548663A967D5F8",
+  "runtimeAcceptance": "NOT_RUN",
+  "gameLaunches": 0
+}

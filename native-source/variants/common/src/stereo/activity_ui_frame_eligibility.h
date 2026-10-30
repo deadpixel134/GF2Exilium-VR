@@ -26,8 +26,13 @@ static int activity_ui_stop_layer(ActivityEyeGroup *g,ActivityUiLayer *l) {
     unsigned char off=0;void *args[]={&off};int ok=1;
     for(unsigned eye=0;eye<2;++eye) {
         ManagedEyeSlot *e=&l->eyes.eyes[eye];
-        if(e->camera_root && !managed_eye_call(a,a->set_enabled,e->camera,args,0))ok=0;
-        if(e->object_root && !managed_eye_call(a,a->set_active,e->object,args,0))ok=0;
+        /* Scene unload can destroy these private objects before group drain.
+           A failed setter is safe only when that exact rooted object is
+           verified dead; live/unknown failures must retain enrollment. */
+        if(e->camera_root && !managed_eye_call(a,a->set_enabled,e->camera,args,0) &&
+           !managed_eye_verified_dead(a,e->camera))ok=0;
+        if(e->object_root && !managed_eye_call(a,a->set_active,e->object,args,0) &&
+           !managed_eye_verified_dead(a,e->object))ok=0;
         if(e->camera_root && !managed_eye_verified_dead(a,e->camera)) {
             unsigned active=1;
             if(!generic_source_active(g->source,e->camera,&active) || active!=0)ok=0;

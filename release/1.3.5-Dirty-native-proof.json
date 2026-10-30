@@ -1,0 +1,9 @@
+{
+  "build_id": "GF2VR-DIRTY-135-008",
+  "flavor": "Dirty",
+  "dll_sha256": "86B3B2AE3847FCFCE401016AF0BAB5F3F2FE0C4BFFEB22616D686E8114C95832",
+  "exactMatch": true,
+  "collapsed_manifest_sha256": "5A52CD76CCB9756B37708070649BF24853E7C862040D1D72BD548663A967D5F8",
+  "runtimeAcceptance": "NOT_RUN",
+  "gameLaunches": 0
+}
