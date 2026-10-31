@@ -19,6 +19,12 @@ static void bootstrap_after_return(unsigned long long n);
 __declspec(dllimport) HINSTANCE WINAPI LoadLibraryExW(const unsigned short *,HANDLE,DWORD);
 __declspec(dllimport) void * WINAPI GetProcAddress(HINSTANCE,const char *);
 static unsigned bootstrap_started,stop_requested,published_phase;
+#ifdef GF2VR_DEFER_CONSUMERS_UNTIL_HMD
+/* Monotonic worker publication, independent of subsequent session loss.
+   Before an HMD exists, leave the game's rendering/input paths untouched.
+   After activation, main-thread retirement must keep running even on loss. */
+static unsigned bootstrap_consumers_ready;
+#endif
 #ifdef BOUNDARY_TEST
 static BootstrapApi worker_test_api;
 static unsigned worker_test_enabled;
@@ -74,6 +80,10 @@ static DWORD WINAPI bootstrap_worker(void *unused) {
         }
         if(module) bs_step(&state);
         __atomic_store_n(&published_phase,state.phase,__ATOMIC_RELEASE);
+#ifdef GF2VR_DEFER_CONSUMERS_UNTIL_HMD
+        if(state.phase==BS_INSTANCE_SYSTEM_READY)
+            __atomic_store_n(&bootstrap_consumers_ready,1,__ATOMIC_RELEASE);
+#endif
         if(last_phase!=(unsigned)state.phase || last_result!=state.result ||
            last_generation!=state.generation || last_loader_error!=loader_error) {
             bootstrap_report(&state,loader_error);
@@ -88,6 +98,9 @@ static DWORD WINAPI bootstrap_worker(void *unused) {
     bootstrap_report(&state,0); return 0;
 }
 static void bootstrap_after_return(U64 n) {
+#ifdef GF2VR_DEFER_CONSUMERS_UNTIL_HMD
+    if(__atomic_load_n(&bootstrap_consumers_ready,__ATOMIC_ACQUIRE))
+#endif
     GF2VR_MAIN_TICK(n);
     if(n<2 || GetCurrentThreadId()!=__atomic_load_n(&first_tid,__ATOMIC_ACQUIRE)) return;
     unsigned zero=0;

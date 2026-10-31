@@ -19,6 +19,11 @@ Targets Haoplay and Steam. The current 3.0 compatibility build has passed static
 
 Actual Crewdeck recovery has not yet been confirmed in the game/HMD. Validation includes 27 modeled regression checks plus Clean/Dirty build and package checks.
 
+
+[1.3.6 — Protect startup without an HMD](docs/release-notes/1.3.6.en.md)
+
+Addresses a Steam report of startup failure or crashes after minutes when no HMD is connected. No crash stack was supplied, and resolution in the affected game environment is not yet confirmed. Validation covers 21 bootstrap boundary checks, existing recovery/clock/Crewdeck tests, and Clean/Dirty builds and packages.
+
 ## What does it do?
 
 Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
