@@ -402,6 +402,7 @@ static void admission_transform(unsigned root,void *actual,void *expected);
 #else
 #define GF2VR_OBSERVER_ID "LOCAL-RENDER-INTEGRATION"
 #endif
+#define GF2VR_DEFER_CONSUMERS_UNTIL_HMD 1
 #define GF2VR_MAIN_TICK(n) stereo_local_tick(n)
 #define GF2VR_READY_RUN(s,module) panel_ready_run(s,module)
 #define GF2VR_RENDER_SCOPE_BEGIN(c,s) stereo_root_begin(c,s)

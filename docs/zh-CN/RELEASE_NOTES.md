@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.6 — 保护未连接HMD时的启动
+
+在OpenXR确认HMD可用之前，推迟VR渲染Hook和专用桥接初始化。保留启动后连接HMD的等待能力；VR启用后的清理和恢复流程保持运行。包含1.3.5的Crewdeck清理修复。
+
+针对Steam用户未连接HMD时启动失败或数分钟后崩溃的报告。未提供崩溃堆栈，尚未在受影响环境中确认解决。已通过21项初始化边界检查、现有恢复/时钟/Crewdeck测试及Clean/Dirty构建和安装包验证。
+
+[1.3.6](../release-notes/1.3.6.zh-CN.md)
+
 ## 1.3.5 — 修复Crewdeck场景切换清理问题
 
 修复场景卸载后已销毁的VR UI相机清理阻塞、导致下一组VR相机无法启用的问题，对应Steam/Darkwinter Crewdeck失败日志。仅对确认销毁的对象允许清理继续；存活或状态未知的安全检查及用户设置保持不变。

@@ -1,0 +1,17 @@
+{
+  "releaseVersion": "1.3.6",
+  "nativeBaseline": "NATIVE-BASELINE-009",
+  "nativeManifestSha256": "5B5BD7A69C7F2C0A384BBF5F05D20A1B54DFE5745445C8F4FD3C2108F1947987",
+  "commonCoreSha256": "E9BE54B53339847DA9EBB324BE2A1582EFF60F70FA5EB74EC80FE74322D2EAC1",
+  "variants": {
+    "Clean": {
+      "buildId": "GF2VR-CLEAN-136-009",
+      "dllSha256": "762E27B49A03D909C5CC91D6D2B25574D0AAFFC8617C0D805FD5C5AAC38E8E48"
+    },
+    "Dirty": {
+      "buildId": "GF2VR-DIRTY-136-009",
+      "dllSha256": "1C77D227501786288E8E47DE8B793B64163375DC59460FCF8BE4E67A7C00E1A4"
+    }
+  },
+  "runtimeAcceptance": "No-HMD isolation fix; exact crash fault and real-game resolution unconfirmed"
+}
