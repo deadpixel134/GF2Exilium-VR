@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.7 — 主页视角及游戏更新兼容性修复
+
+修复当前Steam和Haoplay版本的主页VR进入及角色背景预览视角。使用当前背景时间轴所属的活动摄像机，避免始终选取固定场景摄像机。移除Dirty触碰入口对旧游戏内部辅助类名称的依赖。
+
+Dirty主页视角已通过Steam和Haoplay用户实机测试。Clean使用相同核心代码并通过构建及安装包检查，尚未单独验证HMD。仅在已验证的引擎加载器结构不变时支持部分名称变更，不能保证所有未来更新的兼容性。没有新增Crewdeck或未连接HMD稳定性验证结论。
+
+[1.3.7](../release-notes/1.3.7.zh-CN.md)
+
 ## 1.3.6 — 保护未连接HMD时的启动
 
 在OpenXR确认HMD可用之前，推迟VR渲染Hook和专用桥接初始化。保留启动后连接HMD的等待能力；VR启用后的清理和恢复流程保持运行。包含1.3.5的Crewdeck清理修复。

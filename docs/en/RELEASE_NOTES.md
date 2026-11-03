@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.7 — Home viewpoint and game-update compatibility fixes
+
+Restores Home VR entry and character-background preview viewpoints on current Steam and Haoplay builds. Uses the active camera owned by the current background timeline instead of always choosing its fixed scene camera. Removes Dirty contact admission dependencies on obsolete game helper names.
+
+Dirty Home viewpoints passed user hardware tests on Steam and Haoplay. Clean shares the core changes and passed build/package checks; it has no separate HMD acceptance. Export renames are supported only under the validated unchanged engine-loader contract; future game updates may still require fixes. No new Crewdeck or no-HMD stability validation is claimed.
+
+[1.3.7](../release-notes/1.3.7.en.md)
+
 ## 1.3.6 — Protect startup without an HMD
 
 Defers VR render hooks and private bridge initialization until OpenXR reports an available HMD system. The game can continue waiting for a later HMD connection. Once VR has activated, existing cleanup and recovery continue through later loss. Includes the v1.3.5 Crewdeck cleanup fix.

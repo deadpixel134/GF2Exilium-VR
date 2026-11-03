@@ -33,6 +33,9 @@ static int il2cpp_export_index(const char *plain) {
     }
     return -1;
 }
+#ifdef GF2VR_ADAPTIVE_IL2CPP_EXPORTS
+#include "il2cpp_export_auto_runtime.h"
+#endif
 static int il2cpp_export_profile_select(Il2cppSymbolFn sym,void *module) {
     if(!sym || !module)return IL2CPP_PROFILE_UNKNOWN;
     if(__atomic_load_n(&il2cpp_profile_cache.module,__ATOMIC_ACQUIRE)==module)
@@ -62,7 +65,13 @@ static void *il2cpp_export_with(Il2cppSymbolFn sym,void *module,const char *plai
     if(!sym || !module || !il2cpp_export_name_valid(plain))return 0;
     void *found=sym(module,plain);if(found)return found;
     int profile=il2cpp_export_profile_select(sym,module);
-    if(profile!=IL2CPP_PROFILE_STEAM && profile!=IL2CPP_PROFILE_HAOPLAY30 && profile!=IL2CPP_PROFILE_STEAM30)return 0;
+    if(profile!=IL2CPP_PROFILE_STEAM && profile!=IL2CPP_PROFILE_HAOPLAY30 && profile!=IL2CPP_PROFILE_STEAM30){
+#ifdef GF2VR_ADAPTIVE_IL2CPP_EXPORTS
+        return il2cpp_export_auto(sym,module,plain);
+#else
+        return 0;
+#endif
+    }
     int index=il2cpp_export_index(plain);
     const char *mapped=index<0?0:(profile==IL2CPP_PROFILE_STEAM?il2cpp_export_names[index].steam:
         profile==IL2CPP_PROFILE_HAOPLAY30?il2cpp_export_names[index].haoplay30:il2cpp_export_names[index].steam30);

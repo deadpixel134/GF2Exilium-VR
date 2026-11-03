@@ -3,6 +3,12 @@
 #include "main_test_grant.h"
 #include "main_phase_roles.h"
 #include "activity_stack_plan.h"
+#ifdef GF2VR_TYPED_HOME_SOURCE
+#include "home_source_policy.h"
+#ifndef GF2VR_HOME_SOURCE_CAMERA
+#include "home_source_runtime.h"
+#endif
+#endif
 #ifdef GF2VR_GENERIC_SOURCE_ADAPTER
 #include "recent_camera_anchor.h"
 #endif
@@ -300,7 +306,13 @@ static int generic_source_unique(ActivitySourceGroup *a,const SourceTopologyEntr
         }
         else if(r->render_type!=2 && r->render_type!=3)goto done; /* Never omit an Overlay. */
     }
-    if(bases!=1)goto done;
+    if(bases!=1) {
+#ifdef GF2VR_TYPED_HOME_SOURCE
+        if(!home_source_choose(entries,a->input_roles,count,GF2VR_HOME_SOURCE_CAMERA(a),&base))goto done;
+#else
+        goto done;
+#endif
+    }
 #ifdef GF2VR_SKILL_SINGLE_SOURCE
     /* A changed mask/extent/target on the same already qualified object cannot
        reuse a Camera.CopyFrom allocation made for the old configuration. */
@@ -315,6 +327,10 @@ static int generic_source_unique(ActivitySourceGroup *a,const SourceTopologyEntr
         if(!activity_entry_same(&entries[i],&e) || !activity_role_same(&a->input_roles[i],&r))goto done;}
     unsigned active=0;if(!generic_source_active(a,entries[base].identity.source,&active) || !active ||
         a->source->cancelled || a->topology->cancelled)goto done;
+#ifdef GF2VR_TYPED_HOME_SOURCE
+    if(bases>1 && (GF2VR_HOME_SOURCE_CAMERA(a)!=entries[base].identity.source ||
+       a->source->cancelled || a->topology->cancelled))goto done;
+#endif
     RcaPlan plan={0};if(!generic_source_recent(a,entries,&base,1,&plan))goto done;
     a->topology->group_stamp=0;*index=base;*units=g->units_per_meter;
     main_test_revoke(g);g->identity=entries[base].identity;g->identity.units_per_meter=*units;g->state=MTG_ACTIVE;
