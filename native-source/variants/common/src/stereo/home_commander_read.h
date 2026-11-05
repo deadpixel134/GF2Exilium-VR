@@ -12,6 +12,9 @@ typedef struct {
 #ifdef GF2VR_HOME_TIMELINE_SOURCE
     int (*select_timeline)(void *,void **,unsigned *);
 #endif
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+    int (*select_primary)(void *,void **,unsigned *);
+#endif
 #ifdef GF2VR_HOME_PREVIEW_OBSERVE
     void *observed_secondary;
 #endif
@@ -26,9 +29,22 @@ static void *home_commander_read(HomeCommanderApi *h) {
     if(!game || !registry)goto done;
     h->stage=2;roots[0]=c->pin(game,1);roots[1]=c->pin(registry,1);
     if(!roots[0] || !roots[1] || c->object_class(game)!=h->game_class || c->object_class(registry)!=h->registry_class)goto done;
-    h->instance_read(game,h->current_kind,&current);h->instance_read(game,h->current,&main);
+#ifndef GF2VR_SEMANTIC_HOME_FIELDS
+    h->instance_read(game,h->current_kind,&current);
+#endif
+    h->instance_read(game,h->current,&main);
     h->stage=3;if(!main)goto done;roots[2]=c->pin(main,1);if(!roots[2])goto done;
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+    if(c->object_class(main)!=h->main_class)goto done;
+    h->instance_read(main,h->scene_kind,&current);
+    if(current!=3 && current!=41)goto done;
+    h->stage=10; /* Current-object / registry identity guard. */
+    {void *registered=0,*current_args[]={&current};
+     if(!managed_eye_call(c,h->lookup,registry,current_args,&registered) || registered!=main)goto done;}
+    h->stage=3;
+#else
     if((current!=3 && current!=41) || c->object_class(main)!=h->main_class)goto done;
+#endif
     h->instance_read(main,h->background_kind,&background);
     h->stage=4;if(background!=10)goto done;
     h->owns_current=1;
@@ -43,7 +59,13 @@ static void *home_commander_read(HomeCommanderApi *h) {
 #ifdef GF2VR_HOME_TIMELINE_SOURCE
     if(!h->select_timeline || (timeline=h->select_timeline(commander,&camera,&roots[4]))<0)goto done;
 #endif
-    if(!timeline)h->instance_read(commander,h->primary,&camera);
+    if(!timeline){
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+        if(!h->select_primary || h->select_primary(commander,&camera,&roots[4])!=1)goto done;
+#else
+        h->instance_read(commander,h->primary,&camera);
+#endif
+    }
     h->stage=6;if(!camera)goto done;if(!roots[4])roots[4]=c->pin(camera,1);
     if(!roots[4] || c->object_class(camera)!=c->camera_class)goto done;
     h->stage=7;
@@ -52,15 +74,33 @@ static void *home_commander_read(HomeCommanderApi *h) {
     int current_after=-1,background_after=-1,kind_after=-1;
     h->stage=8;
     if(!managed_eye_call(c,h->lookup,registry,args,&commander_after) || commander_after!=commander)goto done;
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+    h->stage=11;
+    {void *registered=0,*current_args[]={&current};
+     if(!managed_eye_call(c,h->lookup,registry,current_args,&registered) || registered!=main)goto done;}
+    h->stage=8;
+#endif
     h->static_read(h->game_singleton,&game_after);h->static_read(h->registry_singleton,&registry_after);
-    h->instance_read(game,h->current,&main_after);h->instance_read(game,h->current_kind,&current_after);
+    h->instance_read(game,h->current,&main_after);
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+    h->instance_read(main,h->scene_kind,&current_after);
+#else
+    h->instance_read(game,h->current_kind,&current_after);
+#endif
     h->instance_read(main,h->background_kind,&background_after);
     h->instance_read(commander,h->scene_kind,&kind_after);
 #ifdef GF2VR_HOME_TIMELINE_SOURCE
     {unsigned held=0;int next=h->select_timeline(commander,&camera_after,&held);
      if(held)c->unpin(held);if(next!=timeline)goto done;}
 #endif
-    if(!timeline)h->instance_read(commander,h->primary,&camera_after);
+    if(!timeline){
+#ifdef GF2VR_SEMANTIC_HOME_FIELDS
+        unsigned held=0;int status=h->select_primary(commander,&camera_after,&held);
+        if(held)c->unpin(held);if(status!=1)goto done;
+#else
+        h->instance_read(commander,h->primary,&camera_after);
+#endif
+    }
     if(game_after!=game || registry_after!=registry || main_after!=main || current_after!=current ||
        background_after!=10 || kind_after!=10 || camera_after!=camera)goto done;
     h->stage=9;result=camera;
