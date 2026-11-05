@@ -2,33 +2,33 @@
   "schemaVersion": 1,
   "product": "GF2VR",
   "repository": "deadpixel134/GF2Exilium-VR",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "channel": "stable",
-  "archiveName": "GF2VR-Native-SelfContained-Clean-1.3.7.zip",
-  "archiveSha256": "964F80F0FBBAB696A45D1E48FAD4EFD37E93B99A45D0F10D69BE7462FAB8944F",
-  "packageManifestSha256": "8CCCEAABB9D7E44AB3B47B4CE9C5722B610CEF9BA5D96CDD7C51BED83DEBCA01",
+  "archiveName": "GF2VR-Native-SelfContained-Clean-1.3.8.zip",
+  "archiveSha256": "EDE59AF33D645C1ED28D49D2B18FE4913D6FE40EC4739172F177BF25E4323D46",
+  "packageManifestSha256": "AA9C324FD744BAAA6508CB1DD898B964C61348A927D71D78A0AB12F336ECE391",
   "installerFiles": [
     {
-      "sha256": "E7376D6ED0CC62737FD3E23D055D99E1CDF91F675A62ECA0407D4BE38C989BEC",
-      "path": "GF2VR.Installer.exe",
-      "bytes": 51597583
+      "sha256": "26D40B9E30559067C648154D7A4EB68F01C8E2A140CADA22E81A39FE8B602CEA",
+      "bytes": 51597583,
+      "path": "GF2VR.Installer.exe"
     },
     {
-      "sha256": "E03183F63BE04D053CBDFAF7F31D8FC2A0C42329FAAD7A080048AA18900BFE3A",
-      "path": "GF2VR.Installer.dll",
-      "bytes": 523776
+      "sha256": "C5F26CEF3127231D32AA5D24C314F93704BA8C1E989EB832745463BC1085C9F0",
+      "bytes": 523776,
+      "path": "GF2VR.Installer.dll"
     },
     {
-      "sha256": "8784D2DAD350F19DC0DE6A10A2FDB57D839E4757C798AAB0E436FBAD367E0D30",
-      "path": "GF2VR.Installer.deps.json",
-      "bytes": 31144
+      "sha256": "9D9A1967D59097C8AC48F1A123003A95590360A32FC25A59992B460673EB2F26",
+      "bytes": 31144,
+      "path": "GF2VR.Installer.deps.json"
     },
     {
       "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3",
-      "path": "GF2VR.Installer.runtimeconfig.json",
-      "bytes": 529
+      "bytes": 529,
+      "path": "GF2VR.Installer.runtimeconfig.json"
     }
   ],
   "buildFlavor": "Clean",
-  "commonCoreSha256": "31C661A77C7BA58A1025BAA2C5177F16D7EF35D96AEAD2B342FC137617794186"
+  "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5"
 }

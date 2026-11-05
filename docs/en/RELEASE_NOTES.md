@@ -2,6 +2,14 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.8 — Improved resilience to game updates
+
+Reduces obfuscated class and field-name dependencies in Home scene/camera binding. Validates unique metadata shapes, current-scene registry identity and scene-owned camera relationships. Ambiguous or changed structures are rejected rather than guessed.
+
+The shipped Dirty DLL is byte-identical to the file hardware-tested by the user on Steam and Haoplay. Home VR and the requested character-background transitions passed. Clean shares the core changes and passed build/package checks; it has no separate HMD acceptance. Primary-camera ownership resolution was observed, but separate live fallback-camera VR publication was not verified. Compatibility with every future game update is not guaranteed.
+
+[1.3.8](../release-notes/1.3.8.en.md)
+
 ## 1.3.7 — Home viewpoint and game-update compatibility fixes
 
 Restores Home VR entry and character-background preview viewpoints on current Steam and Haoplay builds. Uses the active camera owned by the current background timeline instead of always choosing its fixed scene camera. Removes Dirty contact admission dependencies on obsolete game helper names.

@@ -2,11 +2,11 @@
 #nullable enable
 namespace GF2VR.Installer;
 internal static class VariantProfiles {
- internal const string CleanBuild="GF2VR-CLEAN-137-010";
- internal const string DirtyBuild="GF2VR-DIRTY-HOME-TIMELINE-FIX001";
- internal const string CleanHash="6725EE78794BE06D76A3AD21CC91A3332E5DDF536A5F4905D347DA428C523FEB";
- internal const string DirtyHash="5C0B8A19691C67640EDE605410DDAF604C6B89304F170FC0F0C1D88F99401FCF";
- internal const string CommonCoreSha256="31C661A77C7BA58A1025BAA2C5177F16D7EF35D96AEAD2B342FC137617794186";
+ internal const string CleanBuild="GF2VR-CLEAN-138-011";
+ internal const string DirtyBuild="GF2VR-DIRTY-HOME-SEMANTIC-FIELDS001";
+ internal const string CleanHash="69A63DC2E0C1901936FDFE2CC35217F5547029FB189A6E64AC30663FED260961";
+ internal const string DirtyHash="C6396AB3506E0C2B8BD9173B553C2B2E16C898FA94FA5DF164B531451391CF33";
+ internal const string CommonCoreSha256="1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5";
  internal static bool IsVariant(string? id) => id is CleanBuild or DirtyBuild;
  internal static string? Flavor(string? id) => id == CleanBuild ? "Clean" : id == DirtyBuild ? "Dirty" : null;
 }
