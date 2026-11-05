@@ -14,24 +14,6 @@ Targets Haoplay and Steam. The current 3.0 compatibility build has passed static
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
-
-[1.3.5 — Crewdeck scene-transition cleanup fix](docs/release-notes/1.3.5.en.md)
-
-Actual Crewdeck recovery has not yet been confirmed in the game/HMD. Validation includes 27 modeled regression checks plus Clean/Dirty build and package checks.
-
-
-[1.3.6 — Protect startup without an HMD](docs/release-notes/1.3.6.en.md)
-
-Addresses a Steam report of startup failure or crashes after minutes when no HMD is connected. No crash stack was supplied, and resolution in the affected game environment is not yet confirmed. Validation covers 21 bootstrap boundary checks, existing recovery/clock/Crewdeck tests, and Clean/Dirty builds and packages.
-
-## 1.3.7 — Home viewpoint and game-update compatibility fixes
-
-Restores Home VR entry and character-background preview viewpoints on current Steam and Haoplay builds. Uses the active camera owned by the current background timeline instead of always choosing its fixed scene camera. Removes Dirty contact admission dependencies on obsolete game helper names.
-
-Dirty Home viewpoints passed user hardware tests on Steam and Haoplay. Clean shares the core changes and passed build/package checks; it has no separate HMD acceptance. Export renames are supported only under the validated unchanged engine-loader contract; future game updates may still require fixes. No new Crewdeck or no-HMD stability validation is claimed.
-
-[1.3.7](docs/release-notes/1.3.7.en.md)
-
 ## What does it do?
 
 Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
