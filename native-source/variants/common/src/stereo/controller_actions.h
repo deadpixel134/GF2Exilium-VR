@@ -15,6 +15,9 @@ typedef struct {
 typedef struct {
     ControllerActionApi api;XrSession session;
     XrAction aim,primary,trigger,back;XrSpace space;
+#ifdef GF2VR_LIVE_SETTINGS
+    XrPath hands[2];XrSpace spaces[2]; /* Physical right/left, selected without reattaching. */
+#endif
     unsigned hand,ready,tracked,face_down,trigger_down,back_down;
 #ifdef GF2VR_CONTROLLER_FACE_CONFIG
     unsigned face_swap; /* Captured before shared-set profile binding/attachment. */
@@ -28,10 +31,18 @@ static void controller_actions_invalidate(ControllerActions *c) {
    Failure retains the handle; caller must retry instead of zeroing storage. */
 static int controller_actions_close(ControllerActions *c) {
     controller_actions_invalidate(c);c->ready=0;
+#ifdef GF2VR_LIVE_SETTINGS
+    for(unsigned h=0;h<2;++h)if(c->spaces[h]) {
+        if(!c->api.DestroySpace||c->api.DestroySpace(c->spaces[h])!=XR_SUCCESS)return 0;
+        c->spaces[h]=XR_NULL_HANDLE;
+    }
+    c->space=XR_NULL_HANDLE;
+#else
     if(c->space) {
         if(!c->api.DestroySpace || c->api.DestroySpace(c->space)!=XR_SUCCESS)return 0;
         c->space=XR_NULL_HANDLE;
     }
+#endif
     *c=(ControllerActions){0};return 1;
 }
 static void controller_action_text(char *out,const char *in) {while((*out++=*in++)) {}}
@@ -48,6 +59,10 @@ static int controller_actions_create(ControllerActions *c,const ControllerAction
        !api->CreateAction||!api->StringToPath||!api->CreateActionSpace||!api->DestroySpace||
        !api->GetActionStatePose||!api->GetActionStateBoolean||!api->LocateSpace)return 0;
     c->api=*api;c->session=session;c->hand=hand;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(api->StringToPath(instance,"/user/hand/right",&c->hands[0])!=XR_SUCCESS||
+       api->StringToPath(instance,"/user/hand/left",&c->hands[1])!=XR_SUCCESS)return 0;
+#endif
 #ifdef GF2VR_CONTROLLER_FACE_CONFIG
     /* Runtime configuration supersedes the historical fixed test-build flag. */
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
@@ -61,12 +76,23 @@ static int controller_actions_create(ControllerActions *c,const ControllerAction
     for(unsigned i=0;i<4;++i) {
         XrActionCreateInfo info={0};info.type=XR_TYPE_ACTION_CREATE_INFO;
         info.actionType=i?XR_ACTION_TYPE_BOOLEAN_INPUT:XR_ACTION_TYPE_POSE_INPUT;
+#ifdef GF2VR_LIVE_SETTINGS
+        info.countSubactionPaths=2;info.subactionPaths=c->hands;
+#endif
         controller_action_text(info.actionName,names[i]);controller_action_text(info.localizedActionName,names[i]);
         if(api->CreateAction(set,&info,handles[i])!=XR_SUCCESS || !*handles[i])return 0;
     }
     XrActionSpaceCreateInfo space={0};space.type=XR_TYPE_ACTION_SPACE_CREATE_INFO;
     space.action=c->aim;space.poseInActionSpace.orientation.w=1;
+#ifdef GF2VR_LIVE_SETTINGS
+    for(unsigned h=0;h<2;++h) {
+        space.subactionPath=c->hands[h];
+        if(api->CreateActionSpace(session,&space,&c->spaces[h])!=XR_SUCCESS||!c->spaces[h])return 0;
+    }
+    c->space=c->spaces[c->hand];
+#else
     if(api->CreateActionSpace(session,&space,&c->space)!=XR_SUCCESS || !c->space)return 0;
+#endif
     c->ready=1;return 1;
 }
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
@@ -81,6 +107,9 @@ static int controller_actions_create(ControllerActions *c,const ControllerAction
 static unsigned controller_actions_bindings(ControllerActions *c,XrInstance instance,
     unsigned profile,XrActionSuggestedBinding *out,unsigned capacity) {
     unsigned count=profile<2?4:2;
+#ifdef GF2VR_LIVE_SETTINGS
+    unsigned per_hand=count;count*=2;
+#endif
     if(!c||!c->ready||!instance||profile>3||!out||capacity<count)return 0;
     /* Keep immutable logical Primary/Back actions and exchange only their two
        within-hand paths. Trigger/aim/hand roles and unsupported profiles stay. */
@@ -96,14 +125,29 @@ static unsigned controller_actions_bindings(ControllerActions *c,XrInstance inst
 #elif defined(GF2VR_FACE_SWAP)
     swap=1;
 #endif
+#ifdef GF2VR_LIVE_SETTINGS
+    (void)swap;
+    for(unsigned h=0;h<2;++h) {
+    const char **paths=h?(profile==0?left_touch:left_index):right;
+#else
     const char **paths=c->hand?(profile==0?left_touch:left_index):right;
+#endif
     XrAction actions[]={c->aim,c->trigger,c->primary,c->back};
+#ifdef GF2VR_LIVE_SETTINGS
+    for(unsigned i=0;i<per_hand;++i) {
+        XrPath path=0;
+        if(c->api.StringToPath(instance,paths[i],&path)!=XR_SUCCESS||!path)return 0;
+        out[h*per_hand+i]=(XrActionSuggestedBinding){actions[i],path};
+    }
+    }
+#else
     for(unsigned i=0;i<count;++i) {
         XrPath path=0;
         unsigned index=swap && i>=2?(i==2?3:2):i;
         if(c->api.StringToPath(instance,paths[index],&path)!=XR_SUCCESS || !path)return 0;
         out[i]=(XrActionSuggestedBinding){actions[i],path};
     }
+#endif
     return count;
 }
 /* Called AFTER the shared owner's successful SyncActions, once per predicted
@@ -113,6 +157,10 @@ static int controller_actions_sample(ControllerActions *c,XrSpace panel_space,Xr
     if(!c)return 0;controller_actions_invalidate(c);
     if(!c->ready||!focused||!panel_space||time<=0)return 0;
     XrActionStateGetInfo get={0};get.type=XR_TYPE_ACTION_STATE_GET_INFO;get.action=c->aim;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(c->hand>1)return 0;
+    get.subactionPath=c->hands[c->hand];c->space=c->spaces[c->hand];
+#endif
     XrActionStatePose pose={0};pose.type=XR_TYPE_ACTION_STATE_POSE;
     XrSpaceLocation loc={0};loc.type=XR_TYPE_SPACE_LOCATION;
     XrSpaceLocationFlags required=XR_SPACE_LOCATION_POSITION_VALID_BIT|XR_SPACE_LOCATION_ORIENTATION_VALID_BIT|
@@ -125,6 +173,9 @@ static int controller_actions_sample(ControllerActions *c,XrSpace panel_space,Xr
         if(c->api.GetActionStateBoolean(c->session,&get,&button)!=XR_SUCCESS)return 0;
         states[i]=button.isActive && button.currentState;
     }
+#if defined(GF2VR_LIVE_SETTINGS) && defined(GF2VR_CONTROLLER_FACE_CONFIG)
+    if(c->face_swap){unsigned held=states[0];states[0]=states[2];states[2]=held;}
+#endif
     c->pose=loc.pose;c->tracked=1;c->face_down=states[0];c->trigger_down=states[1];c->back_down=states[2];return 1;
 }
 #endif

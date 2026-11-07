@@ -2,6 +2,19 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.9 — In-game VR settings
+
+Hold the auxiliary-panel hand’s side Grip for 1 second to open in-game VR settings and apply edits without restarting the game. The PC configurator also supports live application. Restoring VR stereo after a render-scale change may take about **5–10 seconds**. Please wait for recovery.
+
+![In-game VR settings panel](../images/vr-settings-en.png)
+
+UI example captured from the actual VR settings panel renderer while editing render scale 0.75. The footer asks the user to wait about 5–10 seconds for recovery.
+
+
+Dirty runtime acceptance covers the requested VR settings controls, render-scale changes and stereo recovery flows on Steam and Haoplay. Clean was validated through the shared-code build and package checks.
+
+[1.3.9](../release-notes/1.3.9.en.md)
+
 ## 1.3.8 — Improved resilience to game updates
 
 Reduces obfuscated class and field-name dependencies in Home scene/camera binding. Validates unique metadata shapes, current-scene registry identity and scene-owned camera relationships. Ambiguous or changed structures are rejected rather than guessed.

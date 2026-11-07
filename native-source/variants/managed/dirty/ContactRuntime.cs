@@ -44,6 +44,14 @@ namespace GF2.Private
         private static long contactRotationWrites, contactScaleWrites, contactStiffnessCaps, contactImplicitSteps;
         private static long contactGapHeld, contactGapDecay, contactMaskZero, contactInvalid, contactGenerationReset, contactHardExpiry, contactDtReset, contactImpulses;
 
+#if GF2VR_LIVE_SETTINGS
+        // Prepare validates without clearing contact, changing configuration or touching bones.
+        public static void ValidateContact(byte[] utf8, ref int status)
+        {
+            ContactSettings parsed;
+            status = ContactSettings.Read(utf8, out parsed) ? 1 : -70;
+        }
+#endif
         public static void ConfigureContact(byte[] utf8, ref int status)
         {
             status = 0;

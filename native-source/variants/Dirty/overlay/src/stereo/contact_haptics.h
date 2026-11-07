@@ -70,11 +70,19 @@ static void contact_haptic_open(ContactHapticActions *a,PFN_xrGetInstanceProcAdd
 }
 static XrResult contact_haptic_suggest(ContactHapticActions *a,PFN_xrSuggestInteractionProfileBindings suggest,
     PFN_xrStringToPath path,XrInstance instance,unsigned profile,const XrInteractionProfileSuggestedBinding *base) {
+#ifdef GF2VR_LIVE_SETTINGS
+    if(a->action && base->countSuggestedBindings<=48) {
+#else
     if(a->action && base->countSuggestedBindings<=24) {
+#endif
         XrPath left=0,right=0;
         if(path(instance,"/user/hand/left/output/haptic",&left)==XR_SUCCESS &&
            path(instance,"/user/hand/right/output/haptic",&right)==XR_SUCCESS) {
+#ifdef GF2VR_LIVE_SETTINGS
+            XrActionSuggestedBinding bindings[50];
+#else
             XrActionSuggestedBinding bindings[26];
+#endif
             for(unsigned n=0;n<base->countSuggestedBindings;++n)bindings[n]=base->suggestedBindings[n];
             bindings[base->countSuggestedBindings]=(XrActionSuggestedBinding){a->action,left};
             bindings[base->countSuggestedBindings+1]=(XrActionSuggestedBinding){a->action,right};

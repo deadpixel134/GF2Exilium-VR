@@ -5,6 +5,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>GF2VR.Configurator</AssemblyName>
     <Version>0.1.0</Version>
@@ -15,8 +16,11 @@
   <PropertyGroup Condition="'$(GF2VRBuildFlavor)' == 'Dirty'">
     <DefineConstants>$(DefineConstants);GF2VR_TOUCH_PRIVATE;GF2VR_DIRTY_CONTACT</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(GF2VREntryObserve)' == 'true'">
+    <DefineConstants>$(DefineConstants);GF2VR_LIVE_SETTINGS_ENTRY_OBSERVE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup Condition="'$(GF2VRBuildFlavor)' == 'Dirty'">
-    <Compile Include="../../../../native-source/variants/managed/dirty/ContactConfig.cs;../../../../native-source/variants/managed/dirty/ContactMaterial.cs" Link="Contact/%(Filename)%(Extension)" />
+    <Compile Include="../desktop-shared/dirty/ContactConfig.cs;../desktop-shared/dirty/ContactMaterial.cs" Link="Contact/%(Filename)%(Extension)" />
     <EmbeddedResource Include="Locales/Dirty/*.json" />
   </ItemGroup>
   <Import Project="../../tools/variant_metadata.props" />

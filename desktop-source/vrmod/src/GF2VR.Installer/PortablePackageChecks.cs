@@ -47,6 +47,43 @@ internal static class PortablePackageChecks
         Assert(process.WaitForExit(20000), "Configurator check timeout");
         Assert((process.ExitCode == 0) == expectedSuccess, "actual Configurator contract result");
     }
+    private static void LiveContract(string root, Package source, byte[] bytes)
+    {
+        var original = JsonNode.Parse(bytes)!.AsObject();
+        if (original["apply"]?.GetValue<string>() != "LIVE_TRANSACTION_V1") return;
+        void Validate(JsonObject contract)
+        {
+            var payload = new Dictionary<string, byte[]> { [GuiContract] = Contract.Encode(contract) };
+            NativeLayout.ConfiguratorContract(root, source, payload);
+            var bound = JsonNode.Parse(payload[GuiContract])!.AsObject();
+            Assert(bound["configurationRoot"]!.GetValue<string>() == Path.Combine(root, "vrmod", "config"), "live contract binds actual root");
+        }
+        Validate(original);
+        Action<JsonObject>[] invalid =
+        [
+            c => c.Remove("liveSettingsProtocol"),
+            c => c["liveSettingsProtocol"] = 2,
+            c => c["liveSettingsProtocol"] = "1",
+            c => c.Remove("pcOutputSupported"),
+            c => c["pcOutputSupported"] = false,
+            c => c["unexpected"] = true,
+            c => c["apply"] = "UNKNOWN",
+            c => c["files"] = new JsonArray(c["files"]!.AsArray()
+                .Where(n => n!.GetValue<string>() != "performance.json").Select(n => n!.DeepClone()).ToArray())
+        ];
+        foreach (var mutate in invalid)
+        {
+            var bad = original.DeepClone().AsObject(); mutate(bad);
+            Reject(() => Validate(bad), "strict live protocol/capability/files/keys");
+        }
+        var legacy = original.DeepClone().AsObject();
+        legacy["apply"] = "GAME_RESTART";
+        legacy.Remove("liveSettingsProtocol"); legacy.Remove("pcOutputSupported");
+        Validate(legacy);
+        legacy["files"] = new JsonArray(legacy["files"]!.AsArray()
+            .Where(n => n!.GetValue<string>() != "performance.json").Select(n => n!.DeepClone()).ToArray());
+        Validate(legacy);
+    }
     internal static int Run(string actualPackage)
     {
         string fixture = Path.Combine(AppContext.BaseDirectory, "portable-validation-fixture");
@@ -57,6 +94,7 @@ internal static class PortablePackageChecks
         Assert(NativeLayout.IsPortable(source) && source.BoundGameRoot == null, "portable source profile");
         string expectedDll = NativeLayout.ExpectedHash(source);
         Assert(Paths.Equal(source.Native!.DllSha256, expectedDll), "recognized portable provider hash");
+        LiveContract(rootA, source, File.ReadAllBytes(Paths.Contained(actualPackage, "payload/" + GuiContract)));
         foreach (var f in source.Files)
         {
             byte[] bytes = File.ReadAllBytes(Paths.Contained(actualPackage, "payload/" + f.Path));

@@ -106,6 +106,9 @@ static int stereo_two_arm(void) {
     if(!stereo_live || stereo_live->pair_count!=EFO_CAPACITY || !stereo_two.enabled ||
        GetCurrentThreadId()!=stereo_live->thread || !stereo_pipeline.render.active ||
        stereo_prepare_attempted)return 0;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(live_settings_runtime_busy())return 0;
+#endif
     /* Set BEFORE invoking any managed preparation; reentrant renders remain
        original-only and cannot reserve a second flight in the same root. */
 #ifdef GF2VR_MFO_ACTIVE
@@ -334,6 +337,9 @@ static int stereo_two_arm(void) {
     }
     stereo_two.slots[index].entry=entry;stereo_two.slots[index].description=description;
     stereo_two.slots[index].ready=1;
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_note_frame(f.ticket.serial);
+#endif
 #ifdef GF2VR_BANK_CPU_OBSERVE
     /* Existing successful preparation boundary, no extra managed/GPU query. */
     bank_admission_observe_record(f.ticket.serial,f.token.generation,f.token.epoch,

@@ -119,11 +119,17 @@ internal static class NativeLayout
             bool portable = IsPortable(package);
             bool variant = VariantProfiles.IsVariant(package.Native?.BuildId);
             bool stable = package.Native?.BuildId == StablePortableBuild || IsFlexible(package);
+            string? apply = c.GetProperty("apply").GetString();
+            bool live = apply == "LIVE_TRANSACTION_V1";
+            if (live && (!variant || !c.TryGetProperty("liveSettingsProtocol", out var protocol) ||
+                !protocol.TryGetInt32(out int version) || version != 1 ||
+                !c.TryGetProperty("pcOutputSupported", out var pcOutput) || pcOutput.ValueKind != JsonValueKind.True))
+                throw new InstallError("configContract");
             string[] configFiles = variant ? (package.Native?.BuildFlavor == "Dirty" ? [.. VariantConfigFiles, "touch_interaction.json"] : VariantConfigFiles) : stable ? StableConfigFiles : ConfigFiles;
             // Older verified GUI providers did not consume performance.json.
             // Retain their exact legacy set without granting payload ownership.
             string[] legacyConfigFiles = configFiles.Where(f => f != "performance.json").ToArray();
-            bool validFiles = new[] { configFiles, legacyConfigFiles }.Any(expected =>
+            bool validFiles = (live ? new[] { configFiles } : new[] { configFiles, legacyConfigFiles }).Any(expected =>
                 c.GetProperty("files").GetArrayLength() == expected.Length &&
                 c.GetProperty("files").EnumerateArray().Select(v => v.GetString()).ToHashSet(StringComparer.Ordinal).SetEquals(expected));
             string expectedHash = ExpectedHash(package);
@@ -140,7 +146,7 @@ internal static class NativeLayout
                 !(portable ? c.GetProperty("configurationRoot").GetString() == ContractTemplateRoot :
                     Path.TrimEndingDirectorySeparator(Path.GetFullPath(c.GetProperty("configurationRoot").GetString()!))
                     .Equals(expectedRoot, StringComparison.OrdinalIgnoreCase)) ||
-                c.GetProperty("apply").GetString() != "GAME_RESTART" ||
+                (apply != "GAME_RESTART" && !live) ||
                 !validFiles)
                 throw new InstallError("configContract");
             if (portable)
@@ -148,6 +154,7 @@ internal static class NativeLayout
                 // A single explicit placeholder; never interpolate arbitrary manifest text.
                 string[] keys = ["schemaVersion", "buildId", "dllSha256", "configurationRoot", "files", "apply"];
                 if (variant) keys = [.. keys, "buildFlavor", "commonCoreSha256"];
+                if (live) keys = [.. keys, "liveSettingsProtocol", "pcOutputSupported"];
                 if (c.EnumerateObject().Count() != keys.Length ||
                     !c.EnumerateObject().Select(p => p.Name).ToHashSet(StringComparer.Ordinal).SetEquals(keys))
                     throw new InstallError("configContract");

@@ -244,7 +244,11 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
         .bank_flags=(projected!=0)|((combined.layerCount==1)<<1)|((!stereo_aux.shown)<<2)|
             ((current.head_valid!=0)<<3)|((xr_eye_matches(&current,current.reference_epoch,current.frame_id,end.displayTime)!=0)<<4)};
 #endif
-    if(combined.layerCount<=2 && visible){
+    if(combined.layerCount<=2 && visible
+#ifdef GF2VR_LIVE_SETTINGS
+       &&live_settings_game_allowed
+#endif
+       ){
 #ifdef GF2VR_ACTIVITY_DIALOGUE_RAY
         if(projected && combined.layerCount==1 && !stereo_aux.shown && current.head_valid &&
            xr_eye_matches(&current,current.reference_epoch,current.frame_id,end.displayTime)){
@@ -281,8 +285,17 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
 #endif
         if(valid){U64 prepared=stereo_banks.storage.leases.banks[shown].prepared_ms;
             valid=now>=prepared && now-prepared<250;}
+#ifdef GF2VR_LIVE_SETTINGS
+        if(valid&&!live_settings_projection_allowed(fresh,!fresh,stereo_banks.storage.leases.banks[shown].ready_serial))valid=0;
+#endif
         if(!valid){combined=end;projected=cursor_submitted=0;stereo_bank_cache.valid=0;}
     }
+#ifdef GF2VR_LIVE_SETTINGS
+    XrCompositionLayerQuad settings_quad={0},settings_cursor={0};
+    const XrCompositionLayerBaseHeader *settings_layers[4];
+    int settings_displayed=live_settings_compose(p,visible,projected,&combined,&settings_quad,&settings_cursor,settings_layers);
+    if(settings_displayed)cursor_submitted=0;
+#endif
     for(unsigned i=0;i<PBP_BANKS;++i) {
         unsigned state=stereo_banks.storage.leases.banks[i].state;
         if((state==PBP_WRITING || state==PBP_DRAINING) &&
@@ -324,6 +337,9 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
     ebo_driver(observe_start,ebo_stamp());
 #endif
     XrResult result=r==EFO_OK?d->end_result:XR_ERROR_RUNTIME_FAILURE;
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_xr_end(result,settings_displayed);
+#endif
 #ifdef GF2VR_LATENCY_OBSERVE
     if(!fresh && projected)latency_submitted(stereo_bank_cache.token.epoch,
         stereo_bank_cache.token.frame,stereo_bank_cache.token.generation,result==XR_SUCCESS,0);
@@ -358,9 +374,15 @@ static XrResult stereo_bank_end(PanelXr *p,const XrFrameEndInfo *original,int vi
         (stereo_aux.drag.frame.tracked[0]?1u:0u)|(stereo_aux.drag.frame.tracked[1]?2u:0u));
 #endif
     stereo_world_drag_end(stereo_aux.drag.frame,result==XR_SUCCESS && projected && immersive &&
+#ifdef GF2VR_LIVE_SETTINGS
+        live_settings_game_allowed&&!live_settings_runtime_busy()&&
+#endif
         generation==(fresh?fresh_token.generation:stereo_bank_cache.token.generation),current.reference_epoch,generation);
 #ifdef GF2VR_THUMBSTICK_NAVIGATION
     stereo_navigation_end(&stereo_aux.navigation.frame,result==XR_SUCCESS && projected && immersive &&
+#ifdef GF2VR_LIVE_SETTINGS
+        live_settings_game_allowed&&!live_settings_runtime_busy()&&
+#endif
         generation==(fresh?fresh_token.generation:stereo_bank_cache.token.generation),
         current.reference_epoch,generation,stereo_drag.owner<WD_NONE ||
         (cursor_submitted && (stereo_aux.pointer.trigger_down || stereo_aux.pointer.face_down)));

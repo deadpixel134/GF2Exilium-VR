@@ -1,27 +1,27 @@
 {
   "schemaVersion": 2,
   "product": "GF2VR",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "scope": "PAIRED_NATIVE_DESKTOP_SOURCE_AND_FOUR_LANGUAGE_PLAYER_DOCS",
   "repository": "deadpixel134/GF2Exilium-VR",
   "nativeSourceReproduction": "EXACT_PAIRED_RELEASE_REPRODUCTION",
   "nativeVariants": [
     {
       "flavor": "Dirty",
-      "buildId": "GF2VR-DIRTY-HOME-SEMANTIC-FIELDS001",
-      "dllSha256": "C6396AB3506E0C2B8BD9173B553C2B2E16C898FA94FA5DF164B531451391CF33",
-      "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5",
-      "nativeProofSha256": "AAAF212CA2A2E55053F9D359832E8BAB1E217BC3D446C3BC54B20D9BA66CBA9E"
+      "buildId": "GF2VR-DIRTY-139-LIVESET004",
+      "dllSha256": "8877C5E59366B760860350A76D23AD41A090231AD3B73D0545C3C887D4A8115A",
+      "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
+      "nativeProofSha256": "DBC40421C440DE584F7D745B1E0F9D2BD8A9635F0FA012D4F87C5DF4B3D1B34A"
     },
     {
       "flavor": "Clean",
-      "buildId": "GF2VR-CLEAN-138-011",
-      "dllSha256": "69A63DC2E0C1901936FDFE2CC35217F5547029FB189A6E64AC30663FED260961",
-      "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5",
-      "nativeProofSha256": "BC795AF4F0B2E2BBDCADD4F3893C6D0CB875088422111E51256C3669B0AF8CFE"
+      "buildId": "GF2VR-CLEAN-139-LIVESET004",
+      "dllSha256": "76668E014AC5159207CAD1DA510B477C68DF438AA5B5EC87E2947439C6B7BF9F",
+      "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
+      "nativeProofSha256": "21D806DFD5249DCC6056ABFD3A74D601F3AD1A699E58B40904E9376361A2EC6A"
     }
   ],
-  "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5",
+  "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
   "gameAssetsIncluded": false,
   "userConfigurationIncluded": false,
   "credentialMaterialIncluded": false,
@@ -57,6 +57,16 @@
       "bytes": 7219
     },
     {
+      "path": "desktop-source/vrmod/src/desktop-shared/dirty/ContactConfig.cs",
+      "sha256": "F2BE41B07A0643AAED2CF399BA850283667FE6362A9BEE2D4611464528EEE958",
+      "bytes": 16186
+    },
+    {
+      "path": "desktop-source/vrmod/src/desktop-shared/dirty/ContactMaterial.cs",
+      "sha256": "9AF80DECDA95C94DB6E3E85725D508914DDCB1463B429F756BA76B2A29E40DC7",
+      "bytes": 2426
+    },
+    {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Directory.Build.props",
       "sha256": "66EC97D1A0CDA700083FF09AAAE8BCE96EAC360AA94545D83D799E9B81764085",
       "bytes": 236
@@ -68,8 +78,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/GF2VR.Configurator.csproj",
-      "sha256": "5667EFEDF812B0703BA19A9915E7D160F1D1185B018D0250FA3C807E1F9399F6",
-      "bytes": 2701
+      "sha256": "473EBB9CEC1ED27CE48BB56FA1C9224B572474E958FF866D59155062225416CB",
+      "bytes": 2914
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/JiggleChecks.cs",
@@ -77,44 +87,54 @@
       "bytes": 6714
     },
     {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/LiveSettingsCoordinator.cs",
+      "sha256": "DE3C69634A5EECC9867DDACAB6ECF2ED60DAB0FB8E20D6B20792EC69904B6BF0",
+      "bytes": 9115
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/LiveSettingsProtocol.cs",
+      "sha256": "FEF1272016455833E9E64FD07286807A6F4D50CCBE17BB4B2E4521B1B96B8135",
+      "bytes": 9384
+    },
+    {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/Dirty/en.json",
-      "sha256": "04973011E6BBE6844A3B5DAC2EC5C63E5E4646EC09E67578013BD7699BCB655D",
-      "bytes": 5159
+      "sha256": "56029669921630925F317D31FCC9E3666377538ABF858C89FD49926FD8425793",
+      "bytes": 5322
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/Dirty/ja.json",
-      "sha256": "B29C2B0BE17F28755D1F5166C671F5146DEAAADF4F05F56297E5F1D3A409C0EB",
-      "bytes": 6426
+      "sha256": "69738A06EEAFF5AAD2B3C9767906B4CA53C4FFFF49C2F5F6AE403CF9807BE5EA",
+      "bytes": 6481
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/Dirty/ko.json",
-      "sha256": "889AE9384C7FC6C50DC519938F35D3CB4D0F6FDF5E3F7EE58C3AF225CDE0C6DC",
-      "bytes": 6192
+      "sha256": "217BCBB74FD96BD546DA8BD285FA61C80A7CE7BD3C5F926B5230EF4069412064",
+      "bytes": 6319
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/Dirty/zh-CN.json",
-      "sha256": "69F8001F3455436AE633F5CC5606CBD7C705A57A0094063A5FE7833D19FCBFFB",
-      "bytes": 4288
+      "sha256": "E496498CB53217F3C3F9D52F26A41E9C22A1E45A901B7390A37836BB8193EC01",
+      "bytes": 4640
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/en.json",
-      "sha256": "D09F7A4F853BD9A189A6005C20051DD1176EEB055810D438A7EFC6981EB3D023",
-      "bytes": 19958
+      "sha256": "DFDD22D4BD06641A1280D3DD5F1E46AB62B76635646CDEDFA6697E14D2486ED0",
+      "bytes": 21684
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ja.json",
-      "sha256": "ACAD8AAC74D9D32EF2FEEC9FE7E314D0BE19F3DA6FB2492D362950AA63BFBAB8",
-      "bytes": 24840
+      "sha256": "7612E88AE883370D208CFEAACE1633F493EEA06CCF67492C29C87AF61F5978A5",
+      "bytes": 26791
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/ko.json",
-      "sha256": "6E734AC6A30DC021E1089A6F444A3D9BACE3DC1584DD6A6A3FE50427DC269437",
-      "bytes": 23887
+      "sha256": "AF060191700C9F6BBC46494A8399A76D8BB27BA9DC2B28D6E51DC3FE9AC7A227",
+      "bytes": 25819
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Locales/zh-CN.json",
-      "sha256": "923090381A522BC8F7DA41A5F86183679D748305F16B5680126874C8B99D8330",
-      "bytes": 18202
+      "sha256": "A84260D404040827AE3683732491BF5EE04B73F948B6E98DCFA0DABAA5F6C3EA",
+      "bytes": 19967
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/LoggingChecks.cs",
@@ -123,28 +143,28 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/MainForm.cs",
-      "sha256": "BE174F4F7120DC01F3AA9955277E6FF10415E5D2E8BBA96AA5DB4A14A7EA1590",
-      "bytes": 60127
+      "sha256": "D056BAC14B4B6A5F2E87BE56DFD760A3F8F37F2B7BE6A704EF7C3422B0B6AB34",
+      "bytes": 60656
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/MainForm.SaveStateChecks.cs",
-      "sha256": "9D365CBB29FFBD19D90BE1CDA67690AF386020AA1935676143EEBCF7212EBAA8",
-      "bytes": 4837
+      "sha256": "942B93047D955590E0E31F3B0F702B3DEFA4026599E0285D550E8CBABDE569A1",
+      "bytes": 5249
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/PcOutputChecks.cs",
-      "sha256": "98AC8495A9287BA9CEDABAB3BC7E86A0CF2BCD6D1F985CEBEFFD0C8529ADC626",
-      "bytes": 15006
+      "sha256": "96F428236AC8D7C14598C20D0DAA5D3D3AEBE75418F42731E2EB8C3E5DB40C7E",
+      "bytes": 15030
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Program.cs",
-      "sha256": "B26EFB8495C48076DC4BC92F21D5C1BDB6793F22BCF229D3DAD7AD92C02509CC",
-      "bytes": 2185
+      "sha256": "0A23E5CF901B95274A364B144C595B08CE2249055249AC46F61E6209B31036B3",
+      "bytes": 2955
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/runtime-contract.json",
-      "sha256": "8F05534C6DD5958CE9062572AA331182E2AA883DA52F11DF7487AAA58FB5CEAB",
-      "bytes": 624
+      "sha256": "CA98FA475366B7616F043210035FB95C947813C9BD42965788C991EDCEBC6AEE",
+      "bytes": 707
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/SelfTest.cs",
@@ -153,8 +173,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/SettingsStore.cs",
-      "sha256": "11D29DBF3758D9CEA749E4EAC72308220ECB210B16B8CB1CEBDE6ACDCEFD1301",
-      "bytes": 30991
+      "sha256": "7D8340AE7CFE4CDFADAFAA532E1D212E46881D34198DACA20A612CFC90CB590F",
+      "bytes": 36520
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/Texts.cs",
@@ -170,6 +190,16 @@
       "path": "desktop-source/vrmod/src/GF2VR.Configurator/UpdateNoticeDialog.cs",
       "sha256": "868C031234806A02FD559F4270A89660961CFCE19041F7EC67A0230DA199AE15",
       "bytes": 1537
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/VrSettingsEditor.cs",
+      "sha256": "3F635EB9C6192035D3F7E0CAE0E64A072A5774CE5FDA1A0D8611964C26CA2E29",
+      "bytes": 17277
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Configurator/VrSettingsSurface.cs",
+      "sha256": "4A78983E091D8B3F46EC7105C91388A682279E0EFBB10106F147A20BAB08A3D2",
+      "bytes": 8437
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/BootstrapContractChecks.cs",
@@ -195,6 +225,11 @@
       "path": "desktop-source/vrmod/src/GF2VR.Installer/FlexibleLayoutChecks.cs",
       "sha256": "C6A397FD54B88F305CC3D3D3F37B03F18DEB1A514C660F1EA349D575D2EB48AD",
       "bytes": 9304
+    },
+    {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/FutureHelperFixture.cs",
+      "sha256": "6499807EEC73A0F5BC85983295E9FCCBCC6F4C129C955730ECA7A8C33C9BE194",
+      "bytes": 11103
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/GF2VR.Installer.csproj",
@@ -248,8 +283,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/NativeLayout.cs",
-      "sha256": "C38B48FB2A42DE7631A93FC39A92EF12DB5B723921AD1929AD47BB470B469B4E",
-      "bytes": 11482
+      "sha256": "61425B29C4C5FF8324475DCA3A9E6F007B0179C8C18CFDD8853BF65C2D694DAA",
+      "bytes": 12064
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/NativePackageChecks.cs",
@@ -283,8 +318,8 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/PortablePackageChecks.cs",
-      "sha256": "CF581504680347A572B648B97B535B24186D3F4E2158916F81D9B08491982DBA",
-      "bytes": 12973
+      "sha256": "870B182F05044D17AED40CB9701C7278835E225FD1A45421F3CA80DFACC771A1",
+      "bytes": 14992
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/Postprocessing.cs",
@@ -337,6 +372,11 @@
       "bytes": 5361
     },
     {
+      "path": "desktop-source/vrmod/src/GF2VR.Installer/UnchangedWriteChecks.cs",
+      "sha256": "346B8E7D20EB0EC008EB4D5773353B69996F14E3BD4BC624BD01C37EAE1CA10C",
+      "bytes": 11797
+    },
+    {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/UpdateBootstrapChecks.cs",
       "sha256": "C1FA241710239043353AF8C6660B7B9F220F6CA3826D4B265711E4E3524997BB",
       "bytes": 9895
@@ -368,13 +408,38 @@
     },
     {
       "path": "desktop-source/vrmod/src/GF2VR.Installer/VariantProfiles.generated.cs",
-      "sha256": "F586E7CC34F3553C5B77CE0718A230490B0057DB7E2B47F662CA709D06DB1B45",
-      "bytes": 775
+      "sha256": "2F96A7CE45A8950B4A43E0AA5B41614E1443E75E5E41A4B4135541C8E61A412B",
+      "bytes": 801
+    },
+    {
+      "path": "desktop-source/vrmod/src/release-fixtures/OfficialLegacyFixtureHook.cs",
+      "sha256": "6BBEB1E9D092D1DA3124F460A0AA674A32FF293E014AF257681AEEB5A4DA8D05",
+      "bytes": 6756
+    },
+    {
+      "path": "desktop-source/vrmod/src/release-fixtures/RepairDesktopHook.cs",
+      "sha256": "AE03A20CF5998595F04684D705FE652AB96AA7E103B24F86E2DF66665F93503E",
+      "bytes": 7056
+    },
+    {
+      "path": "desktop-source/vrmod/src/release-fixtures/SaveStateDesktopHook.cs",
+      "sha256": "CB8C17DA180B92B543A3BB56808264F41AED81A83D90BC9CA448F811F363A572",
+      "bytes": 11736
+    },
+    {
+      "path": "desktop-source/vrmod/src/release-fixtures/SteamBootstrapHook.cs",
+      "sha256": "84FD0005A8E25FEDA09CF438F92FD97E0F583C341F8CF7B520C02A917DF89D1B",
+      "bytes": 12853
+    },
+    {
+      "path": "desktop-source/vrmod/src/release-fixtures/UpdateManualDesktopHook.cs",
+      "sha256": "CC5778BED8FB6FC34173CD501D9C6897815EDEB61E4A6D5C9FF942217A35D393",
+      "bytes": 7624
     },
     {
       "path": "desktop-source/vrmod/tools/build_desktop_private_runtime.ps1",
-      "sha256": "1D88EEE8124790E8EBB0E7C91A363B25C39F4669A3278ABF29339FA7DED34C5B",
-      "bytes": 6529
+      "sha256": "B14ED42AEC76B7C657180F8B082DA1413C9E77EAAEA08CE7A1CB76CFC7DCA784",
+      "bytes": 6609
     },
     {
       "path": "desktop-source/vrmod/tools/desktop_private_runtime.targets",
@@ -413,8 +478,8 @@
     },
     {
       "path": "docs/en/RELEASE_NOTES.md",
-      "sha256": "F7E1EAE19AC732B4907FD34E5F9A15DE4204BF200AACCE11310CCEE1AA16DED0",
-      "bytes": 10010
+      "sha256": "7E59E22BD919FBA08671326CE9CD06536EBF61FFCED4E53B21ABF1EF09BF6CD2",
+      "bytes": 10809
     },
     {
       "path": "docs/en/RELEASE_READINESS.md",
@@ -423,8 +488,8 @@
     },
     {
       "path": "docs/en/SETTINGS.md",
-      "sha256": "89F0BEE1318BBD89DB3D8BAED854C01539293151EBC1C925599351854813F080",
-      "bytes": 9193
+      "sha256": "3F78F087D961E2EBE5EB791E6FFC6CA85F899960EF3C9512E663FEC2386E5D15",
+      "bytes": 9597
     },
     {
       "path": "docs/en/TROUBLESHOOTING.md",
@@ -438,13 +503,33 @@
     },
     {
       "path": "docs/en/USAGE.md",
-      "sha256": "8C2915AF0D51423E02BFAD1C30A34E186412F5784BBF5EC06828AAF8DC3848F4",
-      "bytes": 4340
+      "sha256": "49C2F3D926CA51BAC5230504581498195E0AC8D6E63555ACA47072DB89D4F4CE",
+      "bytes": 6091
     },
     {
       "path": "docs/en/VERIFICATION.md",
       "sha256": "531F5425306181359E4BA6800909AA65295C79A4DBD70575DB2444F34C9E9104",
       "bytes": 1921
+    },
+    {
+      "path": "docs/images/vr-settings-en.png",
+      "sha256": "CF692C189BADDAFADD9379E230BF3237A063100FD0A082608B85DB221AAAFB19",
+      "bytes": 44356
+    },
+    {
+      "path": "docs/images/vr-settings-ja.png",
+      "sha256": "FD8B4B3B6AE2F4CE51859667C7E8E4CF385BF01DD7577B4724965F12E15043D0",
+      "bytes": 46514
+    },
+    {
+      "path": "docs/images/vr-settings-ko.png",
+      "sha256": "76FC094A13B53CDD1242DA0CE88C95DAFF958D72EEA80D19C55C11D778AEA3B9",
+      "bytes": 40406
+    },
+    {
+      "path": "docs/images/vr-settings-zh-CN.png",
+      "sha256": "6C8E04AA13A8A831CB62391B65A7FC16553525F583FDF87D36039BDB70F3AB33",
+      "bytes": 47406
     },
     {
       "path": "docs/ja/3DMIGOTO_COMPATIBILITY.md",
@@ -468,8 +553,8 @@
     },
     {
       "path": "docs/ja/RELEASE_NOTES.md",
-      "sha256": "694353BDDF26EF785CCD160B155B4090390D04B8CF22996901AB023668DD2189",
-      "bytes": 11907
+      "sha256": "FF48FC96D08389E860C5379B0FEDE6F9EE4A21D6F7F4E37313749FCD90C73357",
+      "bytes": 12795
     },
     {
       "path": "docs/ja/RELEASE_READINESS.md",
@@ -478,8 +563,8 @@
     },
     {
       "path": "docs/ja/SETTINGS.md",
-      "sha256": "4C37DE97C61E7D694612A3E7AD9870F7C25E65D7982F44C0E2F302C3991E13D6",
-      "bytes": 11495
+      "sha256": "C372A4C611ADCCFE239AAAA6CAD9BDB2FFADD730EEF26EF701565587C0B85692",
+      "bytes": 11831
     },
     {
       "path": "docs/ja/TROUBLESHOOTING.md",
@@ -493,8 +578,8 @@
     },
     {
       "path": "docs/ja/USAGE.md",
-      "sha256": "839D5069F6E224689BC722087C1568286A860C2C68E954E989BE58DAE1B995E7",
-      "bytes": 5646
+      "sha256": "861A5C7C1836B1A654BB8BC6DAAA8340434A50C511950A30C3AD3C334E4D8A72",
+      "bytes": 7592
     },
     {
       "path": "docs/ja/VERIFICATION.md",
@@ -523,8 +608,8 @@
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
-      "sha256": "44C085A1F07AD6DFC080BCF80AB25D83805167E5D581B22AAB4F52B1C261EA22",
-      "bytes": 11648
+      "sha256": "213F9F5CC46C205AEA6FE88D4AAE840010076B48A1EDFDBDA2A5998BF08E1B32",
+      "bytes": 12482
     },
     {
       "path": "docs/ko/RELEASE_READINESS.md",
@@ -533,8 +618,8 @@
     },
     {
       "path": "docs/ko/SETTINGS.md",
-      "sha256": "E2AE7CF52E208B84DCDF621B866B7007D15FE4D808D030AC1C1BD96FDAD861E0",
-      "bytes": 10720
+      "sha256": "55E8EA5DD6A01600554D6012DA5D65240B1E2E233EF4426B44C98CF06D0A1E84",
+      "bytes": 11130
     },
     {
       "path": "docs/ko/TROUBLESHOOTING.md",
@@ -548,8 +633,8 @@
     },
     {
       "path": "docs/ko/USAGE.md",
-      "sha256": "C48556DBF2CE860437D7BE88C9A49704B2E8E5CB6AD992028612B302B7B38522",
-      "bytes": 5040
+      "sha256": "7D8EC44163D349CCA5416A97E9C4C1DC257072822FD9C70F3A7ABD10D97AF0D2",
+      "bytes": 7057
     },
     {
       "path": "docs/ko/VERIFICATION.md",
@@ -742,6 +827,26 @@
       "bytes": 940
     },
     {
+      "path": "docs/release-notes/1.3.9.en.md",
+      "sha256": "156CD58BB2FF482FAF73B53DE0F675E91EFA9487FC49B87329B3C5065F3565E8",
+      "bytes": 2292
+    },
+    {
+      "path": "docs/release-notes/1.3.9.ja.md",
+      "sha256": "A703E00D62A7CFD625B9FF2664D98F56547CC7DE67B47A5EF65048E6B7DC4999",
+      "bytes": 2617
+    },
+    {
+      "path": "docs/release-notes/1.3.9.ko.md",
+      "sha256": "CFCB7C2EE4748A9BEF9BDF8151A3BD74160339A6F0443CBAC8377C73AF466CF8",
+      "bytes": 2546
+    },
+    {
+      "path": "docs/release-notes/1.3.9.zh-CN.md",
+      "sha256": "8E3A405DBD08B06DA61F19AE4E432980BA5AABD7EEF349B012D8D3589E64AE5C",
+      "bytes": 1962
+    },
+    {
       "path": "docs/release-notes/update-bootstrap-contract.md",
       "sha256": "B1942148DB5AB5F5D3BD0389F75B39097074B7D9C1FCC23ADF73845D392A32C2",
       "bytes": 5086
@@ -768,8 +873,8 @@
     },
     {
       "path": "docs/zh-CN/RELEASE_NOTES.md",
-      "sha256": "7AA4B384E0DC63FB49375500C192A05FEEE48196EBE5697007C4F4B905D1ECA3",
-      "bytes": 9062
+      "sha256": "A3DCA31BC7EB48C1F28B42728D5865EF8D6E652B5137AA3A85208EBFE1BEC695",
+      "bytes": 9753
     },
     {
       "path": "docs/zh-CN/RELEASE_READINESS.md",
@@ -778,8 +883,8 @@
     },
     {
       "path": "docs/zh-CN/SETTINGS.md",
-      "sha256": "6BAB36329E6EA516B6574415D4AFB4DDC75A1FEBD6750D45E23005E22F85CD11",
-      "bytes": 8451
+      "sha256": "5070E5A8A02A078547C3082CCAE002DF73E282FB1978943968546BBF290E5E58",
+      "bytes": 8791
     },
     {
       "path": "docs/zh-CN/TROUBLESHOOTING.md",
@@ -793,8 +898,8 @@
     },
     {
       "path": "docs/zh-CN/USAGE.md",
-      "sha256": "3C4FCB08F9D4BF452680540C0AEC5370E9DC8677964C9CF6C4A380EA84A130E7",
-      "bytes": 4063
+      "sha256": "5213330538ED13809DC1B166963749034F396B3B704F3CAC7BBAFFD8779447E0",
+      "bytes": 5517
     },
     {
       "path": "docs/zh-CN/VERIFICATION.md",
@@ -2033,17 +2138,17 @@
     },
     {
       "path": "native-source/variants/Clean/native-build.json",
-      "sha256": "654D47C1BF68926717F4753A5EDC33A48AD17E87C424EB579A0E5172B2513E69",
-      "bytes": 7487
+      "sha256": "58030FFAB8B39682FD055D8C03C0A4832D8682350D3B459425D7E1AA5C813CD0",
+      "bytes": 7708
     },
     {
       "path": "native-source/variants/Clean/overlay/build-config/probe_config.h",
-      "sha256": "0537CB97649CFB623CD2F1E4E9C274E63CF319480F2D06717EF797447AA0D7A9",
-      "bytes": 740
+      "sha256": "1EEBC66C0BDDC0753D9C7966C920351189D867D4D6D636E77F01D3858D41195D",
+      "bytes": 811
     },
     {
       "path": "native-source/variants/Clean/overlay/src/stereo/gf2_touch_bridge_package.h",
-      "sha256": "BC02AA382825875AA70EECBD27611365C566E2BFF23B1F3BAC9EAD33C7B37E2E",
+      "sha256": "F04B8B095470A0C989F4786387D4AE7EC37D34820E7016A84A9CB4704D00FA3B",
       "bytes": 67999
     },
     {
@@ -2053,8 +2158,8 @@
     },
     {
       "path": "native-source/variants/common/build-native.ps1",
-      "sha256": "985B3CBA1011DA4D61D00451AAA49B405AA033F042B54AD75DBCBAA10A2FF95C",
-      "bytes": 3934
+      "sha256": "61E4B713FC7F395A7489A677917A8ADA66A388F63005811556ADFDFF4BE47EC2",
+      "bytes": 4006
     },
     {
       "path": "native-source/variants/common/src/bootstrap/callback_observer.c",
@@ -2123,13 +2228,18 @@
     },
     {
       "path": "native-source/variants/common/src/panel/panel_capture.h",
-      "sha256": "40D2ACC35F6FC18E16D83288E4EF099204C8DF2367AA222F5AC4C4B6FC3EE181",
-      "bytes": 18327
+      "sha256": "D946549A47FBA77BD522AD9D677FAD5220EF24496F82DE91B195FAF4E3B72FC9",
+      "bytes": 18169
     },
     {
       "path": "native-source/variants/common/src/panel/panel_device_identity.h",
       "sha256": "8460AEB2BF68563ED4CE9EE6866171206E8F35B8DF6C2271E2F79245F2410F58",
       "bytes": 1156
+    },
+    {
+      "path": "native-source/variants/common/src/panel/panel_texture_format.h",
+      "sha256": "A43953B6510F8973E966C215F8A6857245180D9569DD9282DCD85021FDC7D90D",
+      "bytes": 493
     },
     {
       "path": "native-source/variants/common/src/panel/panel_xr.h",
@@ -2183,8 +2293,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/activity_source_group.h",
-      "sha256": "DEDE47774B30260F31A676F6423A790183F2F863D5DDDE32CDEB217E843C85AE",
-      "bytes": 27189
+      "sha256": "8F1A5E1A0E97D13CF0BA496B0AD1B6541935F3E36A43C351879D3A948B77FD5B",
+      "bytes": 27456
     },
     {
       "path": "native-source/variants/common/src/stereo/activity_stack_plan.h",
@@ -2258,8 +2368,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/aux_panel.h",
-      "sha256": "693294659717762BB38C31E672A3CAAD782D8330B34DCB70470874AAD566EACB",
-      "bytes": 23347
+      "sha256": "FEC8250CE0A645377ED851F94C0A5D75BDCD39A8202E35CF23BB096B01E6CC2E",
+      "bytes": 26345
     },
     {
       "path": "native-source/variants/common/src/stereo/aux_panel_config.h",
@@ -2283,8 +2393,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/bank_presentation_runtime.h",
-      "sha256": "AC8703A3D216519B612816109A1A2848323808098F9A100EAC32716219C70190",
-      "bytes": 29018
+      "sha256": "DC70E6144F3217F7A0EAB63F56F59816C2B9A53F2EB79C7B069B462A993628C4",
+      "bytes": 29885
     },
     {
       "path": "native-source/variants/common/src/stereo/camera_data_owner.h",
@@ -2398,13 +2508,13 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/contact_haptics.h",
-      "sha256": "A022A65FE29D4AB9B72E4530340AC7D9E79D5A4D9F0A0943F53A121490972E98",
-      "bytes": 6758
+      "sha256": "92EE624BCA12560BE97DA002DE6DD463CACA588C3F7B61998E2BBD5F504E802D",
+      "bytes": 6945
     },
     {
       "path": "native-source/variants/common/src/stereo/controller_actions.h",
-      "sha256": "EEC1EC84B6B6E4D5F4F1901C3C04EDA1E76CC5A50AA970F717E0615C7CFBE08E",
-      "bytes": 7286
+      "sha256": "FB4969CDF76AD6AD532F7A56B8041DFD488DF827F51FEC4CC922C6B264D15C31",
+      "bytes": 9010
     },
     {
       "path": "native-source/variants/common/src/stereo/controller_cursor_gpu.h",
@@ -2688,8 +2798,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/home_source_read.h",
-      "sha256": "BF92C722617CB094B277637A9543AB0E8B949A4FECECC268891DBBDA0AB5C1F1",
-      "bytes": 1976
+      "sha256": "A4054DAD90342C76466B4CB4F52A3FC4D7880EDECA8023C58C72C632435584FF",
+      "bytes": 2747
     },
     {
       "path": "native-source/variants/common/src/stereo/home_source_runtime.h",
@@ -2740,6 +2850,56 @@
       "path": "native-source/variants/common/src/stereo/late_relocate_runtime.h",
       "sha256": "7A2EE3E6399946987C6A5551E36AF5BA0C9ACD371FDBC63A9B0AFD798CFC4030",
       "bytes": 2698
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_config.h",
+      "sha256": "6815CDD43CF452DF2EC4C70E64F377DE645744121F6B08EAEEF584224F35B965",
+      "bytes": 2858
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_defaults.generated.h",
+      "sha256": "3847CB20A5514A229AB4E86B1F34CE31AB56E85AF92086CBB826573DC34F2670",
+      "bytes": 2407
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_gesture.h",
+      "sha256": "06F795BFD732C11B444E64AB2830A2686B618E0B80B52EEA515432ADA0DE0B54",
+      "bytes": 1538
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_gpu.h",
+      "sha256": "F830F07688E889CD0F3F0E2EA262551729DB58712BAD4FD920E2B9B24DA661B1",
+      "bytes": 4041
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_runtime.h",
+      "sha256": "D3DAB51690FCBF6C91BB64614FF287F23305591B81EE029EA5630198A70DAB86",
+      "bytes": 22306
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_service.c",
+      "sha256": "D229F71FB9A96FB91390D2226770674ACECBB00E66B9B4BB9F2DED4DC02FD141",
+      "bytes": 11316
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_surface.h",
+      "sha256": "89BCA7A17284551AB0801AC1E4C782E02DE7C85C282C6C59CEC4802CD3952299",
+      "bytes": 2837
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_transaction.h",
+      "sha256": "AD502776B1771D900830CCDA8C79ED6D43DEE6EE12FF6202D88A6326F3E686BA",
+      "bytes": 6903
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_wire.h",
+      "sha256": "2F469C5219EA2DE88EA6154B3B302AA9403D9BC3D3379B74165123D08ADAFB99",
+      "bytes": 3864
+    },
+    {
+      "path": "native-source/variants/common/src/stereo/live_settings_xr.h",
+      "sha256": "79C7D5022129A7440BC59FF39E2AFB30C31CD97BF69525447FA4BBEBC7E2F45F",
+      "bytes": 13737
     },
     {
       "path": "native-source/variants/common/src/stereo/main_multicamera_observe.h",
@@ -2848,8 +3008,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/performance_runtime.h",
-      "sha256": "5754085DBE156B1E1FBCAD9884A71775F8AC42060339F271FEDA59A7FE9E22D9",
-      "bytes": 7267
+      "sha256": "019E4040BDD0CCD41EB8FB87744A808E941E7AC984E58F96E3C0C47FC6332CCF",
+      "bytes": 7313
     },
     {
       "path": "native-source/variants/common/src/stereo/platform/haoplay_30_il2cpp_api_block.json",
@@ -2958,8 +3118,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/render_pipeline_integration.c",
-      "sha256": "D0A5775FD15A130AD6F03EE6A74141B878C4855D4457476DE034FD1E1BE7C354",
-      "bytes": 233201
+      "sha256": "836DD8AE44BCDB19582D9D34693D7417B46D719294D01029BCCF6819D6D53A1A",
+      "bytes": 235762
     },
     {
       "path": "native-source/variants/common/src/stereo/render_scale_config.h",
@@ -3103,8 +3263,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/two_flight_pipeline.h",
-      "sha256": "53021F4F817DE188DC3D869095EF8771F4135F0FFF1958B8E9D06115AE6F42B7",
-      "bytes": 35822
+      "sha256": "3DC17513FAB2101690627E14E022043CDEED1D763DFF14D7A0F3D7CB119F2B87",
+      "bytes": 35983
     },
     {
       "path": "native-source/variants/common/src/stereo/two_flight_root_observe.h",
@@ -3123,8 +3283,8 @@
     },
     {
       "path": "native-source/variants/common/src/stereo/world_drag_config.h",
-      "sha256": "600B3219CBF2D89722B1EAD6262DAD15294B0796095A469CFDD26792650D6284",
-      "bytes": 4779
+      "sha256": "2F624233E603E0779D8594BB2199EB7B2A6EBDCA754E54B44139B456E67C24AA",
+      "bytes": 5524
     },
     {
       "path": "native-source/variants/common/src/stereo/world_drag_handoff.h",
@@ -3368,13 +3528,13 @@
     },
     {
       "path": "native-source/variants/Dirty/native-build.json",
-      "sha256": "C7AC3D3FB3864C1489135A28DE4B7624050F6F0937691AF89D3EE6E8AC6E45D4",
-      "bytes": 7535
+      "sha256": "212A7CB6E62ED45A6F3F15B6E8FE181FB9ED271DDCD5BCC313E3B1F9466F7B62",
+      "bytes": 7762
     },
     {
       "path": "native-source/variants/Dirty/overlay/build-config/probe_config.h",
-      "sha256": "C67B4F2D93929C44E1FED7B2E4CB171332455ABF0A4F579FE3DD148D25992BEE",
-      "bytes": 820
+      "sha256": "875F734593A27C7FCA1AABA266CFE3C199B750F9EEFAA5EDBFC0B5178A090C49",
+      "bytes": 811
     },
     {
       "path": "native-source/variants/Dirty/overlay/src/stereo/contact_haptic_config.h",
@@ -3383,33 +3543,33 @@
     },
     {
       "path": "native-source/variants/Dirty/overlay/src/stereo/contact_haptics.h",
-      "sha256": "A022A65FE29D4AB9B72E4530340AC7D9E79D5A4D9F0A0943F53A121490972E98",
-      "bytes": 6758
+      "sha256": "92EE624BCA12560BE97DA002DE6DD463CACA588C3F7B61998E2BBD5F504E802D",
+      "bytes": 6945
     },
     {
       "path": "native-source/variants/Dirty/overlay/src/stereo/gf2_touch_bridge_package.h",
-      "sha256": "08BD1A2A3F2F0A943557890C02CA616D1DE4781D2CC9872F0A0DD9CFAD9B7695",
+      "sha256": "30C044C50DBE21EE7DF2BD450A6ABD62933C94EDD9DB1483D0701495633178CB",
       "bytes": 312649
     },
     {
       "path": "native-source/variants/generate-desktop-metadata.ps1",
-      "sha256": "846B51848CFB6F26B6E449F380B2CDB3CB56EB4B7F78EEF71EF17917330BD4D2",
-      "bytes": 5405
+      "sha256": "D192ABB7A8C61F540FDFBA7AF4A727266B54496B7011E06EDFBC4D1282F5DD39",
+      "bytes": 5490
     },
     {
       "path": "native-source/variants/managed/build_touch_bridge.ps1",
-      "sha256": "5FD1436D7B43C2220BA1760049C74B5062AF265879821A49E2F9567E4F7D7AC2",
-      "bytes": 14622
+      "sha256": "15D77B7CA0F3E86047BB3AB340370A457BE47D4F921B2901276832C5F94855D5",
+      "bytes": 16625
     },
     {
       "path": "native-source/variants/managed/CleanContactAdapter.cs",
-      "sha256": "896EE8FC49A1649586E2FF3A76FE93C40E88FCFE2D15A70EC8998113FEA02787",
-      "bytes": 926
+      "sha256": "EA73D5D5F42FBD269A597C72D83D2B3D75B9C22559A9008628400CFDAE3DBD17",
+      "bytes": 1054
     },
     {
       "path": "native-source/variants/managed/ControllerDisplay.cs",
-      "sha256": "473AB0B13F2E4760E5F40C15D2EE4EFE3F0CBBCF0F44B234665712129F1944D0",
-      "bytes": 37186
+      "sha256": "342C4769E0E7BB037C2782F7589030D50A2CCD318125BF71306CA7C6A03CE0D5",
+      "bytes": 40159
     },
     {
       "path": "native-source/variants/managed/dirty/BoneReadProbe.cs",
@@ -3443,8 +3603,8 @@
     },
     {
       "path": "native-source/variants/managed/dirty/ContactRuntime.cs",
-      "sha256": "71C408ECC2DAE2FDC8D0111BE9693D794591A7EC44191C054D307352AC833154",
-      "bytes": 30677
+      "sha256": "3EE183B916A3207F4065D66FA0D56C23BE04C615DC83A49CE78027120FBC61F5",
+      "bytes": 31012
     },
     {
       "path": "native-source/variants/managed/dirty/ContextActorContact.cs",
@@ -3727,6 +3887,26 @@
       "bytes": 1107
     },
     {
+      "path": "release/1.3.9-Clean-native-proof.json",
+      "sha256": "21D806DFD5249DCC6056ABFD3A74D601F3AD1A699E58B40904E9376361A2EC6A",
+      "bytes": 1823
+    },
+    {
+      "path": "release/1.3.9-core-source-manifest.txt",
+      "sha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
+      "bytes": 57953
+    },
+    {
+      "path": "release/1.3.9-Dirty-native-proof.json",
+      "sha256": "DBC40421C440DE584F7D745B1E0F9D2BD8A9635F0FA012D4F87C5DF4B3D1B34A",
+      "bytes": 1837
+    },
+    {
+      "path": "release/1.3.9-native-metadata.json",
+      "sha256": "FDA62E9C996C1B0CEB3FA66E8DB770CFE491B324211B9CBBD81CCC647E89C661",
+      "bytes": 627
+    },
+    {
       "path": "release/CHECKSUMS-1.1.1.sha256",
       "sha256": "0E42A44020859BFE131E7F43A4242F13F74C165BAD11DD3F007A59567D74EFEF",
       "bytes": 398
@@ -3803,8 +3983,8 @@
     },
     {
       "path": "release/Clean-package-manifest.json",
-      "sha256": "AA9C324FD744BAAA6508CB1DD898B964C61348A927D71D78A0AB12F336ECE391",
-      "bytes": 4683
+      "sha256": "8165126F40400EE6B833849C429220A3025BB03FE6DD1A7CB1F7B760B0083FB5",
+      "bytes": 4690
     },
     {
       "path": "release/common-source-manifest-1.1.3.txt",
@@ -3843,8 +4023,8 @@
     },
     {
       "path": "release/Dirty-package-manifest.json",
-      "sha256": "972CE050F5087EDDC67A1DF969E3242EA897D42FCBA44101FF01BCB238B43A0F",
-      "bytes": 4699
+      "sha256": "8CEA5F8DBCE2FAB855BD85415F273CCC63C3A40B44303E05990269F953EA6019",
+      "bytes": 4690
     },
     {
       "path": "release/GF2VR-Clean-update.json",
@@ -3953,10 +4133,10 @@
     }
   },
   "currentNativeSourceIdentity": {
-    "algorithm": "SHA256 sorted path NUL SHA256 LF rows",
-    "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5",
-    "manifest": "release/1.3.8-core-source-manifest.txt",
+    "algorithm": "SHA256 sorted path NUL SHA256 LF rows, excluding variant bridge overlay",
+    "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
+    "manifest": "release/1.3.9-core-source-manifest.txt",
     "nativeBytesUnchanged": false,
-    "runtimeAcceptance": "DIRTY_PA093_PA094_STEAM_HAOPLAY_CLEAN_NOT_RUN"
+    "runtimeAcceptance": "DIRTY_PA095_PA096_HAOPLAY_STEAM_CLEAN_NOT_RUN"
   }
 }

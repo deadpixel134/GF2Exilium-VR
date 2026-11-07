@@ -4,16 +4,13 @@
 
 [Home](../../README.en.md)
 
-Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語** buttons at the bottom; your selection is remembered.
+Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語 / 简体中文** buttons at the bottom; your selection is remembered.
 
 ## Applying changes
 
-1. Close the game.
-2. Adjust the settings you want. Read the descriptions beneath the settings as well.
-3. Click **Save** and check the completion message.
-4. Start the game again yourself.
+With the game running, edit values and press **Save** in the PC window or **Apply** in the VR panel. A valid runtime connection and consumer confirmation are required before persistence and success. With the game closed, saved PC settings are used on the next launch.
 
-Changing a number in the settings window does not immediately apply it to a running game. Enter numbers without units, using a period for the decimal separator, for example 0.5.
+Enter numbers without units and use a period for decimals. After changing render scale, restoring VR stereo may take about **5–10 seconds**. Please wait for VR to return and for the application result. See [In-game VR settings](USAGE.md#in-game-vr-settings).
 
 ## Quality and stereo depth
 
@@ -92,7 +89,7 @@ The Contact jiggle tab provides separate breast/buttock controls. Values below a
 | Breasts | 40% / 0.4x / 75% / 50% / 45% |
 | Buttocks | 120% / 0.5x / 120% / 120% / 140% |
 
-Explicit saved values are preserved; regional values override legacy common values. Arbitrary upper limits are removed while finite-number, positive-duration and positive-compression-scale checks remain. Restart the game after saving.
+Explicit saved values are preserved; regional values override legacy common values. Arbitrary upper limits are removed while finite-number, positive-duration and positive-compression-scale checks remain. Save/apply to update the running game.
 
 ## Activity UI
 
@@ -113,7 +110,7 @@ The **X/A → F, Y/B → Escape** inputs in game control mode are separate from 
 
 ## Diagnostics and logging
 
-**Diagnostics → Automatic logging** defaults to OFF. Enable it when investigating an issue, save, and restart the game. With logging ON, files keep growing.
+**Diagnostics → Automatic logging** defaults to OFF. Enable it when investigating an issue and save/apply. With logging ON, files keep growing.
 
 From 1.3.3, **Open log folder** on the same tab opens the folder where logs are saved, and the location is shown below the button. To send logs, see [Saving and sending logs](LOGS.md).
 
@@ -123,10 +120,15 @@ During an upgrade, eligible old automatic VR logs are cleaned once. An explicit 
 
 | Button | How to use it |
 |---|---|
-| Save | Saves your current settings. Restart the game to apply them. |
+| Save | Saves edits and confirms live application when the game is running. |
 | Reload | Loads the last saved settings. Unsaved changes are discarded. |
 | Defaults | Resets the settings to their defaults. Save afterward to apply them. |
 | Export | Stores the current settings in a separate profile file. Use it to switch between combinations or keep a backup. |
 | Import | Loads a saved profile. Check its contents and save before the game settings are updated. |
 
 The recommended ranges beside numeric fields are guidance for choosing a starting point. Values outside them are not always blocked, but values a device or feature cannot handle may not be applied. If an error appears, read the message and return to the previous value or default.
+
+
+![In-game VR settings panel](../images/vr-settings-en.png)
+
+UI example captured from the actual VR settings panel renderer while editing render scale 0.75. The footer asks the user to wait about 5–10 seconds for recovery.

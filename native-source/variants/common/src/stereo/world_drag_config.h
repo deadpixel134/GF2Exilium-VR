@@ -1,6 +1,9 @@
 #ifndef GF2_WORLD_DRAG_CONFIG_H
 #define GF2_WORLD_DRAG_CONFIG_H
 #include "world_drag.h"
+#ifdef GF2VR_LIVE_SETTINGS
+#include "touch2_config.h"
+#endif
 /* Dedicated version1 JSON file. Only the top-level worldDrag object is
    interpreted. Unknown nested JSON values are validated/skipped; duplicate
    recognized keys, non-boolean known values and malformed files fail closed. */
@@ -12,6 +15,19 @@ static int wd_json_word(WorldDragJson *j,const char *word) {
 }
 static int wd_json_string(WorldDragJson *j,char *name,unsigned cap) {
     if(!wd_json_char(j,'"'))return 0;unsigned n=0,escaped=0;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(name){
+        // GUI serialization may escape Unicode/quotes in compatible unknown keys.
+        // Decode names with the existing strict UTF8 reader; recognized ASCII
+        // names remain exact, while non-ASCII/control scalars cannot alias them.
+        Touch2Json decoded={(const unsigned char *)j->p,(unsigned)(j->end-j->p),0};
+        for(;;){unsigned scalar=0;int result=touch2_json_scalar(&decoded,&scalar);
+            if(result<0)return 0;
+            if(!result){if(cap)name[n<cap?n:cap-1]=0;j->p+=(unsigned)decoded.position;return 1;}
+            if(n+1<cap)name[n]=(char)(scalar>=32&&scalar<127?scalar:'?');++n;
+        }
+    }
+#endif
     while(j->p<j->end) {
         unsigned char c=(unsigned char)*j->p++;
         if(c=='"') {if(name&&cap)name[n<cap?n:cap-1]=0;return 1;}

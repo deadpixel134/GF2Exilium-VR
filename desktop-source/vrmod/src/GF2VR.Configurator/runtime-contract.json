@@ -1,20 +1,23 @@
 {
   "files": [
     "render_quality.json",
+    "performance.json",
     "stereo_depth.json",
-    "navigation.json",
-    "world_drag.json",
+    "world_scale.json",
     "activity_ui.json",
     "controller_input.json",
-    "world_scale.json",
     "controller_hands.json",
+    "navigation.json",
+    "world_drag.json",
     "touch_interaction.json"
   ],
   "schemaVersion": 1,
-  "apply": "GAME_RESTART",
-  "dllSha256": "C6396AB3506E0C2B8BD9173B553C2B2E16C898FA94FA5DF164B531451391CF33",
-  "commonCoreSha256": "1345204867BB72743C2407BE35FA4FD9514D1EDF5B0FA254D527210D78C4A9C5",
-  "buildId": "GF2VR-DIRTY-HOME-SEMANTIC-FIELDS001",
+  "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
+  "liveSettingsProtocol": 1,
+  "pcOutputSupported": true,
+  "dllSha256": "8877C5E59366B760860350A76D23AD41A090231AD3B73D0545C3C887D4A8115A",
+  "buildFlavor": "Dirty",
   "configurationRoot": "INSTALL_ROOT/vrmod/config",
-  "buildFlavor": "Dirty"
+  "buildId": "GF2VR-DIRTY-139-LIVESET004",
+  "apply": "LIVE_TRANSACTION_V1"
 }

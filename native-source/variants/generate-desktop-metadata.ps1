@@ -54,13 +54,13 @@ if($releaseRecipes.Clean.exact -and $releaseRecipes.Dirty.exact -and
  $commonAlgorithm='RELEASE-NATIVE-003-DLL-BOUND'
 }
 $files=@('render_quality.json','stereo_depth.json','navigation.json','world_drag.json',
- 'activity_ui.json','controller_input.json','world_scale.json','controller_hands.json')
+ 'activity_ui.json','controller_input.json','world_scale.json','controller_hands.json','performance.json')
 [IO.Directory]::CreateDirectory($metadata)|Out-Null
 foreach($flavor in @('Clean','Dirty')){
  $folder=Join-Path $metadata $flavor
  [IO.Directory]::CreateDirectory($folder)|Out-Null
  $contract=[ordered]@{schemaVersion=1;buildId=$variants[$flavor].buildId;dllSha256=$variants[$flavor].dllSha256;
-  configurationRoot='INSTALL_ROOT/vrmod/config';files=$(if($flavor -eq 'Dirty'){@($files)+@('touch_interaction.json')}else{$files});apply='GAME_RESTART';buildFlavor=$flavor;commonCoreSha256=$commonHash}
+  configurationRoot='INSTALL_ROOT/vrmod/config';files=$(if($flavor -eq 'Dirty'){@($files)+@('touch_interaction.json')}else{$files});apply='LIVE_TRANSACTION_V1';liveSettingsProtocol=1;pcOutputSupported=$true;buildFlavor=$flavor;commonCoreSha256=$commonHash}
  [IO.File]::WriteAllText((Join-Path $folder 'runtime-contract.json'),((($contract|ConvertTo-Json -Depth 4).Replace("`r`n","`n"))+"`n"),$utf8)
 }
 $profiles=@"

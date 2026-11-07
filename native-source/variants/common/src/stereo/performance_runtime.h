@@ -66,7 +66,11 @@ static void performance_bind(void) {
     event("performance_config_state",performance_runtime.config.invalid,GetCurrentThreadId());
     HINSTANCE module=GetModuleHandleW(L"GameAssembly.dll");
     unsigned char (*generic)(void *)=(void *)il2cpp_export(module,"il2cpp_method_is_generic");
+#ifdef GF2VR_LIVE_SETTINGS
+    {
+#else
     if(performance_runtime.config.pc.fixed) {
+#endif
         void *screen=render_class("UnityEngine.CoreModule.dll","UnityEngine","Screen");
         const char *args[]={"System.Int32","System.Int32","UnityEngine.FullScreenMode"};
         if(generic) {

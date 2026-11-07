@@ -13,6 +13,11 @@
 #define AUX_DRAG_API(F)
 #endif
 #include "aux_panel_config.h"
+#ifdef GF2VR_LIVE_SETTINGS
+#include "live_settings_gesture.h"
+static unsigned live_settings_modal(void);
+static void live_settings_toggle(void);
+#endif
 #ifdef GF2VR_DIRTY_CONTACT
 #include "contact_haptics.h"
 #endif
@@ -37,6 +42,9 @@ typedef struct {
 } AuxApi;
 typedef struct {
     AuxApi api; XrActionSet set; XrAction pose,grip; XrSpace space;
+#ifdef GF2VR_LIVE_SETTINGS
+    XrPath hands[2];XrSpace spaces[2];LiveSettingsGesture settings_grip;
+#endif
 #ifdef GF2VR_DIRTY_CONTACT
     ContactHapticActions haptics;
 #endif
@@ -79,6 +87,9 @@ static void aux_reset_visibility(AuxPanel *a) {
     GF2VR_ACTIVITY_UI_AUX(0);
 #endif
     a->shown=a->armed=a->down=a->tracked=a->last_projection=0;a->generation=0;
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_gesture_reset(&a->settings_grip);
+#endif
 }
 static int aux_close(AuxPanel *a) {
     if(a->thread && a->thread!=GetCurrentThreadId()) return 0;
@@ -91,6 +102,13 @@ static int aux_close(AuxPanel *a) {
 #endif
 #ifdef GF2VR_WORLD_DRAG
     if(!world_drag_actions_close(&a->drag))return 0;
+#ifdef GF2VR_LIVE_SETTINGS
+    for(unsigned h=0;h<2;++h)if(a->spaces[h]) {
+        if(!a->api.DestroySpace||XR_FAILED(a->api.DestroySpace(a->spaces[h])))return 0;
+        a->spaces[h]=0;
+    }
+    a->space=0;
+#endif
     if(a->space) {if(!a->api.DestroySpace||XR_FAILED(a->api.DestroySpace(a->space)))return 0;a->space=0;}
     if(a->set) {if(!a->api.DestroyActionSet||XR_FAILED(a->api.DestroyActionSet(a->set)))return 0;a->set=0;}
 #else
@@ -170,6 +188,11 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
     aux_haptic_load(a);
 #endif
     XrActionCreateInfo action={0};action.type=XR_TYPE_ACTION_CREATE_INFO;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(a->api.StringToPath(instance,"/user/hand/left",&a->hands[0])!=XR_SUCCESS||
+       a->api.StringToPath(instance,"/user/hand/right",&a->hands[1])!=XR_SUCCESS)goto fail;
+    action.countSubactionPaths=2;action.subactionPaths=a->hands;
+#endif
     action.actionType=XR_ACTION_TYPE_POSE_INPUT;
     aux_text(action.actionName,"panel_hand");aux_text(action.localizedActionName,"Panel hand");
     if(a->api.CreateAction(a->set,&action,&a->pose)!=XR_SUCCESS) goto fail;
@@ -206,6 +229,19 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
     unsigned supported=0;
     for(unsigned i=0;i<4;++i) {
         XrPath profile=0,pose=0,grip=0;
+#ifdef GF2VR_LIVE_SETTINGS
+        if(a->api.StringToPath(instance,profiles[i],&profile)!=XR_SUCCESS)continue;
+        XrActionSuggestedBinding bindings[48];unsigned binding_count=0;
+        for(unsigned h=0;h<2;++h) {
+            const char *pp=h?"/user/hand/right/input/grip/pose":"/user/hand/left/input/grip/pose";
+            const char *pg=h?(i<2?"/user/hand/right/input/squeeze/value":"/user/hand/right/input/squeeze/click"):
+                (i<2?"/user/hand/left/input/squeeze/value":"/user/hand/left/input/squeeze/click");
+            if(a->api.StringToPath(instance,pp,&pose)!=XR_SUCCESS||a->api.StringToPath(instance,pg,&grip)!=XR_SUCCESS)break;
+            bindings[binding_count++]=(XrActionSuggestedBinding){a->pose,pose};
+            bindings[binding_count++]=(XrActionSuggestedBinding){a->grip,grip};
+        }
+        if(binding_count!=4)continue;
+#else
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
         const char *panel_pose=a->panel_hand?"/user/hand/right/input/grip/pose":"/user/hand/left/input/grip/pose";
         const char *panel_grip=a->panel_hand?(i<2?"/user/hand/right/input/squeeze/value":"/user/hand/right/input/squeeze/click"):
@@ -228,17 +264,18 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
 #else
         XrActionSuggestedBinding bindings[12]={{a->pose,pose},{a->grip,grip}};unsigned binding_count=2;
 #endif
+#endif /* prebound live panel hands */
 #ifdef GF2VR_WORLD_DRAG
-        unsigned extra=world_drag_actions_bindings(&a->drag,instance,i,bindings+2,6);
+        unsigned extra=world_drag_actions_bindings(&a->drag,instance,i,bindings+binding_count,6);
         if(!extra)continue;binding_count+=extra;
 #endif
 #ifdef GF2VR_CONTROLLER_INPUT
-        unsigned pointer_count=controller_actions_bindings(&a->pointer,instance,i,bindings+binding_count,12-binding_count);
+        unsigned pointer_count=controller_actions_bindings(&a->pointer,instance,i,bindings+binding_count,(unsigned)(sizeof(bindings)/sizeof(bindings[0]))-binding_count);
         if(!pointer_count)continue;binding_count+=pointer_count;
 #endif
 #ifdef GF2VR_THUMBSTICK_NAVIGATION
         unsigned original_count=binding_count;
-        unsigned nav_count=navigation_actions_bindings(&a->navigation,instance,i,bindings+binding_count,16-binding_count);
+        unsigned nav_count=navigation_actions_bindings(&a->navigation,instance,i,bindings+binding_count,(unsigned)(sizeof(bindings)/sizeof(bindings[0]))-binding_count);
         binding_count+=nav_count;
 #endif
 #ifdef GF2VR_CAMERA_RETURN
@@ -253,7 +290,7 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
 #endif
 #ifdef GF2VR_CONTROLLER_GAME_MODE
         unsigned before_game=binding_count;
-        unsigned game_count=controller_game_actions_bindings(&a->game,instance,i,bindings+binding_count,20-binding_count);
+        unsigned game_count=controller_game_actions_bindings(&a->game,instance,i,bindings+binding_count,(unsigned)(sizeof(bindings)/sizeof(bindings[0]))-binding_count);
         binding_count+=game_count;
 #endif
         XrInteractionProfileSuggestedBinding suggest={0};suggest.type=XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING;
@@ -263,7 +300,7 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
         /* Independently optional children. Prefer preserving old game keys,
            then LEFT return, while retrying RIGHT without a rejected neighbor.
            All subsets use the same existing action set and single attach. */
-        XrActionSuggestedBinding full[24];for(unsigned n=0;n<binding_count;++n)full[n]=bindings[n];
+        XrActionSuggestedBinding full[48];for(unsigned n=0;n<binding_count;++n)full[n]=bindings[n];
         const unsigned choices[]={7,5,6,4,3,1,2,0};
         unsigned available=(return_count?1u:0u)|(follow_count?2u:0u);
 #ifdef GF2VR_CONTROLLER_GAME_MODE
@@ -343,7 +380,15 @@ static int aux_open(AuxPanel *a,PFN_xrGetInstanceProcAddr get,XrInstance instanc
     if(!supported) goto fail;
     XrActionSpaceCreateInfo space={0};space.type=XR_TYPE_ACTION_SPACE_CREATE_INFO;
     space.action=a->pose;space.poseInActionSpace.orientation.w=1;
+#ifdef GF2VR_LIVE_SETTINGS
+    for(unsigned h=0;h<2;++h) {
+        space.subactionPath=a->hands[h];
+        if(a->api.CreateActionSpace(session,&space,&a->spaces[h])!=XR_SUCCESS)goto fail;
+    }
+    a->space=a->spaces[a->panel_hand];
+#else
     if(a->api.CreateActionSpace(session,&space,&a->space)!=XR_SUCCESS) goto fail;
+#endif
     XrSessionActionSetsAttachInfo attach={0};attach.type=XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO;
     attach.countActionSets=1;attach.actionSets=&a->set;
     if(a->api.AttachSessionActionSets(session,&attach)!=XR_SUCCESS) goto fail;
@@ -353,12 +398,30 @@ fail:
 }
 /* No edge on entry or tracking/focus recovery while already holding Grip. */
 static void aux_button(AuxPanel *a,int active,int down,unsigned long long generation) {
+#ifdef GF2VR_LIVE_SETTINGS
+    if(live_settings_modal()) {
+        // A settings surface belongs to the XR session, not the current world source.
+        if(!generation)generation=a->generation?a->generation:1;
+        a->generation=generation;
+    }
+#endif
     if(!generation) {aux_reset_visibility(a);return;}
     if(a->generation!=generation) {aux_reset_visibility(a);a->generation=generation;}
-    if(!active) {a->armed=a->down=a->tracked=0;return;}
+    if(!active) {a->armed=a->down=a->tracked=0;
+#ifdef GF2VR_LIVE_SETTINGS
+        (void)live_settings_gesture_step(&a->settings_grip,0,0,GetTickCount64());
+#endif
+        return;}
+#ifdef GF2VR_LIVE_SETTINGS
+    unsigned gesture=live_settings_gesture_step(&a->settings_grip,1,down,GetTickCount64());
+    if(gesture==LSG_SHORT)a->shown=!a->shown;
+    if(gesture==LSG_LONG){event("live_settings_grip_long",a->panel_hand,GetCurrentThreadId());live_settings_toggle();a->shown=1;}
+    a->down=down;
+#else
     if(!down) a->armed=1;
     if(a->armed && down && !a->down) a->shown=!a->shown;
     a->down=down;
+#endif
 #ifdef GF2VR_ACTIVITY_UI_AUX
     GF2VR_ACTIVITY_UI_AUX(a->shown);
 #endif
@@ -388,6 +451,10 @@ static void aux_frame(AuxPanel *a,XrSpace view,XrTime time,unsigned long long ge
     XrActionsSyncInfo sync={0};sync.type=XR_TYPE_ACTIONS_SYNC_INFO;
     sync.countActiveActionSets=1;sync.activeActionSets=&active;
     XrActionStateGetInfo get={0};get.type=XR_TYPE_ACTION_STATE_GET_INFO;get.action=a->grip;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(a->panel_hand>1)goto lost;
+    get.subactionPath=a->hands[a->panel_hand];a->space=a->spaces[a->panel_hand];
+#endif
     XrActionStateBoolean button={0};button.type=XR_TYPE_ACTION_STATE_BOOLEAN;
     XrActionStatePose pose={0};pose.type=XR_TYPE_ACTION_STATE_POSE;
     XrSpaceLocation location={0};location.type=XR_TYPE_SPACE_LOCATION;
