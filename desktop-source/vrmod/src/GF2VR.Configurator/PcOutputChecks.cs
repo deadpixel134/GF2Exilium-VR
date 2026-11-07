@@ -105,7 +105,7 @@ internal static partial class SelfTest
         {
             Texts.Language = locale;
             Assert(Texts.Get(preset.Key) != Texts.Get("unavailable") && Texts.Get(scope.Key) != Texts.Get("unavailable"), "PC labels packaged " + locale);
-            Assert(Texts.Get("pcOutputHelp").Contains("720p") && Texts.Get("pcOutputScopeHelp").Contains("GAME_RESTART"), "localized720p/restart help " + locale);
+            Assert(Texts.Get("pcOutputHelp").Contains("720p") && Texts.Get("pcOutputScopeHelp").Contains(Texts.Get("liveApply")), "localized720p/live apply help " + locale);
             Assert(Fields.ChoiceText(preset, "NATIVE") == Texts.Get("pcOutputNative") && Fields.ChoiceText(preset, "1280x720") == "1280×720", "localized preset mapping " + locale);
         }
         Texts.Language = language;
@@ -158,7 +158,7 @@ internal static partial class SelfTest
         foreach (string locale in Texts.Languages)
         {
             Texts.Language = locale;
-            Assert(Texts.Get(late.Key) != Texts.Get("unavailable") && Texts.Get(late.Help).Contains("GAME_RESTART"), "late relocate label/help packaged " + locale);
+            Assert(Texts.Get(late.Key) != Texts.Get("unavailable") && Texts.Get(late.Help).Contains(Texts.Get("liveApply")), "late relocate live label/help packaged " + locale);
         }
         Texts.Language = language;
         File.Delete(profile);

@@ -22,6 +22,22 @@ internal sealed class SettingsStore
     private readonly bool fixture;
     internal Dictionary<string, JsonObject> Documents { get; private set; } = Fields.Defaults();
     internal bool PcOutputAvailable { get; private set; }
+    internal ulong? RuntimeRevision { get; private set; }
+    internal ulong RuntimeInstance { get; private set; }
+    internal void BindRuntimeBaseline(LiveState state) { RuntimeRevision = state.Revision; RuntimeInstance = state.Instance; }
+    internal void CaptureRuntimeBaseline()
+    {
+        RuntimeRevision = null; RuntimeInstance = 0;
+        if (!IsRunning()) return;
+        try { using var client = LiveSettingsClient.Connect(Root); if (client.State.Phase == 0) BindRuntimeBaseline(client.State); }
+        catch (SettingsError) { } // Editing stays available while the game finishes loading; Apply still requires a valid connection.
+    }
+    internal SettingsStore ReloadSnapshot()
+    {
+        var snapshot = new SettingsStore(Root, fixture);
+        snapshot.Load(); LiveSettingsCoordinator.Recover(snapshot); snapshot.CaptureRuntimeBaseline();
+        return snapshot;
+    }
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
     internal static Func<bool> GameRunning = () =>
     {
@@ -29,6 +45,21 @@ internal sealed class SettingsStore
         try { return processes.Length != 0; }
         finally { foreach (var p in processes) p.Dispose(); }
     };
+    internal bool IsRunning()
+    {
+        if (fixture) return GameRunning();
+        string executable = GameExecutable(Root);
+        foreach (var process in Process.GetProcessesByName("GF2_Exilium"))
+        {
+            using (process)
+            {
+                try { if (string.Equals(process.MainModule?.FileName, executable, StringComparison.OrdinalIgnoreCase)) return true; }
+                catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+                { return true; } // An unreadable game identity cannot authorize an offline overwrite.
+            }
+        }
+        return false;
+    }
 
     internal SettingsStore(string root, bool testFixture = false)
     {
@@ -148,6 +179,21 @@ internal sealed class SettingsStore
                 (File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0)
                 throw new SettingsError("pathError");
         }
+    }
+    internal void CheckRuntimePath(string path) => CheckPath(path);
+
+    internal IDisposable AcquireWriteLock() => new WriteLock(Root);
+    private sealed class WriteLock : IDisposable
+    {
+        private readonly Mutex mutex;
+        internal WriteLock(string root)
+        {
+            mutex = new Mutex(false, "Local\\GF2VR.Settings." + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(root.ToUpperInvariant()))));
+            bool held;
+            try { held = mutex.WaitOne(0); } catch (AbandonedMutexException) { held = true; }
+            if (!held) { mutex.Dispose(); throw new SettingsError("conflictError"); }
+        }
+        public void Dispose() { mutex.ReleaseMutex(); mutex.Dispose(); }
     }
 
     internal void Load()
@@ -343,62 +389,119 @@ internal sealed class SettingsStore
     internal void Save(Dictionary<string, JsonObject> requested)
     {
         Validate(requested); EnsureRoot();
-        if (GameRunning()) throw new SettingsError("runningError");
+        using var held = AcquireWriteLock();
+        LiveSettingsCoordinator.Recover(this);
+        if (IsRunning()) { LiveSettingsCoordinator.Apply(this, requested); return; }
+        SaveTransaction(requested, null);
+    }
+
+    internal Dictionary<string, byte[]?> OriginalBytes() => originals.ToDictionary(p => p.Key, p => p.Value?.ToArray());
+    internal void PreflightLive()
+    {
         if (originals.Count != Fields.Files.Length) throw new SettingsError("reloadError");
-        string mutexName = "Local\\GF2VR.Settings." + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Root.ToUpperInvariant())));
-        using var mutex = new Mutex(false, mutexName);
-        bool held; try { held = mutex.WaitOne(0); } catch (AbandonedMutexException) { held = true; }
-        if (!held) throw new SettingsError("conflictError");
-        var committed = new List<string>();
-        var output = requested.ToDictionary(p => p.Key, p => Encode(p.Value));
-        var staged = new Dictionary<string, string>();
-        string transaction = Guid.NewGuid().ToString("N");
-        try
+        foreach (string file in Fields.Files)
         {
-            Directory.CreateDirectory(Config);
-            // Preflight ALL files before any replacement. No overwrite after external changes or future schemas.
-            foreach (string file in Fields.Files)
-            {
-                string path = Path.Combine(Config, file); CheckPath(path);
-                if (!Same(ReadBounded(path), originals[file])) throw new SettingsError("conflictError");
-                if (JsonNode.DeepEquals(requested[file], Documents[file]) && originals[file] != null) continue;
-                string temp = Path.Combine(Config, "." + file + "." + transaction + ".tmp");
-                WriteNew(temp, output[file]); staged.Add(file, temp);
-            }
-            if (GameRunning()) throw new SettingsError("runningError");
-            foreach (var p in staged)
-            {
-                string dest = Path.Combine(Config, p.Key);
-                if (!Same(ReadBounded(dest), originals[p.Key])) throw new SettingsError("conflictError");
-                if (originals[p.Key] != null) File.Replace(p.Value, dest, dest + "." + transaction + ".bak");
-                else File.Move(p.Value, dest);
-                committed.Add(p.Key);
-            }
-            Load(); // Publish GUI state only after the entire transaction completes.
+            string path = Path.Combine(Config, file); CheckPath(path);
+            if (!Same(ReadBounded(path), originals[file])) throw new SettingsError("conflictError");
         }
-        catch
+    }
+    internal DiskStage Stage(Dictionary<string, JsonObject> requested) => new(this, requested);
+    private void SaveTransaction(Dictionary<string, JsonObject> requested, LiveSaveLease? lease)
+    { using var stage = Stage(requested); stage.Commit(lease); }
+
+    // Shared offline/live staging engine. All IO preparation completes before native Prepare/Apply.
+    internal sealed class DiskStage : IDisposable
+    {
+        private readonly SettingsStore store;
+        private readonly IDisposable held;
+        private readonly Dictionary<string, byte[]?> before;
+        private readonly Dictionary<string, byte[]> output;
+        private readonly Dictionary<string, string> staged = [];
+        private readonly string transaction = Guid.NewGuid().ToString("N");
+        private bool attempted, disposed;
+        internal DiskStage(SettingsStore owner, Dictionary<string, JsonObject> requested)
         {
-            // Restore only files still equal to OUR transaction. Never erase an external writer's change.
-            var unresolved = new List<string>();
-            foreach (string file in committed.AsEnumerable().Reverse())
+            store = owner; Validate(requested); store.EnsureRoot(); held = store.AcquireWriteLock();
+            before = store.OriginalBytes(); output = requested.ToDictionary(p => p.Key, p => Encode(p.Value));
+            try
             {
-                string dest = Path.Combine(Config, file), backup = dest + "." + transaction + ".bak";
-                try
+                store.PreflightLive(); Directory.CreateDirectory(store.Config);
+                foreach (string file in Fields.Files)
                 {
-                    if (!Same(ReadBounded(dest), output[file])) { unresolved.Add(backup); continue; }
-                    if (originals[file] == null) File.Delete(dest);
-                    else if (File.Exists(backup)) File.Replace(backup, dest, null);
+                    if (JsonNode.DeepEquals(requested[file], store.Documents[file]) && before[file] != null) continue;
+                    string temp = Path.Combine(store.Config, "." + file + "." + transaction + ".tmp");
+                    store.CheckPath(temp); WriteNew(temp, output[file]); staged.Add(file, temp);
                 }
-                catch { unresolved.Add(backup); }
             }
-            if (unresolved.Count != 0) throw new SettingsError("rollbackError", string.Join("\n", unresolved));
-            throw;
+            catch { Dispose(); throw; }
         }
-        finally
+        internal void Commit(LiveSaveLease? lease)
         {
-            try { foreach (string temp in staged.Values) { try { if (File.Exists(temp)) File.Delete(temp); } catch (IOException) { } } }
-            finally { mutex.ReleaseMutex(); }
+            if (disposed || attempted) throw new SettingsError("conflictError");
+            attempted = true; lease?.Validate(store.Root);
+            if (store.IsRunning() && lease == null) throw new SettingsError("runningError");
+            var committed = new List<string>();
+            try
+            {
+                store.PreflightLive();
+                foreach (var pair in staged)
+                {
+                    string dest = Path.Combine(store.Config, pair.Key); store.CheckPath(dest);
+                    if (!Same(ReadBounded(dest), before[pair.Key])) throw new SettingsError("conflictError");
+                    if (before[pair.Key] != null) File.Replace(pair.Value, dest, dest + "." + transaction + ".bak");
+                    else File.Move(pair.Value, dest);
+                    committed.Add(pair.Key);
+                }
+                store.Load();
+            }
+            catch
+            {
+                var unresolved = new List<string>();
+                foreach (string file in committed.AsEnumerable().Reverse())
+                {
+                    string dest = Path.Combine(store.Config, file), backup = dest + "." + transaction + ".bak";
+                    try
+                    {
+                        if (!Same(ReadBounded(dest), output[file])) { unresolved.Add(backup); continue; }
+                        if (before[file] == null) File.Delete(dest);
+                        else if (File.Exists(backup)) File.Replace(backup, dest, null);
+                        else unresolved.Add(backup);
+                    }
+                    catch { unresolved.Add(backup); }
+                }
+                if (unresolved.Count != 0) throw new SettingsError("rollbackError", string.Join("\n", unresolved));
+                throw;
+            }
         }
+        public void Dispose()
+        {
+            if (disposed) return; disposed = true;
+            try { foreach (string temp in staged.Values) try { if (File.Exists(temp)) File.Delete(temp); } catch (IOException) { } }
+            finally { held.Dispose(); }
+        }
+    }
+
+    internal void RestoreLive(Dictionary<string, byte[]?> before, Dictionary<string, byte[]> after)
+    {
+        using var held = AcquireWriteLock();
+        // Preflight the entire set before compensating any document.
+        foreach (string file in Fields.Files)
+        {
+            if (!before.ContainsKey(file) || !after.ContainsKey(file)) throw new SettingsError("liveRecoveryError");
+            string path = Path.Combine(Config, file); CheckPath(path);
+            byte[]? actual = ReadBounded(path);
+            if (!Same(actual, before[file]) && !Same(actual, after[file])) throw new SettingsError("liveRecoveryError");
+        }
+        foreach (string file in Fields.Files)
+        {
+            if (!before.ContainsKey(file) || !after.ContainsKey(file)) throw new SettingsError("liveRecoveryError");
+            string path = Path.Combine(Config, file); CheckPath(path);
+            byte[]? actual = ReadBounded(path);
+            if (Same(actual, before[file])) continue;
+            if (!Same(actual, after[file])) throw new SettingsError("liveRecoveryError");
+            if (before[file] == null) File.Delete(path); else AtomicStandalone(path, before[file]!);
+        }
+        Load();
     }
 
     internal static void WriteNew(string path, byte[] bytes)

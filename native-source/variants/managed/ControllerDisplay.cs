@@ -44,9 +44,11 @@ namespace GF2.Private
             public int Kind; // 1 Main, 2 Dorm, 3 Activity, 4 legacy actor, 5 source with independent actors.
             public GameObject Root;
             public Camera OwnerCamera;
+#if !GF2VR_GAME_INDEPENDENT_CONTACT
             public T0BGHelper Main;
             public LoungeHelper Dorm;
             public Lobby.World.LobbyHelper Activity;
+#endif
             public Animator ContextActor;
             public Transform ActorParent, AnchorBone;
             public SkinnedMeshRenderer AnchorSkin;
@@ -72,6 +74,11 @@ namespace GF2.Private
         {
             if (value == null || source == null || !source.gameObject.activeInHierarchy ||
                 value.Root == null || !value.Root.activeInHierarchy) return false;
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+            // Native admission already owns the source/generation. Individual
+            // actors still pass ContactFind/ContactValid visibility/bone checks.
+            return value.Kind == 5 && value.OwnerCamera == source && value.Root == source.gameObject;
+#else
             if (value.Kind == 1)
                 return Live(value.Main) && value.Main == T0BGHelper.MJGPKADBALF &&
                     T0BGHelper.CurrActive && !value.Main.isGachaModel && value.OwnerCamera == source;
@@ -90,12 +97,16 @@ namespace GF2.Private
             if (value.Kind == 5) return value.OwnerCamera == source && value.Root == source.gameObject;
             if (value.Kind == 4) return ContextActorEligible(value, source);
             return false;
+#endif
         }
 
         // Cold exact-type lookup only. The MonoSingleton getter is not called:
         // its lazy creation side effects have not been proved absent.
         private static string ContactRejection(Context value, Camera source)
         {
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+            return Eligible(value, source) ? "eligible-multiple-actors" : "invalid-source";
+#else
             if (source == null || !source.gameObject.activeInHierarchy) return "invalid-source";
             if (value.Root == null || !value.Root.activeInHierarchy) return "inactive-root";
             if (value.Kind == 5) return Eligible(value, source) ? "eligible-multiple-actors" : "invalid-source";
@@ -119,10 +130,19 @@ namespace GF2.Private
             if (Lobby.World.LobbyHelper.isSceneReloading || Lobby.World.LobbyHelper.isSceneDayNightSwitching) return "transition";
             return value.Activity.CameraMgr == null || value.Activity.CameraMgr.EEMIJPMBCPJ != source
                 ? "OwnerCamera-mismatch" : "eligible";
+#endif
         }
 
         private static Context Select(Camera source)
         {
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+            selectKind = 0; selectReason = "invalid-source";
+            mainReject = dormReject = activityReject = "legacy-helper-not-required";
+            Context selected = SelectContextActor(source);
+            if (!Eligible(selected, source)) return null;
+            selectKind = selected.Kind; selectReason = "eligible-multiple-actors";
+            return selected;
+#else
             Context selected = null;
             int matches = 0;
             selectKind = 0; selectReason = mainReject = dormReject = activityReject = "no-owner";
@@ -171,6 +191,7 @@ namespace GF2.Private
             selectReason = matches > 1 ? "ambiguous-owner" : mainReject != "no-owner" ? mainReject :
                 dormReject != "no-owner" ? dormReject : activityReject;
             return null;
+#endif
         }
 
         // A broken optional game contact binding must not clear valid hand
@@ -511,19 +532,58 @@ namespace GF2.Private
             text.Append(",\"is_initialized\":").Append(actor.isInitialized ? "true" : "false");
             // Exactly once for each deduplicated Animator root. includeInactive
             // discovers existing disabled components but never activates them.
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+            // Optional inventory only: a missing/renamed game diagnostic type
+            // must not create an Assembly-CSharp TypeRef in the contact bridge.
+            Component[] chains = null;
+            FieldInfo rootField = null;
+            bool inventoryAvailable = false;
+            try
+            {
+                Type dynamicType = null;
+                int gameAssemblies = 0;
+                Assembly[] loaded = AppDomain.CurrentDomain.GetAssemblies();
+                if (loaded.Length <= 128)
+                    for (int i = 0; i < loaded.Length; ++i)
+                        if (loaded[i].GetName().Name == "Assembly-CSharp")
+                        {
+                            if (++gameAssemblies > 1) { dynamicType = null; break; }
+                            dynamicType = loaded[i].GetType("DynamicBone", false);
+                        }
+                if (dynamicType != null && typeof(Behaviour).IsAssignableFrom(dynamicType))
+                {
+                    rootField = dynamicType.GetField("m_Root", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (rootField != null && rootField.FieldType == typeof(Transform))
+                    { chains = actor.GetComponentsInChildren(dynamicType, true); inventoryAvailable = true; }
+                }
+            }
+            catch (Exception) { chains = null; rootField = null; inventoryAvailable = false; }
+            text.Append(",\"dynamicbone_inventory_available\":").Append(inventoryAvailable ? "true" : "false");
+#else
             DynamicBone[] chains = actor.GetComponentsInChildren<DynamicBone>(true);
+#endif
             text.Append(",\"dynamicbone_include_inactive_count\":").Append(chains == null ? 0 : chains.Length);
             text.Append(",\"dynamicbones\":[");
             int count = chains == null ? 0 : Math.Min(chains.Length, 512);
             for (int i = 0; i < count; ++i)
             {
                 if (i != 0) text.Append(',');
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+                Behaviour chain = chains[i] as Behaviour;
+#else
                 DynamicBone chain = chains[i];
+#endif
                 if (chain == null) { text.Append("null"); continue; }
                 text.Append("{\"component\":"); ObjectValue(text, chain);
                 text.Append(",\"enabled\":").Append(chain.enabled ? "true" : "false");
                 text.Append(",\"active\":").Append(chain.gameObject.activeInHierarchy ? "true" : "false");
+#if GF2VR_GAME_INDEPENDENT_CONTACT
+                Transform root = null;
+                try { root = rootField.GetValue(chain) as Transform; } catch (Exception) { }
+                text.Append(",\"root\":"); ObjectValue(text, root);
+#else
                 text.Append(",\"root\":"); ObjectValue(text, chain.m_Root);
+#endif
                 text.Append('}');
             }
             text.Append("],\"dynamicbone_recorded\":").Append(count).Append('}');
@@ -557,8 +617,10 @@ namespace GF2.Private
                 text.Append(",\"display_context_rejected\":").Append(source == null || source != preparedSource ? "true" : "false");
                 text.Append(",\"owner_root\":"); ObjectValue(text, actual == null ? null : actual.Root);
                 text.Append(",\"owner_root_path\":"); Path(text, actual == null ? null : actual.Root.transform);
+#if !GF2VR_GAME_INDEPENDENT_CONTACT
                 if (actual != null && actual.Activity != null)
                     text.Append(",\"activity_is_hall_observed_only\":").Append(actual.Activity.isHallScene ? "true" : "false");
+#endif
                 // Same passive active-object query as P1, once on F11. Actor
                 // roots outside the display helper (e.g. Commander) remain in
                 // coverage; global presence does not imply display eligibility.

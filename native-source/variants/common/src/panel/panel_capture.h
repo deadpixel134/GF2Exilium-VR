@@ -11,11 +11,7 @@ static void **panel_vt(void *p) { return *(void ***)p; }
 static void panel_release(void *p) { if(p)((unsigned (*)(void *))panel_vt(p)[2])(p); }
 static long panel_qi(void *p,const PanelGuid *id,void **out) { return ((long (*)(void *,const PanelGuid *,void **))panel_vt(p)[0])(p,id,out); }
 #include "panel_device_identity.h"
-static unsigned panel_format(unsigned source) { return source==28||source==29 ? 29 : source==87||source==91 ? 91 : 0; }
-static BOOL panel_destination_format(unsigned actual,unsigned requested) {
-    return requested==29 ? (actual==27 || actual==28 || actual==29) :
-           requested==91 && (actual==87 || actual==90 || actual==91);
-}
+#include "panel_texture_format.h"
 /* IDLE -> REQUEST -> COPYING -> INFLIGHT -> DONE; SKIPPED has no GPU work.
    FAULT is quarantined: no XR image destruction/reuse while completion unknown. */
 enum { PC_IDLE,PC_REQUEST,PC_COPYING,PC_INFLIGHT,PC_DONE,PC_SKIPPED,PC_FAULT };
@@ -82,6 +78,9 @@ static void panel_dimensions(unsigned *w,unsigned *h,unsigned *format) {
 }
 #ifdef GF2VR_CONTROLLER_INPUT
 #include "../stereo/controller_cursor_gpu.h"
+#ifdef GF2VR_LIVE_SETTINGS
+#include "../stereo/live_settings_gpu.h"
+#endif
 #endif
 #ifdef GF2VR_AUX_OBSERVE
 #include "panel_observe_capture.h"
@@ -192,6 +191,9 @@ static long panel_present(void *chain,unsigned interval,unsigned flags) {
 #endif
 #ifdef GF2VR_CONTROLLER_INPUT
         controller_cursor_render(chain);
+#ifdef GF2VR_LIVE_SETTINGS
+        live_settings_gpu_render();
+#endif
 #endif
 #ifndef GF2VR_PERF_POLL
         __atomic_store_n(&panel_present_busy,0,__ATOMIC_RELEASE);

@@ -501,6 +501,20 @@ static int controller_game_runtime_close(void);
 #include "xr_eye_output.h"
 #include "xr_eye_config.h"
 #include "xr_eye_size.h"
+#ifdef GF2VR_LIVE_SETTINGS
+static unsigned live_settings_game_allowed;
+static void live_settings_xr_tick(PanelXr *,int);
+static int live_settings_xr_quad(PanelXr *,int,XrCompositionLayerQuad *,XrCompositionLayerQuad *);
+static int live_settings_compose(PanelXr *,int,int,XrFrameEndInfo *,XrCompositionLayerQuad *,XrCompositionLayerQuad *,const XrCompositionLayerBaseHeader **);
+static void live_settings_xr_end(XrResult,int);
+static int live_settings_xr_close(void);
+static void live_settings_runtime_xr_open(PFN_xrGetInstanceProcAddr,XrInstance,XrSystemId);
+static void live_settings_runtime_xr_tick(void);
+static void live_settings_runtime_xr_closed(void);
+static unsigned live_settings_runtime_busy(void);
+static void live_settings_note_frame(U64);
+static unsigned live_settings_projection_allowed(unsigned,unsigned,U64);
+#endif
 #if defined(GF2VR_DYNAMIC_EYE_SCALE_OPTIN) && defined(GF2VR_RENDER_SCALE) && defined(GF2VR_PERF_OBSERVE) && defined(GF2VR_PORTABLE_BINDING)
 #define GF2VR_DYNAMIC_EYE_SCALE_XR
 #include "dynamic_eye_scale.h"
@@ -2449,7 +2463,14 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
     XrCompositionLayerQuad cursor={0};const XrCompositionLayerBaseHeader *ui_layers[3];
     int cursor_submitted=0;
     unsigned ui_mode=projected?1u:0u;
-    if(combined.layerCount<=2&&visible&&controller_runtime_prepare(panel,&combined,stereo_hold_focused,ui_mode,&cursor)) {
+#ifdef GF2VR_LIVE_SETTINGS
+    if(!live_settings_projection_allowed(fresh,held,stereo_xr_output.ticket.serial)){combined=*end;projected=held=0;ui_mode=0;}
+#endif
+    if(combined.layerCount<=2&&visible&&
+#ifdef GF2VR_LIVE_SETTINGS
+       live_settings_game_allowed&&
+#endif
+       controller_runtime_prepare(panel,&combined,stereo_hold_focused,ui_mode,&cursor)) {
         for(unsigned i=0;i<combined.layerCount;++i)ui_layers[i]=combined.layers[i];
         ui_layers[combined.layerCount]=(const XrCompositionLayerBaseHeader *)&cursor;
         combined.layers=ui_layers;++combined.layerCount;cursor_submitted=1;
@@ -2513,12 +2534,21 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
 #endif
     }
 #endif
+#ifdef GF2VR_LIVE_SETTINGS
+    XrCompositionLayerQuad settings_quad={0},settings_cursor={0};
+    const XrCompositionLayerBaseHeader *settings_layers[4];int settings_displayed=0;
+    settings_displayed=live_settings_compose(panel,visible,projected,&combined,&settings_quad,&settings_cursor,settings_layers);
+    if(settings_displayed)cursor_submitted=0;
+#endif
     int current_fresh=fresh && !isolated;
 #ifdef GF2VR_ASYNC_PRESENTATION
     if(stereo_async_enabled && async_late)current_fresh=0; /* new display != old production */
 #endif
     XrResult result=stereo_two.enabled?stereo_two_frame_end(&combined,current_fresh):
         panel->api.EndFrame(panel->session,&combined);
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_xr_end(result,settings_displayed);
+#endif
 #ifdef GF2VR_PERF_PRODUCER_OBSERVE
     if(trace_ticket.serial) {
         trace_values[4]=producer_clock();++producer_xr_records;
@@ -2568,7 +2598,12 @@ static XrResult stereo_output_xr_end(void *opaque,const XrFrameEndInfo *end,int 
        drag_now>=stereo_completed.tick && drag_now-stereo_completed.tick<250 &&
        stereo_completed.cancel_clock==__atomic_load_n(&stereo_completed_cancel_clock,__ATOMIC_ACQUIRE))drag_world=1;
 #endif
-    stereo_world_drag_end(stereo_aux.drag.frame,drag_world,input.reference_epoch,drag_generation);
+    stereo_world_drag_end(stereo_aux.drag.frame,drag_world
+#ifdef GF2VR_LIVE_SETTINGS
+        &&live_settings_game_allowed
+        &&!live_settings_runtime_busy()
+#endif
+        ,input.reference_epoch,drag_generation);
 #endif
 #ifdef GF2VR_MAIN_TRANSITION_HOLD
     if(result!=XR_SUCCESS)stereo_hold.valid=0;
@@ -2663,8 +2698,16 @@ static int stereo_panel_wanted(void *opaque,const XrFrameState *frame) {
     stereo_controller.sample_tick=GetTickCount64();
 #endif
     aux_frame(&stereo_aux,panel->space,frame->predictedDisplayTime,generation);
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_runtime_xr_tick();
+    live_settings_xr_tick(panel,frame->shouldRender&&stereo_hold_focused);
+#endif
 #ifdef GF2VR_CONTROLLER_GAME_MODE
-    controller_game_runtime_prepare(frame->shouldRender && stereo_hold_focused,generation,
+    controller_game_runtime_prepare(frame->shouldRender && stereo_hold_focused
+#ifdef GF2VR_LIVE_SETTINGS
+        &&live_settings_game_allowed
+#endif
+        ,generation,
         stereo_eye_runtime.owner.head_reference_epoch);
 #endif
 #ifdef GF2VR_AUX_OBSERVE
@@ -2690,6 +2733,9 @@ static void stereo_output_xr_open(void *opaque,void *module) {
     get=stereo_eye_test_get;
 #endif
     if(!get && module) get=(PFN_xrGetInstanceProcAddr)GetProcAddress(module,"xrGetInstanceProcAddr");
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_runtime_xr_open(get,state->instance,state->system);
+#endif
 #ifdef GF2VR_AUX_PANEL
     event(aux_open(&stereo_aux,get,state->instance,stereo_eye_runtime.owner.session)?
         "aux_panel_ready":"aux_panel_unavailable",0,GetCurrentThreadId());
@@ -2778,6 +2824,9 @@ static int stereo_output_xr_close(void *panel) {
     __atomic_add_fetch(&stereo_navigation_close_serial,1,__ATOMIC_RELEASE);
 #endif
     while(!stereo_two_xr_close(panel))Sleep(1);
+#ifdef GF2VR_LIVE_SETTINGS
+    while(!live_settings_xr_close())Sleep(10);
+#endif
 #ifdef GF2VR_CONTROLLER_INPUT
     while(!controller_runtime_close())Sleep(10);
 #ifdef GF2VR_CONTROLLER_GAME_MODE
@@ -2815,6 +2864,9 @@ static int stereo_output_xr_close(void *panel) {
 #endif
         while(!xr_eye_config_close(&stereo_xr_config,&stereo_xr_output,panel)) Sleep(10);
 #ifdef GF2VR_PORTABLE_BINDING
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_runtime_xr_closed();
+#endif
     performance_xr_closed();
 #endif
     return 1;
@@ -3114,6 +3166,9 @@ static void stereo_frame_configure(SourceRenderFrame *f) {
     stereo_frame_description=(EyeGpuDescription){0};
     stereo_native_frame.ticket=(EyeGpuTicket){0};stereo_native_frame.targets=(EyeNativeTargets){0};
     f->scope->current=stereo_frame_output_current;
+#ifdef GF2VR_LIVE_SETTINGS
+    if(live_settings_runtime_busy())return;
+#endif
     EyeNativeTargets native={0};
     GF2VR_PREPARE_STEP(810);
     if(!stereo_output.enabled || stereo_output.reserved.serial || !source_render_frame_current(f) ||
@@ -3135,6 +3190,9 @@ static void stereo_frame_configure(SourceRenderFrame *f) {
         GF2VR_PREPARE_STEP(817);
         stereo_native_frame.ticket=(EyeGpuTicket){f->serial,f->check.ticket.source_generation,f->epoch};
         stereo_native_frame.targets=native;
+#ifdef GF2VR_LIVE_SETTINGS
+        live_settings_note_frame(f->serial);
+#endif
         EyeGpuTicket lease={f->serial,f->check.ticket.source_generation,f->epoch};
         if(xr_eye_output_claim(&stereo_xr_output,f->check.ticket.frame_id,lease,stereo_output.destinations)) {
             stereo_output.reserved=lease;
@@ -4345,7 +4403,14 @@ __declspec(dllexport) int reentry_fault_observation_test(void) {
 #ifdef GF2VR_PORTABLE_BINDING
 #include "performance_runtime.h"
 #endif
+#ifdef GF2VR_LIVE_SETTINGS
+#include "live_settings_xr.h"
+#include "live_settings_runtime.h"
+#endif
 static void stereo_local_tick(U64 n) {
+#ifdef GF2VR_LIVE_SETTINGS
+    live_settings_main_tick();
+#endif
 #line 3644
 #ifdef GF2VR_ACTIVITY_CANVAS_SCOPE
     primary_ui_canvas_owner_tick();
@@ -4395,6 +4460,9 @@ static void stereo_local_tick(U64 n) {
     if(GetCurrentThreadId()==stereo_pipeline.owner_thread&&!stereo_start.busy&&
        !stereo_pipeline.render.active&&!render_guard) {
         unsigned pc_eye_w=0,pc_eye_h=0;xr_eye_size_read(&stereo_xr_size,&pc_eye_w,&pc_eye_h);
+#ifdef GF2VR_LIVE_SETTINGS
+        if(live_settings_transaction.phase!=3&&live_settings_transaction.phase!=4)
+#endif
         performance_main_tick(stereo_live&&stereo_source.enabled&&stereo_source.manual&&
             stereo_source.manual->state==MTG_ACTIVE&&pc_eye_w&&pc_eye_h,
             performance_manual_flat||!pc_eye_w||!pc_eye_h||!stereo_start.requested||stereo_start.failed);

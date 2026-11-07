@@ -1,6 +1,7 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty',[string]$GameRoot='',[ValidateSet('Auto','Haoplay','Steam')][string]$GameProfile='Auto')
+param([Parameter(Mandatory=$true)][ValidateSet(2,3)][int]$NativeEyeCapacity,[Parameter(Mandatory=$true)][string]$OutputDirectory,[ValidateSet('Clean','Dirty')][string]$Flavor='Dirty',[string]$GameRoot='',[ValidateSet('Auto','Haoplay','Steam')][string]$GameProfile='Auto',[switch]$GameIndependentContact,[switch]$LiveSettings)
 $ErrorActionPreference='Stop'
+if($GameIndependentContact -and $Flavor -ne 'Dirty'){throw 'GameIndependentContact applies only to Dirty contact'}
 Add-Type -AssemblyName Microsoft.CodeAnalysis.CSharp
 Add-Type -AssemblyName System.Reflection.Metadata
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
@@ -40,8 +41,32 @@ $options=[Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions]::new([Microsof
  WithAssemblyIdentityComparer([Microsoft.CodeAnalysis.DesktopAssemblyIdentityComparer]::Default)
 $symbols=[string[]]@('GF2VR_TOUCH_PRIVATE')
 if($Flavor -eq 'Dirty'){$symbols+=@('GF2VR_DIRTY_CONTACT')}
+if($GameIndependentContact){$symbols+=@('GF2VR_GAME_INDEPENDENT_CONTACT')}
+if($LiveSettings){$symbols+=@('GF2VR_LIVE_SETTINGS')}
 $parse=[Microsoft.CodeAnalysis.CSharp.CSharpParseOptions]::Default.WithLanguageVersion([Microsoft.CodeAnalysis.CSharp.LanguageVersion]::CSharp7_3).WithPreprocessorSymbols([System.Collections.Generic.IEnumerable[string]][string[]]$symbols)
-$trees=@(foreach($file in $sourceFiles) { [Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText((Get-Content $file -Raw),$parse,[IO.Path]::GetFileName($file)) })
+# Compile-time aliases belong to the exact hash-pinned game reference profile.
+# They change only known contact API identifiers in one existing source owner;
+# no runtime name guessing, getter discovery or contact algorithm substitution.
+$effectiveTexts=@{};$effectiveHashes=[ordered]@{};$appliedAliases=@()
+$effectiveFolder=Join-Path $folder 'effective-source'
+New-Item -ItemType Directory -Path $effectiveFolder -Force|Out-Null
+foreach($file in $sourceFiles) {
+ $text=Get-Content -LiteralPath $file -Raw
+ foreach($alias in @(if(!$GameIndependentContact){$referenceProfile.contactAliases})) {
+  if(!$alias){continue}
+  if($alias.file -cne 'ControllerDisplay.cs' -or !$alias.from -or !$alias.to -or $alias.count -lt 1){throw 'Invalid bounded contact alias'}
+  if([IO.Path]::GetFileName($file) -cne $alias.file){continue}
+  $count=([regex]::Matches($text,[regex]::Escape([string]$alias.from))).Count
+  if($count -ne $alias.count){throw ('Contact alias source drift: '+$alias.from)}
+  $text=$text.Replace([string]$alias.from,[string]$alias.to)
+  $appliedAliases+=@{file=$alias.file;from=$alias.from;to=$alias.to;count=$count}
+ }
+ $effectiveTexts[$file]=$text
+ $derived=Join-Path $effectiveFolder ([IO.Path]::GetFileName($file))
+ [IO.File]::WriteAllText($derived,$text,[Text.UTF8Encoding]::new($false))
+ $effectiveHashes[[IO.Path]::GetFileName($file)]=(Get-FileHash -LiteralPath $derived).Hash
+}
+$trees=@(foreach($file in $sourceFiles) { [Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText($effectiveTexts[$file],$parse,[IO.Path]::GetFileName($file)) })
 $compilation=[Microsoft.CodeAnalysis.CSharp.CSharpCompilation]::Create('GF2.Private.TouchBridge',[Microsoft.CodeAnalysis.SyntaxTree[]]$trees,[Microsoft.CodeAnalysis.MetadataReference[]]$refs,$options)
 $rawPath=Join-Path $folder 'GF2.Private.TouchBridge.raw.dll'
 $stream=[IO.File]::Create($rawPath)
@@ -97,7 +122,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 public static class TouchPrivateContract {
- public static string[] Check(Compilation c) {
+ public static string[] Check(Compilation c, bool liveSettings) {
   var t=c.GetTypeByMetadataName("GF2.Private.ControllerDisplay");
   if(t==null||!t.IsStatic)throw new InvalidOperationException("Expected public static private bridge");
   var expected=new Dictionary<string,string> {
@@ -111,6 +136,7 @@ public static class TouchPrivateContract {
    {"ContactDiagnostics","string"}
   };
   if(c.GetTypeByMetadataName("GF2.Private.ContactHapticEdges")!=null)expected.Add("DrainContactHaptics","void|long|long|ref int");
+  if(liveSettings)expected.Add("ValidateContact","void|byte[]|ref int");
   var found=new List<string>();
   foreach(var a in t.GetMembers())if(a is IMethodSymbol m && m.DeclaredAccessibility==Accessibility.Public) {
    string wanted;if(!m.IsStatic||!expected.TryGetValue(m.Name,out wanted))throw new InvalidOperationException("Unexpected public contract "+m.Name);
@@ -125,8 +151,8 @@ public static class TouchPrivateContract {
 }
 '@
 Add-Type -TypeDefinition $contractCode -CompilerOptions '/nowarn:1701' -ReferencedAssemblies @([Microsoft.CodeAnalysis.Compilation].Assembly.Location,[Microsoft.CodeAnalysis.CSharp.CSharpCompilation].Assembly.Location,[Collections.Immutable.ImmutableArray].Assembly.Location,(Join-Path $PSHOME 'ref/System.Collections.dll'))
-$contract=[TouchPrivateContract]::Check($compilation)
-$offTrees=@(foreach($file in $sourceFiles) { [Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText((Get-Content $file -Raw),$parse.WithPreprocessorSymbols([string[]]@()),[IO.Path]::GetFileName($file)) })
+$contract=[TouchPrivateContract]::Check($compilation,[bool]$LiveSettings)
+$offTrees=@(foreach($file in $sourceFiles) { [Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText($effectiveTexts[$file],$parse.WithPreprocessorSymbols([string[]]@()),[IO.Path]::GetFileName($file)) })
 $offCompilation=[Microsoft.CodeAnalysis.CSharp.CSharpCompilation]::Create('GF2.Private.TouchBridge.MacroOffWitness',[Microsoft.CodeAnalysis.SyntaxTree[]]$offTrees,[Microsoft.CodeAnalysis.MetadataReference[]]$refs,$options)
 if($offCompilation.GetTypeByMetadataName('GF2.Private.ControllerDisplay')){throw 'Macro OFF still contains feature type'}
 $offErrors=@($offCompilation.GetDiagnostics() | Where-Object Severity -eq Error)
@@ -145,6 +171,10 @@ foreach($file in $sourceFiles) { if((Get-FileHash -LiteralPath $file).Hash -cne 
  native_eye_capacity=$NativeEyeCapacity
  generated_contract_sha256=(Get-FileHash -LiteralPath $generated).Hash
  source_hashes=$sourceHashes
+ effective_source_hashes=$effectiveHashes
+ contact_aliases_applied=$appliedAliases
+ game_independent_contact=[bool]$GameIndependentContact
+ live_settings=[bool]$LiveSettings
  source_sha256=(Get-FileHash -LiteralPath $source).Hash
  builder_sha256=(Get-FileHash -LiteralPath $PSCommandPath).Hash
  package_header_sha256=(Get-FileHash -LiteralPath $packageHeader).Hash

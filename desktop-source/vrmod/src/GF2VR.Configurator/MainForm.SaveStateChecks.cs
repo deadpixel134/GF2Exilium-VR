@@ -9,6 +9,16 @@ internal sealed partial class MainForm
     {
         int checks = 0;
         void Check(bool ok, string why) { ++checks; if (!ok) throw new InvalidDataException(why); }
+        static void Save(MainForm form)
+        {
+            Task task = form.SaveSettings(); var deadline = System.Diagnostics.Stopwatch.StartNew();
+            while (!task.IsCompleted)
+            {
+                if (deadline.Elapsed > TimeSpan.FromSeconds(10)) throw new TimeoutException("Save UI acknowledgement");
+                Application.DoEvents(); Thread.Sleep(1);
+            }
+            task.GetAwaiter().GetResult();
+        }
         string fixture = Path.Combine(AppContext.BaseDirectory, "save-state-fixture");
         if (Directory.Exists(fixture)) throw new InvalidDataException("Preserve save-state fixture");
         foreach (string locale in Texts.Languages)
@@ -27,14 +37,14 @@ internal sealed partial class MainForm
             byte[] original=File.ReadAllBytes(performance);
             using(var lease=new FileStream(performance,FileMode.Open,FileAccess.Read,FileShare.None))
             {
-                bool refused=false;try{form.SaveSettings();}catch(IOException){refused=true;}
+                bool refused=false;try{Save(form);}catch(IOException){refused=true;}
                 Check(refused&&form.dirty&&form.Text.EndsWith(" *")&&form.status.Tag as string=="saveFailed"&&form.status.Text==Texts.Get("saveFailed"),"real lock failure preserves dirty state "+locale);
             }
             Check(File.ReadAllBytes(performance).SequenceEqual(original),"locked file preserved "+locale);
             File.AppendAllText(performance,"\n");byte[] external=File.ReadAllBytes(performance);
-            bool conflict=false;try{form.SaveSettings();}catch(SettingsError ex)when(ex.Key=="conflictError"){conflict=true;}
+            bool conflict=false;try{Save(form);}catch(SettingsError ex)when(ex.Key=="conflictError"){conflict=true;}
             Check(conflict&&form.dirty&&form.status.Tag as string=="saveFailed"&&File.ReadAllBytes(performance).SequenceEqual(external),"external change preserved "+locale);
-            File.WriteAllBytes(performance,original);form.SaveSettings();
+            File.WriteAllBytes(performance,original);Save(form);
             Check(!form.dirty&&!form.Text.EndsWith(" *")&&form.status.Tag as string=="saved","verified save clears marker "+locale);
             var after=JsonNode.Parse(File.ReadAllBytes(performance))!;
             Check(after["pcOutput"]!["mode"]!.GetValue<string>()=="FIXED"&&after["pcOutput"]!["width"]!.GetValue<int>()==1280&&after["pcOutput"]!["height"]!.GetValue<int>()==720,"saved preset values "+locale);
@@ -45,7 +55,7 @@ internal sealed partial class MainForm
             form.SetStatus("exported");Check(form.status.Text.Contains(Texts.Get("unsaved")),"export does not hide unsaved state "+locale);
             form.Translate();Check(form.Text.EndsWith(" *")&&form.status.Text.Contains(Texts.Get("unsaved")),"translation keeps state "+locale);
             ((TextBox)form.inputs["eyeRenderScale"]).Text="invalid";
-            bool invalid=false;try{form.SaveSettings();}catch(SettingsError){invalid=true;}
+            bool invalid=false;try{Save(form);}catch(SettingsError){invalid=true;}
             Check(invalid&&form.dirty&&form.Text.EndsWith(" *")&&form.status.Tag as string=="saveFailed","validation failure explicit "+locale);
         }
         File.WriteAllText(Path.Combine(AppContext.BaseDirectory,"save-state-validation.json"),System.Text.Json.JsonSerializer.Serialize(new{passed=true,checks,locales=Texts.Languages,realIoFailure=true,externalConflict=true,gameLaunches=0}));

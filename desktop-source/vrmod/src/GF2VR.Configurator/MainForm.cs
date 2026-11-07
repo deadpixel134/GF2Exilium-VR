@@ -96,7 +96,7 @@ internal sealed partial class MainForm : Form
         var footer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Padding = new Padding(0, 4, 0, 4), Margin = Padding.Empty };
         footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         footer.Controls.Add(languages, 0, 0); footer.Controls.Add(actions, 1, 0);
-        localized.Add(save); save.Click += (_, _) => SaveSettings();
+        localized.Add(save); save.Click += async (_, _) => await SaveSettings();
         actions.Controls.Add(save);
         actions.Controls.Add(Button("reload", (_, _) => { if (Discard()) LoadRoot(rootBox.Text); }));
         actions.Controls.Add(Button("reset", (_, _) => { if (Confirm("resetQuestion")) ApplyDefaults(); }));
@@ -130,7 +130,7 @@ internal sealed partial class MainForm : Form
             if (updateRefusal != null)
                 MessageBox.Show(this, Texts.UpdateError(updateRefusal), Texts.Get("updateDetails"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         };
-        FormClosing += (_, e) => { if (smokeFolder == null && !Discard()) e.Cancel = true; };
+        FormClosing += (_, e) => { if (saving || (smokeFolder == null && !Discard())) e.Cancel = true; };
         LoadRoot(root); Translate();
         if (smoke != null) Shown += (_, _) => Smoke();
         else Shown += async (_, _) => await CheckUpdates();
@@ -322,7 +322,7 @@ internal sealed partial class MainForm : Form
         UpdateState("updateIdle");
         Run(() =>
         {
-            var candidate = new SettingsStore(root, smokeFolder != null); candidate.Load();
+            var candidate = new SettingsStore(root, smokeFolder != null); candidate.Load(); LiveSettingsCoordinator.Recover(candidate); candidate.CaptureRuntimeBaseline();
             // A damaged preference cannot replace valid runtime settings with defaults.
             string locale;
             try { locale = candidate.LoadLanguage(); } catch { locale = "ko"; }
@@ -421,18 +421,28 @@ internal sealed partial class MainForm : Form
     }
     private void UpdateSave()
     {
-        save.Enabled = store != null;
+        save.Enabled = store != null && !saving;
         Text = Texts.Get("title") + (dirty ? " *" : "");
         if (status.Tag is string key)
             status.Text = Texts.Get(key) + (dirty && key is not ("unsaved" or "saveFailed") ? " · " + Texts.Get("unsaved") : "");
     }
-    private void SaveSettings() => Run(() =>
+    private bool saving;
+    private async Task SaveSettings()
     {
-        if (store == null) throw new SettingsError("rootError");
-        var requested = ReadControls(); store.Save(requested); editing = Fields.Clone(store.Documents);
-        pcOutputConfigurationTouched = false; ApplyControls();
-        dirty = false; SetStatus("saved");
-    }, failedSave: true);
+        if (saving) return;
+        try
+        {
+            if (store == null) throw new SettingsError("rootError");
+            var selected = store; var requested = ReadControls();
+            bool live = selected.IsRunning();
+            saving = true; Enabled = false; SetStatus("liveApplying");
+            await Task.Run(() => selected.Save(requested));
+            editing = Fields.Clone(selected.Documents); pcOutputConfigurationTouched = false; ApplyControls();
+            dirty = false; SetStatus(live ? "liveApplied" : "saved");
+        }
+        catch (Exception ex) { Run(() => throw ex, failedSave: true); }
+        finally { saving = false; Enabled = true; UpdateSave(); }
+    }
     private bool Confirm(string key) => MessageBox.Show(this, Texts.Get(key), Texts.Get("title"),
         MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
     private bool Discard() => !dirty || Confirm("discardQuestion");

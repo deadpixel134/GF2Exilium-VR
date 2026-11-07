@@ -11,6 +11,9 @@ namespace GF2.Private
         private static void CacheContactHands(Vector3 left, Vector3 right, float radius, float unit,
             int mask, long epoch, long generation, long ticket) { }
         public static void ConfigureContact(byte[] configuration, ref int status) { status = 1; }
+#if GF2VR_LIVE_SETTINGS
+        public static void ValidateContact(byte[] configuration, ref int status) { status = 1; }
+#endif
         public static void ServiceContact(ref int status) { status = 1; }
         public static string ContactDiagnostics()
         { return "{\"event\":\"controller_hands_backend\",\"flavor\":\"Clean\",\"contact_available\":false}"; }

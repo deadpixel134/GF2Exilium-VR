@@ -26,6 +26,7 @@ foreach($p in $recipe.units.PSObject.Properties){
  $src=Join-Path $root ('src/stereo/'+$p.Value+'.c');$obj=Join-Path $Output ($p.Name+'.obj')
  $args=@('cc','-target','x86_64-windows-gnu','-c','-nostdlib','-fno-stack-protector','-Os','-Wall','-Wextra','-Werror')+$unitDefines
  if($p.Name -eq 'eye_target_watch'){$args+='-DGF2VR_FOCUS_MRT'}
+ if($p.Name -eq 'live_settings_service'){$args+='-Wno-unused-function'}
  if($p.Name -in @('eye_pose_pool','xr_frame_prefetch','xr_ordered_frames')){$args+=@('-I',(Join-Path $root 'third_party/openxr/include'),'-Wno-unused-function')}
  $args+=@('-isystem',$zigHeaders,$src,'-MD','-MF',(Join-Path $Output ($p.Name+'.d')),'-o',$obj)
  Compile $args $p.Name;$objects[$p.Name]=(Get-FileHash -LiteralPath $obj).Hash

@@ -9,11 +9,11 @@ These instructions use the default hand roles. If you changed roles or buttons, 
 ## Startup order
 
 1. Make sure your headset and controllers are connected, then start SteamVR.
-2. If needed, save your options in the configurator and close it.
+2. Save options in the PC configurator if needed. During play, use the PC window or VR panel to apply changes.
 3. Start the game as you normally would. The installer does not start it for you.
 4. When using controllers to operate the game, make sure the game window is selected on the PC.
 
-To apply new settings, close and restart the game. If the display or input behaves unexpectedly, see the [troubleshooting guide](TROUBLESHOOTING.md).
+Press Save or Apply to update the running game. See [Troubleshooting](TROUBLESHOOTING.md) if needed.
 
 ## Front panel and auxiliary panel
 
@@ -32,7 +32,7 @@ The following assumes that you have not changed hand roles.
 | Right-hand pointer | Point at items on the game screen. |
 | Right Trigger or A | Click the pointed item |
 | Right B | Back / cancel |
-| Left Grip | Open or close the auxiliary panel in 3D scenes |
+| Left Grip | Short press toggles the auxiliary panel, hold for 1 second to open/leave VR settings |
 
 To snap turn again, return the stick to the center before tilting it again. To drag, hold the click while moving the pointer.
 
@@ -50,7 +50,7 @@ You can use this mode without opening the auxiliary panel. This Trigger is separ
 
 ## Moving your viewpoint with world grip
 
-World grip is off by default. To use it, close the game, enable it in the configurator's **World grip** tab, save and restart the game.
+World grip defaults to off. Enable it in the PC configurator or VR settings, then save/apply.
 
 With the default selection of right Grip and right-hand tracking, hold right Grip and move your hand to adjust your viewpoint as if grabbing and moving the world. Release the button to stop, and press it again to continue.
 
@@ -70,3 +70,18 @@ The left and right click roles do not change when you change the movement-hand s
 To use world grip again after returning your viewpoint, release any Grip you were holding and press it again. Camera following toggled with right stick click lasts only for the current game session. Save its startup value separately in the configurator for the next launch.
 
 See the [settings guide](SETTINGS.md) for world scale, linked stereo depth and movement speed, and startup camera following.
+
+## In-game VR settings
+
+![In-game VR settings panel](../images/vr-settings-en.png)
+
+UI example captured from the actual VR settings panel renderer while editing render scale 0.75. The footer asks the user to wait about 5–10 seconds for recovery.
+
+1. Hold the auxiliary-panel hand’s side Grip for 1 second to open VR settings. The default hand is left. The gesture follows a hand-role swap. A short press and release hides or shows the current auxiliary panel.
+2. Select items with the ray and edit values with the ± buttons or numeric keypad, then press **Apply**. Changes reach the running VR mode without restarting the game, with an actual application result. The PC configurator uses the same application path.
+3. **After changing render scale, restoring VR stereo may take about 5–10 seconds.** A brief flat view may appear during application. Please wait for VR to return and for the application result. Recovery depends on GPU work finishing, render resources being rebuilt and a new stereo frame becoming ready.
+4. Choose **Game panel** or hold Grip again to return to the original game auxiliary panel. Unsaved edits require discard confirmation. Release all buttons before resuming game controls.
+
+While settings are visible, game clicks and keys, locomotion, artificial turning and world grab are blocked. Head and hand tracking remain available. In Dirty, character touch also remains available. If simultaneous PC and VR edits conflict, use **Reload** to read the latest settings before applying. Failed edits remain available for retry.
+
+Korean, English, Japanese and Simplified Chinese are supported. The PC window and VR panel share the language preference in the same installation. The VR settings host reads it when the host starts.

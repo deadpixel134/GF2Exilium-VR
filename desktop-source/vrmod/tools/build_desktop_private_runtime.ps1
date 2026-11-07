@@ -4,7 +4,7 @@ param([ValidateSet('Configurator','Installer')][string]$Application='Configurato
     [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='FLEX-DESKTOP-001',
     [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.2.2',
     [string]$NativeMetadataRoot,
-    [ValidateSet('Clean','Dirty')][string]$NativeFlavor)
+    [ValidateSet('Clean','Dirty')][string]$NativeFlavor,[switch]$EntryObserve)
 $ErrorActionPreference='Stop'
 if($NativeFlavor -and !$NativeMetadataRoot){throw '-NativeFlavor requires -NativeMetadataRoot from a paired native build.'}
 if($NativeMetadataRoot){
@@ -71,6 +71,7 @@ try {
     $args+='-p:SourceRevisionId=1de6a501f2f364cc3e6a0e600fa5ba2a50c9134f'
     if($NativeMetadataRoot){$args+=('-p:GF2VRVariantMetadataRoot='+$NativeMetadataRoot)}
     if($NativeFlavor){$args+=('-p:GF2VRBuildFlavor='+$NativeFlavor)}
+    if($EntryObserve){$args+='-p:GF2VREntryObserve=true'}
     & $dotnet @args 2>&1 | Out-File -LiteralPath (Join-Path $evidence ($Application+'-publish.log')) -Encoding UTF8
     if($LASTEXITCODE -ne 0) { throw ('Private desktop publish failed. See '+$Application+'-publish.log') }
     $names=@('.exe','.dll','.deps.json','.runtimeconfig.json') | ForEach-Object {'GF2VR.'+$Application+$_}

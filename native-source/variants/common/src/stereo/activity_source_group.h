@@ -8,6 +8,9 @@
 #ifndef GF2VR_HOME_SOURCE_CAMERA
 #include "home_source_runtime.h"
 #endif
+#ifdef GF2VR_HOME_VIEW_OBSERVE
+#include "home_view_observe.h"
+#endif
 #endif
 #ifdef GF2VR_GENERIC_SOURCE_ADAPTER
 #include "recent_camera_anchor.h"
@@ -320,6 +323,10 @@ static int generic_source_unique(ActivitySourceGroup *a,const SourceTopologyEntr
         SourceTopologyEntry q=entries[base];q.identity.units_per_meter=g->units_per_meter;
         if(!activity_entry_same(&a->qualified,&q))goto done;
     }
+#endif
+#ifdef GF2VR_HOME_VIEW_OBSERVE
+    if(bases>1 && hc_api.owns_current && hc_api.stage==9)
+        home_view_observe(&a->binding->refs.settings.calls,entries,a->input_roles,count,base);
 #endif
     for(unsigned i=0;i<count;++i){SourceTopologyEntry e={0};PhaseRoleSnapshot r={0};
         if(!source_topology_entry(a->topology->api,entries[i].identity.source,&e))goto done;
