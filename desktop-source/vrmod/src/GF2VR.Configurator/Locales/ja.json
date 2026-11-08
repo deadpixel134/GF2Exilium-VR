@@ -44,7 +44,7 @@
   "stickDeadzone": "スティックのデッドゾーン",
   "deadzoneHelp": "初期値 0.2。入力正規化の仕様上 0 以上 1 未満が必要です。推奨範囲による制限ではありません。",
   "enabled": "World Drag を有効化",
-  "dragHelp": "初期値 OFF。起動ボタンと追跡する手を選択してください。保存するまで実際のファイルは変わりません。",
+  "dragHelp": "初期値 ON。起動ボタンと追跡する手を選択してください。保存するまで実際のファイルは変わりません。",
   "leftGripActivation": "左 Grip で起動",
   "leftTriggerActivation": "左 Trigger で起動",
   "rightGripActivation": "右 Grip で起動",

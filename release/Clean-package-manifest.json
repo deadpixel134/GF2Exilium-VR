@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "GF2VR",
-  "version": "1.3.9",
+  "version": "1.3.10",
   "scope": "vrmod",
   "gameExecutableSha256": "733A05AC0D028867EBF0313D68B3A7B43FBF5E6BD722910C5EBEC2211D4D43B5",
   "boundGameRoot": null,
@@ -9,8 +9,8 @@
   "files": [
     {
       "path": "GF2 Game/version.dll",
-      "sha256": "76668E014AC5159207CAD1DA510B477C68DF438AA5B5EC87E2947439C6B7BF9F",
-      "bytes": 624128
+      "sha256": "C87A275E42EC900C1297A0E3F8A1442394742E0A586F8365D6B5FE6D08AD6746",
+      "bytes": 622592
     },
     {
       "path": "vrmod/runtime/openxr_loader.dll",
@@ -29,18 +29,18 @@
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe",
-      "sha256": "5AC1C7208B4998790A4B77A07CAEB7FC52420D30D9F4D86B8654489A13123B25",
+      "sha256": "5AB415324404491B0202CE2C0ACD74A438E9CE73E0E1505A79D727CBAF2C5F82",
       "bytes": 51597583
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.dll",
-      "sha256": "0428D04F888861752ECFE2AC8A37ED8C5CA3BDD1EF0DE6DC2413E4A2B15DB65A",
-      "bytes": 518144
+      "sha256": "7794A46BA6FF73B910BA639B3AFCC521079A90C91936E7B5987616EAD32F7ACE",
+      "bytes": 516096
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.deps.json",
-      "sha256": "3FF26788897A9FD4D04F70DBC658942FB094B2A43587F20F251B407241370CE7",
-      "bytes": 31153
+      "sha256": "6B8F50B12210EAF8022CBE4823E47BC469DBB8EDA5013D2B5A3EDB959B22444D",
+      "bytes": 31155
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.runtimeconfig.json",
@@ -49,13 +49,13 @@
     },
     {
       "path": "vrmod/bin/GF2VR.Configurator/runtime-contract.json",
-      "sha256": "07EAFF92C56FBDF324C8C4B5AE104EE63FCB69B49EA6DA3BA9CC64AC287367E9",
-      "bytes": 676
+      "sha256": "71F610C9CF75E56EF8163B7F6BBFDCE280CE089BDB6D34E5E87786A8179C4D42",
+      "bytes": 679
     }
   ],
   "native": {
-    "buildId": "GF2VR-CLEAN-139-LIVESET004",
-    "dllSha256": "76668E014AC5159207CAD1DA510B477C68DF438AA5B5EC87E2947439C6B7BF9F",
+    "buildId": "GF2VR-CLEAN-1310-WORLDGRIP001",
+    "dllSha256": "C87A275E42EC900C1297A0E3F8A1442394742E0A586F8365D6B5FE6D08AD6746",
     "loaderSha256": "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF",
     "gameFiles": [
       {
@@ -111,6 +111,6 @@
     ],
     "resourceBinding": "MODULE_RELATIVE_V1",
     "buildFlavor": "Clean",
-    "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01"
+    "commonCoreSha256": "8E7A3F014A5B1E7B13FCDBDB3A0ACE2051D408EAA8983DD6E7A23AC6E7306109"
   }
 }

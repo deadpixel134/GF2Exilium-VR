@@ -14,6 +14,37 @@ Targets Haoplay and Steam. The current 3.0 compatibility build has passed static
 
 > **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
 
+## VR controls
+
+### ① General VR controls
+
+![① General VR controls](docs/images/vr-controls-en.png)
+
+### ② Left Trigger game-input mode
+
+![② Left Trigger game-input mode](docs/images/vr-game-input-en.png)
+
+While holding the left index Trigger, the default movement stick sends WASD to the game instead of moving the VR viewpoint. Up W, down S, left A, right D; X/A sends F and Y/B sends Escape. Release Trigger to return to normal VR movement.
+
+Explanatory illustration using default hand roles. Distinguish the index Trigger from the side Grip. Press a stick down to click it. Stick-click functions remain on their physical left/right hands.
+
+**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
+
+### X / Y / A / B buttons
+
+These are the default hand-role and button settings. Game-input mode lasts **while holding the left index Trigger**. Use the panel-hand Trigger if the panel hand was changed.
+
+| Button | Normal UI | Game-input mode |
+|---|---|---|
+| X | No additional binding | F key |
+| Y | No additional binding | Escape key |
+| A | Click / drag | F key |
+| B | Back / cancel | Escape key |
+
+Swapping panel/pointer hands moves normal UI click to X and back to Y. The click/back button-swap setting exchanges normal UI actions. Game-input mode retains physical X/A → F and Y/B → Escape.
+
+[Full controls](docs/en/USAGE.md)
+
 ## What does it do?
 
 Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.

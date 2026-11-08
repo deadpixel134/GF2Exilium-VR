@@ -18,6 +18,12 @@ namespace GF2.Private
             internal Animator Animator;
             internal SkinnedMeshRenderer Skin;
             internal Mesh Mesh;
+            internal ContactSurface Surface;
+            internal Vector3 ContactPosition, ContactPoint;
+            internal Matrix4x4 BaseMatrix, ActualInverse;
+            internal bool SurfaceInvalid;
+            internal float ContactRadius;
+            internal int ContactFrame, SurfaceState;
             internal Vector3 Base, LastWritten, Offset, Velocity;
             internal int InsideMask;
             internal long HandTicket;
@@ -43,6 +49,8 @@ namespace GF2.Private
         private static long contactCallbacks, contactFrames, contactWrites, contactRestores, contactExternal, contactFaults, contactBindings;
         private static long contactRotationWrites, contactScaleWrites, contactStiffnessCaps, contactImplicitSteps;
         private static long contactGapHeld, contactGapDecay, contactMaskZero, contactInvalid, contactGenerationReset, contactHardExpiry, contactDtReset, contactImpulses;
+        private static readonly long[] contactFrameTicks = new long[256];
+        private static int contactTimedFrames;
 
 #if GF2VR_LIVE_SETTINGS
         // Prepare validates without clearing contact, changing configuration or touching bones.
@@ -96,12 +104,17 @@ namespace GF2.Private
             contactHaptics.Suspend();
             contactRunning = false; contactMask = 0;
             ContactRestoreAll();
+            ClearContactIndicators();
+            contactSurfaceSkins = null;
             if (contactSubscribed)
             {
                 try { Application.onBeforeRender -= contactAction; contactSubscribed = false; }
                 catch (Exception) { contactFault = true; ++contactFaults; contactStatus = -72; }
             }
-            if (contactTargets != null) Array.Clear(contactTargets, 0, contactTargets.Length);
+            if (contactTargets != null) {
+                for (int i=0;i<contactCount;++i) ContactDisposeSurface(contactTargets[i].Surface);
+                Array.Clear(contactTargets, 0, contactTargets.Length);
+            }
             contactCount = 0; contactNeedsRebind = false;
             contactTicket = -1; contactLastFrame = contactHandFrame = -1;
             contactEpoch = contactGeneration = 0; contactStepStamp = contactHandStamp = contactServiceStamp = 0;
@@ -205,6 +218,7 @@ namespace GF2.Private
         // No subscribe/unsubscribe, search, allocation, strings or diagnostics.
         private static void ContactBeforeRender()
         {
+            long started = Stopwatch.GetTimestamp(), previousFrames = contactFrames;
             try
             {
                 // An unexpected emitter thread must not touch Unity objects,
@@ -238,6 +252,22 @@ namespace GF2.Private
                 contactHapticValid = hands && contactCount != 0 && !contactNeedsRebind ? contactMask : 0;
                 for (int i = 0; i < contactCount; ++i)
                 {
+                    if (ContactValidTarget(contactTargets[i])) ContactSnapshot(i);
+                    else contactTargets[i].ContactFrame = -1;
+                }
+                for (int i=0;i<contactCount;++i) if (contactTargets[i].SurfaceState==5) {
+                    ContactTarget target=contactTargets[i];
+                    if (target.ContactFrame!=frame || !ContactUpdatePatch(target.Surface.Patch,target.ContactPosition)) {
+                        target.SurfaceState=2; contactHapticValid=0;
+                        target.InsideMask=0; target.HandTicket=-1;
+                    } else {
+                        target.ContactPosition=(target.Surface.Patch.Minimum+target.Surface.Patch.Maximum)*.5f;
+                        target.ContactPoint=target.Surface.Patch.Vertices[target.Surface.Patch.Triangles[0]];
+                    }
+                    contactTargets[i]=target;
+                }
+                for (int i = 0; i < contactCount; ++i)
+                {
                     if (!ContactValidTarget(contactTargets[i]))
                     { ++contactInvalid; contactHapticValid = 0; ContactRestoreOne(i); contactNeedsRebind = true; continue; }
                     ContactApply(i, (float)dt, hands);
@@ -246,6 +276,12 @@ namespace GF2.Private
                 contactStatus = contactCount == 0 ? 2 : 1;
             }
             catch (Exception) { ContactStop(-77, true); }
+            finally {
+                if (Thread.CurrentThread.ManagedThreadId == ownerThread && contactFrames != previousFrames) {
+                    contactFrameTicks[contactTimedFrames % contactFrameTicks.Length] = Stopwatch.GetTimestamp()-started;
+                    contactTimedFrames = (contactTimedFrames+1) & Int32.MaxValue;
+                }
+            }
         }
 
         private static bool ContactFiniteScale(Vector3 value)
@@ -295,6 +331,7 @@ namespace GF2.Private
             }
             else renderers = prepared.Root.GetComponentsInChildren<SkinnedMeshRenderer>(false);
             if (renderers == null || renderers.Length > 2048) return selected;
+            contactSurfaceSkins = renderers;
             int scannedBones = 0;
             for (int i = 0; i < renderers.Length; ++i)
             {
@@ -372,9 +409,13 @@ namespace GF2.Private
                 else changed = true;
             }
             for (int i = 0; i < contactCount; ++i) if (!retained[i])
-            { ContactRestoreOne(i); changed = true; }
+            { ContactRestoreOne(i); ContactDisposeSurface(contactTargets[i].Surface); changed = true; }
             contactTargets = selected; contactCount = count;
-            if (changed) ++contactBindings;
+            if (changed) {
+                ++contactBindings;
+                for (int i=0;i<contactCount;++i) if (contactTargets[i].Surface!=null && contactTargets[i].Surface.Patch!=null)
+                    foreach (ContactPatchSkin skin in contactTargets[i].Surface.Patch.Skins) ContactPatchAncestors(skin,contactTargets[i].Actor);
+            }
         }
 
         public static void ServiceContact(ref int status)
@@ -388,16 +429,32 @@ namespace GF2.Private
                     if (contactSubscribed || contactCount != 0) ClearContact();
                     status = contactStatus; return;
                 }
-                // A live binding needs no periodic hierarchy search. Callback
-                // validation schedules a cold rebind after target loss/swap.
-                if (prepared.Kind != 5 && !contactNeedsRebind && contactCount != 0) { status = contactStatus; return; }
+                // Refresh the bounded surface set on the cold owner so newly
+                // enabled clothing/LOD renderers invalidate the cached fit.
+                PrepareContactIndicators();
                 long now = Stopwatch.GetTimestamp();
                 double elapsed = ((double)now - contactServiceStamp) / Stopwatch.Frequency;
-                if (contactServiceStamp != 0 && elapsed >= 0 && elapsed < (prepared.Kind == 5 ? 1.0 : .5)) { status = contactStatus; return; }
+                if (contactServiceStamp != 0 && elapsed >= 0 && elapsed < (contactNeedsRebind ? .5 : 1.0)) { status = contactStatus; return; }
                 contactServiceStamp = now;
                 int count;
                 ContactTarget[] selected = ContactFind(out count);
                 ContactReconcile(selected, count);
+                bool rebuild = false;
+                for (int i = 0; i < contactCount; ++i)
+                    if (contactTargets[i].SurfaceInvalid || !ContactSurfaceCurrent(contactTargets[i].Surface) || !ContactSurfaceSetMatches(contactTargets[i])) { ContactDisposeSurface(contactTargets[i].Surface); contactTargets[i].Surface = null; contactTargets[i].SurfaceInvalid = false; rebuild = true; }
+                if (rebuild) {
+                    // Baking must see the animation basis, without our previous
+                    // frame's deformation. Missing observations do not rearm haptics.
+                    contactHaptics.Suspend();
+                    for (int i = 0; i < contactCount; ++i) {
+                        bool affected = false;
+                        for (int j = 0; j < contactCount; ++j)
+                            if (contactTargets[j].Surface == null && contactTargets[j].Actor == contactTargets[i].Actor) { affected = true; break; }
+                        if (affected) ContactRestoreOne(i);
+                    }
+                    for (int i = 0; i < contactCount; ++i) if (contactTargets[i].Surface == null)
+                        contactTargets[i].Surface = ContactBuildSurface(contactTargets[i]);
+                }
                 contactNeedsRebind = false;
                 contactStatus = status = count == 0 ? 2 : 1;
             }
@@ -450,14 +507,37 @@ namespace GF2.Private
             text.Append(",\"mask0_decay_frames\":").Append(contactMaskZero.ToString(CultureInfo.InvariantCulture)).Append(",\"invalid_resets\":").Append(contactInvalid.ToString(CultureInfo.InvariantCulture));
             text.Append(",\"generation_resets\":").Append(contactGenerationReset.ToString(CultureInfo.InvariantCulture)).Append(",\"hard_expiry_resets\":").Append(contactHardExpiry.ToString(CultureInfo.InvariantCulture));
             text.Append(",\"dt_resets\":").Append(contactDtReset.ToString(CultureInfo.InvariantCulture)).Append(",\"release_impulses\":").Append(contactImpulses.ToString(CultureInfo.InvariantCulture));
-            text.Append(",\"reported_targets\":").Append(Math.Min(contactCount, 64));
+            text.Append(",\"show_contact_locations\":").Append(contactSettings != null && contactSettings.ShowContactLocations ? "true" : "false");
+            text.Append(",\"indicator_ready\":").Append(contactIdleMaterial != null && contactActiveMaterial != null ? "true" : "false");
+            text.Append(",\"indicator_draws\":").Append(contactIndicatorDraws);
+            text.Append(",\"surface_builds\":").Append(contactSurfaceBuilds).Append(",\"surface_failures\":").Append(contactSurfaceFailures);
+            text.Append(",\"surface_build_ms_total\":").Append((contactSurfaceTicks * 1000.0 / Stopwatch.Frequency).ToString("R", CultureInfo.InvariantCulture));
+            int timed = Math.Min(contactTimedFrames, contactFrameTicks.Length);
+            if (timed > 0) {
+                long[] sorted = new long[timed]; Array.Copy(contactFrameTicks, sorted, timed); Array.Sort(sorted);
+                text.Append(",\"contact_callback_p95_ms\":").Append((sorted[(timed-1)*95/100]*1000.0/Stopwatch.Frequency).ToString("R",CultureInfo.InvariantCulture));
+                text.Append(",\"contact_callback_max_ms\":").Append((sorted[timed-1]*1000.0/Stopwatch.Frequency).ToString("R",CultureInfo.InvariantCulture));
+            }
+            text.Append(",\"reported_targets\":").Append(Math.Min(contactCount, 16));
             text.Append(",\"bound_bones\":[");
-            for (int i = 0; i < Math.Min(contactCount, 64); ++i)
+            for (int i = 0; i < Math.Min(contactCount, 16); ++i)
             {
                 if (i != 0) text.Append(',');
                 ContactTarget target = contactTargets[i];
                 text.Append("{\"id\":").Append((target.Bone == null ? 0 : target.Bone.GetInstanceID()).ToString(CultureInfo.InvariantCulture));
                 text.Append(",\"name\":"); Quoted(text, target.Bone == null ? null : target.Bone.name);
+                text.Append(",\"surface_state\":").Append(target.SurfaceState).Append(",\"surface_samples\":").Append(target.Surface == null ? 0 : target.Surface.Samples);
+                text.Append(",\"surface_failure\":"); Quoted(text,target.Surface==null?null:target.Surface.Failure);
+                text.Append(",\"patch_failure\":"); Quoted(text,target.Surface==null?null:target.Surface.PatchFailure);
+                text.Append(",\"patch_triangles\":").Append(target.Surface==null || target.Surface.Patch==null?0:target.Surface.Patch.Triangles.Length/3);
+                text.Append(",\"patch_recovered_vertices\":").Append(target.Surface==null?0:target.Surface.PatchRecoveredVertices);
+                text.Append(",\"patch_bind_error_world\":").Append((target.Surface==null?0:target.Surface.PatchBindError).ToString("R",CultureInfo.InvariantCulture));
+                text.Append(",\"surface_error_local\":").Append((target.Surface == null ? 0 : target.Surface.Error).ToString("R", CultureInfo.InvariantCulture));
+                text.Append(",\"contact_radius_world\":").Append(target.ContactRadius.ToString("R", CultureInfo.InvariantCulture));
+                text.Append(",\"contact_center_world\":[").Append(target.ContactPosition.x.ToString("R", CultureInfo.InvariantCulture)).Append(',').Append(target.ContactPosition.y.ToString("R", CultureInfo.InvariantCulture)).Append(',').Append(target.ContactPosition.z.ToString("R", CultureInfo.InvariantCulture)).Append(']');
+                text.Append(",\"contact_point_world\":[").Append(target.ContactPoint.x.ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(target.ContactPoint.y.ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(target.ContactPoint.z.ToString("R",CultureInfo.InvariantCulture)).Append(']');
+                text.Append(",\"patch_display_ready\":").Append(target.Surface!=null && target.Surface.Patch!=null && target.Surface.Patch.DisplayMesh!=null && !target.Surface.Patch.DisplayFault ? "true":"false");
+                text.Append(",\"inside_mask\":").Append(target.InsideMask);
                 text.Append(",\"axis_status\":").Append(target.Alignment).Append(",\"press_axis_status\":").Append(target.PressAlignment);
                 text.Append(",\"actor_id\":").Append((target.Actor == null ? 0 : target.Actor.GetInstanceID()).ToString(CultureInfo.InvariantCulture)).Append('}');
             }

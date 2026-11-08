@@ -5,12 +5,26 @@ internal static partial class SelfTest
 {
     private static void JiggleChecks(SettingsStore store,string root)
     {
-        var fields=Fields.All.Where(f=>f.File=="touch_interaction.json").ToArray();
+        var fields=Fields.All.Where(f=>f.File=="touch_interaction.json" && f.Kind=="number").ToArray();
         Assert(fields.Length==10,"Dirty ten independent controls");
         File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory,"touch-defaults-native.json"),SettingsStore.Encode(Fields.Defaults()["touch_interaction.json"]));
         foreach(var language in Texts.Languages){Texts.Language=language;foreach(var f in fields)Assert(Texts.Get(f.Key)!=Texts.Get("unavailable")&&Texts.Get(f.Help)!=Texts.Get("unavailable"),"Dirty packaged locale");}
         Texts.Language="ko";
         var original=Fields.Clone(store.Documents);
+        var display=Fields.All.Single(f=>f.Key=="showContactLocations");
+        Assert(!(bool)display.Default && !Fields.Get(Fields.Defaults(),display)!.GetValue<bool>(),"contact visualization default OFF");
+        foreach(bool enabled in new[]{true,false}) {
+            var edit=Fields.Clone(original); Fields.Set(edit,display,JsonValue.Create(enabled)!);
+            store.Save(edit); store.Load();
+            Assert(Fields.Get(store.Documents,display)!.GetValue<bool>()==enabled,"contact visualization save/reload");
+            string profile=Path.Combine(root,"contact-display-profile.json"); SettingsStore.Export(profile,store.Documents);
+            Assert(Fields.Get(SettingsStore.Import(profile),display)!.GetValue<bool>()==enabled,"contact visualization profile roundtrip");
+        }
+        foreach(var value in new JsonNode?[]{null,JsonValue.Create(1),JsonValue.Create("true"),new JsonObject()}) {
+            var bad=Fields.Clone(original);bad[display.File][display.Key]=value?.DeepClone();
+            Reject(()=>SettingsStore.Validate(bad),"contact visualization strict boolean");
+        }
+        store.Save(original); store.Load();
         var expected = new Dictionary<string,double> { ["jiggleStrengthPercent"]=50,["jiggleDurationMultiplier"]=.4,["jiggleRangePercent"]=80,["jiggleTiltPercent"]=50,["jiggleStretchPercent"]=50 };
                 var selectedBreast=new double[]{40,.4,75,50,45};var selectedButt=new double[]{120,.5,120,120,140};
         var suffixes=new[]{"StrengthPercent","DurationMultiplier","RangePercent","TiltPercent","StretchPercent"};

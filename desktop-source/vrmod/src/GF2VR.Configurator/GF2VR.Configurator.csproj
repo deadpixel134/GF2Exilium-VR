@@ -20,7 +20,7 @@
     <DefineConstants>$(DefineConstants);GF2VR_LIVE_SETTINGS_ENTRY_OBSERVE</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(GF2VRBuildFlavor)' == 'Dirty'">
-    <Compile Include="../desktop-shared/dirty/ContactConfig.cs;../desktop-shared/dirty/ContactMaterial.cs" Link="Contact/%(Filename)%(Extension)" />
+    <Compile Include="../../../../native-source/variants/managed/dirty/ContactConfig.cs;../../../../native-source/variants/managed/dirty/ContactMaterial.cs" Link="Contact/%(Filename)%(Extension)" />
     <EmbeddedResource Include="Locales/Dirty/*.json" />
   </ItemGroup>
   <Import Project="../../tools/variant_metadata.props" />

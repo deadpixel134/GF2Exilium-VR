@@ -28,6 +28,98 @@
         "UnityEngine.CoreModule.dll.bytes": "7ED87B8E18B4764246E6BBB10DA4F4BB8841D4777C517530448E596D77E058EC",
         "UnityEngine.AnimationModule.dll.bytes": "889F21C06DF0FC0D1CCD25892CBA7551362EA2B31D51FCB672ED4F7C80A87D5F"
       }
+    },
+    {
+      "name": "Steam",
+      "gameAssemblySha256": "D4F183458A7F97FED490743F598E25D4D6A1C992B00B27D70B9424EF15C5556E",
+      "codesRelativePath": "GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/3.0.5400/Codes",
+      "references": {
+        "Assembly-CSharp.dll.bytes": "33C724398300EB4AAECEDA627C37CA539F7A432465F410F9787C9B1ED3C3F053",
+        "Assembly-CSharp-firstpass.dll.bytes": "37224AFA2CEC8655EA6836D39D2F661546DC6EE36B31C035A70246DA23EEB647",
+        "mscorlib.dll.bytes": "C5EAB4063972C58E579E23AE600F3CEB75778AB978B1DEF1EA8282968B1B2338",
+        "System.dll.bytes": "4BB92B192E1D0DCD9F0D8F0C18CA2C034C5EE5373D4527F2A27A5149444E9318",
+        "System.Core.dll.bytes": "B02F22729B3CECA252F93BA4C82EBCFD7C24F944E658F16CB340660A74FB9331",
+        "UnityEngine.CoreModule.dll.bytes": "A4F6281E73093A5610014CC7229BF8F02F53B2CACA5E8E5D63C2BF12B46F8421",
+        "UnityEngine.AnimationModule.dll.bytes": "D4F3E51ABA9C004C37F38787E5739C4D8253477ACC262DE5FF7AD2DEEDCB763A"
+      },
+      "contactAliases": [
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "T0BGHelper.NNPLCJNECLN",
+          "count": 3,
+          "from": "T0BGHelper.MJGPKADBALF"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "LoungeHelper.NNPLCJNECLN",
+          "count": 3,
+          "from": "LoungeHelper.MJGPKADBALF"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "LoungeHelper.AHFGENEIJHP",
+          "count": 2,
+          "from": "LoungeHelper.GCKKGOJLMGB"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": ".CameraMgr.FCPFANAKEKM",
+          "count": 2,
+          "from": ".CameraMgr.EEMIJPMBCPJ"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "\"HDDMEPNCFAD\"",
+          "count": 1,
+          "from": "\"LGKDOCICKCP\""
+        }
+      ]
+    },
+    {
+      "name": "Haoplay",
+      "gameAssemblySha256": "D0A17CF397E18EF4FBFD190A8D2DA999C9E7945DEB5ED82066D81F4D60B052F8",
+      "codesRelativePath": "GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/3.0.5388/Codes",
+      "references": {
+        "Assembly-CSharp.dll.bytes": "33C724398300EB4AAECEDA627C37CA539F7A432465F410F9787C9B1ED3C3F053",
+        "Assembly-CSharp-firstpass.dll.bytes": "37224AFA2CEC8655EA6836D39D2F661546DC6EE36B31C035A70246DA23EEB647",
+        "mscorlib.dll.bytes": "C4096A53DEC899BDE3E708A0AD0BB0C7ACAB58415E133D01DCC5374DBBA859B3",
+        "System.dll.bytes": "792415B0DD888246A1EFDC43B5A0A5F6BD08FB47EAB86E755F86028263C6FDBB",
+        "System.Core.dll.bytes": "B02F22729B3CECA252F93BA4C82EBCFD7C24F944E658F16CB340660A74FB9331",
+        "UnityEngine.CoreModule.dll.bytes": "A4F6281E73093A5610014CC7229BF8F02F53B2CACA5E8E5D63C2BF12B46F8421",
+        "UnityEngine.AnimationModule.dll.bytes": "D4F3E51ABA9C004C37F38787E5739C4D8253477ACC262DE5FF7AD2DEEDCB763A"
+      },
+      "contactAliases": [
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "T0BGHelper.NNPLCJNECLN",
+          "count": 3,
+          "from": "T0BGHelper.MJGPKADBALF"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "LoungeHelper.NNPLCJNECLN",
+          "count": 3,
+          "from": "LoungeHelper.MJGPKADBALF"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "LoungeHelper.AHFGENEIJHP",
+          "count": 2,
+          "from": "LoungeHelper.GCKKGOJLMGB"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": ".CameraMgr.FCPFANAKEKM",
+          "count": 2,
+          "from": ".CameraMgr.EEMIJPMBCPJ"
+        },
+        {
+          "file": "ControllerDisplay.cs",
+          "to": "\"HDDMEPNCFAD\"",
+          "count": 1,
+          "from": "\"LGKDOCICKCP\""
+        }
+      ]
     }
   ]
 }

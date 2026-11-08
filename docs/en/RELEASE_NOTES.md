@@ -2,6 +2,44 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.10
+
+- Improved character contact judgment to reflect body and clothing surfaces.
+- Fixed contact releasing while pressing the hand inward.
+- Added live contact visualization. Cyan means idle and orange means active contact. Toggle it from PC or VR settings. Its default is OFF.
+- Changed the world-drag default to ON while preserving existing saved settings.
+- Added four-language illustrations covering general VR controls.
+
+### ① General VR controls
+
+![① General VR controls](../images/vr-controls-en.png)
+
+### ② Left Trigger game-input mode
+
+![② Left Trigger game-input mode](../images/vr-game-input-en.png)
+
+While holding the left index Trigger, the default movement stick sends WASD to the game instead of moving the VR viewpoint. Up W, down S, left A, right D; X/A sends F and Y/B sends Escape. Release Trigger to return to normal VR movement.
+
+Explanatory illustration using default hand roles. Distinguish the index Trigger from the side Grip. Press a stick down to click it. Stick-click functions remain on their physical left/right hands.
+
+**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
+
+### X / Y / A / B buttons
+
+These are the default hand-role and button settings. Game-input mode lasts **while holding the left index Trigger**. Use the panel-hand Trigger if the panel hand was changed.
+
+| Button | Normal UI | Game-input mode |
+|---|---|---|
+| X | No additional binding | F key |
+| Y | No additional binding | Escape key |
+| A | Click / drag | F key |
+| B | Back / cancel | Escape key |
+
+Swapping panel/pointer hands moves normal UI click to X and back to Y. The click/back button-swap setting exchanges normal UI actions. Game-input mode retains physical X/A → F and Y/B → Escape.
+
+
+[1.3.10](../release-notes/1.3.10.en.md)
+
 ## 1.3.9 — In-game VR settings
 
 Hold the auxiliary-panel hand’s side Grip for 1 second to open in-game VR settings and apply edits without restarting the game. The PC configurator also supports live application. Restoring VR stereo after a render-scale change may take about **5–10 seconds**. Please wait for recovery.

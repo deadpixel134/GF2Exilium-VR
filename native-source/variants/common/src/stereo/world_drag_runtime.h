@@ -29,11 +29,15 @@ static void stereo_world_drag_open(void) {
     stereo_drag_settings=world_drag_defaults();
     HANDLE file=CreateFileW(GF2VR_WORLD_DRAG_CONFIG,0x80000000u,7,0,3,128,0);
     if(file==(HANDLE)(U64)-1) {
-        DWORD error=GetLastError();event(error==2||error==3?"world_drag_default_disabled":"world_drag_config_read_failed",error,GetCurrentThreadId());return;
+        DWORD error=GetLastError();
+        if(error==2||error==3)event("world_drag_default_enabled",error,GetCurrentThreadId());
+        else {stereo_drag_settings.enabled=0;event("world_drag_config_read_failed",error,GetCurrentThreadId());}
+        return;
     }
     static char text[4097];DWORD length=0;int ok=ReadFile(file,text,sizeof(text),&length,0);CloseHandle(file);
     if(!ok||length>=sizeof(text)||!world_drag_config_parse(text,length,&stereo_drag_settings)) {
-        stereo_drag_settings=world_drag_defaults();event("world_drag_config_invalid_disabled",length,GetCurrentThreadId());return;
+        stereo_drag_settings=world_drag_defaults();stereo_drag_settings.enabled=0;
+        event("world_drag_config_invalid_disabled",length,GetCurrentThreadId());return;
     }
     event("world_drag_config_loaded",stereo_drag_settings.enabled,GetCurrentThreadId());
 #ifdef GF2VR_CONTROLLER_HAND_ROLES
