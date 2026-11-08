@@ -12,6 +12,7 @@ namespace GF2.Private
         internal bool Enabled = true;
         internal bool ShowContactLocations;
         internal float HandRadius=.035f, BodyRadius=.06f, HandHoldSeconds=.1f;
+        internal float FacePressMeters=.008f, ThighPressMeters=.006f;
         internal float StrengthPercent=40f, DurationMultiplier=.4f, RangePercent=75f, TiltPercent=50f, StretchPercent=45f;
         internal ContactKnobs BreastKnobs,ButtKnobs;
         internal struct ContactKnobs
@@ -32,7 +33,7 @@ namespace GF2.Private
         internal float Damping { get { return Breast.Damping; } }
         internal float MaxDisplacement { get { return Breast.MaxDisplacement; } }
         internal float ReleaseImpulse { get { return Breast.ReleaseImpulse; } }
-        internal string[] Targets = { "Chest_L", "Chest_R", "Butt_L_Back01", "Butt_R_Back01" };
+        internal string[] Targets = { "Chest_L", "Chest_R", "Butt_L_Back01", "Butt_R_Back01", "Head_M", "Hip_L", "Hip_R" };
         private static readonly string[] Names={"springFrequencyHz","dampingRatio","maxDisplacementMeters","releaseImpulse","maxTiltDegrees","maxStretch","maxSquash","pressSquashGain","maxPressSquash","stiffeningGain","verticalCompliance","lateralCompliance","depthCompliance","tiltFrequencyHz","tiltDampingRatio","tiltGain","stretchGain","lrDetune"};
 
         internal ContactSettings()
@@ -44,10 +45,25 @@ namespace GF2.Private
         internal static int Region(string name)
         {
             return name!=null && name.StartsWith("Chest_",StringComparison.Ordinal)?1:
-                name!=null && name.StartsWith("Butt_",StringComparison.Ordinal)?2:0;
+                name!=null && name.StartsWith("Butt_",StringComparison.Ordinal)?2:
+                name=="Head_M"?3:name=="Hip_L"?4:name=="Hip_R"?5:0;
+        }
+        internal static bool DetectionOnly(int region) { return region>=3 && region<=5; }
+        internal static bool PreferSurfacePatch(int region, int state)
+        { return state!=1 || region==2 || DetectionOnly(region); }
+
+        private static string[] UpgradeStandardTargets(string[] targets)
+        {
+            // Only the old complete standard list gains the new default regions.
+            // Explicit empty, subset and custom lists retain their meaning.
+            string[] standard={"Chest_L","Chest_R","Butt_L_Back01","Butt_R_Back01"};
+            if (targets.Length!=standard.Length) return targets;
+            foreach (string name in standard) if (Array.IndexOf(targets,name)<0) return targets;
+            return new[]{"Chest_L","Chest_R","Butt_L_Back01","Butt_R_Back01","Head_M","Hip_L","Hip_R"};
         }
         internal ContactMaterial ForBone(string name)
         {
+            if (DetectionOnly(Region(name))) return new ContactMaterial();
             ContactMaterial m=Region(name)==2?Butt:Breast;
             if(name!=null && (name.EndsWith("_R",StringComparison.Ordinal)||name.IndexOf("_R_",StringComparison.Ordinal)>=0))
             {m.Frequency*=1+m.Detune;m.TiltFrequency*=1+m.Detune;}
@@ -106,10 +122,12 @@ namespace GF2.Private
                     if(key=="schemaVersion"){if(reader.Number()!=1)throw new FormatException();schema=true;}
                     else if(key=="enabled")result.Enabled=reader.Boolean();
                     else if(key=="showContactLocations")result.ShowContactLocations=reader.Boolean();
+                    else if(key=="facePressMeters")result.FacePressMeters=reader.Physical(false);
+                    else if(key=="thighPressMeters")result.ThighPressMeters=reader.Physical(false);
                     else if(key=="handRadiusMeters")result.HandRadius=reader.Physical(false);
                     else if(key=="bodyRadiusMeters")result.BodyRadius=reader.Physical(false);
                     else if(key=="handHoldSeconds"){result.HandHoldSeconds=reader.Physical(false);if(result.HandHoldSeconds>.25f)throw new FormatException("contact tracking age");}
-                    else if(key=="targetBones")result.Targets=reader.Targets();
+                    else if(key=="targetBones")result.Targets=UpgradeStandardTargets(reader.Targets());
                     else if(key=="jiggleStrengthPercent"){result.StrengthPercent=reader.Physical(false);commonKnobMask|=1;}
                     else if(key=="jiggleDurationMultiplier"){result.DurationMultiplier=reader.Physical(true);commonKnobMask|=2;}
                     else if(key=="jiggleRangePercent"){result.RangePercent=reader.Physical(false);commonKnobMask|=4;}

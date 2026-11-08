@@ -25,6 +25,8 @@ namespace GF2.Private
             internal string Failure, PatchFailure;
             internal float PatchBindError;
             internal int PatchRecoveredVertices;
+            internal int PatchNonzeroVertices;
+            internal float PatchMaxInfluence;
             internal ContactPatch Patch;
         }
         private static SkinnedMeshRenderer[] contactSurfaceSkins;
@@ -35,7 +37,7 @@ namespace GF2.Private
             if (surface == null || surface.Sources == null) return false;
             for (int i = 0; i < surface.Sources.Length; ++i) {
                 ContactSurfaceSource s = surface.Sources[i];
-                if (s.Skin == null || s.Mesh == null || !s.Skin.enabled || !s.Skin.gameObject.activeInHierarchy || s.Skin.sharedMesh != s.Mesh ||
+                if (s.Skin == null || s.Mesh == null || !s.Skin.enabled || !s.Skin.gameObject.activeInHierarchy || ContactSourceMesh(s.Skin) != s.Mesh ||
                     s.Actor == null || !s.Skin.transform.IsChildOf(s.Actor)) return false;
                 for (int j = 0; j < s.Shapes.Length; ++j) if (s.Skin.GetBlendShapeWeight(j) != s.Shapes[j]) return false;
             }
@@ -49,9 +51,9 @@ namespace GF2.Private
             int count = 0;
             for (int i = 0; i < contactSurfaceSkins.Length; ++i) {
                 SkinnedMeshRenderer skin = contactSurfaceSkins[i];
-                if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || skin.sharedMesh == null || skin.GetComponentInParent<Animator>() != target.Animator) continue;
+                if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || ContactSourceMesh(skin) == null || skin.GetComponentInParent<Animator>() != target.Animator) continue;
                 bool found = false;
-                for (int j = 0; j < target.Surface.Sources.Length; ++j) if (target.Surface.Sources[j].Skin == skin && target.Surface.Sources[j].Mesh == skin.sharedMesh) {
+                for (int j = 0; j < target.Surface.Sources.Length; ++j) if (target.Surface.Sources[j].Skin == skin && target.Surface.Sources[j].Mesh == ContactSourceMesh(skin)) {
                     Transform[] bones=skin.bones;
                     Transform[] before=target.Surface.Sources[j].Bones;
                     if (bones==null || before==null || bones.Length!=before.Length) return false;
@@ -66,6 +68,7 @@ namespace GF2.Private
 
         private static ContactSurface ContactBuildSurface(ContactTarget target)
         {
+            if (ContactSettings.DetectionOnly(target.Region)) return ContactBuildRegionSurface(target);
             ContactSurface result = new ContactSurface { State = 2 };
             if (contactSettings.BodyRadius != .06f) { result.State = 3; result.Sources = new ContactSurfaceSource[0]; return result; }
             long start = Stopwatch.GetTimestamp();
@@ -77,8 +80,8 @@ namespace GF2.Private
                 if (contactSurfaceSkins == null) return result;
                 for (int i = 0; i < contactSurfaceSkins.Length; ++i) {
                     SkinnedMeshRenderer skin = contactSurfaceSkins[i];
-                    if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || skin.sharedMesh == null || skin.GetComponentInParent<Animator>() != target.Animator) continue;
-                    Mesh mesh = skin.sharedMesh;
+                    if (skin == null || !skin.enabled || !skin.gameObject.activeInHierarchy || ContactSourceMesh(skin) == null || skin.GetComponentInParent<Animator>() != target.Animator) continue;
+                    Mesh mesh = ContactSourceMesh(skin);
                     if (sources.Count == 128) { incomplete = true; result.Failure="source-limit"; break; }
                     Transform[] bones = skin.bones;
                     var source = new ContactSurfaceSource { Skin = skin, Mesh = mesh, Actor=target.Actor, Bones=bones, Shapes = new float[0] };
@@ -95,7 +98,7 @@ namespace GF2.Private
                         BoneWeight[] weights = mesh.boneWeights;
                         if (weights == null || weights.Length != mesh.vertexCount) { incomplete = true; result.Failure="weights-unavailable"; continue; }
                         baked = new Mesh(); baked.hideFlags = HideFlags.HideAndDontSave;
-                        skin.BakeMesh(baked);
+                        ContactBakeOriginal(skin,baked);
                         Vector3[] vertices = baked.vertices;
                         if (vertices.Length != weights.Length) { incomplete = true; result.Failure="bake-count"; continue; }
                         Matrix4x4 toBone = target.Bone.worldToLocalMatrix * skin.transform.localToWorldMatrix;
@@ -104,7 +107,7 @@ namespace GF2.Private
                             BoneWeight w = weights[v];
                             float influence = ContactSurfaceWeight(related,w.boneIndex0,w.weight0) + ContactSurfaceWeight(related,w.boneIndex1,w.weight1) +
                                 ContactSurfaceWeight(related,w.boneIndex2,w.weight2) + ContactSurfaceWeight(related,w.boneIndex3,w.weight3);
-                            if (influence < .5f) continue;
+                            if (target.Region==2?influence<=0:influence<.5f) continue;
                             if (points.Count == 32768) { incomplete = true; result.Failure="sample-limit"; break; }
                             Vector3 p = toBone.MultiplyPoint3x4(vertices[v]);
                             if (!Finite(p)) { incomplete = true; result.Failure="nonfinite-sample"; break; }
@@ -146,6 +149,7 @@ namespace GF2.Private
             ContactTarget t = contactTargets[index];
             if (!ContactSurfaceCurrent(t.Surface)) {
                 t.SurfaceInvalid=true;
+                t.UnobservedMask|=t.InsideMask;
                 t.InsideMask=0; t.HandTicket=-1;
                 contactNeedsRebind=true;
                 contactHapticValid=0;
@@ -169,7 +173,10 @@ namespace GF2.Private
                     t.ContactRadius=t.Surface.Radius*uniform;
                 } else t.SurfaceState=4;
             } else if (t.SurfaceState==1) t.SurfaceState=2;
-            if (t.Surface!=null && !t.SurfaceInvalid && t.Surface.Patch!=null && t.SurfaceState!=1) t.SurfaceState=5;
+            // Butt contact uses the measured outer triangles even when a sphere
+            // also passes the fit tolerance. Keep the accepted breast policy.
+            if (t.Surface!=null && !t.SurfaceInvalid && t.Surface.Patch!=null &&
+                ContactSettings.PreferSurfacePatch(t.Region,t.SurfaceState)) t.SurfaceState=5;
             t.ContactPoint=t.ContactPosition;
             t.ContactFrame=Time.frameCount;
             contactTargets[index]=t;

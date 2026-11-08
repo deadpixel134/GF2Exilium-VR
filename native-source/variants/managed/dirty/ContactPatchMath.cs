@@ -43,6 +43,9 @@ namespace GF2.Private
             return ContactMotion.Finite(matrixNorm*inverseNorm) && matrixNorm*inverseNorm<=10000;
         }
 
+        internal static bool InverseSkin(Matrix4x4[] matrices, BoneWeight weight, out Matrix4x4 inverse)
+        { return InvertStable(Blend(matrices,weight),out inverse); }
+
         // Invert the complete weighted skin transform, not each bone separately.
         // This reconstructs rest geometry from a readable current BakeMesh even
         // when the original mesh has discarded its CPU vertex/index buffers.
@@ -110,19 +113,45 @@ namespace GF2.Private
             Vector3 core, Vector3 minimum, Vector3 maximum, Vector3 hand, float handRadius,
             out Vector3 point, out Vector3 normal, out float penetration)
         {
+            return Sample(vertices,normals,triangles,triangles.Length,core,minimum,maximum,hand,handRadius,out point,out normal,out penetration);
+        }
+
+        internal static bool Sample(Vector3[] vertices, Vector3[] normals, int[] triangles, int indexCount,
+            Vector3 core, Vector3 minimum, Vector3 maximum, Vector3 hand, float handRadius,
+            out Vector3 point, out Vector3 normal, out float penetration)
+        {
+            return SampleVolume(vertices,normals,triangles,indexCount,core,core,false,minimum,maximum,hand,handRadius,out point,out normal,out penetration);
+        }
+
+        internal static bool SampleSegment(Vector3[] vertices, Vector3[] normals, int[] triangles, int indexCount,
+            Vector3 start, Vector3 end, Vector3 minimum, Vector3 maximum, Vector3 hand, float handRadius,
+            out Vector3 point, out Vector3 normal, out float penetration)
+        {
+            return SampleVolume(vertices,normals,triangles,indexCount,start,end,true,minimum,maximum,hand,handRadius,out point,out normal,out penetration);
+        }
+
+        private static bool SampleVolume(Vector3[] vertices, Vector3[] normals, int[] triangles, int indexCount,
+            Vector3 core, Vector3 end, bool segment, Vector3 minimum, Vector3 maximum, Vector3 hand, float handRadius,
+            out Vector3 point, out Vector3 normal, out float penetration)
+        {
             point=normal=Vector3.zero; penetration=0;
-            if (!ContactMotion.Finite(hand) || !ContactMotion.Finite(core) || !ContactMotion.Finite(handRadius) || handRadius<0 ||
+            if (!ContactMotion.Finite(hand) || !ContactMotion.Finite(core) || (segment && !ContactMotion.Finite(end)) || !ContactMotion.Finite(handRadius) || handRadius<0 ||
                 hand.x<minimum.x-handRadius || hand.y<minimum.y-handRadius || hand.z<minimum.z-handRadius ||
                 hand.x>maximum.x+handRadius || hand.y>maximum.y+handRadius || hand.z>maximum.z+handRadius) return false;
             float nearest=Single.PositiveInfinity;
             bool inside=false;
-            for (int i=0;i<triangles.Length;i+=3) {
+            for (int i=0;i<indexCount;i+=3) {
                 int ia=triangles[i], ib=triangles[i+1], ic=triangles[i+2];
                 Vector3 a=vertices[ia], b=vertices[ib], c=vertices[ic];
                 Vector3 cross=Vector3.Cross(b-a,c-a);
                 float length=cross.magnitude;
                 if (!ContactMotion.Finite(length) || length<=1e-12f) continue;
                 if (!inside) inside=Contains(a,b,c,hand,core);
+                // The convex hull of a surface triangle and a finite bone
+                // segment is the union of these five tetrahedra. It retains
+                // deep contact along the thigh axis without an infinite cone.
+                if (!inside && segment) inside=Contains(a,b,c,hand,end) || Contains(a,b,core,hand,end) ||
+                    Contains(a,c,core,hand,end) || Contains(b,c,core,hand,end);
                 int edges;
                 Vector3 candidate=Closest(hand,a,b,c,out edges);
                 float squared=(hand-candidate).sqrMagnitude;

@@ -64,6 +64,7 @@ namespace GF2.Private
             if (contactHandStamp==0 || now<contactHandStamp || now-contactHandStamp>Stopwatch.Frequency/10) return;
             try { for (int i=0;i<contactCount;++i) {
                 ContactTarget t=contactTargets[i];
+                if (ContactSettings.DetectionOnly(t.Region) && t.SurfaceState!=5) continue;
                 // The previous completed contact sample can be drawn before
                 // this frame's callback, but never across a gap or binding loss.
                 if (t.ContactFrame<Time.frameCount-1 || !ContactValidTarget(t) || !Finite(t.ContactPosition) || !Finite(t.ContactRadius) || t.ContactRadius<=0) continue;

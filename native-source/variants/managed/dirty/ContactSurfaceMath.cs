@@ -6,6 +6,14 @@ namespace GF2.Private
 {
     internal static class ContactSurfaceMath
     {
+        internal static bool IncludeTriangle(int region, float a, float b, float c)
+        {
+            if (!ContactMotion.Finite(a) || !ContactMotion.Finite(b) || !ContactMotion.Finite(c) || a<0 || b<0 || c<0) return false;
+            // A butt control may share every vertex with Root/Hip and never
+            // exceed50%. Its nonzero skin support still defines real geometry.
+            if (region==2) return Math.Max(a,Math.Max(b,c))>0;
+            return Math.Max(a,Math.Max(b,c))>=.5f && a>.05f && b>.05f && c>.05f;
+        }
         // Cold least-squares sphere fit. Centering and normalization avoid
         // cancellation for small characters at large world coordinates.
         internal static bool Fit(Vector3[] points, int count, out Vector3 center,

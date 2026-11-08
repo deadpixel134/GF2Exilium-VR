@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param([ValidateSet('Configurator','Installer')][string]$Application='Configurator',
     [ValidatePattern('^[A-Z0-9-]+$')][string]$BuildId='FLEX-DESKTOP-001',
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.2.2',
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+$')][string]$ProductVersion='1.3.11',
     [string]$NativeMetadataRoot,
     [ValidateSet('Clean','Dirty')][string]$NativeFlavor,[switch]$EntryObserve)
 $ErrorActionPreference='Stop'

@@ -2,3 +2,5 @@
 native-source/** -text
 release/** -text
 desktop-source/vrmod/src/** -text
+desktop-source/vrmod/tests/** -text
+desktop-source/vrmod/tools/** -text

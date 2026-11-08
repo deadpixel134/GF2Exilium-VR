@@ -8,7 +8,7 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)
 
 通过 VR 头显和控制器游玩 GF2 Exilium 的非官方模组。普通菜单显示在虚拟屏幕上，支持的 3D 场景以立体 VR 显示。
 
-面向Haoplay和Steam。当前3.0兼容版本已通过静态和自动检查，实际游戏及HMD运行情况尚未验证。
+支持Haoplay和Steam。现有VR和游戏内设置功能已通过实机验证。面部、大腿按压及臀部外表面接触已在Haoplay确认正常，新增接触功能的Steam HMD独立验证尚未完成。
 
 **[下载最新版本](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
@@ -134,3 +134,7 @@ Clean与Dirty均兼容3DMigoto默认wrapper模式（[PR #1](https://github.com/d
 - [源码边界与使用条件](SOURCE_BOUNDARY.zh-CN.md)
 
 > GF2VR 是非官方粉丝项目，需要合法安装的游戏。游戏商标及相关作品的权利属于各自权利人。
+
+## 角色接触（Dirty）
+
+在Dirty版中，将手靠近受支持角色的胸部、臀部、面部或左右大腿即可触发接触。面部和大腿的接触周围会局部凹陷，松手后恢复。默认最大深度为面部8毫米、大腿6毫米。可在PC或VR设置中切换接触位置显示，默认关闭。青色表示未接触，橙色表示接触中。已有自定义接触目标和保存设置会保留。

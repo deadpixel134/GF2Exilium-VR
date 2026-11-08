@@ -1,12 +1,13 @@
-// Generated paired metadata for local live-settings candidate; no release publication.
+// Generated from a paired native source build; do not substitute frozen release hashes.
 #nullable enable
 namespace GF2VR.Installer;
-internal static class VariantProfiles {
- internal const string CleanBuild="GF2VR-CLEAN-1310-WORLDGRIP001";
- internal const string DirtyBuild="GF2VR-DIRTY-1310-WORLDGRIP001";
- internal const string CleanHash="C87A275E42EC900C1297A0E3F8A1442394742E0A586F8365D6B5FE6D08AD6746";
- internal const string DirtyHash="0C25D729ED9B6513E9041239B551384CF4F2D8A3E875E8C9D8274B4CDD8B8531";
- internal const string CommonCoreSha256="8E7A3F014A5B1E7B13FCDBDB3A0ACE2051D408EAA8983DD6E7A23AC6E7306109";
- internal static bool IsVariant(string? id) => id is CleanBuild or DirtyBuild;
- internal static string? Flavor(string? id) => id == CleanBuild ? "Clean" : id == DirtyBuild ? "Dirty" : null;
+internal static class VariantProfiles
+{
+    internal const string CleanBuild="GF2VR-CLEAN-1311-RELEASE001";
+    internal const string DirtyBuild="GF2VR-DIRTY-1311-RELEASE001";
+    internal const string CleanHash="8764E8305B351130D102A2E81F85A80AC2787EE534ACE25DF7C465F16F9F5A95";
+    internal const string DirtyHash="59BB43A485A8EFE6277B924D72F5FDB81B27B0D551901C1DF4F37CC728E37D3C";
+    internal const string CommonCoreSha256="5C2380950B35C3FCD96D3DAC178BFD8679BCFBD917D9752695A47550FEC71843";
+    internal static bool IsVariant(string? id) => id is CleanBuild or DirtyBuild;
+    internal static string? Flavor(string? id) => id == CleanBuild ? "Clean" : id == DirtyBuild ? "Dirty" : null;
 }

@@ -23,8 +23,8 @@ Steam판 실행 파일 폴더와 기존 Haoplay 설치 구조를 지원합니다
 현재 1.2.0 native 빌드는 variants의 공통 소스 238개와 종류별 설정·생성 브리지 헤더를 사용합니다. Zig 0.16.0과 Windows SDK 10.0.26100.0으로 아래 명령을 실행하면 배포 DLL과 정확히 일치하며, 두 빌드의 일치하는 desktop-metadata가 생성됩니다. 루트 build-native.ps1은 과거 1.0.2 재현용입니다. 관리 브리지를 다시 생성하려면 현재 설치된 게임의 메타데이터가 필요하며, game-reference-profiles.json의 정확한 Haoplay/Steam 프로필을 검사합니다. 게임 파일은 저장소에 포함하지 않습니다.
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
-./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.3.11'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -GameIndependentContact -LiveSettings -OutputDirectory './managed-1.3.11'
 ```
 
 ## 1.1.6 — 자동 업데이트 수정

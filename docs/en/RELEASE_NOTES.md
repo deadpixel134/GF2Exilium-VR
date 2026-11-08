@@ -2,6 +2,15 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.11
+
+- Added face and both thighs to the default Dirty contact regions.
+- Face and thigh surfaces indent near the touching hand and return to their original shape after release. Default maximum depths are 8 mm for the face and 6 mm for thighs.
+- Fixed butt contact remaining inside the body by including surface geometry with small but genuine skinning influence.
+- Preserved contact markers, active color changes, and PC/VR live settings. Contact visualization defaults to OFF; existing saved values are retained.
+
+[1.3.11](../release-notes/1.3.11.en.md)
+
 ## 1.3.10
 
 - Improved character contact judgment to reflect body and clothing surfaces.

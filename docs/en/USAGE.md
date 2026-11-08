@@ -119,3 +119,9 @@ UI example captured from the actual VR settings panel renderer while editing ren
 While settings are visible, game clicks and keys, locomotion, artificial turning and world grab are blocked. Head and hand tracking remain available. In Dirty, character touch also remains available. If simultaneous PC and VR edits conflict, use **Reload** to read the latest settings before applying. Failed edits remain available for retry.
 
 Korean, English, Japanese and Simplified Chinese are supported. The PC window and VR panel share the language preference in the same installation. The VR settings host reads it when the host starts.
+
+## Character contact (Dirty)
+
+In Dirty, bring a hand near supported chest, butt, face, or thigh regions to make contact. Face and thigh surfaces indent locally and recover after release. Default maximum depths are 8 mm for the face and 6 mm for thighs. Toggle contact visualization in PC or VR settings. It defaults to OFF; cyan means idle and orange means active contact. Existing custom contact targets and saved settings are retained.
+
+Support depends on each character and outfit mesh. Indentation is skipped for meshes that cannot be handled safely. The user visually confirmed face/thigh pressing and restoration and butt exterior contact in a recent Haoplay run. Separate Steam HMD validation of these additions and coverage of every character and outfit remain pending.

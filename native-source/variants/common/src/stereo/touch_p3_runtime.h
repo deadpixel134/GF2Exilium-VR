@@ -22,7 +22,12 @@ static struct {
     unsigned haptic_route;
 #endif
     unsigned contact_configured,contact_config_length,contact_ready,contact_length;
-    char contact_config[4097],contact_json[16384];
+    char contact_config[4097];
+#ifdef GF2VR_DIRTY_CONTACT
+    char contact_json[32768];
+#else
+    char contact_json[16384];
+#endif
     unsigned contact_down;
     void *bone_sample,*bone_drain,*bone_reset;
     unsigned bone_bound,bone_pending;
@@ -356,6 +361,9 @@ static void touch_p3_contact_service(void){
     int status;void *args[]={&status};
     if(!touch_p2_void(t2.contact_service,args,&status)){touch_p2_reset();return;}
 #ifdef GF2VR_DIRTY_CONTACT
+    /* Status3 requests one cold binding/surface report after a completed
+       managed callback. Reuse the writer mailbox and its backpressure. */
+    if(status==3 && GF2VR_LOGGING_ALLOWED())touch_p3_contact_report();
     if(t2.contact_haptics) {
         unsigned route=__atomic_load_n(&contact_haptic_route,__ATOMIC_ACQUIRE);
         int stable=route==t2.haptic_route;t2.haptic_route=route;
