@@ -23,8 +23,8 @@ Steam版の実行ファイルフォルダーと既存のHaoplay構成に対応�
 現在の1.2.0 nativeビルドはvariants内の共通238入力と種類別の設定・生成ブリッジヘッダーを使います。Zig0.16.0とWindows SDK10.0.26100.0で以下を実行すると配布DLLを完全再現し、両種類のdesktop-metadataを生成します。ルートのbuild-native.ps1は過去1.0.2用です。管理ブリッジの再生成にはインストール済みゲームのメタデータが必要で、game-reference-profiles.jsonの正確なHaoplay/Steamプロファイルを検証します。ゲームファイルは含みません。
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
-./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.3.11'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -GameIndependentContact -LiveSettings -OutputDirectory './managed-1.3.11'
 ```
 
 ## 1.1.6 — 自動更新の修正

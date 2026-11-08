@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "product": "GF2VR",
+  "version": "1.3.11",
+  "scope": "vrmod",
+  "gameExecutableSha256": "733A05AC0D028867EBF0313D68B3A7B43FBF5E6BD722910C5EBEC2211D4D43B5",
+  "boundGameRoot": null,
+  "requiresInstalledDllSha256": null,
+  "files": [
+    {
+      "path": "GF2 Game/version.dll",
+      "sha256": "8764E8305B351130D102A2E81F85A80AC2787EE534ACE25DF7C465F16F9F5A95",
+      "bytes": 622592
+    },
+    {
+      "path": "vrmod/runtime/openxr_loader.dll",
+      "sha256": "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF",
+      "bytes": 2671104
+    },
+    {
+      "path": "vrmod/runtime/openxr-LICENSE.txt",
+      "sha256": "3DDF9BE5C28FE27DAD143A5DC76EEA25222AD1DD68934A047064E56ED2FA40C5",
+      "bytes": 11560
+    },
+    {
+      "path": "vrmod/runtime/minhook-LICENSE.txt",
+      "sha256": "D5C2224982B0B95A16B098A561335FA93F3EAF4D0AA964B7843EDB986DF78DC8",
+      "bytes": 4365
+    },
+    {
+      "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe",
+      "sha256": "9448C05BF9C7D9909E639B1CCA145E88DAE1843E673D9C0749083AE657052110",
+      "bytes": 51597583
+    },
+    {
+      "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.dll",
+      "sha256": "BED66FCCAA73036CE255732A81D0E9D80D58E7D8EEC005B6930A0338CB7608E8",
+      "bytes": 514048
+    },
+    {
+      "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.deps.json",
+      "sha256": "45695C73D2B4BDE9CA2EDC6FEF35D73FB414D07F5EC4B372ACAD19ACEE5323B4",
+      "bytes": 31155
+    },
+    {
+      "path": "vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.runtimeconfig.json",
+      "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3",
+      "bytes": 529
+    },
+    {
+      "path": "vrmod/bin/GF2VR.Configurator/runtime-contract.json",
+      "sha256": "564E586F0EA222BBAEF4BEF609A45367F734A70686E441BB44882E3BC285C570",
+      "bytes": 657
+    }
+  ],
+  "native": {
+    "buildId": "GF2VR-CLEAN-1311-RELEASE001",
+    "dllSha256": "8764E8305B351130D102A2E81F85A80AC2787EE534ACE25DF7C465F16F9F5A95",
+    "loaderSha256": "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF",
+    "gameFiles": [
+      {
+        "path": "GF2 Game/GameAssembly.dll",
+        "sha256": "EF4B33D68FDB13877B5BC3687A2FCF85B560854935A61A262B2AF3DAD1CA2C34",
+        "bytes": 87980096
+      },
+      {
+        "path": "GF2 Game/UnityPlayer.dll",
+        "sha256": "F699721A876731B541A3133ACB81456E9C63B0A3984331881FE5A3B0D449BA9A",
+        "bytes": 26205248
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/boot.config",
+        "sha256": "4F64D2733E4F5F96D9D80D042B1E82EC763529A006ECB6EAEF4AF115503A99A6",
+        "bytes": 99
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/globalgamemanagers",
+        "sha256": "B14040BFA4D4E9434823738059454D97895C7EBEB6BAF8E37AADB84DA4126ABC",
+        "bytes": 1058420
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/Unity.RenderPipelines.Universal.Runtime.dll.bytes",
+        "sha256": "A00455A9110E3373CCF0DC581AFCF4687FDE18BA6D645530973D55B52D5ECD85",
+        "bytes": 402432
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/Cinemachine.dll.bytes",
+        "sha256": "ABCF82B521A22D779C714E23E9A29816B60F9BCE5DE64F4619D1EF21795A03A3",
+        "bytes": 213504
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/Unity.RenderPipelines.Universal.Runtime.dll.bytes_HUDll.u",
+        "sha256": "F514726C3D5B70AB46BA4DA4EF014F00B40E5FC0AA5CD8CBF7BD771A15AA9C92",
+        "bytes": 2414604
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/Cinemachine.dll.bytes_HUDll.u",
+        "sha256": "09E38F84FF9EBEA4B91B8B546EF3B77711F507F522BAB4169AA3D1EB348F7B67",
+        "bytes": 1281036
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/Cinemachine.dll.bytes_AOT.u",
+        "sha256": "09E38F84FF9EBEA4B91B8B546EF3B77711F507F522BAB4169AA3D1EB348F7B67",
+        "bytes": 1281036
+      },
+      {
+        "path": "GF2 Game/GF2_Exilium_Data/LocalCache/Data/ClientRes_Windows/2.7.4330/Codes/UnityEngine.CoreModule.dll.bytes",
+        "sha256": "7ED87B8E18B4764246E6BBB10DA4F4BB8841D4777C517530448E596D77E058EC",
+        "bytes": 843264
+      }
+    ],
+    "resourceBinding": "MODULE_RELATIVE_V1",
+    "buildFlavor": "Clean",
+    "commonCoreSha256": "5C2380950B35C3FCD96D3DAC178BFD8679BCFBD917D9752695A47550FEC71843"
+  }
+}

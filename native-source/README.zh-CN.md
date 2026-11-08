@@ -23,8 +23,8 @@
 当前1.2.0 native构建使用variants下238项公共输入及每种版本的配置、生成桥接头文件。使用Zig0.16.0和Windows SDK10.0.26100.0运行以下命令，可精确重现发行DLL并生成配套desktop-metadata。根目录build-native.ps1保留历史1.0.2复现用途。重新生成托管桥需要已安装游戏的元数据，并校验game-reference-profiles.json中的精确Haoplay/Steam配置。仓库不包含游戏文件。
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
-./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.3.11'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -GameIndependentContact -LiveSettings -OutputDirectory './managed-1.3.11'
 ```
 
 ## 1.1.6 — 修复自动更新

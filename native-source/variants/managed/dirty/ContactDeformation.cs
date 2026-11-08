@@ -40,6 +40,7 @@ namespace GF2.Private
         private static void ContactApply(int index,float dt,bool hands)
         {
             ContactTarget t=contactTargets[index];ContactMaterial m=t.Material;
+            if (ContactSettings.DetectionOnly(t.Region)) { ContactApplyRegion(index,hands); return; }
             Vector3 current=t.Bone.localPosition,scale=t.Bone.localScale;Quaternion rotation=t.Bone.localRotation;
             if(!Finite(current)||!ContactFiniteScale(scale)||!ContactRotationValid(rotation)||
                 !ContactFiniteScale(t.Parent.lossyScale)||!ContactFiniteMatrix(t.Parent.localToWorldMatrix))

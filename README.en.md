@@ -8,7 +8,7 @@ Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
 An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
-Targets Haoplay and Steam. The current 3.0 compatibility build has passed static and automated checks; actual game/HMD operation has not yet been verified.
+Supports Haoplay and Steam. Existing VR and in-game settings have hardware validation. Face/thigh pressing and butt exterior contact were confirmed in Haoplay; separate Steam HMD validation of the new contact features remains pending.
 
 **[Download the latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
 
@@ -134,3 +134,7 @@ The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be
 - [Source boundary and terms](SOURCE_BOUNDARY.en.md)
 
 > GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.
+
+## Character contact (Dirty)
+
+In Dirty, bring a hand near supported chest, butt, face, or thigh regions to make contact. Face and thigh surfaces indent locally and recover after release. Default maximum depths are 8 mm for the face and 6 mm for thighs. Toggle contact visualization in PC or VR settings. It defaults to OFF; cyan means idle and orange means active contact. Existing custom contact targets and saved settings are retained.

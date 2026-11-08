@@ -15,6 +15,11 @@ namespace GF2.Private
             internal bool[] Used;
             internal Vector3[] RestVertices, RestNormals;
             internal BoneWeight[] Weights;
+            internal SkinnedMeshRenderer DynamicSkin;
+            internal SkinnedMeshRenderer SourceSkin;
+            internal Mesh DynamicSource, Snapshot;
+            internal int[] SampleIndices;
+            internal List<Vector3> SampledVertices, SampledNormals;
             internal int Start;
         }
         private sealed class ContactPatch
@@ -27,6 +32,12 @@ namespace GF2.Private
             internal Mesh DisplayMesh;
             internal bool DisplayFault;
             internal int Frame=-1;
+            internal int Region, RegionIndexCount;
+            internal Transform RegionStart, RegionEnd;
+            internal Vector3 SegmentStart, SegmentFinish;
+            internal Vector3[] RegionVertices, RegionNormals, ClipA, ClipB, ClipNormalA, ClipNormalB;
+            internal int[] RegionTriangles;
+            internal bool UpdateFault;
         }
 
         private static void ContactDisposeSurface(ContactSurface surface)
@@ -36,6 +47,9 @@ namespace GF2.Private
             // references. No private GPU completion is synthesized here.
             if (surface.Patch.DisplayMesh!=null) UnityEngine.Object.Destroy(surface.Patch.DisplayMesh);
             surface.Patch.DisplayMesh=null;
+            foreach (ContactPatchSkin skin in surface.Patch.Skins) if (skin.Snapshot!=null) {
+                UnityEngine.Object.Destroy(skin.Snapshot); skin.Snapshot=null;
+            }
         }
 
         private static void ContactPatchUseBone(ContactPatchSkin data, int index, float weight)
@@ -50,7 +64,7 @@ namespace GF2.Private
         {
             for (int b=0;b<data.Bones.Length;++b) if (data.Used[b]) {
                 data.ContactAncestors[b]=null;
-                for (int j=0;j<contactCount;++j) if (contactTargets[j].Actor==actor &&
+                for (int j=0;j<contactCount;++j) if (contactTargets[j].Actor==actor && !ContactSettings.DetectionOnly(contactTargets[j].Region) &&
                     (data.Bones[b]==contactTargets[j].Bone || data.Bones[b].IsChildOf(contactTargets[j].Bone))) {
                     data.ContactAncestors[b]=contactTargets[j].Bone; break;
                 }
@@ -63,7 +77,7 @@ namespace GF2.Private
             Mesh snapshot=new Mesh();
             snapshot.hideFlags=HideFlags.HideAndDontSave;
             try {
-                skin.BakeMesh(snapshot);
+                ContactBakeOriginal(skin,snapshot);
                 vertices=snapshot.vertices; triangles=snapshot.triangles;
                 normals=snapshot.normals;
                 if (normals.Length!=vertices.Length && vertices.Length>0 && triangles.Length>0) {
@@ -81,9 +95,10 @@ namespace GF2.Private
             ContactPatch patch=null;
             try {
                 foreach (ContactSurfaceSource source in surface.Sources) {
+                    if (source.Mesh.vertexCount>262144) throw new FormatException("patch-source-vertex-limit");
+                    if (target.Region==3 && !ContactFaceSource(target.Bone,source.Bones)) continue;
                     bool[] related=new bool[source.Bones.Length]; bool used=false;
-                    for (int b=0;b<related.Length;++b) if (source.Bones[b]!=null &&
-                        (source.Bones[b]==target.Bone || source.Bones[b].IsChildOf(target.Bone))) { related[b]=true; used=true; }
+                    for (int b=0;b<related.Length;++b) if (ContactRelatedBone(target,source.Bones[b])) { related[b]=true; used=true; }
                     if (!used) continue;
                     Mesh mesh=source.Mesh;
                     BoneWeight[] originalWeights=mesh.boneWeights;
@@ -93,12 +108,16 @@ namespace GF2.Private
                         BoneWeight w=originalWeights[v];
                         influence[v]=ContactSurfaceWeight(related,w.boneIndex0,w.weight0)+ContactSurfaceWeight(related,w.boneIndex1,w.weight1)+
                             ContactSurfaceWeight(related,w.boneIndex2,w.weight2)+ContactSurfaceWeight(related,w.boneIndex3,w.weight3);
-                        influenced|=influence[v]>=.5f;
+                        if (!Finite(influence[v]) || influence[v]<0) throw new FormatException("patch-influence");
+                        surface.PatchMaxInfluence=Math.Max(surface.PatchMaxInfluence,influence[v]);
+                        if (influence[v]>0) ++surface.PatchNonzeroVertices;
+                        influenced|=target.Region==2?influence[v]>0:influence[v]>=.5f;
                     }
                     if (!influenced) continue;
                     // The measured failing actor's body/clothing meshes have
                     // no morphs. Unverified active morphs retain safe fallback.
-                    for (int shape=0;shape<mesh.blendShapeCount;++shape)
+                    if (mesh.blendShapeCount>256) throw new FormatException("patch-shape-limit");
+                    for (int shape=0;target.Region!=3 && shape<mesh.blendShapeCount;++shape)
                         if (source.Skin.GetBlendShapeWeight(shape)!=0) throw new FormatException("patch-active-morph");
                     Vector3[] sampled, sampledNormals; int[] indices;
                     ContactBakeGeometry(source.Skin,out sampled,out sampledNormals,out indices);
@@ -110,13 +129,13 @@ namespace GF2.Private
                             mesh.GetInstanceID(),sampled.Length,originalWeights.Length,sampledNormals.Length,
                             bindPoses.Length,source.Bones.Length,indices.Length));
                     var vertices=new List<Vector3>(); var normals=new List<Vector3>(); var weights=new List<BoneWeight>();
+                    var sampleIndices=new List<int>();
                     int[] map=new int[sampled.Length];
                     for (int t=0;t<indices.Length;t+=3) {
                         int a=indices[t], b=indices[t+1], c=indices[t+2];
                         if (a<0 || b<0 || c<0 || a>=sampled.Length || b>=sampled.Length || c>=sampled.Length)
                             throw new FormatException("patch-index");
-                        if (Math.Max(influence[a],Math.Max(influence[b],influence[c]))<.5f ||
-                            influence[a]<=.05f || influence[b]<=.05f || influence[c]<=.05f) continue;
+                        if (!ContactSurfaceMath.IncludeTriangle(target.Region,influence[a],influence[b],influence[c])) continue;
                         if (triangles.Count>=24576) throw new FormatException("patch-triangle-limit");
                         for (int corner=0;corner<3;++corner) {
                             int index=indices[t+corner];
@@ -125,6 +144,7 @@ namespace GF2.Private
                                 if (!Finite(sampled[index]) || !Finite(sampledNormals[index]) || sampledNormals[index].sqrMagnitude<1e-12f)
                                     throw new FormatException("patch-nonfinite");
                                 vertices.Add(sampled[index]); normals.Add(sampledNormals[index]); weights.Add(originalWeights[index]);
+                                sampleIndices.Add(index);
                                 map[index]=vertices.Count;
                             }
                             triangles.Add(vertexTotal+map[index]-1);
@@ -134,6 +154,7 @@ namespace GF2.Private
                     var data=new ContactPatchSkin {
                         Bones=source.Bones, BindPoses=bindPoses, Start=vertexTotal,
                         RestVertices=vertices.ToArray(), RestNormals=normals.ToArray(), Weights=weights.ToArray(),
+                        SourceSkin=source.Skin, SampleIndices=sampleIndices.ToArray(),
                         Used=new bool[source.Bones.Length], ContactAncestors=new Transform[source.Bones.Length],
                         Matrices=new Matrix4x4[source.Bones.Length], NormalMatrices=new Matrix4x4[source.Bones.Length]
                     };
@@ -152,7 +173,7 @@ namespace GF2.Private
                     Matrix4x4 world=source.Skin.transform.localToWorldMatrix;
                     Matrix4x4 normalWorld=world.inverse.transpose;
                     float unit=contactUnitScale>0?contactUnitScale:1;
-                    for (int v=0;v<data.RestVertices.Length;++v) {
+                    for (int v=0;target.Region!=3 && v<data.RestVertices.Length;++v) {
                         Vector3 restPoint,restNormal; float error;
                         if (!ContactPatchMath.RecoverRest(data.Matrices,data.NormalMatrices,data.Weights[v],
                             world.MultiplyPoint3x4(data.RestVertices[v]),normalWorld.MultiplyVector(data.RestNormals[v]),
@@ -162,15 +183,33 @@ namespace GF2.Private
                         data.RestVertices[v]=restPoint; data.RestNormals[v]=restNormal;
                         ++surface.PatchRecoveredVertices;
                     }
-                    batches.Add(data); vertexTotal+=vertices.Count;
+                    batches.Add(data);
+                    if (target.Region==3) {
+                        data.DynamicSkin=source.Skin; data.DynamicSource=mesh;
+                        data.SampledVertices=new List<Vector3>(sampled.Length);
+                        data.SampledNormals=new List<Vector3>(sampled.Length);
+                        data.Snapshot=new Mesh(); data.Snapshot.hideFlags=HideFlags.HideAndDontSave;
+                        data.Snapshot.MarkDynamic();
+                    }
+                    vertexTotal+=vertices.Count;
                 }
                 if (triangles.Count==0) throw new FormatException("patch-empty");
                 patch=new ContactPatch {
                     Skins=batches.ToArray(), Vertices=new Vector3[vertexTotal], Normals=new Vector3[vertexTotal],
-                    Triangles=triangles.ToArray(), BindError=surface.PatchBindError
+                    Triangles=triangles.ToArray(), BindError=surface.PatchBindError,
+                    Region=target.Region, RegionStart=target.Bone, RegionEnd=target.SegmentEnd
                 };
+                if (target.Region==4 || target.Region==5) {
+                    int capacity=patch.Triangles.Length*3;
+                    patch.RegionVertices=new Vector3[capacity]; patch.RegionNormals=new Vector3[capacity];
+                    patch.RegionTriangles=new int[capacity];
+                    for (int i=0;i<capacity;++i) patch.RegionTriangles[i]=i;
+                    patch.ClipA=new Vector3[6]; patch.ClipB=new Vector3[6];
+                    patch.ClipNormalA=new Vector3[6]; patch.ClipNormalB=new Vector3[6];
+                }
                 if (contactSettings.ShowContactLocations) try {
                     patch.DisplayMesh=new Mesh(); patch.DisplayMesh.hideFlags=HideFlags.HideAndDontSave;
+                    if (patch.RegionVertices!=null) patch.DisplayMesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;
                     patch.DisplayMesh.MarkDynamic(); patch.DisplayMesh.vertices=patch.Vertices; patch.DisplayMesh.triangles=patch.Triangles;
                 }
                 catch (Exception) { patch.DisplayFault=true; }
@@ -179,15 +218,32 @@ namespace GF2.Private
             catch (Exception ex) {
                 surface.PatchFailure=ex is FormatException?ex.Message:ex.GetType().Name;
                 if (patch!=null && patch.DisplayMesh!=null) UnityEngine.Object.Destroy(patch.DisplayMesh);
+                foreach (ContactPatchSkin skin in batches) if (skin.Snapshot!=null) UnityEngine.Object.Destroy(skin.Snapshot);
                 return null;
             }
         }
 
         private static bool ContactUpdatePatch(ContactPatch patch, Vector3 core)
         {
+            if (!ContactSettings.DetectionOnly(patch.Region)) return ContactUpdatePatchGeometry(patch,core);
+            // Unreadable/replaced face geometry must not stop existing contact.
+            try {
+                bool valid=ContactUpdatePatchGeometry(patch,core);
+                patch.UpdateFault=!valid;
+                return valid;
+            }
+            catch (Exception) { patch.UpdateFault=true; return false; }
+        }
+
+        private static bool ContactUpdatePatchGeometry(ContactPatch patch, Vector3 core)
+        {
             Vector3 minimum=new Vector3(Single.PositiveInfinity,Single.PositiveInfinity,Single.PositiveInfinity);
             Vector3 maximum=new Vector3(Single.NegativeInfinity,Single.NegativeInfinity,Single.NegativeInfinity);
             foreach (ContactPatchSkin skin in patch.Skins) {
+                if (skin.DynamicSkin!=null) {
+                    if (!ContactUpdateFaceSkin(skin,patch,ref minimum,ref maximum)) return false;
+                    continue;
+                }
                 for (int b=0;b<skin.Bones.Length;++b) if (skin.Used[b]) {
                     if (skin.Bones[b]==null) return false;
                     Matrix4x4 world=skin.Bones[b].localToWorldMatrix;
@@ -208,12 +264,24 @@ namespace GF2.Private
                     minimum=Vector3.Min(minimum,position); maximum=Vector3.Max(maximum,position);
                 }
             }
+            if (patch.RegionVertices!=null) {
+                if (!ContactClipThigh(patch,ref minimum,ref maximum)) return false;
+                core=patch.Core;
+            } else if (patch.Region==3) {
+                // Keep face interior membership within the measured facial envelope.
+                core=Vector3.Max(minimum,Vector3.Min(maximum,core));
+            }
             // Include the bound tissue core so deeper inward contact remains
             // eligible without extending the open patch behind the whole actor.
             minimum=Vector3.Min(minimum,core); maximum=Vector3.Max(maximum,core);
             patch.Core=core; patch.Minimum=minimum; patch.Maximum=maximum; patch.Frame=Time.frameCount;
             if (contactSettings.ShowContactLocations && patch.DisplayMesh!=null && !patch.DisplayFault) try {
-                patch.DisplayMesh.vertices=patch.Vertices;
+                if (patch.RegionVertices!=null) {
+                    // Fixed-capacity vertex storage keeps old indices valid until
+                    // the active index range is replaced, even after clipping shrinks.
+                    patch.DisplayMesh.vertices=patch.RegionVertices;
+                    patch.DisplayMesh.SetTriangles(patch.RegionTriangles,0,patch.RegionIndexCount,0,false);
+                } else patch.DisplayMesh.vertices=patch.Vertices;
                 patch.DisplayMesh.bounds=new Bounds((minimum+maximum)*.5f,maximum-minimum);
             }
             catch (Exception) { patch.DisplayFault=true; }
@@ -225,8 +293,13 @@ namespace GF2.Private
         {
             ContactPatch patch=target.Surface.Patch;
             Vector3 point, normal; float depth;
-            bool touching=ContactPatchMath.Sample(patch.Vertices,patch.Normals,patch.Triangles,patch.Core,
-                patch.Minimum,patch.Maximum,hand,contactSettings.HandRadius*contactHandScale,out point,out normal,out depth);
+            bool clipped=patch.RegionVertices!=null;
+            float handRadius=contactSettings.HandRadius*contactHandScale;
+            bool touching=clipped?
+                ContactPatchMath.SampleSegment(patch.RegionVertices,patch.RegionNormals,patch.RegionTriangles,patch.RegionIndexCount,
+                    patch.SegmentStart,patch.SegmentFinish,patch.Minimum,patch.Maximum,hand,handRadius,out point,out normal,out depth):
+                ContactPatchMath.Sample(patch.Vertices,patch.Normals,patch.Triangles,patch.Core,
+                    patch.Minimum,patch.Maximum,hand,handRadius,out point,out normal,out depth);
             if (!touching) {
                 if (inside==0 && normal.sqrMagnitude>0) target.ContactPoint=point;
                 return;

@@ -4,7 +4,7 @@
 
 ## Source tree guide
 
-`variants/common/` together with `variants/<Flavor>/overlay/` is the source of the current1.2.0 distributed DLLs, including Steam/Haoplay build profiles and runtime-derived hook targets. Use the reproduction commands in the1.2.0 section below.
+`variants/common/` together with `variants/<Flavor>/overlay/` is the source of the current1.3.11 distributed DLLs, including Steam/Haoplay build profiles and runtime-derived hook targets. Use the reproduction commands in the1.2.0 section below.
 
 `src/` with the root `build-native.ps1` and `native-build.json` is retained only for historical1.0.x `BOOTSTRAP-FLEX-001` reproduction (`6215CEAF…`). Its old Haoplay-only constants, for example `src/stereo/stereo_hooks.h:48`, are not used by the current build; runtime-derived targets in `variants/common/src/stereo/stereo_hooks.h` replace that route. Historical source bytes are intentionally unchanged.
 
@@ -20,11 +20,11 @@ An intact managed 1.1.6 installation can update to 1.2.0 by approving the Settin
 
 The release version is 1.2.0. Internal native build IDs retaining 130 identify the exact validated DLLs from an earlier unpublished candidate. The normal Installer does not silently overwrite manually replaced or unowned files.
 
-The current1.2.0 native recipe uses238 shared inputs under variants and per-flavor config/generated bridge headers. With Zig0.16.0 and Windows SDK10.0.26100.0 the command below reproduces the exact distributed DLLs and generates paired desktop-metadata. The root build-native.ps1 preserves historical1.0.2 reproduction. Regenerating the managed bridge requires metadata from your installed game and checks exact Haoplay/Steam profiles in game-reference-profiles.json. Game files are not included.
+The current paired native recipe uses238 shared inputs under variants and per-flavor config/generated bridge headers. With Zig0.16.0 and Windows SDK10.0.26100.0 the command below reproduces the exact distributed DLLs and generates paired desktop-metadata. The root build-native.ps1 preserves historical1.0.2 reproduction. Regenerating the managed bridge requires metadata from your installed game and checks exact Haoplay/Steam profiles in game-reference-profiles.json. Game files are not included.
 
 ```powershell
-./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.2.0'
-./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -OutputDirectory './managed-1.2.0'
+./variants/build-variants.ps1 -Zig 'C:/Tools/zig/zig.exe' -Output './build-1.3.11'
+./variants/managed/build_touch_bridge.ps1 -NativeEyeCapacity 3 -Flavor Dirty -GameRoot '<game executable folder>' -GameProfile Auto -GameIndependentContact -LiveSettings -OutputDirectory './managed-1.3.11'
 ```
 
 ## 1.1.6 — Automatic update fix
