@@ -44,7 +44,7 @@
   "stickDeadzone": "스틱 데드존",
   "deadzoneHelp": "기본 0.2. 입력 정규화 계약상 0 이상 1 미만이어야 합니다. 권장 구간에 의한 제한이 아닙니다.",
   "enabled": "월드 그립 사용",
-  "dragHelp": "기본 OFF. 활성화 버튼과 추적할 손을 선택하세요. 저장 전까지 실제 파일은 변경하지 않습니다.",
+  "dragHelp": "기본 ON. 활성화 버튼과 추적할 손을 선택하세요. 저장 전까지 실제 파일은 변경하지 않습니다.",
   "leftGripActivation": "왼쪽 Grip으로 활성화",
   "leftTriggerActivation": "왼쪽 Trigger로 활성화",
   "rightGripActivation": "오른쪽 Grip으로 활성화",

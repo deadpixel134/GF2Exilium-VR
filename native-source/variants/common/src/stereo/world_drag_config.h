@@ -65,8 +65,8 @@ static int wd_json_skip(WorldDragJson *j) {
     return 1;
 }
 static int world_drag_config_parse(const char *text,unsigned length,WorldDragSettings *out) {
-    if(!out)return 0;*out=world_drag_defaults();if(!text||!length)return 0;
-    WorldDragJson j={text,text+length,0};WorldDragSettings s=*out;
+    if(!out)return 0;*out=world_drag_defaults();out->enabled=0;if(!text||!length)return 0;
+    WorldDragJson j={text,text+length,0};WorldDragSettings s=world_drag_defaults();
     unsigned found=0,seen=0;
     if(!wd_json_char(&j,'{'))return 0;
     if(!wd_json_char(&j,'}'))do {

@@ -37,6 +37,7 @@ internal static class Fields
         new("controller_hands.json", null, "contactHapticStrengthPercent", "number", 15d, "contactHapticStrengthHelp"),
         new("controller_hands.json", null, "contactHapticDurationMs", "number", 30d, "contactHapticDurationHelp"),
 #if GF2VR_DIRTY_CONTACT
+        new("touch_interaction.json", null, "showContactLocations", "bool", false, "showContactLocationsHelp"),
         new("touch_interaction.json", null, "breastJiggleStrengthPercent", "number", 40d, "breastJiggleStrengthHelp"),
         new("touch_interaction.json", null, "breastJiggleDurationMultiplier", "number", .4d, "breastJiggleDurationHelp"),
         new("touch_interaction.json", null, "breastJiggleRangePercent", "number", 75d, "breastJiggleRangeHelp"),
@@ -58,7 +59,7 @@ internal static class Fields
         new("navigation.json", "navigation", "snapAngleDegrees", "number", 30d, "snapHelp"),
         new("navigation.json", "navigation", "smoothTurnDegreesPerSecond", "number", 60d, "smoothHelp"),
         new("navigation.json", "navigation", "stickDeadzone", "number", .2d, "deadzoneHelp"),
-        new("world_drag.json", "worldDrag", "enabled", "bool", false, "dragHelp"),
+        new("world_drag.json", "worldDrag", "enabled", "bool", true, "dragHelp"),
         new("world_drag.json", "worldDrag", "leftGripActivation", "bool", false, ""),
         new("world_drag.json", "worldDrag", "leftTriggerActivation", "bool", false, ""),
         new("world_drag.json", "worldDrag", "rightGripActivation", "bool", true, ""),

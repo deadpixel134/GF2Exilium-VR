@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "1.3.10",
+  "commonCoreSha256": "8E7A3F014A5B1E7B13FCDBDB3A0ACE2051D408EAA8983DD6E7A23AC6E7306109",
+  "variants": {
+    "Dirty": {
+      "buildId": "GF2VR-DIRTY-1310-WORLDGRIP001",
+      "dllSha256": "0C25D729ED9B6513E9041239B551384CF4F2D8A3E875E8C9D8274B4CDD8B8531"
+    },
+    "Clean": {
+      "buildId": "GF2VR-CLEAN-1310-WORLDGRIP001",
+      "dllSha256": "C87A275E42EC900C1297A0E3F8A1442394742E0A586F8365D6B5FE6D08AD6746"
+    }
+  },
+  "legacyBuildIdentityExceptions": [],
+  "runtimeAcceptance": "SURFACE004 contact flow user-confirmed, platform unspecified. Final WORLDGRIP001 changes default/failure preservation only, automated regression. Clean offline only."
+}

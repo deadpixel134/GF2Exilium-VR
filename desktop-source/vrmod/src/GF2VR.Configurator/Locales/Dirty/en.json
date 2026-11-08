@@ -36,5 +36,9 @@
   "breastJiggleTiltHelp": "Nonnegative tilt multiplier for this region. Zero disables rotation. Default 50%. No input upper limit. Large values can cause extreme deformation. Press Apply to update the running game.",
   "buttJiggleTiltHelp": "Nonnegative tilt multiplier for this region. Zero disables rotation. Default 120%. No input upper limit. Large values can cause extreme deformation. Press Apply to update the running game.",
   "breastJiggleStretchHelp": "Nonnegative stretch and pressure multiplier. Zero disables both. Default 45%. Compression remains below zero-scale collapse. No input upper limit. Large values can cause extreme deformation. Press Apply to update the running game.",
-  "buttJiggleStretchHelp": "Nonnegative stretch and pressure multiplier. Zero disables both. Default 140%. Compression remains below zero-scale collapse. No input upper limit. Large values can cause extreme deformation. Press Apply to update the running game."
+  "buttJiggleStretchHelp": "Nonnegative stretch and pressure multiplier. Zero disables both. Default 140%. Compression remains below zero-scale collapse. No input upper limit. Large values can cause extreme deformation. Press Apply to update the running game.",
+  "contactDisplayTab": "Contact display",
+  "showContactLocations": "Show contact locations",
+  "showContactLocationsHelp": "Show contact geometry and contact points. Cyan means no contact. Orange means active contact. Default OFF. Use Apply to change this while playing.",
+  "contactDisplaySummary": "Inspect contact locations and their active state."
 }

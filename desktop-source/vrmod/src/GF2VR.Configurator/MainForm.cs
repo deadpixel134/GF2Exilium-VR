@@ -295,6 +295,7 @@ internal sealed partial class MainForm : Form
         page.Controls.Add(jiggleRegions);
         BuildPage("breastJiggleTab", Fields.All.Where(f => f.File == "touch_interaction.json" && f.Key.StartsWith("breast", StringComparison.Ordinal)), "breastJiggleSummary", jiggleRegions);
         BuildPage("buttJiggleTab", Fields.All.Where(f => f.File == "touch_interaction.json" && f.Key.StartsWith("butt", StringComparison.Ordinal)), "buttJiggleSummary", jiggleRegions);
+        BuildPage("contactDisplayTab", Fields.All.Where(f => f.Key == "showContactLocations"), "contactDisplaySummary", jiggleRegions);
     }
 #endif
 
@@ -674,7 +675,7 @@ internal sealed partial class MainForm : Form
                 using var handsBitmap = new Bitmap(Width, Height); DrawToBitmap(handsBitmap, new Rectangle(0, 0, Width, Height));
                 handsBitmap.Save(Path.Combine(smokeFolder!, "hands-" + Texts.Language + ".png"));
 #if GF2VR_DIRTY_CONTACT
-                foreach (var field in Fields.All.Where(f => f.File == "touch_interaction.json"))
+                foreach (var field in Fields.All.Where(f => f.File == "touch_interaction.json" && f.Kind == "number"))
                 {
                     var input = (TextBox)inputs[field.Key]; string saved = input.Text;
                     if (!input.Enabled) throw new InvalidDataException("Jiggle input disabled");
@@ -691,6 +692,23 @@ internal sealed partial class MainForm : Form
                     using var jiggleBitmap = new Bitmap(Width, Height); DrawToBitmap(jiggleBitmap, new Rectangle(0, 0, Width, Height));
                     jiggleBitmap.Save(Path.Combine(smokeFolder!, field.Key + "-" + Texts.Language + ".png"));
                 }
+#endif
+#if GF2VR_DIRTY_CONTACT
+                var contactDisplay = (CheckBox)inputs["showContactLocations"];
+                bool oldContactDisplay = contactDisplay.Checked;
+                contactDisplay.Checked = !oldContactDisplay;
+                if (ReadControls()["touch_interaction.json"]["showContactLocations"]!.GetValue<bool>() != !oldContactDisplay)
+                    throw new InvalidDataException("Contact display control persistence mapping");
+                contactDisplay.Checked = oldContactDisplay;
+                tabs.SelectedIndex = 8; jiggleRegions!.SelectedIndex = 2;
+                PerformLayout(); jiggleRegions.PerformLayout(); jiggleRegions.SelectedTab!.PerformLayout();
+                jiggleRegions.SelectedTab.ScrollControlIntoView(contactDisplay);
+                var contactRectangle = jiggleRegions.SelectedTab.RectangleToClient(contactDisplay.RectangleToScreen(contactDisplay.ClientRectangle));
+                if (!jiggleRegions.SelectedTab.ClientRectangle.Contains(contactRectangle))
+                    throw new InvalidDataException("Contact display control cannot be scrolled into view");
+                using var contactBitmap = new Bitmap(Width, Height);
+                DrawToBitmap(contactBitmap, new Rectangle(0, 0, Width, Height));
+                contactBitmap.Save(Path.Combine(smokeFolder!, "contact-display-" + Texts.Language + ".png"));
 #endif
                 hands.Checked = oldHands; tabs.SelectedIndex = 4;
                 using var faceBitmap = new Bitmap(Width, Height); DrawToBitmap(faceBitmap, new Rectangle(0, 0, Width, Height));

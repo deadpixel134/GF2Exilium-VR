@@ -10,6 +10,7 @@ namespace GF2.Private
     internal sealed class ContactSettings
     {
         internal bool Enabled = true;
+        internal bool ShowContactLocations;
         internal float HandRadius=.035f, BodyRadius=.06f, HandHoldSeconds=.1f;
         internal float StrengthPercent=40f, DurationMultiplier=.4f, RangePercent=75f, TiltPercent=50f, StretchPercent=45f;
         internal ContactKnobs BreastKnobs,ButtKnobs;
@@ -104,6 +105,7 @@ namespace GF2.Private
                     string key=reader.String();if(!seen.Add(key))throw new FormatException();reader.Space();reader.Take(':');reader.Space();
                     if(key=="schemaVersion"){if(reader.Number()!=1)throw new FormatException();schema=true;}
                     else if(key=="enabled")result.Enabled=reader.Boolean();
+                    else if(key=="showContactLocations")result.ShowContactLocations=reader.Boolean();
                     else if(key=="handRadiusMeters")result.HandRadius=reader.Physical(false);
                     else if(key=="bodyRadiusMeters")result.BodyRadius=reader.Physical(false);
                     else if(key=="handHoldSeconds"){result.HandHoldSeconds=reader.Physical(false);if(result.HandHoldSeconds>.25f)throw new FormatException("contact tracking age");}

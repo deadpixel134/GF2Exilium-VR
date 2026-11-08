@@ -6,6 +6,40 @@
 
 These instructions use the default hand roles. If you changed roles or buttons, use your saved mappings. Turn off in-game anti-aliasing before using VR.
 
+## VR controls
+
+### ① General VR controls
+
+![① General VR controls](../images/vr-controls-en.png)
+
+### ② Left Trigger game-input mode
+
+![② Left Trigger game-input mode](../images/vr-game-input-en.png)
+
+While holding the left index Trigger, the default movement stick sends WASD to the game instead of moving the VR viewpoint. Up W, down S, left A, right D; X/A sends F and Y/B sends Escape. Release Trigger to return to normal VR movement.
+
+Explanatory illustration using default hand roles. Distinguish the index Trigger from the side Grip. Press a stick down to click it. Stick-click functions remain on their physical left/right hands.
+
+**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
+
+### X / Y / A / B buttons
+
+These are the default hand-role and button settings. Game-input mode lasts **while holding the left index Trigger**. Use the panel-hand Trigger if the panel hand was changed.
+
+| Button | Normal UI | Game-input mode |
+|---|---|---|
+| X | No additional binding | F key |
+| Y | No additional binding | Escape key |
+| A | Click / drag | F key |
+| B | Back / cancel | Escape key |
+
+Swapping panel/pointer hands moves normal UI click to X and back to Y. The click/back button-swap setting exchanges normal UI actions. Game-input mode retains physical X/A → F and Y/B → Escape.
+
+
+The left stick moves and the right stick turns. Right Trigger or A clicks and drags; B goes back. Tap left Grip to toggle the auxiliary panel or hold it for one second to open VR settings. While left Trigger is held, the movement stick sends WASD, X/A sends F and Y/B sends Escape. Hold right Grip and move the hand to drag the world.
+
+**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
+
 ## Startup order
 
 1. Make sure your headset and controllers are connected, then start SteamVR.
@@ -50,7 +84,7 @@ You can use this mode without opening the auxiliary panel. This Trigger is separ
 
 ## Moving your viewpoint with world grip
 
-World grip defaults to off. Enable it in the PC configurator or VR settings, then save/apply.
+World grip defaults ON for new settings and reset. Existing saved values are retained. Change it in PC or VR settings and save/apply.
 
 With the default selection of right Grip and right-hand tracking, hold right Grip and move your hand to adjust your viewpoint as if grabbing and moving the world. Release the button to stop, and press it again to continue.
 

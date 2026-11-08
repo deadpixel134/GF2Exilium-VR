@@ -28,7 +28,7 @@ namespace GF2.Private
             }
             t.Owned=t.RotationOwned=t.ScaleOwned=false;
             t.Offset=t.Velocity=t.Tilt=t.TiltVelocity=t.PressLog=Vector3.zero;
-            t.InsideMask=0;t.HandTicket=-1;contactTargets[index]=t;
+            t.InsideMask=0;t.HandTicket=-1;t.ContactFrame=-1;contactTargets[index]=t;
         }
 
         private static Vector3 ContactCompliant(Vector3 world,ContactTarget t,Vector3 depth,Vector3 vertical,Vector3 lateral)
@@ -47,10 +47,10 @@ namespace GF2.Private
             if(!t.Owned||!ContactExact(current,t.LastWritten)){if(t.Owned)++contactExternal;t.Base=current;t.Owned=false;}
             if(!t.RotationOwned||!ContactExact(rotation,t.LastRotation)){if(t.RotationOwned)++contactExternal;t.BaseRotation=rotation;t.RotationOwned=false;}
             if(!t.ScaleOwned||!ContactExact(scale,t.LastScale)){if(t.ScaleOwned)++contactExternal;t.BaseScale=scale;t.ScaleOwned=false;}
-            Vector3 position=t.Parent.TransformPoint(t.Base);
+            Vector3 position=t.ContactPosition;
             if(!Finite(position)){++contactInvalid;contactHapticValid=0;ContactRestoreOne(index);return;}
             float maximum=m.MaxDisplacement*contactUnitScale;
-            float radius=contactSettings.HandRadius*contactHandScale+contactSettings.BodyRadius*contactUnitScale;
+            float radius=contactSettings.HandRadius*contactHandScale+t.ContactRadius;
             if(!Finite(maximum)||!Finite(radius)||radius<=0)
             {++contactInvalid;contactHapticValid=0;ContactRestoreOne(index);return;}
             // Derive geometry from the unmodified basis, never last frame's
@@ -73,8 +73,13 @@ namespace GF2.Private
             t.Alignment=geometry?(axis<0?2:1):3;
             Vector3 desired=Vector3.zero,pressure=Vector3.zero;float penetration=0;int inside=0;
             if(hands) {
-                if((contactMask&1)!=0)ContactPressure(position,contactLeft,radius,maximum,ref desired,ref pressure,ref penetration,ref inside,1);
-                if((contactMask&2)!=0)ContactPressure(position,contactRight,radius,maximum,ref desired,ref pressure,ref penetration,ref inside,2);
+                if (t.SurfaceState==5) {
+                    if((contactMask&1)!=0)ContactPatchPressure(ref t,contactLeft,maximum,ref desired,ref pressure,ref penetration,ref inside,1);
+                    if((contactMask&2)!=0)ContactPatchPressure(ref t,contactRight,maximum,ref desired,ref pressure,ref penetration,ref inside,2);
+                } else {
+                    if((contactMask&1)!=0)ContactPressure(position,contactLeft,radius,maximum,ref desired,ref pressure,ref penetration,ref inside,1);
+                    if((contactMask&2)!=0)ContactPressure(position,contactRight,radius,maximum,ref desired,ref pressure,ref penetration,ref inside,2);
+                }
                 if(t.HandTicket!=contactTicket) {
                     int released=t.InsideMask&~inside&contactMask&contactVelocityMask;
                     if((released&1)!=0&&m.ReleaseImpulse>0&&contactLeftVelocity.sqrMagnitude>0){t.Velocity+=ContactCompliant(contactLeftVelocity,t,depth,vertical,lateral)*m.ReleaseImpulse;++contactImpulses;}
@@ -118,7 +123,7 @@ namespace GF2.Private
             bool scaleActive=axis>=0&&(extension!=0||t.PressLog.sqrMagnitude!=0);
             if(!positionActive&&!rotationActive&&!scaleActive) {
                 contactTargets[index]=t;ContactRestoreOne(index);
-                contactTargets[index].InsideMask=t.InsideMask;contactTargets[index].HandTicket=t.HandTicket;return;
+                contactTargets[index].InsideMask=t.InsideMask;contactTargets[index].HandTicket=t.HandTicket;contactTargets[index].ContactFrame=t.ContactFrame;return;
             }
             // Stage ownership before engine writes so boundary cleanup can
             // restore a successfully written earlier channel after an exception.

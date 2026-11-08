@@ -21,7 +21,7 @@ typedef struct {
     unsigned long long last_ms,epoch,generation,sample_id;
     WorldDragSettings settings;
 } WorldDrag;
-static WorldDragSettings world_drag_defaults(void) {return (WorldDragSettings){0,0,0,1,0,0,1};}
+static WorldDragSettings world_drag_defaults(void) {return (WorldDragSettings){1,0,0,1,0,0,1};}
 static int world_drag_settings_valid(const WorldDragSettings *s) {
     if(!s||s->enabled>1||s->leftGripActivation>1||s->leftTriggerActivation>1||
        s->rightGripActivation>1||s->rightTriggerActivation>1||s->trackLeftHand>1||s->trackRightHand>1)return 0;

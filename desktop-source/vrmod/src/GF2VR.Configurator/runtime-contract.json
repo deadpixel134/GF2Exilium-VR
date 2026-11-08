@@ -1,4 +1,12 @@
 {
+  "apply": "LIVE_TRANSACTION_V1",
+  "commonCoreSha256": "8E7A3F014A5B1E7B13FCDBDB3A0ACE2051D408EAA8983DD6E7A23AC6E7306109",
+  "buildId": "GF2VR-DIRTY-1310-WORLDGRIP001",
+  "schemaVersion": 1,
+  "dllSha256": "0C25D729ED9B6513E9041239B551384CF4F2D8A3E875E8C9D8274B4CDD8B8531",
+  "configurationRoot": "INSTALL_ROOT/vrmod/config",
+  "pcOutputSupported": true,
+  "liveSettingsProtocol": 1,
   "files": [
     "render_quality.json",
     "performance.json",
@@ -11,13 +19,5 @@
     "world_drag.json",
     "touch_interaction.json"
   ],
-  "schemaVersion": 1,
-  "commonCoreSha256": "79668A4069A6CD6357478E5AEBA9667C5EA54A0EFAC43AC31F89C04F330B1A01",
-  "liveSettingsProtocol": 1,
-  "pcOutputSupported": true,
-  "dllSha256": "8877C5E59366B760860350A76D23AD41A090231AD3B73D0545C3C887D4A8115A",
-  "buildFlavor": "Dirty",
-  "configurationRoot": "INSTALL_ROOT/vrmod/config",
-  "buildId": "GF2VR-DIRTY-139-LIVESET004",
-  "apply": "LIVE_TRANSACTION_V1"
+  "buildFlavor": "Dirty"
 }

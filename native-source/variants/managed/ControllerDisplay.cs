@@ -456,7 +456,10 @@ namespace GF2.Private
                 if ((validMask & 1) != 0) Queue(leftPosition, scale, left, right);
                 if ((validMask & 2) != 0) Queue(rightPosition, scale, left, right);
                 lastPair[pair] = frame;
-                CacheContactHands(leftPosition, rightPosition, radius, unitScale, validMask, epoch, generation, frame);
+                CacheContactHands(leftPosition, rightPosition, radius * (materialMode == 2 ? .65f : 1f), unitScale, validMask, epoch, generation, frame);
+#if GF2VR_DIRTY_CONTACT
+                DrawContactIndicators(left, right);
+#endif
                 status = materialMode == 2 ? -6 : 1;
             }
             catch (Exception) { status = -9; }

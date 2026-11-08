@@ -56,7 +56,7 @@ Toggling camera following during play with **right stick click** does not change
 
 ## World grip
 
-World grip moves the VR viewpoint by moving your hand while holding a button. It is off by default, so enable it first if you want to use it.
+World grip moves the VR viewpoint by moving your hand while holding a button. It defaults ON for new settings and reset, while existing saved ON/OFF values are retained.
 
 - **Enable world grip**: Turns the feature on or off.
 - **Activation buttons**: Select which left or right Grip or Trigger buttons to use.
@@ -132,3 +132,5 @@ The recommended ranges beside numeric fields are guidance for choosing a startin
 ![In-game VR settings panel](../images/vr-settings-en.png)
 
 UI example captured from the actual VR settings panel renderer while editing render scale 0.75. The footer asks the user to wait about 5–10 seconds for recovery.
+
+World drag defaults ON for new settings and reset. Existing saved ON/OFF values survive updates. Changed hand roles and buttons follow saved settings.
