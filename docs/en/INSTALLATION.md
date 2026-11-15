@@ -2,7 +2,7 @@
 
 [한국어](../ko/INSTALLATION.md) | [English](../en/INSTALLATION.md) | [日本語](../ja/INSTALLATION.md) | [简体中文](../zh-CN/INSTALLATION.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 ## Before you start
 

@@ -2,7 +2,7 @@
 
 [한국어](../ko/3DMIGOTO_COMPATIBILITY.md) | [English](../en/3DMIGOTO_COMPATIBILITY.md) | [日本語](../ja/3DMIGOTO_COMPATIBILITY.md) | [简体中文](../zh-CN/3DMIGOTO_COMPATIBILITY.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 Clean and Dirty support 3DMigoto’s default wrapper mode. The game wrapper stays in place while VR uses the underlying D3D11 device/context. 3DMigoto is not required for VR alone.
 

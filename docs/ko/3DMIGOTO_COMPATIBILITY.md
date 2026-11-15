@@ -2,7 +2,7 @@
 
 [한국어](../ko/3DMIGOTO_COMPATIBILITY.md) | [English](../en/3DMIGOTO_COMPATIBILITY.md) | [日本語](../ja/3DMIGOTO_COMPATIBILITY.md) | [简体中文](../zh-CN/3DMIGOTO_COMPATIBILITY.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 Clean·Dirty 모두 3DMigoto의 기본 wrapper 모드와 호환됩니다. 게임 wrapper는 유지하고 VR은 실제 D3D11 장치/context를 사용합니다. VR만 사용한다면 3DMigoto를 별도로 설치할 필요는 없습니다.
 

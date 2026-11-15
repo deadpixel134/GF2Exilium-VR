@@ -2,7 +2,7 @@
 
 [한국어](../ko/RELEASE_READINESS.md) | [English](../en/RELEASE_READINESS.md) | [日本語](../ja/RELEASE_READINESS.md) | [简体中文](../zh-CN/RELEASE_READINESS.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 설치 파일은 [최신 정식 릴리스](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)의 **Assets**에서 받으세요. 릴리스 페이지에서 실제 버전과 파일 이름을 확인할 수 있습니다.
 

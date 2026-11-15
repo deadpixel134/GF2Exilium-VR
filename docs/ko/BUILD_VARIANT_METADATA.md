@@ -2,7 +2,7 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 일반 사용자는 [전체 설치 ZIP](RELEASE_READINESS.md)을 사용하세요. 아래는 DLL을 재현하거나 수정하는 개발자를 위한 절차입니다. 현재 배포판의 native 소스는 `native-source/variants/common`이며 `native-source/src`는 보존된 역사적 소스입니다. [소스 구성](../../SOURCE_BOUNDARY.md)을 먼저 확인하세요.
 

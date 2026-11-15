@@ -2,7 +2,7 @@
 
 [한국어](../ko/INSTALLATION.md) | [English](../en/INSTALLATION.md) | [日本語](../ja/INSTALLATION.md) | [简体中文](../zh-CN/INSTALLATION.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 ## 시작 전 준비
 

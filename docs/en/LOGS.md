@@ -2,7 +2,7 @@
 
 [한국어](../ko/LOGS.md) | [English](../en/LOGS.md) | [日本語](../ja/LOGS.md) | [简体中文](../zh-CN/LOGS.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 When you report a problem, attaching the VR mod's diagnostic log helps a lot in finding the cause. Logging is off by default, so turn it on with the steps below, run into the problem again, and then send the file.
 

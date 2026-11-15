@@ -1,140 +1,161 @@
 # GF2VR
 
-제작자: [@TBluebox12](https://x.com/TBluebox12)  
-아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)  
-후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)  
+Creator: [@TBluebox12](https://x.com/TBluebox12)<br>
+Arca VR community: [VR community](https://arca.live/b/vrshits)<br>
+Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
-[한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-소녀전선 2: 망명(GF2 Exilium)을 VR 헤드셋과 컨트롤러로 즐기기 위한 비공식 모드입니다. 일반 메뉴는 가상 화면으로, 지원되는 3D 장면은 입체 화면으로 표시합니다.
+An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
-Haoplay와 Steam을 지원합니다. 기존 VR·인게임 설정 기능은 실기 검증되었고, 얼굴·허벅지 눌림과 엉덩이 외곽 판정은 Haoplay에서 정상 확인했습니다. 새 접촉 기능의 Steam HMD 검증은 아직 완료되지 않았습니다.
+[Download a release](https://github.com/deadpixel134/GF2Exilium-VR/releases) · [Full installation guide](docs/en/INSTALLATION.md) · [Full controls guide](docs/en/USAGE.md)
 
-**[최신 릴리스 다운로드](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
+## Requirements and supported environments
 
-> **필수: VR 사용 전 게임 설정에서 안티앨리어싱을 끄세요.**
+- A Windows x64 PC with a working **Haoplay or Steam** installation of GF2 Exilium. The game is not included.
+- A VR headset and controllers with a working **SteamVR/OpenXR** connection.
+- **Turn OFF anti-aliasing in the game's settings before using VR.**
 
-## VR 모드 조작법
+### Choose Clean or Dirty
 
-### ① 일반 VR 조작
-
-![① 일반 VR 조작](docs/images/vr-controls-ko.png)
-
-### ② 왼손 Trigger 게임 조작
-
-![② 왼손 Trigger 게임 조작](docs/images/vr-game-input-ko.png)
-
-왼손 검지 Trigger를 누르는 동안 기본 이동 스틱은 VR 시점 이동 대신 게임에 WASD 입력을 보냅니다. 위 W·아래 S·왼쪽 A·오른쪽 D이며, X·A는 F, Y·B는 Escape를 입력합니다. Trigger를 놓으면 일반 VR 이동으로 돌아갑니다.
-
-기본 손 역할을 기준으로 한 설명용 도해입니다. 검지 Trigger와 옆면 Grip을 구분하세요. 스틱 클릭은 아래로 누르는 동작이며 좌우 클릭 기능은 물리적인 손에 고정됩니다.
-
-**오른손 옆면 Grip을 누른 채 손을 움직이면 월드를 잡아 시점을 옮기고, Grip을 놓으면 멈춥니다.**
-
-### X·Y·A·B 버튼
-
-기본 손 역할·버튼 설정을 기준으로 합니다. 게임 조작 모드는 **왼손 검지 Trigger를 누르는 동안** 작동합니다. 보조패널 손을 바꾸었다면 해당 손의 Trigger를 사용합니다.
-
-| 버튼 | 일반 조작 | 게임 조작 모드 |
+| Feature | Clean | Dirty |
 |---|---|---|
-| X | 별도 할당 없음 | F 입력 |
-| Y | 별도 할당 없음 | Escape 입력 |
-| A | 클릭·드래그 | F 입력 |
-| B | 뒤로가기·취소 | Escape 입력 |
+| Stereo VR, head tracking, controller input and settings | Included | Included |
+| White markers for both hands and auxiliary-panel placement | Included | Included |
+| Supported character contact, deformation, vibration and jiggle settings | Not included | Included |
 
-패널·포인터 손 역할을 교환하면 일반 UI 조작은 X가 클릭, Y가 뒤로가기로 바뀝니다. 클릭·뒤로가기 버튼 교환 설정은 일반 UI 동작에 적용됩니다. 게임 조작 모드의 물리 버튼 X·A → F, Y·B → Escape는 그대로입니다.
+Install **one variant at a time**. Clean excludes contact-deformation code; it is not simply Dirty with contact disabled. Both run inside the game process, so the Clean name does not guarantee undetectability or safety. Both support 3DMigoto's default wrapper mode; see [compatibility](docs/en/3DMIGOTO_COMPATIBILITY.md).
 
-[전체 조작법](docs/ko/USAGE.md)
+## 1. Install
 
-## 무엇을 할 수 있나요?
+1. Download **one full Clean or Dirty ZIP** under Assets on [Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases). GitHub's `Source code` ZIP is not an installation package.
+2. Fully close the game and any existing configurator/installer.
+3. Extract the entire ZIP to a **fresh folder outside the game directory**. Keep its files together.
+4. Run `GF2VR.Installer.exe` from that folder.
+5. Select `GF2_Exilium.exe` or the game folder, review the installation plan and select **Install**. Select the game executable, rather than the launcher, if the location is unclear.
+6. Select **Open settings** to review options. You can start with the defaults.
 
-머리 움직임으로 둘러보기, 스틱 이동·회전, 포인터 클릭과 드래그, 손에 여는 보조 패널을 제공합니다. 화질·월드 크기·입체감과 조작 방식을 설정할 수 있습니다. Dirty에는 지원 캐릭터의 가슴·엉덩이 접촉과 진동·흔들림 설정이 추가됩니다.
+The package includes the OpenXR loader and the .NET runtime needed by the desktop tools. The installer verifies the package and backs up replaced owned files. It places `version.dll` beside the game executable and support files under `vrmod`; original `GameAssembly.dll`, `UnityPlayer.dll` and game assets are not replaced.
 
-## 기여자
+### Already installed? Update
 
-- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto 호환성 및 빌드 도구 개선 ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+**Automatic check and guided update:** Open the installed configurator with the game closed. A normal managed installation of **1.1.6 or later** checks public releases at startup. When a new version appears, select **Update**, approve it and follow the prompts to download, verify and install. GitHub CLI and sign-in are not required. Updates require your consent; a failed check leaves the installation intact.
 
-## 3DMigoto 호환성
+**Manual update:** Download the full ZIP for your variant, extract it to a fresh folder, close existing tools and run the new `GF2VR.Installer.exe` against the **same game location**. Use this route if no notification appears, the update fails or an old client cannot check releases. To switch Clean↔Dirty, use the desired variant's full ZIP and installer.
 
-Clean·Dirty 모두 3DMigoto 기본 wrapper 모드와 호환됩니다([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+Compatible user settings are preserved. If files were modified, use **Repair install** in the latest installer and review its file-by-file plan; keep installation records and backups. See [updating and recovery](docs/en/UPDATE.md).
 
-[3DMigoto](docs/ko/3DMIGOTO_COMPATIBILITY.md)
+## 2. Launch in VR
 
-## 시작 전 준비
+1. Connect the headset and controllers to the PC. If using Virtual Desktop, connect to the PC first.
+2. Prepare SteamVR/OpenXR and confirm the headset is ready.
+3. Start the game normally through the **Haoplay launcher or Steam**, according to your edition. The installer does not launch it.
+4. Keep the game window selected in the Windows foreground for controller input.
 
-- 정상 실행되는 **Haoplay 또는 Steam판 게임**. 게임 본편은 포함하지 않습니다.
-- VR 헤드셋·컨트롤러와 정상 연결된 **SteamVR/OpenXR 환경**.
-- 게임 설정의 **안티앨리어싱 OFF**. Quest 3·Galaxy XR의 양안 영상 어긋남 원인으로 확인됐습니다.
+## 3. Learn the display and basic controls
 
-## Clean과 Dirty 선택
+Menus and 2D screens appear automatically on a **front panel**. Supported 3D scenes use **stereo VR** with head tracking. To operate the original game UI in 3D, tap **left Grip**, bring the auxiliary hand panel into view, then point and click with the right controller. Grip does not hide the automatic 2D front panel.
 
-| 기능 | Clean | Dirty |
-|---|---|---|
-| 일반 VR·입체 화면·컨트롤러 입력·설정 | 포함 | 포함 |
-| 흰색 양손 구 표시 | 포함 | 포함 |
-| 캐릭터 가슴·엉덩이 접촉 및 변형 | 미포함 | 포함 |
-| 수동 보조패널 방향·위치·회전·기울기 설정 | 포함 | 포함 |
-| 터치 진동·흔들림 및 부위별 설정 | 미포함 | 포함 |
+### General VR controls
 
-접촉은 해당 부위의 지원 뼈가 연결된 캐릭터에서 작동합니다. 캐릭터 모델에 따라 지원 부위가 다르며, 숙소·활동층에서의 실제 엉덩이 반응은 아직 확인되지 않았습니다.
+![General VR controls with default hand roles](docs/images/vr-controls-en.png)
 
-두 빌드는 같은 일반 VR 소스와 버전으로 함께 업데이트합니다. 접촉 변형 코드만 Dirty에 포함하며, Clean은 단순히 접촉을 꺼 둔 버전이 아닙니다.
-
-둘 중 하나만 설치하세요. 두 빌드는 게임 실행 파일 옆의 같은 version.dll 한 개를 사용하며, OpenXR 로더·설정 프로그램 등 공통 지원 파일은 vrmod 아래에 설치합니다. 원본 GameAssembly.dll·UnityPlayer.dll·게임 에셋은 교체하지 않습니다. 두 빌드 모두 게임 프로세스에서 실행하므로 Clean이라는 이름이 미감지·안전을 보장하지 않습니다.
-
-## 처음 설치하기
-
-1. [최신 릴리스](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)에서 **Clean 또는 Dirty ZIP 하나**를 받아 새 폴더에 전부 풉니다. `Source code` ZIP은 설치 파일이 아닙니다.
-2. 게임과 기존 설정·인스톨러를 종료합니다. 압축을 푼 폴더의 `GF2VR.Installer.exe`에서 `GF2_Exilium.exe` 또는 게임 폴더를 선택해 설치합니다.
-3. **설정 열기**에서 옵션을 저장합니다. SteamVR와 헤드셋을 준비한 뒤 평소 방법으로 게임을 직접 실행합니다.
-
-[설치·제거·복원](docs/ko/INSTALLATION.md) · [업데이트·Clean/Dirty 전환](docs/ko/UPDATE.md)
-
-## 업데이트·복구·저장
-
-Settings에서 새 버전을 확인하고 동의하면 업데이트합니다. 자동 적용이 불가능한 경우에도 버전 번호와 수동 설치 안내를 표시하고, 릴리스 페이지는 열기를 눌러야 열립니다. 버전별 알림을 다시 보지 않도록 선택할 수 있습니다.
-
-유효한 설치 기록이 있는 삭제·격리 파일은 재설치할 수 있습니다. 변경 파일은 최신 ZIP의 Installer에서 **복구 설치**를 선택해 파일별 계획을 확인하고 동의하면 원본을 백업한 뒤 교체합니다. 소유가 확인되지 않은 파일은 기본 제외하며, 설치 기록·기존 설정·로그·백업은 보존합니다. 제품 설치 후 남은 후처리는 파일 재설치 없이 재시도할 수 있습니다.
-
-설정 창은 저장 성공·실패·미저장 상태와 제목의 *****를 표시합니다. 저장 실패 시 변경은 편집 상태로 남으며, 미저장 상태에서 닫으면 확인합니다. 게임을 종료한 뒤 저장하고, 적용하려면 게임을 다시 시작하세요.
-
-## 기본 조작
-
-| 조작 | 동작 |
+| Action | Default input |
 |---|---|
-| 왼쪽 스틱 | VR 시점 이동 |
-| 오른쪽 스틱 | 시야 회전. 기본은 한 번에 30°씩 도는 스냅 방식 |
-| 오른손 포인터 | 게임 화면의 항목을 가리킵니다. |
-| 오른손 Trigger 또는 A | 가리킨 항목 클릭 |
-| 오른손 B | 뒤로 가기·취소 |
-| 왼손 Grip | 3D 화면에서 보조 패널 열기·닫기 |
+| Aim at the game panel | Point with the right controller |
+| Click / hold and drag | A button or right index Trigger |
+| Back / cancel | B button (`Escape`) |
+| Move the VR viewpoint | Left stick |
+| Turn the view | Right stick — 30° snap by default |
+| World grip / fine positioning | Hold right side Grip and move your hand |
+| Return to the current original-camera reference | Click the physical left stick |
+| Toggle original-camera movement following | Click the physical right stick |
+| Show / hide the 3D auxiliary panel | Tap and release left side Grip |
+| Open VR settings / return to the game panel | Hold left side Grip for 1 second |
 
-[게임 실행·전체 조작법](docs/ko/USAGE.md) · [설정 항목](docs/ko/SETTINGS.md)
+Stick movement follows your view direction: looking up or down while moving forward also moves you vertically. **Use right Grip world grip for vertical movement and fine positioning.** Move your hand as if grabbing the world, then release Grip to keep the new viewpoint. World grip starts ON for new/reset settings; existing saved ON/OFF values are retained.
 
-## 호환성과 확인 범위
+Return the turning stick to center before the next snap. If Trigger pulls disturb your aim, use **A** to click. A stick click means pressing it down, and its left/right function stays on the physical hand even after changing movement-hand settings. After returning the viewpoint, release and press Grip again before another world grip.
 
-Haoplay는 Dirty의 Main·Activity 손 표시와 접촉, Steam은 Dirty의 Main 실행과 입체 화면을 실기로 확인했습니다. Steam의 다른 화면과 Clean의 새 DLL 실기는 아직 별도로 확인하지 않았습니다.
+### Game-input mode: WASD, F and Escape
 
-기존 실기 확인 환경: Meta Quest 2 · 4K 모니터 · Virtual Desktop.
+![Game-input mode while holding left Trigger](docs/images/vr-game-input-en.png)
 
-Quest 3와 Galaxy XR에서 보고된 양안 영상 어긋남은 안티앨리어싱이 원인인 것으로 확인됐습니다. 게임 설정에서 안티앨리어싱을 끄고 VR을 사용하세요.
+**Hold left index Trigger** to control the game instead of moving the VR viewpoint. This mode also works with the auxiliary panel closed.
 
-## 자세한 안내
+| Action | Input while holding left Trigger |
+|---|---|
+| Game movement | Movement stick: up W, down S, left A, right D |
+| F key | X or A |
+| Escape key | Y or B |
+| Return to normal VR controls | Release left Trigger |
 
-- [설치·제거·복원](docs/ko/INSTALLATION.md)
-- [게임 실행·전체 조작법](docs/ko/USAGE.md)
-- [설정 항목](docs/ko/SETTINGS.md)
-- [업데이트](docs/ko/UPDATE.md)
-- [문제 해결](docs/ko/TROUBLESHOOTING.md)
-- [로그 저장과 전달](docs/ko/LOGS.md)
-- [다운로드·파일 구성](docs/ko/RELEASE_READINESS.md)
-- [검증 범위](docs/ko/VERIFICATION.md)
-- [3DMigoto 호환성](docs/ko/3DMIGOTO_COMPATIBILITY.md)
-- [개발자 빌드 안내](docs/ko/BUILD_VARIANT_METADATA.md)
-- [변경 이력](docs/ko/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
-- [소스 구성과 이용 조건](SOURCE_BOUNDARY.md)
+X/Y have no additional normal-mode binding with default hand roles. Swapping panel/pointer hands moves normal click/back to X/Y and the game-mode Trigger to the panel hand. The normal click/back swap does not change game mode's physical X/A → F and Y/B → Escape. Distinguish index **Trigger** from side **Grip**.
 
-> GF2VR은 비공식 팬 프로젝트입니다. 정식으로 설치한 게임이 필요하며, 게임의 상표·저작물은 각 권리자에게 있습니다.
+### Character contact — Dirty
 
-## 캐릭터 접촉 (Dirty)
+Bring a hand near supported chest, butt, face or thigh regions. Face and thigh surfaces indent around contact and recover on release; default maximum depths are **8 mm for face / 6 mm for thighs**. Support depends on the character and outfit; unsupported meshes skip indentation.
 
-Dirty 버전은 지원되는 캐릭터의 가슴·엉덩이·얼굴·양쪽 허벅지에 손을 가까이 대면 접촉을 판정합니다. 얼굴과 허벅지는 접촉 주변이 눌리고 손을 떼면 복원됩니다. 기본 최대 깊이는 얼굴 8mm, 허벅지 6mm입니다. 접촉 위치 표시는 PC 또는 VR 설정에서 켜고 끌 수 있으며 기본값은 OFF입니다. 청록색은 비접촉, 주황색은 접촉 중입니다. 기존 사용자 지정 접촉 대상과 저장한 설정은 유지됩니다.
+Contact visualization can be toggled in PC/VR settings and defaults OFF: cyan means idle, orange means active contact. Custom contact targets and saved settings are retained. See [full controls and contact limits](docs/en/USAGE.md).
+
+## 4. Change settings
+
+Open settings from the installer, or run:
+
+```text
+<installation root>\vrmod\bin\GF2VR.Configurator\GF2VR.Configurator.exe
+```
+
+For the usual Haoplay `GF2 Game/GF2_Exilium.exe` layout, the installation root is the **parent of `GF2 Game`**. For Steam or another direct-executable layout, it is the **folder containing `GF2_Exilium.exe`**.
+
+The PC configurator and VR panel support **Korean, English, Japanese and Simplified Chinese**. Hold left Grip for 1 second to open VR settings. Edit values and select **Save** on PC or **Apply** in VR; supported changes apply to the running game. Settings saved with the game closed take effect at the next launch.
+
+| What to adjust | Settings |
+|---|---|
+| Image quality / performance | VR render scale |
+| Character size / stereo depth | World scale, linked eye separation and movement speed |
+| Panel placement | Panel/pointer hand, position, size, rotation and tilt |
+| Controls | Movement hand/speed, snap/smooth turn, buttons and world grip |
+| Hands / contact | Hand markers; Dirty contact visualization, vibration and regional feedback |
+
+**After changing render scale, allow about 5–10 seconds for VR stereo to return.** A flat view may appear briefly. Wait for the application result. While VR settings are open, game input and artificial movement are blocked; head/hand tracking remains available.
+
+The movement hand defaults to left; changing it swaps movement/turning stick roles together. Visual effects use game defaults; individual VFX toggles are not provided. See [all settings](docs/en/SETTINGS.md), including profiles, defaults and conflicting PC/VR edits.
+
+## Uninstall and roll back
+
+Close the game and configurator, run `GF2VR.Installer.exe` from the full release folder, select the **same game location** and review **Remove**. When a previous installation is recorded, removal restores it; for a first installation it removes owned mod files.
+
+User settings and modified/unowned files are preserved. Keep installation records and backups, and use interrupted-operation recovery if offered. See [removal and previous-install restore](docs/en/INSTALLATION.md).
+
+## Troubleshooting
+
+| Symptom | Check first |
+|---|---|
+| VR is missing / eyes are misaligned | Turn game anti-aliasing OFF; check headset connection and SteamVR/OpenXR, then relaunch |
+| Display works but clicks or game keys do not | Select the game window on the PC; release left Trigger to leave game-input mode |
+| Auxiliary panel is missing in 3D | Tap the configured panel hand's Grip and bring the hand into view |
+| World grip does not work | Check its saved enable state, activation button and tracked hand; release and press Grip again |
+| Stereo pauses after a render-scale change | Wait about 5–10 seconds and read the application result |
+| Settings or contact do not take effect | Save/Apply; contact needs Dirty and a supported model; check error text and [settings](docs/en/SETTINGS.md) |
+| Update or installation fails | Close the game/tools, use a complete new ZIP and review ownership/Repair messages |
+
+See [troubleshooting](docs/en/TROUBLESHOOTING.md). For reports, include edition, variant/version, headset/connection, affected scene, reproduction steps and error text. Automatic logging defaults OFF; use [log instructions](docs/en/LOGS.md) when needed and remove account/authentication data before sharing.
+
+## Further documentation and development
+
+- [Installation](docs/en/INSTALLATION.md) · [Updating](docs/en/UPDATE.md) · [Controls](docs/en/USAGE.md) · [Settings](docs/en/SETTINGS.md)
+- [Compatibility and verification](docs/en/VERIFICATION.md) · [3DMigoto](docs/en/3DMIGOTO_COMPATIBILITY.md)
+- [Download contents](docs/en/RELEASE_READINESS.md) · [Developer build guide](docs/en/BUILD_VARIANT_METADATA.md)
+- [Release notes](docs/en/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+- [Source contents and terms of use](SOURCE_BOUNDARY.en.md)
+
+Contributor: [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build-tool improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+
+## License and rights
+
+A distribution license for GF2VR's project source has **not yet been specified**. A public repository alone does not grant permission to redistribute or distribute modified versions. See [source terms](SOURCE_BOUNDARY.en.md).
+
+OpenXR, MinHook and Microsoft .NET retain their own licenses/notices; see the package's third-party notices and [Microsoft .NET notices](DOTNET-NOTICES.txt). Game files, reference-project assets, user settings, logs and rollback data are excluded from the published source.
+
+> GF2VR is an unofficial fan project, unaffiliated with the game's developer or publisher. A legitimate game installation is required. Game trademarks and copyrighted works belong to their respective owners.

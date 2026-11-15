@@ -1,140 +1,161 @@
 # GF2VR
 
-Creator: [@TBluebox12](https://x.com/TBluebox12)  
-Arca VR community: [VR community](https://arca.live/b/vrshits)  
-Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)  
+Creator: [@TBluebox12](https://x.com/TBluebox12)<br>
+Arca VR community: [VR community](https://arca.live/b/vrshits)<br>
+Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
 
-[한국어](README.md) | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
 An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
-Supports Haoplay and Steam. Existing VR and in-game settings have hardware validation. Face/thigh pressing and butt exterior contact were confirmed in Haoplay; separate Steam HMD validation of the new contact features remains pending.
+[Download a release](https://github.com/deadpixel134/GF2Exilium-VR/releases) · [Full installation guide](docs/en/INSTALLATION.md) · [Full controls guide](docs/en/USAGE.md)
 
-**[Download the latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest)**
+## Requirements and supported environments
 
-> **Required before using VR: Turn OFF anti-aliasing in the game's settings.**
+- A Windows x64 PC with a working **Haoplay or Steam** installation of GF2 Exilium. The game is not included.
+- A VR headset and controllers with a working **SteamVR/OpenXR** connection.
+- **Turn OFF anti-aliasing in the game's settings before using VR.**
 
-## VR controls
-
-### ① General VR controls
-
-![① General VR controls](docs/images/vr-controls-en.png)
-
-### ② Left Trigger game-input mode
-
-![② Left Trigger game-input mode](docs/images/vr-game-input-en.png)
-
-While holding the left index Trigger, the default movement stick sends WASD to the game instead of moving the VR viewpoint. Up W, down S, left A, right D; X/A sends F and Y/B sends Escape. Release Trigger to return to normal VR movement.
-
-Explanatory illustration using default hand roles. Distinguish the index Trigger from the side Grip. Press a stick down to click it. Stick-click functions remain on their physical left/right hands.
-
-**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
-
-### X / Y / A / B buttons
-
-These are the default hand-role and button settings. Game-input mode lasts **while holding the left index Trigger**. Use the panel-hand Trigger if the panel hand was changed.
-
-| Button | Normal UI | Game-input mode |
-|---|---|---|
-| X | No additional binding | F key |
-| Y | No additional binding | Escape key |
-| A | Click / drag | F key |
-| B | Back / cancel | Escape key |
-
-Swapping panel/pointer hands moves normal UI click to X and back to Y. The click/back button-swap setting exchanges normal UI actions. Game-input mode retains physical X/A → F and Y/B → Escape.
-
-[Full controls](docs/en/USAGE.md)
-
-## What does it do?
-
-Look around with your headset, move and turn with the sticks, click and drag with a pointer, and open the original game screen on a hand panel. Configure render quality, world scale, stereo depth and controls. Dirty also adds supported-character breast/buttock contact, haptics and motion settings.
-
-## Contributors
-
-- [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build tooling improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
-
-## 3DMigoto compatibility
-
-Both Clean and Dirty support the default 3DMigoto wrapper mode ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
-
-[3DMigoto](docs/en/3DMIGOTO_COMPATIBILITY.md)
-
-## Before you start
-
-- A working **Haoplay or Steam installation** of the game. The game is not included.
-- A VR headset and controllers with a working **SteamVR/OpenXR connection**.
-- In-game **anti-aliasing OFF**. It was identified as the cause of reported eye misalignment on Quest 3 and Galaxy XR.
-
-## Choose Clean or Dirty
+### Choose Clean or Dirty
 
 | Feature | Clean | Dirty |
 |---|---|---|
-| Ordinary VR, stereo, controller input and settings | Included | Included |
-| White spheres at both hand positions | Included | Included |
-| Character breast and buttock contact/deformation | Excluded | Included |
-| Manual auxiliary-panel position, rotation and tilt | Included | Included |
-| Contact vibration, jiggle and regional settings | Excluded | Included |
+| Stereo VR, head tracking, controller input and settings | Included | Included |
+| White markers for both hands and auxiliary-panel placement | Included | Included |
+| Supported character contact, deformation, vibration and jiggle settings | Not included | Included |
 
-Contact works when the character's supported bones for that region are bound. Supported regions vary by character model; actual buttock response in Dorm and Activity has not yet been confirmed.
+Install **one variant at a time**. Clean excludes contact-deformation code; it is not simply Dirty with contact disabled. Both run inside the game process, so the Clean name does not guarantee undetectability or safety. Both support 3DMigoto's default wrapper mode; see [compatibility](docs/en/3DMIGOTO_COMPATIBILITY.md).
 
-Both variants share ordinary VR source, versions and updates. Only Dirty includes contact deformation code; Clean excludes that implementation rather than merely turning it off.
+## 1. Install
 
-Install one variant at a time. Both use the same single version.dll beside the game executable; shared support files, including the OpenXR loader and Configurator, are installed under vrmod. Original GameAssembly.dll, UnityPlayer.dll and game assets are not replaced. Both variants run inside the game process; the name Clean does not guarantee nondetection or safety.
+1. Download **one full Clean or Dirty ZIP** under Assets on [Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases). GitHub's `Source code` ZIP is not an installation package.
+2. Fully close the game and any existing configurator/installer.
+3. Extract the entire ZIP to a **fresh folder outside the game directory**. Keep its files together.
+4. Run `GF2VR.Installer.exe` from that folder.
+5. Select `GF2_Exilium.exe` or the game folder, review the installation plan and select **Install**. Select the game executable, rather than the launcher, if the location is unclear.
+6. Select **Open settings** to review options. You can start with the defaults.
 
-## First installation
+The package includes the OpenXR loader and the .NET runtime needed by the desktop tools. The installer verifies the package and backs up replaced owned files. It places `version.dll` beside the game executable and support files under `vrmod`; original `GameAssembly.dll`, `UnityPlayer.dll` and game assets are not replaced.
 
-1. Download **one Clean or Dirty ZIP** from the [latest release](https://github.com/deadpixel134/GF2Exilium-VR/releases/latest) and extract the entire archive to a fresh folder. The `Source code` ZIP is not an installer package.
-2. Close the game and any existing configurator/installer. Run the extracted `GF2VR.Installer.exe`, select `GF2_Exilium.exe` or the game folder, and install.
-3. Open settings and save your options. Prepare SteamVR and your headset, then launch the game through your usual method.
+### Already installed? Update
 
-[Installation, removal and restore](docs/en/INSTALLATION.md) · [Updates and variant switching](docs/en/UPDATE.md)
+**Automatic check and guided update:** Open the installed configurator with the game closed. A normal managed installation of **1.1.6 or later** checks public releases at startup. When a new version appears, select **Update**, approve it and follow the prompts to download, verify and install. GitHub CLI and sign-in are not required. Updates require your consent; a failed check leaves the installation intact.
 
-## Updates, repair and saving
+**Manual update:** Download the full ZIP for your variant, extract it to a fresh folder, close existing tools and run the new `GF2VR.Installer.exe` against the **same game location**. Use this route if no notification appears, the update fails or an old client cannot check releases. To switch Clean↔Dirty, use the desired variant's full ZIP and installer.
 
-Confirm an available update in Settings to install it. If automatic installation is unavailable, the version and manual instructions remain visible; the release page opens only with Open. Notifications can be skipped per version.
+Compatible user settings are preserved. If files were modified, use **Repair install** in the latest installer and review its file-by-file plan; keep installation records and backups. See [updating and recovery](docs/en/UPDATE.md).
 
-Missing or quarantined files with a valid installation record can be reinstalled. For changed files, choose **Repair** in the Installer from the latest ZIP, review the per-file plan and confirm. Originals are backed up first; files with unknown ownership are excluded by default. Installation records, settings, logs and backups are preserved. Unfinished final steps can be retried without reinstalling product files.
+## 2. Launch in VR
 
-Settings displays saved, failed-save and unsaved states and a title *****. Failed saves retain your edits, and closing with unsaved changes asks for confirmation. Close the game before saving, then restart it to apply changes.
+1. Connect the headset and controllers to the PC. If using Virtual Desktop, connect to the PC first.
+2. Prepare SteamVR/OpenXR and confirm the headset is ready.
+3. Start the game normally through the **Haoplay launcher or Steam**, according to your edition. The installer does not launch it.
+4. Keep the game window selected in the Windows foreground for controller input.
 
-## Default controls
+## 3. Learn the display and basic controls
 
-| Control | Action |
+Menus and 2D screens appear automatically on a **front panel**. Supported 3D scenes use **stereo VR** with head tracking. To operate the original game UI in 3D, tap **left Grip**, bring the auxiliary hand panel into view, then point and click with the right controller. Grip does not hide the automatic 2D front panel.
+
+### General VR controls
+
+![General VR controls with default hand roles](docs/images/vr-controls-en.png)
+
+| Action | Default input |
 |---|---|
-| Left stick | Move the VR viewpoint |
-| Right stick | Turn the view. The default is snap turning in 30° steps. |
-| Right-hand pointer | Point at items on the game screen. |
-| Right Trigger or A | Click the pointed item |
-| Right B | Back / cancel |
-| Left Grip | Open or close the auxiliary panel in 3D scenes |
+| Aim at the game panel | Point with the right controller |
+| Click / hold and drag | A button or right index Trigger |
+| Back / cancel | B button (`Escape`) |
+| Move the VR viewpoint | Left stick |
+| Turn the view | Right stick — 30° snap by default |
+| World grip / fine positioning | Hold right side Grip and move your hand |
+| Return to the current original-camera reference | Click the physical left stick |
+| Toggle original-camera movement following | Click the physical right stick |
+| Show / hide the 3D auxiliary panel | Tap and release left side Grip |
+| Open VR settings / return to the game panel | Hold left side Grip for 1 second |
 
-[Startup and full controls](docs/en/USAGE.md) · [Settings](docs/en/SETTINGS.md)
+Stick movement follows your view direction: looking up or down while moving forward also moves you vertically. **Use right Grip world grip for vertical movement and fine positioning.** Move your hand as if grabbing the world, then release Grip to keep the new viewpoint. World grip starts ON for new/reset settings; existing saved ON/OFF values are retained.
 
-## Compatibility and verification
+Return the turning stick to center before the next snap. If Trigger pulls disturb your aim, use **A** to click. A stick click means pressing it down, and its left/right function stays on the physical hand even after changing movement-hand settings. After returning the viewpoint, release and press Grip again before another world grip.
 
-Hardware validation covers Dirty hands/contact in Haoplay Main and Activity, and Dirty launch/stereo in Steam Main. Other Steam contexts and the new Clean DLL have not received separate HMD validation.
+### Game-input mode: WASD, F and Escape
 
-Previously tested setup: Meta Quest 2 · 4K monitor · Virtual Desktop.
+![Game-input mode while holding left Trigger](docs/images/vr-game-input-en.png)
 
-The reported binocular misalignment on Quest 3 and Galaxy XR was confirmed to be caused by anti-aliasing. Turn OFF anti-aliasing in the game's settings before using VR.
+**Hold left index Trigger** to control the game instead of moving the VR viewpoint. This mode also works with the auxiliary panel closed.
 
-## Detailed guides
+| Action | Input while holding left Trigger |
+|---|---|
+| Game movement | Movement stick: up W, down S, left A, right D |
+| F key | X or A |
+| Escape key | Y or B |
+| Return to normal VR controls | Release left Trigger |
 
-- [Install, remove and restore](docs/en/INSTALLATION.md)
-- [Startup and full controls](docs/en/USAGE.md)
-- [Settings](docs/en/SETTINGS.md)
-- [Updating](docs/en/UPDATE.md)
-- [Troubleshooting](docs/en/TROUBLESHOOTING.md)
-- [Saving and sending logs](docs/en/LOGS.md)
-- [Downloads and package files](docs/en/RELEASE_READINESS.md)
-- [Verification scope](docs/en/VERIFICATION.md)
-- [3DMigoto compatibility](docs/en/3DMIGOTO_COMPATIBILITY.md)
-- [Developer build guide](docs/en/BUILD_VARIANT_METADATA.md)
-- [Release history](docs/en/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
-- [Source boundary and terms](SOURCE_BOUNDARY.en.md)
+X/Y have no additional normal-mode binding with default hand roles. Swapping panel/pointer hands moves normal click/back to X/Y and the game-mode Trigger to the panel hand. The normal click/back swap does not change game mode's physical X/A → F and Y/B → Escape. Distinguish index **Trigger** from side **Grip**.
 
-> GF2VR is an unofficial fan project. A legally installed copy of the game is required. Game trademarks and assets belong to their respective owners.
+### Character contact — Dirty
 
-## Character contact (Dirty)
+Bring a hand near supported chest, butt, face or thigh regions. Face and thigh surfaces indent around contact and recover on release; default maximum depths are **8 mm for face / 6 mm for thighs**. Support depends on the character and outfit; unsupported meshes skip indentation.
 
-In Dirty, bring a hand near supported chest, butt, face, or thigh regions to make contact. Face and thigh surfaces indent locally and recover after release. Default maximum depths are 8 mm for the face and 6 mm for thighs. Toggle contact visualization in PC or VR settings. It defaults to OFF; cyan means idle and orange means active contact. Existing custom contact targets and saved settings are retained.
+Contact visualization can be toggled in PC/VR settings and defaults OFF: cyan means idle, orange means active contact. Custom contact targets and saved settings are retained. See [full controls and contact limits](docs/en/USAGE.md).
+
+## 4. Change settings
+
+Open settings from the installer, or run:
+
+```text
+<installation root>\vrmod\bin\GF2VR.Configurator\GF2VR.Configurator.exe
+```
+
+For the usual Haoplay `GF2 Game/GF2_Exilium.exe` layout, the installation root is the **parent of `GF2 Game`**. For Steam or another direct-executable layout, it is the **folder containing `GF2_Exilium.exe`**.
+
+The PC configurator and VR panel support **Korean, English, Japanese and Simplified Chinese**. Hold left Grip for 1 second to open VR settings. Edit values and select **Save** on PC or **Apply** in VR; supported changes apply to the running game. Settings saved with the game closed take effect at the next launch.
+
+| What to adjust | Settings |
+|---|---|
+| Image quality / performance | VR render scale |
+| Character size / stereo depth | World scale, linked eye separation and movement speed |
+| Panel placement | Panel/pointer hand, position, size, rotation and tilt |
+| Controls | Movement hand/speed, snap/smooth turn, buttons and world grip |
+| Hands / contact | Hand markers; Dirty contact visualization, vibration and regional feedback |
+
+**After changing render scale, allow about 5–10 seconds for VR stereo to return.** A flat view may appear briefly. Wait for the application result. While VR settings are open, game input and artificial movement are blocked; head/hand tracking remains available.
+
+The movement hand defaults to left; changing it swaps movement/turning stick roles together. Visual effects use game defaults; individual VFX toggles are not provided. See [all settings](docs/en/SETTINGS.md), including profiles, defaults and conflicting PC/VR edits.
+
+## Uninstall and roll back
+
+Close the game and configurator, run `GF2VR.Installer.exe` from the full release folder, select the **same game location** and review **Remove**. When a previous installation is recorded, removal restores it; for a first installation it removes owned mod files.
+
+User settings and modified/unowned files are preserved. Keep installation records and backups, and use interrupted-operation recovery if offered. See [removal and previous-install restore](docs/en/INSTALLATION.md).
+
+## Troubleshooting
+
+| Symptom | Check first |
+|---|---|
+| VR is missing / eyes are misaligned | Turn game anti-aliasing OFF; check headset connection and SteamVR/OpenXR, then relaunch |
+| Display works but clicks or game keys do not | Select the game window on the PC; release left Trigger to leave game-input mode |
+| Auxiliary panel is missing in 3D | Tap the configured panel hand's Grip and bring the hand into view |
+| World grip does not work | Check its saved enable state, activation button and tracked hand; release and press Grip again |
+| Stereo pauses after a render-scale change | Wait about 5–10 seconds and read the application result |
+| Settings or contact do not take effect | Save/Apply; contact needs Dirty and a supported model; check error text and [settings](docs/en/SETTINGS.md) |
+| Update or installation fails | Close the game/tools, use a complete new ZIP and review ownership/Repair messages |
+
+See [troubleshooting](docs/en/TROUBLESHOOTING.md). For reports, include edition, variant/version, headset/connection, affected scene, reproduction steps and error text. Automatic logging defaults OFF; use [log instructions](docs/en/LOGS.md) when needed and remove account/authentication data before sharing.
+
+## Further documentation and development
+
+- [Installation](docs/en/INSTALLATION.md) · [Updating](docs/en/UPDATE.md) · [Controls](docs/en/USAGE.md) · [Settings](docs/en/SETTINGS.md)
+- [Compatibility and verification](docs/en/VERIFICATION.md) · [3DMigoto](docs/en/3DMIGOTO_COMPATIBILITY.md)
+- [Download contents](docs/en/RELEASE_READINESS.md) · [Developer build guide](docs/en/BUILD_VARIANT_METADATA.md)
+- [Release notes](docs/en/RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+- [Source contents and terms of use](SOURCE_BOUNDARY.en.md)
+
+Contributor: [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibility and build-tool improvements ([PR #1](https://github.com/deadpixel134/GF2Exilium-VR/pull/1)).
+
+## License and rights
+
+A distribution license for GF2VR's project source has **not yet been specified**. A public repository alone does not grant permission to redistribute or distribute modified versions. See [source terms](SOURCE_BOUNDARY.en.md).
+
+OpenXR, MinHook and Microsoft .NET retain their own licenses/notices; see the package's third-party notices and [Microsoft .NET notices](DOTNET-NOTICES.txt). Game files, reference-project assets, user settings, logs and rollback data are excluded from the published source.
+
+> GF2VR is an unofficial fan project, unaffiliated with the game's developer or publisher. A legitimate game installation is required. Game trademarks and copyrighted works belong to their respective owners.
