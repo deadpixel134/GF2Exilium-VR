@@ -43,28 +43,28 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 12128,
-      "sha256": "328D0937F45B437467179D108313A154B088E3D447DB6FD3B0133A59155FC17B"
+      "bytes": 12131,
+      "sha256": "D8AD83FA46B65096261E4114C076D775ACFA12E9A20495E46E77E77E41712265"
     },
     {
       "path": "README.ja.md",
-      "bytes": 15280,
-      "sha256": "23D30D0A4A61259AF85C8E5C2C9465097CD0C332187BC818ED25D55719BBF6D2"
+      "bytes": 15283,
+      "sha256": "059BBCE2187870EF5C504793CB69C1655AFB26201EC90514A2CBE339DD414964"
     },
     {
       "path": "README.ko.md",
-      "bytes": 13984,
-      "sha256": "5634272E680E7DA923748B7EAB098DE2D18619E792737C5E19807DC0FB38031A"
+      "bytes": 13987,
+      "sha256": "4A09DCC1A38CE5B18C998F78524161DFFE131A92224DDC7B030C16F46D6242AA"
     },
     {
       "path": "README.md",
-      "bytes": 12128,
-      "sha256": "328D0937F45B437467179D108313A154B088E3D447DB6FD3B0133A59155FC17B"
+      "bytes": 12131,
+      "sha256": "D8AD83FA46B65096261E4114C076D775ACFA12E9A20495E46E77E77E41712265"
     },
     {
       "path": "README.zh-CN.md",
-      "bytes": 10873,
-      "sha256": "3F784D74E7157CE51E5D580B2C392C4946ACB4D67587D0978D81B8039FB3A3B9"
+      "bytes": 10876,
+      "sha256": "F66F517D5E82E8B3BC774735660672B41B063C7472B777014D7174FA8085A220"
     },
     {
       "path": "SOURCE_BOUNDARY.en.md",
@@ -4284,7 +4284,7 @@
   ],
   "readmeIdentity": {
     "preserveUnlessUserChanges": true,
-    "placement": "Immediately below # GF2VR, before language navigation",
+    "placement": "Immediately below # GF2VR; the language navigation is the first line above the title",
     "layout": "Three separate labelled lines; HTML line breaks preserve the creator/community/support layout",
     "headers": {
       "README.md": [
@@ -4377,7 +4377,8 @@
       "Actual prerequisites and supported platforms",
       "Clean/Dirty feature differences"
     ],
-    "preserveTestedScopeMeaning": "Keep evidence in detailed documents and project records; omitting it from README does not add hardware validation or universal support claims."
+    "preserveTestedScopeMeaning": "Keep evidence in detailed documents and project records; omitting it from README does not add hardware validation or universal support claims.",
+    "languageNavigationPlacement": "First line of every root README, as a level-2 heading for larger text, above the title and creator/community/support block"
   },
   "currentNativeSourceIdentity": {
     "algorithm": "SHA256 sorted path NUL SHA256 LF rows, excluding variant bridge overlay",
