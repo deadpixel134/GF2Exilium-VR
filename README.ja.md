@@ -1,10 +1,10 @@
+## [English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 # GF2VR
 
 制作者: [@TBluebox12](https://x.com/TBluebox12)<br>
 Arca Live VR チャンネル: [VR チャンネル](https://arca.live/b/vrshits)<br>
 支援: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
-
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
 GF2 Exilium を VR ヘッドセットとコントローラーで楽しむための非公式 MOD です。通常のメニューは仮想スクリーン、対応する 3D シーンは立体 VR で表示します。
 

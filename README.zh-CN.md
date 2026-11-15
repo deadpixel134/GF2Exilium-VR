@@ -1,10 +1,10 @@
+## [English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 # GF2VR
 
 作者: [@TBluebox12](https://x.com/TBluebox12)<br>
 Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)<br>
 赞助: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
-
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
 通过 VR 头显和控制器游玩 GF2 Exilium 的非官方模组。普通菜单显示在虚拟屏幕上，支持的 3D 场景以立体 VR 显示。
 

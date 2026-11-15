@@ -1,10 +1,10 @@
+## [English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 # GF2VR
 
 제작자: [@TBluebox12](https://x.com/TBluebox12)<br>
 아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)<br>
 후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
-
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
 소녀전선 2: 망명(GF2 Exilium)을 VR 헤드셋과 컨트롤러로 즐기기 위한 비공식 모드입니다. 일반 메뉴는 가상 화면으로, 지원되는 3D 장면은 입체 화면으로 표시합니다.
 

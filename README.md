@@ -1,10 +1,10 @@
+## [English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 # GF2VR
 
 Creator: [@TBluebox12](https://x.com/TBluebox12)<br>
 Arca VR community: [VR community](https://arca.live/b/vrshits)<br>
 Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)
-
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
 An unofficial mod for playing GF2 Exilium with a VR headset and controllers. Menus appear on a virtual screen, while supported 3D scenes use stereoscopic VR.
 
