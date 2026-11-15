@@ -18,7 +18,7 @@ These instructions use the default hand roles. If you changed roles or buttons, 
 
 While holding the left index Trigger, the default movement stick sends WASD to the game instead of moving the VR viewpoint. Up W, down S, left A, right D; X/A sends F and Y/B sends Escape. Release Trigger to return to normal VR movement.
 
-Explanatory illustration using default hand roles. Distinguish the index Trigger from the side Grip. Press a stick down to click it. Stick-click functions remain on their physical left/right hands.
+The illustration shows official **Meta Quest 3 Touch Plus** artwork. Identify **X/Y on the left, A/B on the right**, the front index **Trigger**, and the side **Grip**. A stick click means pressing the stick down. Menu/Meta buttons have no GF2VR binding. See [art credits and rights](CONTROLLER_ART.md).
 
 **Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
 
@@ -34,11 +34,6 @@ These are the default hand-role and button settings. Game-input mode lasts **whi
 | B | Back / cancel | Escape key |
 
 Swapping panel/pointer hands moves normal UI click to X and back to Y. The click/back button-swap setting exchanges normal UI actions. Game-input mode retains physical X/A → F and Y/B → Escape.
-
-
-The left stick moves and the right stick turns. Right Trigger or A clicks and drags; B goes back. Tap left Grip to toggle the auxiliary panel or hold it for one second to open VR settings. While left Trigger is held, the movement stick sends WASD, X/A sends F and Y/B sends Escape. Hold right Grip and move the hand to drag the world.
-
-**Hold the right side Grip and move your hand to grab the world and move the viewpoint. Release Grip to stop.**
 
 ## Startup order
 
@@ -67,6 +62,10 @@ The following assumes that you have not changed hand roles.
 | Right Trigger or A | Click the pointed item |
 | Right B | Back / cancel |
 | Left Grip | Short press toggles the auxiliary panel, hold for 1 second to open/leave VR settings |
+| Hold right Grip and move your hand | World grip moves the viewpoint; release to stop |
+| Physical left stick click | Return to the current original-camera reference |
+| Physical right stick click | Toggle original-camera movement following |
+| While holding left Trigger | Movement stick sends WASD; X/A → F; Y/B → Escape |
 
 To snap turn again, return the stick to the center before tilting it again. To drag, hold the click while moving the pointer.
 

@@ -60,6 +60,8 @@ OpenXR 로더와 데스크톱 도구에 필요한 .NET 런타임은 패키지에
 
 ![기본 손 역할 기준 일반 VR 조작](docs/images/vr-controls-ko.png)
 
+이미지는 Meta Quest 3의 Touch Plus 공식 원화를 사용합니다. 조작 설명은 GF2VR 기본 설정이며, [이미지 출처와 버튼 위치](docs/ko/CONTROLLER_ART.md)를 참고하세요.
+
 | 동작 | 기본 입력 |
 |---|---|
 | 게임 패널의 커서 조준 | 오른손 컨트롤러로 가리키기 |
