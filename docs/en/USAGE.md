@@ -2,7 +2,7 @@
 
 [한국어](../ko/USAGE.md) | [English](../en/USAGE.md) | [日本語](../ja/USAGE.md) | [简体中文](../zh-CN/USAGE.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 These instructions use the default hand roles. If you changed roles or buttons, use your saved mappings. Turn off in-game anti-aliasing before using VR.
 

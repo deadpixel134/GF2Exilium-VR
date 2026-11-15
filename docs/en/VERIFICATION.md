@@ -2,7 +2,7 @@
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 Platform compatibility, observations in the actual game and offline checks are separate kinds of evidence. Editing documentation or rebuilding source does not add HMD verification.
 

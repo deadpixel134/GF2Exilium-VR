@@ -2,7 +2,7 @@
 
 [한국어](../ko/SETTINGS.md) | [English](../en/SETTINGS.md) | [日本語](../ja/SETTINGS.md) | [简体中文](../zh-CN/SETTINGS.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 Use **Open settings** in the installer to open the configurator. You can also run `vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe` in the installed game folder directly. Keep the files installed alongside the executable in the same folder. Change the display language with the **한국어 / English / 日本語 / 简体中文** buttons at the bottom; your selection is remembered.
 

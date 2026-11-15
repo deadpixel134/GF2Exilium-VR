@@ -2,7 +2,7 @@
 
 [한국어](../ko/UPDATE.md) | [English](../en/UPDATE.md) | [日本語](../ja/UPDATE.md) | [简体中文](../zh-CN/UPDATE.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 ## 설정 프로그램에서 업데이트
 

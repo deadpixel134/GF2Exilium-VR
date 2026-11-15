@@ -2,7 +2,7 @@
 
 [한국어](../ko/VERIFICATION.md) | [English](../en/VERIFICATION.md) | [日本語](../ja/VERIFICATION.md) | [简体中文](../zh-CN/VERIFICATION.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 플랫폼 호환성, 실제 게임에서 관찰한 결과, 오프라인 검증을 구분합니다. 문서 정리나 소스 빌드 성공이 새로운 HMD 실기 확인을 뜻하지는 않습니다.
 

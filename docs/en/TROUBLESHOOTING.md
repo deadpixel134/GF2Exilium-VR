@@ -2,7 +2,7 @@
 
 [한국어](../ko/TROUBLESHOOTING.md) | [English](../en/TROUBLESHOOTING.md) | [日本語](../ja/TROUBLESHOOTING.md) | [简体中文](../zh-CN/TROUBLESHOOTING.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 ## The eyes are misaligned or VR looks wrong
 

@@ -43,23 +43,28 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 8248,
-      "sha256": "686873FB5407718E6957DFDEA19A96CB0AF508CE0E87A01B8F1AB0F552228486"
+      "bytes": 12128,
+      "sha256": "328D0937F45B437467179D108313A154B088E3D447DB6FD3B0133A59155FC17B"
     },
     {
       "path": "README.ja.md",
-      "bytes": 9941,
-      "sha256": "F3A5E8AABBF872E9B6B1F95ADE65753423E8551E7740D73ED2380C611D75BDBB"
+      "bytes": 15280,
+      "sha256": "23D30D0A4A61259AF85C8E5C2C9465097CD0C332187BC818ED25D55719BBF6D2"
+    },
+    {
+      "path": "README.ko.md",
+      "bytes": 13984,
+      "sha256": "5634272E680E7DA923748B7EAB098DE2D18619E792737C5E19807DC0FB38031A"
     },
     {
       "path": "README.md",
-      "bytes": 9241,
-      "sha256": "D07DBA26E9E7EC737133E7C0E8D6609FFFDBB0D71C09E007C00A0450742FA98A"
+      "bytes": 12128,
+      "sha256": "328D0937F45B437467179D108313A154B088E3D447DB6FD3B0133A59155FC17B"
     },
     {
       "path": "README.zh-CN.md",
-      "bytes": 7776,
-      "sha256": "717CB87F99382B32B8EE32D86BF4DF7A0EB3DA82305F13482C39F28A4964E262"
+      "bytes": 10873,
+      "sha256": "3F784D74E7157CE51E5D580B2C392C4946ACB4D67587D0978D81B8039FB3A3B9"
     },
     {
       "path": "SOURCE_BOUNDARY.en.md",
@@ -543,23 +548,23 @@
     },
     {
       "path": "docs/en/3DMIGOTO_COMPATIBILITY.md",
-      "bytes": 2313,
-      "sha256": "5ADFBDFAE9BEC34FCF06F9EA4F2B4E44ED8CD775094ED9D9A094409B6B1123B1"
+      "bytes": 2310,
+      "sha256": "1ADB0F822679F48C185D4B310DE666A699D5823E3C424992271649BC829657D0"
     },
     {
       "path": "docs/en/BUILD_VARIANT_METADATA.md",
-      "bytes": 3629,
-      "sha256": "6E0187BC51C508454B5591EC3EF0CEE94F412FE3E2AE3C15F7082085BF82BFDB"
+      "bytes": 3626,
+      "sha256": "D577E163F40D49FA0E8358B698AD6D78269D0455DC0C3013DF4623AB5B12F96A"
     },
     {
       "path": "docs/en/INSTALLATION.md",
-      "bytes": 2506,
-      "sha256": "6C358E201B09EF86253CBA4FF240B35564E1F9682E184D7BA7868A880C97A649"
+      "bytes": 2503,
+      "sha256": "17F077350E308E3BA394F3398B2978230C18B521A99EA54C18ED10BBA06ED0C0"
     },
     {
       "path": "docs/en/LOGS.md",
-      "bytes": 3753,
-      "sha256": "DC13A83B43A74AE4BFE8495555B14348964E5B108D9B3006486B0B8E698833F0"
+      "bytes": 3750,
+      "sha256": "DB7D7A9F507C4F56F521E5C40A5AC5159FE372AE68F0DB60530E0FC3498FE02F"
     },
     {
       "path": "docs/en/RELEASE_NOTES.md",
@@ -568,33 +573,33 @@
     },
     {
       "path": "docs/en/RELEASE_READINESS.md",
-      "bytes": 1251,
-      "sha256": "9FBD9A2325FFD2C0BFB50B60775675D94184E0CF2399D01E4EA481D950C03098"
+      "bytes": 1248,
+      "sha256": "C25458F41A0142C4F12F5C4818BD32A1B187ACFB3956FFBA245679B90C00294C"
     },
     {
       "path": "docs/en/SETTINGS.md",
-      "bytes": 9777,
-      "sha256": "85E451D4E0C5A262156F80BBBE883DD93665F949737C46856F0F6EC1B5738ABB"
+      "bytes": 9774,
+      "sha256": "4C720C2BFF2A91D01AAEA7E5943B34B3F2AF18CE8457A64F188999AF2EE8B0EB"
     },
     {
       "path": "docs/en/TROUBLESHOOTING.md",
-      "bytes": 3089,
-      "sha256": "0C9B12C47B714AC02226F85CD9B529A4BFC2F9FBFFBFE1588EB7EAEEE3C2C993"
+      "bytes": 3086,
+      "sha256": "F4965B2CE59B4359F9D889B782DA86B40EEE1FC363555F5C7C90238388CAC702"
     },
     {
       "path": "docs/en/UPDATE.md",
-      "bytes": 1795,
-      "sha256": "E7A3A943BBA658A091ACC05A5DA9A718AF4D161F3BC7947B5AB0053DAD737FC9"
+      "bytes": 1792,
+      "sha256": "58E0C288019C3F75F8AD419A54957554F40253304E3BB58403AA466125E1E75B"
     },
     {
       "path": "docs/en/USAGE.md",
-      "bytes": 8724,
-      "sha256": "6C53E10B1F6FEF65896BBB7E67EA30B594121E69DBC347EF3893D03CAB780D05"
+      "bytes": 8721,
+      "sha256": "774B9513BA4EB75855F9DF5EC8F3051825E92E9DF4B95374B830B1B225F874B5"
     },
     {
       "path": "docs/en/VERIFICATION.md",
-      "bytes": 1921,
-      "sha256": "531F5425306181359E4BA6800909AA65295C79A4DBD70575DB2444F34C9E9104"
+      "bytes": 1918,
+      "sha256": "9ABE9EB0224C25450F3EBB7D8160FAAB14DAB3CEC7D5F3931F2B5396202CB5DD"
     },
     {
       "path": "docs/images/vr-controls-en.png",
@@ -713,23 +718,23 @@
     },
     {
       "path": "docs/ko/3DMIGOTO_COMPATIBILITY.md",
-      "bytes": 2540,
-      "sha256": "A28F9C032C8D6EFC2B44936E165676B61452D1278E2DABBAB927FFE7F3313F0F"
+      "bytes": 2543,
+      "sha256": "FEF1D8F628669B18C94E516EB584ECBFEFE04AC30B8201376F63EB44C1CAC6E8"
     },
     {
       "path": "docs/ko/BUILD_VARIANT_METADATA.md",
-      "bytes": 4051,
-      "sha256": "43C43EF61947B5CC02EC09AB10785EB7E569D189EF93AF5F105225AB90027271"
+      "bytes": 4054,
+      "sha256": "62B3364ED427A6F4AC7BDECF6706B7084BD91BEA771628E9714576C2B7EDED71"
     },
     {
       "path": "docs/ko/INSTALLATION.md",
-      "bytes": 2737,
-      "sha256": "CCADCA63A0FBB634D013780FBCF548F36A7333421C9CB6147A58D25F6110C0D1"
+      "bytes": 2740,
+      "sha256": "C64DF0D71CCC0CBD75C2CF7FFDA98AA7B7EECDD4B4BAB0964C458AF5CF89784E"
     },
     {
       "path": "docs/ko/LOGS.md",
-      "bytes": 4248,
-      "sha256": "A352FECBE6D8B62DB8D47F0F43ECA9D444E96BA16A91C62ACAB46E9E9D1D57BD"
+      "bytes": 4251,
+      "sha256": "E3DAB045988608148916897D6F37C2182930F4E9A89041AE310C2B43A93E1F5D"
     },
     {
       "path": "docs/ko/RELEASE_NOTES.md",
@@ -738,33 +743,33 @@
     },
     {
       "path": "docs/ko/RELEASE_READINESS.md",
-      "bytes": 1387,
-      "sha256": "2B8D2B29A98BEEF61C9CDD73C508D3A48B8AF68946E9233CB4BEEFC3AAA35994"
+      "bytes": 1390,
+      "sha256": "88AA2D49D663F3D4C11647376BAA2B6238B22EF33832668F861DD723A4AC6A1F"
     },
     {
       "path": "docs/ko/SETTINGS.md",
-      "bytes": 11338,
-      "sha256": "102D8A85B3A135B278FD161758AF2BDCC21B38B3B597A7239582FEE02FC0AFEA"
+      "bytes": 11341,
+      "sha256": "C9A1EE37C33680DA7205198D33FD17B80EC27F27D5DF186FA8C8F0F9A6C6CFC7"
     },
     {
       "path": "docs/ko/TROUBLESHOOTING.md",
-      "bytes": 3907,
-      "sha256": "6A256E40862D9017CA53403BDC9C6434D463F3C156F2CEF809F5AE5F987DD1D7"
+      "bytes": 3910,
+      "sha256": "E75498821D8DDAA0E01B13214E5AECD6A753018AB3298233FC19B4F99798CCFB"
     },
     {
       "path": "docs/ko/UPDATE.md",
-      "bytes": 2070,
-      "sha256": "50B279CB0F79CF6F7A2ED3135CF143DF65EBAE447770132506AC17F737945F54"
+      "bytes": 2073,
+      "sha256": "36B807A79AE992505F7BF10894F84DB23C119A85D8E2FE7A5A34FD26AC2EC4C5"
     },
     {
       "path": "docs/ko/USAGE.md",
-      "bytes": 10239,
-      "sha256": "24AA9B99C9C82B9BBB3A546592C7D7442AA245A55D362F008DC5BE851FEFF947"
+      "bytes": 10242,
+      "sha256": "38A2408017B839B2E3D92A2DD3E917C127F17A4EA09EB5620AE7E50FCA2E6B45"
     },
     {
       "path": "docs/ko/VERIFICATION.md",
-      "bytes": 2093,
-      "sha256": "514D79171337869BA0827C2388D436C9E95F89CF5B3968BB9665678F0CCB7665"
+      "bytes": 2096,
+      "sha256": "CB9800A16EBEEACFBB963DE41F5079698BDCFF9B303F415CA83B292D297B7FBD"
     },
     {
       "path": "docs/release-notes/1.2.1-source-scope.md",
@@ -4280,12 +4285,12 @@
   "readmeIdentity": {
     "preserveUnlessUserChanges": true,
     "placement": "Immediately below # GF2VR, before language navigation",
-    "layout": "Three separate labelled Markdown lines, each with two trailing spaces",
+    "layout": "Three separate labelled lines; HTML line breaks preserve the creator/community/support layout",
     "headers": {
       "README.md": [
-        "제작자: [@TBluebox12](https://x.com/TBluebox12)",
-        "아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)",
-        "후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)"
+        "Creator: [@TBluebox12](https://x.com/TBluebox12)",
+        "Arca VR community: [VR community](https://arca.live/b/vrshits)",
+        "Support: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)"
       ],
       "README.en.md": [
         "Creator: [@TBluebox12](https://x.com/TBluebox12)",
@@ -4301,15 +4306,21 @@
         "作者: [@TBluebox12](https://x.com/TBluebox12)",
         "Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)",
         "赞助: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)"
+      ],
+      "README.ko.md": [
+        "제작자: [@TBluebox12](https://x.com/TBluebox12)",
+        "아카라이브 가상현실 채널: [가상현실 채널](https://arca.live/b/vrshits)",
+        "후원: [buymeacoffee.com/vrshits](https://buymeacoffee.com/vrshits)"
       ]
     },
-    "latestDownloadTag": "v1.2.0"
+    "downloadPage": "https://github.com/deadpixel134/GF2Exilium-VR/releases"
   },
   "commonCoreAlgorithm": "GF2VR-COMMON-SOURCE-MANIFEST-V1",
   "readmeContentPolicy": {
     "scope": [
       "README.md",
       "README.en.md",
+      "README.ko.md",
       "README.ja.md",
       "README.zh-CN.md"
     ],
@@ -4320,7 +4331,7 @@
       "Steam"
     ],
     "preserveTestedScope": true,
-    "authority": "Explicit user2026-10-22: remove per-version README updates and state Steam compatibility.",
+    "authority": "Explicit user 2026-11-15: newcomer task-oriented README in English by default, localized Korean/Japanese and preserved Chinese; omit the removed validation explanations in future README edits.",
     "playerGuides": {
       "scope": [
         "docs/{ko,en,ja,zh-CN}/INSTALLATION.md",
@@ -4340,7 +4351,33 @@
         "GitHub Releases"
       ],
       "authority": "Explicit user2026-10-23: rewrite multilingual explanatory pages for newcomers and remove repeated update histories."
-    }
+    },
+    "defaultLanguage": "en",
+    "languageFiles": {
+      "en": "README.md",
+      "ko": "README.ko.md",
+      "ja": "README.ja.md",
+      "zh-CN": "README.zh-CN.md"
+    },
+    "legacyEnglishAlias": "README.en.md",
+    "verificationDetailsInReadme": false,
+    "verificationDetailsLocations": [
+      "docs/{ko,en,ja,zh-CN}/VERIFICATION.md",
+      "docs/{ko,en,ja,zh-CN}/RELEASE_NOTES.md",
+      "project development records"
+    ],
+    "excludedReadmeContent": [
+      "Quest 3/Galaxy XR eye-misalignment and anti-aliasing cause explanation",
+      "Historical tested equipment/setup lists and all-headset/runtime/connection disclaimer",
+      "Platform/flavor build/package/HMD verification tables and feature-by-feature verified/unverified status",
+      "All-character/outfit/scene/performance verification disclaimers and final-default-change HMD recheck status"
+    ],
+    "preserveUsageRequirements": [
+      "Turn in-game anti-aliasing OFF",
+      "Actual prerequisites and supported platforms",
+      "Clean/Dirty feature differences"
+    ],
+    "preserveTestedScopeMeaning": "Keep evidence in detailed documents and project records; omitting it from README does not add hardware validation or universal support claims."
   },
   "currentNativeSourceIdentity": {
     "algorithm": "SHA256 sorted path NUL SHA256 LF rows, excluding variant bridge overlay",

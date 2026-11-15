@@ -2,7 +2,7 @@
 
 [한국어](../ko/BUILD_VARIANT_METADATA.md) | [English](../en/BUILD_VARIANT_METADATA.md) | [日本語](../ja/BUILD_VARIANT_METADATA.md) | [简体中文](../zh-CN/BUILD_VARIANT_METADATA.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 Players should use the [full installation ZIP](RELEASE_READINESS.md). This procedure is for developers reproducing or modifying DLLs. The shipped native source is `native-source/variants/common`; `native-source/src` is a retained historical closure. Read the [source boundary](../../SOURCE_BOUNDARY.en.md) first.
 

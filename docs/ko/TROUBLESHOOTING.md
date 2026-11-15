@@ -2,7 +2,7 @@
 
 [한국어](../ko/TROUBLESHOOTING.md) | [English](../en/TROUBLESHOOTING.md) | [日本語](../ja/TROUBLESHOOTING.md) | [简体中文](../zh-CN/TROUBLESHOOTING.md)
 
-[처음으로](../../README.md)
+[처음으로](../../README.ko.md)
 
 ## 양안 화면이 어긋나거나 VR 화면이 이상합니다
 

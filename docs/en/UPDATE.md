@@ -2,7 +2,7 @@
 
 [한국어](../ko/UPDATE.md) | [English](../en/UPDATE.md) | [日本語](../ja/UPDATE.md) | [简体中文](../zh-CN/UPDATE.md)
 
-[Home](../../README.en.md)
+[Home](../../README.md)
 
 ## Update through the configurator
 
