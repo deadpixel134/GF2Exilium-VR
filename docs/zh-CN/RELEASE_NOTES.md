@@ -2,6 +2,15 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.13
+
+- 将普通VR和游戏输入图替换为Meta Quest 3 Touch Plus官方原画。
+- 以韩语、英语、日语和简体中文区分按钮、摇杆、Trigger/Grip以及普通/游戏输入模式。
+- 整理相关操作文档及图像来源、权利说明。
+- 调整操作图的换行与留白，确保说明文字位于卡片框内。
+
+[1.3.13](../release-notes/1.3.13.zh-CN.md)
+
 ## 1.3.12
 
 - 安装器从Windows安装记录和Steam库查找游戏位置。只有一处时自动填入，多处时可在列表中选择，并保留手动浏览。

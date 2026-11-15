@@ -60,6 +60,8 @@ OpenXRローダーとデスクトップツールに必要な.NETランタイム�
 
 ![初期の手の役割に基づく通常のVR操作](docs/images/vr-controls-ja.png)
 
+Meta Quest 3 Touch Plusの公式原画を使用しています。操作説明はGF2VRの初期設定です。[画像の出典とボタン位置](docs/ja/CONTROLLER_ART.md)を参照してください。
+
 | 操作 | 初期入力 |
 |---|---|
 | ゲームパネルを狙う | 右コントローラーで指す |

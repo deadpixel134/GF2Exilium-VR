@@ -1,0 +1,34 @@
+{
+  "officialPackagePage": "https://developers.meta.com/vr/downloads/package/oculus-controller-art/",
+  "officialPackageVersion": "1.8",
+  "officialEntry": "Meta Quest Touch Plus/Quest_03.png",
+  "selectedByUser": true,
+  "originalFile": "meta-quest3-touch-plus.png",
+  "originalSha256": "F1CA500D9FF859944B8B62A229626AC9537FD1E06D4338C69D46F0772025A6BD",
+  "officialEntrySha256": "D7286A92ABB9726223F20AD6F5BA8EAE1E1A17681FBD77C01F857BFACCCD3B33",
+  "pixelComparison": {
+    "width": 711,
+    "height": 448,
+    "pixelIdentical": true,
+    "differingChannels": 0
+  },
+  "license": "https://developers.meta.com/vr/licenses/art-1.0/",
+  "localLicense": "META-CONTROLLER-ART-LICENSE.txt",
+  "licenseEncoding": "UTF-8 transcription of package windows-1252 notice",
+  "generatedGuides": [
+    "vr-controls-ko.png",
+    "vr-game-input-ko.png",
+    "vr-controls-en.png",
+    "vr-game-input-en.png",
+    "vr-controls-ja.png",
+    "vr-game-input-ja.png",
+    "vr-controls-zh-CN.png",
+    "vr-game-input-zh-CN.png"
+  ],
+  "layoutScript": "build-controls.mjs",
+  "renderViewport": [
+    1600,
+    1280
+  ],
+  "geometryRedrawn": false
+}

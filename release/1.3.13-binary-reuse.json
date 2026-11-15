@@ -1,0 +1,160 @@
+{
+  "productVersion": "1.3.13",
+  "reason": "Documentation and controller art only; no native or desktop rebuild.",
+  "packages": [
+    {
+      "flavor": "Clean",
+      "sourceRelease": "1.3.12",
+      "allExecutablePayloadsUnchanged": true,
+      "files": [
+        {
+          "path": "DOTNET-NOTICES.txt",
+          "bytes": 79141,
+          "sha256": "8B0E59D2D7B072344EE7023FFE5A171CCAD7A9D7A6B1DED8A60934742CA4AD9C"
+        },
+        {
+          "path": "GF2VR.Installer.deps.json",
+          "bytes": 31146,
+          "sha256": "759E69AC9EA88A9681FD8B1F724F8FAE3C3F2FB969A290250600E854F1E02F79"
+        },
+        {
+          "path": "GF2VR.Installer.dll",
+          "bytes": 545280,
+          "sha256": "60A786307A34B1F97ED560B02D40BEFD4294252D2945D4B7B472C90ED93B0B62"
+        },
+        {
+          "path": "GF2VR.Installer.exe",
+          "bytes": 51597583,
+          "sha256": "E278AF1F9E6327F9E34673BA7293DEAE74709747200D37DB7D562DB5BBD95D25"
+        },
+        {
+          "path": "GF2VR.Installer.runtimeconfig.json",
+          "bytes": 529,
+          "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3"
+        },
+        {
+          "path": "payload/GF2 Game/version.dll",
+          "bytes": 622592,
+          "sha256": "8764E8305B351130D102A2E81F85A80AC2787EE534ACE25DF7C465F16F9F5A95"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.deps.json",
+          "bytes": 31155,
+          "sha256": "7A58D385209B5970CF6E35A1CA3477CABEF2ACA91A701702FE37154DA5A24478"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.dll",
+          "bytes": 526848,
+          "sha256": "BDDB61A51D1B6F53D619AAEACBF89867D326D481BD731B17B4A05B1A6658723A"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe",
+          "bytes": 51597583,
+          "sha256": "02149BDB93A0AF75678572A6B4785D41110A80157072D1A917EBB93D1EBA55E0"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.runtimeconfig.json",
+          "bytes": 529,
+          "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/runtime-contract.json",
+          "bytes": 657,
+          "sha256": "564E586F0EA222BBAEF4BEF609A45367F734A70686E441BB44882E3BC285C570"
+        },
+        {
+          "path": "payload/vrmod/runtime/minhook-LICENSE.txt",
+          "bytes": 4365,
+          "sha256": "D5C2224982B0B95A16B098A561335FA93F3EAF4D0AA964B7843EDB986DF78DC8"
+        },
+        {
+          "path": "payload/vrmod/runtime/openxr-LICENSE.txt",
+          "bytes": 11560,
+          "sha256": "3DDF9BE5C28FE27DAD143A5DC76EEA25222AD1DD68934A047064E56ED2FA40C5"
+        },
+        {
+          "path": "payload/vrmod/runtime/openxr_loader.dll",
+          "bytes": 2671104,
+          "sha256": "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF"
+        }
+      ]
+    },
+    {
+      "flavor": "Dirty",
+      "sourceRelease": "1.3.12",
+      "allExecutablePayloadsUnchanged": true,
+      "files": [
+        {
+          "path": "DOTNET-NOTICES.txt",
+          "bytes": 79141,
+          "sha256": "8B0E59D2D7B072344EE7023FFE5A171CCAD7A9D7A6B1DED8A60934742CA4AD9C"
+        },
+        {
+          "path": "GF2VR.Installer.deps.json",
+          "bytes": 31146,
+          "sha256": "759E69AC9EA88A9681FD8B1F724F8FAE3C3F2FB969A290250600E854F1E02F79"
+        },
+        {
+          "path": "GF2VR.Installer.dll",
+          "bytes": 545280,
+          "sha256": "60A786307A34B1F97ED560B02D40BEFD4294252D2945D4B7B472C90ED93B0B62"
+        },
+        {
+          "path": "GF2VR.Installer.exe",
+          "bytes": 51597583,
+          "sha256": "E278AF1F9E6327F9E34673BA7293DEAE74709747200D37DB7D562DB5BBD95D25"
+        },
+        {
+          "path": "GF2VR.Installer.runtimeconfig.json",
+          "bytes": 529,
+          "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3"
+        },
+        {
+          "path": "payload/GF2 Game/version.dll",
+          "bytes": 718336,
+          "sha256": "59BB43A485A8EFE6277B924D72F5FDB81B27B0D551901C1DF4F37CC728E37D3C"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.deps.json",
+          "bytes": 31155,
+          "sha256": "7A58D385209B5970CF6E35A1CA3477CABEF2ACA91A701702FE37154DA5A24478"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.dll",
+          "bytes": 573952,
+          "sha256": "672A3550B4CD2DC73FECB1ABCDCBE96B9BB3B9D855567A1F4D1E47B120D6DE87"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.exe",
+          "bytes": 51597583,
+          "sha256": "02149BDB93A0AF75678572A6B4785D41110A80157072D1A917EBB93D1EBA55E0"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/GF2VR.Configurator.runtimeconfig.json",
+          "bytes": 529,
+          "sha256": "2556F3E7CB7F562C3139A4C08EA55A28FBA36F396A1FF2E49F1AA66AA27ADAA3"
+        },
+        {
+          "path": "payload/vrmod/bin/GF2VR.Configurator/runtime-contract.json",
+          "bytes": 687,
+          "sha256": "10FE861E5750A305925F7A31F6BD371E2ED3611A00CA96D8810AC78B2F80EF46"
+        },
+        {
+          "path": "payload/vrmod/runtime/minhook-LICENSE.txt",
+          "bytes": 4365,
+          "sha256": "D5C2224982B0B95A16B098A561335FA93F3EAF4D0AA964B7843EDB986DF78DC8"
+        },
+        {
+          "path": "payload/vrmod/runtime/openxr-LICENSE.txt",
+          "bytes": 11560,
+          "sha256": "3DDF9BE5C28FE27DAD143A5DC76EEA25222AD1DD68934A047064E56ED2FA40C5"
+        },
+        {
+          "path": "payload/vrmod/runtime/openxr_loader.dll",
+          "bytes": 2671104,
+          "sha256": "66946EA6E9CC2649E299EC412521C5EAFE56C635D05055097FE4DB81E11932DF"
+        }
+      ]
+    }
+  ]
+}

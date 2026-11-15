@@ -60,6 +60,8 @@ Arca Live VR 社区: [VR 社区](https://arca.live/b/vrshits)<br>
 
 ![默认手部角色下的普通VR操作](docs/images/vr-controls-zh-CN.png)
 
+指南使用Meta Quest 3 Touch Plus官方原画，操作标注为GF2VR默认设置。参见[图片来源与按钮位置](docs/zh-CN/CONTROLLER_ART.md)。
+
 | 动作 | 默认输入 |
 |---|---|
 | 瞄准游戏面板 | 用右控制器指向 |

@@ -18,7 +18,7 @@ The existing `version.dll` may differ from its installation record or belong to 
 
 ## Input, the auxiliary panel or world grip does not work
 
-Focus the game window on the PC and check controller connections. Default left Grip toggles the 3D auxiliary panel; holding left Trigger uses WASD game control mode. Grip does not hide the normal 2D front panel. World grip defaults to OFF: enable it, choose an activation button and tracked hand, save and restart. See [full controls](USAGE.md).
+Focus the game window on the PC and check controller connections. Default left Grip toggles the 3D auxiliary panel; holding left Trigger uses WASD game control mode. Grip does not hide the normal 2D front panel. World grip defaults ON for new settings; saved values are retained. Check its enable state, activation button and tracked hand, then Save/Apply. After returning the viewpoint, release and press Grip again. See [full controls](USAGE.md).
 
 ## Saved settings, hands or contact do not take effect
 

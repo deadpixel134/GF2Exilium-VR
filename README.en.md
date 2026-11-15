@@ -60,6 +60,8 @@ Menus and 2D screens appear automatically on a **front panel**. Supported 3D sce
 
 ![General VR controls with default hand roles](docs/images/vr-controls-en.png)
 
+The guides use official Meta Quest 3 Touch Plus artwork. Labels describe GF2VR defaults; see [art credits and button locations](docs/en/CONTROLLER_ART.md).
+
 | Action | Default input |
 |---|---|
 | Aim at the game panel | Point with the right controller |
