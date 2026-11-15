@@ -234,5 +234,7 @@
   "liveClear": "Clear",
   "liveBackspace": "Backspace",
   "liveLinked": "Linked value",
-  "liveHelp": "While the game runs, settings are saved after runtime confirmation. Resource changes may briefly show the flat view. When the game is closed, saved settings take effect on next launch."
+  "liveHelp": "While the game runs, settings are saved after runtime confirmation. Resource changes may briefly show the flat view. When the game is closed, saved settings take effect on next launch.",
+  "updateSummaryTitle": "Highlights in this update",
+  "updateSummaryMissing": "No summary is available. See the release page for details."
 }

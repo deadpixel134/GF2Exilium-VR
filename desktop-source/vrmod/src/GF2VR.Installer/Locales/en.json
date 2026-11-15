@@ -124,5 +124,6 @@
   "postprocessConflict": "An existing final-step result differs. Preserve and inspect this file: {0}",
   "reopenFailed": "Update completed, but Settings could not be opened. Start Settings directly from the game folder.",
   "gameFingerprintInfo": "Game fingerprint differences do not block installation. Mod payload integrity is checked separately.",
-  "operationReportUnavailable": "The product operation completed, but its report could not be exported. Reinstallation is unnecessary. Check the installation record in the game folder."
+  "operationReportUnavailable": "The product operation completed, but its report could not be exported. Reinstallation is unnecessary. Check the installation record in the game folder.",
+  "chooseGameLocation": "Select a detected game location from the list, or choose Browse."
 }

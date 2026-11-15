@@ -175,7 +175,7 @@ internal sealed partial class MainForm : Form
                 if (store != null && updateVersion != null && store.ShouldNotifyUpdate(updateVersion))
                 {
                     store.MarkUpdateNotice(updateVersion, false);
-                    using var notice = new UpdateNoticeDialog(updateVersion, readyUpdate != null);
+                    using var notice = new UpdateNoticeDialog(updateVersion, readyUpdate != null, releaseNotes: check.ReleaseNotesBody);
                     notice.ShowDialog(this);
                     if (notice.SkipVersion) store.MarkUpdateNotice(updateVersion, true);
                 }

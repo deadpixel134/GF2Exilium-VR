@@ -10,6 +10,12 @@ internal static class Program
         try
         {
             InstallerText.Verify();
+            if (args.Contains("--self-test-game-locations")) return GameLocationChecks.Run();
+            if (args.Contains("--check-game-locations"))
+            {
+                var locations = GameLocationDiscovery.Discover([AppContext.BaseDirectory, Environment.CurrentDirectory]);
+                File.WriteAllBytes(Path.Combine(AppContext.BaseDirectory, "game-locations.json"), Contract.Encode(locations)); return 0;
+            }
             if (args.Contains("--self-test-unchanged")) return UnchangedWriteChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-repair")) return RepairChecks.Run(Value(args, "--package")!);
             if (args.Contains("--self-test-bootstrap-contract")) return BootstrapContractChecks.Run(Value(args, "--package")!);
@@ -115,11 +121,14 @@ internal static class Program
                     Contract.Encode(new { passed = true, plan.ManifestHash, plan.Package.Version, files = plan.Package.Files.Length, installWrites = 0 }));
                 return 0;
             }
-            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"), args.Contains("--smoke-install-workflow"), args.Contains("--settings-maintenance"));
+            using var form = new InstallerForm(root, package, Value(args, "--smoke-gui"), args.Contains("--smoke-install-workflow"), args.Contains("--settings-maintenance"),
+                autoDetect: Value(args, "--root") == null && Value(args, "--smoke-gui") == null);
             Application.Run(form); return 0;
         }
         catch (Exception ex)
         {
+            if (args.Contains("--self-test-game-locations") || args.Contains("--check-game-locations"))
+            { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Any(a => a is "--repair" or "--repair-plan" or "--retry-postprocess" or "--self-test-repair" or "--self-test-unchanged"))
             { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "verification-error.txt"), ex.ToString()); return 1; }
             if (args.Contains("--self-test-bootstrap-contract"))

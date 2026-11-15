@@ -24,3 +24,5 @@
 같은 종류의 업데이트는 호환되는 사용자 설정과 설치 기록을 유지합니다. Clean↔Dirty 전환은 원하는 종류의 전체 ZIP과 인스톨러로 진행합니다. 파일 변조·소유권 불일치·실행 중인 게임 때문에 거부되면 검사를 우회하지 말고 [문제 해결](TROUBLESHOOTING.md)을 확인하세요. 중단 복구와 이전 설치 복원은 [설치 안내](INSTALLATION.md)를 따릅니다.
 
 [변경 이력](RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+
+새 GUI는 시작할 때 새 버전을 확인한 뒤, 현재 언어의 변경 사항 요약을 기존 알림 팝업에 표시합니다. 요약이 없으면 릴리스 페이지 확인 안내가 나옵니다. 이 동작은 새 GUI를 설치한 뒤 이후 업데이트 확인부터 사용하며, 동의 없이 설치하지 않습니다.

@@ -2,6 +2,13 @@
 
 [한국어](../ko/RELEASE_NOTES.md) | [English](../en/RELEASE_NOTES.md) | [日本語](../ja/RELEASE_NOTES.md) | [简体中文](../zh-CN/RELEASE_NOTES.md)
 
+## 1.3.12
+
+- 安装器从Windows安装记录和Steam库查找游戏位置。只有一处时自动填入，多处时可在列表中选择，并保留手动浏览。
+- 设置GUI发现新版本时，会在现有通知中显示当前语言的最多5条更新要点，并保留每版本一次通知及不再提示选项。
+
+[1.3.12](../release-notes/1.3.12.zh-CN.md)
+
 ## 1.3.11
 
 - 将面部和左右大腿加入Dirty版的默认接触部位。

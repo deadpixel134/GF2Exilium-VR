@@ -124,5 +124,6 @@
   "postprocessConflict": "기존 후처리 결과가 다릅니다. 해당 파일을 보존하고 확인하세요: {0}",
   "reopenFailed": "업데이트는 완료됐지만 Settings를 열지 못했습니다. 게임 폴더의 Settings를 직접 실행하세요.",
   "gameFingerprintInfo": "게임 파일 지문 차이는 설치를 막지 않습니다. 모드 파일 무결성은 별도로 검사합니다.",
-  "operationReportUnavailable": "제품 작업은 완료됐지만 결과 보고서를 내보내지 못했습니다. 재설치는 필요하지 않습니다. 게임 폴더의 설치 기록을 확인하세요."
+  "operationReportUnavailable": "제품 작업은 완료됐지만 결과 보고서를 내보내지 못했습니다. 재설치는 필요하지 않습니다. 게임 폴더의 설치 기록을 확인하세요.",
+  "chooseGameLocation": "발견된 게임 위치를 목록에서 선택하거나 찾아보기를 눌러 주세요."
 }

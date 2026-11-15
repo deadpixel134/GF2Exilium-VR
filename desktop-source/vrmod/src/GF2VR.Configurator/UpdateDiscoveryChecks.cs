@@ -28,6 +28,7 @@ internal static class UpdateDiscoveryChecks
             ["url"] = "https://api.github.com/" + UpdatePolicy.Api + "releases/assets/" + id, ["browser_download_url"] = "https://github.com/" + UpdatePolicy.Repository + "/releases/download/v" + offeredVersion + "/" + name };
         var descriptorAsset = Asset(102, UpdatePolicy.DescriptorFor(prior.BuildFlavor), meta.Length, Paths.Hash(meta));
         byte[] Catalog() => Contract.Encode(new JsonArray(new JsonObject { ["id"] = 101, ["draft"] = false, ["prerelease"] = false, ["published_at"] = "2026-10-25T00:00:00Z", ["tag_name"] = mode == "same" ? "v"+prior.Version : "v"+offeredVersion,
+            ["body"] = "## ko\n- 설정 개선\n## en\n- Settings improvements",
             ["assets"] = mode == "manual" ? new JsonArray() : new JsonArray(descriptorAsset.DeepClone(), Asset(103, d.ArchiveName, 100, d.ArchiveSha256)) }));
         HttpResponseMessage Response(HttpRequestMessage r)
         {
@@ -42,8 +43,10 @@ internal static class UpdateDiscoveryChecks
         using var http = new HttpClient(new Handler(Response)); var service = new UpdateService(new GithubOwnerClient(http));
         var good = service.Check(root, default).GetAwaiter().GetResult();
         Check(good.DiscoveredVersion == offeredVersion && good.State == "updateAvailable" && good.Release != null, "discovery and applicability");
+        Check(UpdateSummary.Create(good.ReleaseNotesBody, "en") == "• Settings improvements", "applicable update carries exact release notes");
         mode = "manual"; var manual = service.Check(root,default).GetAwaiter().GetResult();
         Check(manual.DiscoveredVersion == offeredVersion && manual.State == "updateManual" && manual.Release == null && manual.PageUrl == UpdatePolicy.ReleasePage(offeredVersion), "unsupported assets retain version/manual page");
+        Check(UpdateSummary.Create(manual.ReleaseNotesBody, "ko") == "• 설정 개선", "manual update retains localized release notes");
         mode = "valid"; string dll = Path.Combine(root, "GF2 Game/version.dll"); byte[] bytes = File.ReadAllBytes(dll);
         File.WriteAllText(dll, "INERT MODIFIED");
         try { var changed = service.Check(root, default).GetAwaiter().GetResult(); Check(changed.DiscoveredVersion == offeredVersion && changed.Refusal?.Key == "modified", "modified install still discovers version"); }

@@ -36,6 +36,20 @@ internal static class UpdatePolicy
     internal static string ArchiveName(string version, string? flavor = null) => "GF2VR-Native-SelfContained-" + (flavor == null ? "" : flavor + "-") + version + ".zip";
     internal static string DescriptorFor(string? flavor) => flavor == null ? DescriptorName : "GF2VR-" + flavor + "-update.json";
     internal static string ReleasePage(string version) { _ = VersionOf(version); return "https://github.com/" + Repository + "/releases/tag/v" + version; }
+    // Advisory display text only, from the same bounded catalog and exact discovered tag.
+    // Missing/ambiguous notes never alter update eligibility or payload verification.
+    internal static string? ReleaseBody(byte[] json, string version)
+    {
+        if (json.Length > 262144) return null;
+        using var doc = JsonDocument.Parse(json);
+        var matches = doc.RootElement.EnumerateArray().Where(r =>
+            !r.GetProperty("draft").GetBoolean() && !r.GetProperty("prerelease").GetBoolean() &&
+            r.GetProperty("published_at").ValueKind == JsonValueKind.String &&
+            r.GetProperty("tag_name").GetString() == "v" + version).ToArray();
+        if (matches.Length != 1 || !matches[0].TryGetProperty("body", out var body) || body.ValueKind != JsonValueKind.String) return null;
+        string? text = body.GetString();
+        return text?.Length <= 65536 ? text : null;
+    }
     // Discovery needs only a published stable version. Applicability continues
     // through the unchanged strict asset/descriptor policy in Select/Descriptor.
     internal static string? DiscoverVersion(byte[] json, string installedVersion)
