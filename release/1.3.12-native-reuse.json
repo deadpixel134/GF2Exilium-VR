@@ -1,0 +1,16 @@
+[
+  {
+    "productVersion": "1.3.12",
+    "flavor": "Clean",
+    "buildId": "GF2VR-CLEAN-1311-RELEASE001",
+    "nativeSha256": "8764E8305B351130D102A2E81F85A80AC2787EE534ACE25DF7C465F16F9F5A95",
+    "reason": "Desktop-only 1.3.12: reuse the exact released 1.3.11 native DLL and reproduction sources without rebuilding or renaming its accepted identity."
+  },
+  {
+    "productVersion": "1.3.12",
+    "flavor": "Dirty",
+    "buildId": "GF2VR-DIRTY-1311-RELEASE001",
+    "nativeSha256": "59BB43A485A8EFE6277B924D72F5FDB81B27B0D551901C1DF4F37CC728E37D3C",
+    "reason": "Desktop-only 1.3.12: reuse the exact released 1.3.11 native DLL and reproduction sources without rebuilding or renaming its accepted identity."
+  }
+]

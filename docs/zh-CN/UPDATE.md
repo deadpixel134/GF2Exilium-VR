@@ -24,3 +24,5 @@
 同类型更新保留兼容的用户设置和安装记录。切换 Clean↔Dirty 时，使用目标类型的完整 ZIP 与安装器。若完整性、文件归属或游戏运行状态检查拒绝操作，请查看[故障排除](TROUBLESHOOTING.md)，不要绕过检查。中断恢复和恢复上一次安装见[安装指南](INSTALLATION.md)。
 
 [更新记录](RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+
+新GUI检查到更新版本后，会在现有通知中显示当前语言的简要变更。没有摘要时会提示查看发布页面。此功能在安装新GUI后的后续更新检查中可用，未经同意不会安装。

@@ -1,7 +1,8 @@
 namespace GF2VR.Installer;
 
 internal sealed record UpdateCheckResult(ReleaseCandidate? Release, UpdateDescriptor? Descriptor, byte[]? Bytes,
-    string State, string? DiscoveredVersion = null, string? PageUrl = null, InstallError? Refusal = null);
+    string State, string? DiscoveredVersion = null, string? PageUrl = null, InstallError? Refusal = null,
+    string? ReleaseNotesBody = null);
 
 internal sealed class UpdateService
 {
@@ -19,6 +20,7 @@ internal sealed class UpdateService
         string? discovered = UpdatePolicy.DiscoverVersion(catalog, version);
         if (discovered == null) return new(null, null, null, "updateCurrent", Refusal: initial);
         string page = UpdatePolicy.ReleasePage(discovered);
+        string? notes = UpdatePolicy.ReleaseBody(catalog, discovered);
         try
         {
             if (initial != null) throw initial;
@@ -31,12 +33,12 @@ internal sealed class UpdateService
             {
                 if (UpdateStaging.ManagedVersion(root, out var refusal) == null) throw refusal ?? new InstallError("notInstalled");
             }, token);
-            return new(release, descriptor, bytes, "updateAvailable", discovered, page);
+            return new(release, descriptor, bytes, "updateAvailable", discovered, page, ReleaseNotesBody: notes);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
         catch (Exception ex)
         {
-            return new(null, null, null, "updateManual", discovered, page, ex as InstallError ?? new InstallError("updateInvalid"));
+            return new(null, null, null, "updateManual", discovered, page, ex as InstallError ?? new InstallError("updateInvalid"), notes);
         }
     }
     internal async Task<PreparedUpdate> Stage(string root, ReleaseCandidate release, UpdateDescriptor descriptor, byte[] bytes, CancellationToken token)

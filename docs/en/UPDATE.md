@@ -24,3 +24,5 @@ Use this one-time route for 1.1.4 or earlier, or when an older updater cannot ch
 Same-variant updates preserve compatible user settings and installation records. To switch Clean↔Dirty, use the full ZIP and installer for the desired variant. If integrity, ownership or running-game checks reject the operation, follow [troubleshooting](TROUBLESHOOTING.md); do not bypass them. See [installation](INSTALLATION.md) for interrupted-operation recovery and previous-install restore.
 
 [Release history](RELEASE_NOTES.md) · [GitHub Releases](https://github.com/deadpixel134/GF2Exilium-VR/releases)
+
+After checking for a newer release, the new GUI shows a brief localized summary in the existing notification. Missing summaries point to the release page. This becomes available after installing the new GUI, on subsequent update checks, and does not install without consent.

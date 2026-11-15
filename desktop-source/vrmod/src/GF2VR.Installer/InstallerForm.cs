@@ -32,8 +32,13 @@ internal sealed class InstallerForm : Form
     private bool pending, busy, hasPrevious, packageIncomplete;
     private int progressTotal, progressCurrent, operationSerial;
     private string statusKey = "ready";
+    private ComboBox? detectedLocations;
+    private int locationRevision;
+    private readonly CancellationTokenSource discoveryCancel = new();
+    private bool discoveryDisposed;
+    internal string SelectedGameRoot => root.Text;
 
-    internal InstallerForm(string gameRoot, string? packageRoot, string? smokeFolder = null, bool verifyWorkflow = false, bool settingsMaintenance = false)
+    internal InstallerForm(string gameRoot, string? packageRoot, string? smokeFolder = null, bool verifyWorkflow = false, bool settingsMaintenance = false, bool autoDetect = false)
     {
         smoke = smokeFolder; smokeWorkflow = verifyWorkflow; settingsOnly = settingsMaintenance;
         if (verifyWorkflow && smokeFolder == null) throw new InvalidDataException("Workflow validation requires an inert GUI fixture");
@@ -126,6 +131,13 @@ internal sealed class InstallerForm : Form
         layout.Controls.Add(footer, 0, 7); layout.Controls.Add(status, 0, 8);
         FormClosing += (_, e) => { if (busy) e.Cancel = true; };
         Translate(); Inspect(); if (smoke != null) Shown += (_, _) => Smoke(details);
+        else if (autoDetect) Shown += async (_, _) => await DetectLocations();
+        FormClosed += (_, _) => { if (!discoveryDisposed) discoveryCancel.Cancel(); };
+        Disposed += (_, _) =>
+        {
+            if (discoveryDisposed) return;
+            discoveryDisposed = true; discoveryCancel.Cancel(); discoveryCancel.Dispose(); root.Dispose();
+        };
     }
 
     private Label Label(string key)
@@ -178,7 +190,7 @@ internal sealed class InstallerForm : Form
         remove.Tag = hasPrevious ? "rollback" : "remove";
         install.Text = InstallerText.Get((string)install.Tag); remove.Text = InstallerText.Get((string)remove.Tag);
         install.Enabled = !settingsOnly && !busy && !pending && plan != null; remove.Enabled = !settingsOnly && !busy && !pending && receiptHash != null;
-        repair.Enabled = !settingsOnly && !busy && !pending && !packageIncomplete;
+        repair.Enabled = !settingsOnly && !busy && !pending && !packageIncomplete && !string.IsNullOrWhiteSpace(root.Text);
         retryPostprocess.Enabled = !settingsOnly && !busy && postprocessId != null;
         protectSettings.Enabled = !busy && !pending && receipt != null;
         recover.Enabled = !settingsOnly && !busy && pending; openSettings.Enabled = !settingsOnly && !busy && !pending && settings != null;
@@ -190,6 +202,7 @@ internal sealed class InstallerForm : Form
         packageIncomplete = !PackageLocation.IsAvailable(packageRoot);
         try
         {
+            if (string.IsNullOrWhiteSpace(root.Text)) { SetStatus("chooseGameLocation"); return; }
             root.Text = Paths.Root(root.Text);
             pending = engine.HasPending(root.Text); receipt = engine.Inspect(root.Text);
             postprocessId = engine.FindPendingPostprocessing(root.Text);
@@ -209,11 +222,53 @@ internal sealed class InstallerForm : Form
     private void Browse()
     {
         if (busy) return;
+        ++locationRevision;
         using var dialog = new FolderBrowserDialog { Description = InstallerText.Get("folderHelp"), UseDescriptionForTitle = true };
         if (dialog.ShowDialog(this) != DialogResult.OK) return;
-        root.Text = dialog.SelectedPath;
+        SelectGameRoot(dialog.SelectedPath);
+    }
+    private void SelectGameRoot(string selected)
+    {
+        ++locationRevision; root.Text = selected;
+        if (detectedLocations != null)
+        {
+            if (!detectedLocations.Items.Contains(selected)) detectedLocations.Items.Add(selected);
+            detectedLocations.SelectedItem = selected;
+        }
         InstallerText.Language = InstallerText.LoadPreference(root.Text); Translate();
         Inspect();
+    }
+    private async Task DetectLocations()
+    {
+        int revision = locationRevision; var token = discoveryCancel.Token;
+        string[] starts = [AppContext.BaseDirectory, Environment.CurrentDirectory];
+        try
+        {
+            var result = await Task.Run(() => GameLocationDiscovery.Discover(starts, token), token);
+            if (!IsDisposed && !Disposing && !token.IsCancellationRequested && !busy && locationRevision == revision)
+                ApplyDetectedLocations(result);
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception) { /* Optional discovery never prevents manual selection. */ }
+    }
+    internal void ApplyDetectedLocations(GameLocations locations)
+    {
+        if (locations.Roots.Length == 0 || busy) return;
+        if (locations.Roots.Length > 1)
+        {
+            var row = (TableLayoutPanel)root.Parent!;
+            detectedLocations = new ComboBox { Name = "detectedGameLocations", DropDownStyle = ComboBoxStyle.DropDownList,
+                Anchor = AnchorStyles.Left | AnchorStyles.Right, IntegralHeight = true, DropDownWidth = 760 };
+            detectedLocations.Items.AddRange(locations.Roots);
+            row.Controls.Remove(root); row.Controls.Add(detectedLocations, 1, 0); operations.Add(detectedLocations);
+            detectedLocations.SelectedIndexChanged += (_, _) =>
+            {
+                if (detectedLocations.SelectedItem is string selected && !string.Equals(root.Text, selected, StringComparison.OrdinalIgnoreCase))
+                    SelectGameRoot(selected);
+            };
+        }
+        if (locations.PreferredRoot != null) SelectGameRoot(locations.PreferredRoot);
+        else { root.Text = ""; Inspect(); }
     }
     private bool Confirm(string message) => MessageBox.Show(this, message, InstallerText.Get("title"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
     private void DisplayError(Exception ex, bool modal)

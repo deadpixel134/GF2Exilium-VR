@@ -124,5 +124,6 @@
   "postprocessConflict": "现有后续处理结果不同。请保留并检查此文件：{0}",
   "reopenFailed": "更新已完成，但无法打开Settings。请从游戏文件夹直接启动。",
   "gameFingerprintInfo": "游戏文件指纹不同不会阻止安装。模组文件完整性将单独检查。",
-  "operationReportUnavailable": "产品操作已完成，但无法导出结果报告。无需重新安装，请检查游戏文件夹中的安装记录。"
+  "operationReportUnavailable": "产品操作已完成，但无法导出结果报告。无需重新安装，请检查游戏文件夹中的安装记录。",
+  "chooseGameLocation": "请在列表中选择检测到的游戏位置，或点击浏览。"
 }

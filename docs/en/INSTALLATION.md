@@ -33,3 +33,5 @@ Extract the full latest ZIP of the desired variant into a fresh folder and use i
 Close the game, select the same game location in the installer and review the removal action. A recorded previous installation is restored when available; an initial installation removes only owned files. User settings and modified or unowned files are preserved. Keep the installation records and backups. Use interrupted-operation recovery if offered.
 
 [Updating](UPDATE.md) · [Troubleshooting](TROUBLESHOOTING.md)
+
+The installer searches for game locations at startup. A unique location is prefilled; if several exist, choose one from the game-folder list. Use Browse if none is found or the path is wrong. Confirm the location in the final installation plan before installing.
