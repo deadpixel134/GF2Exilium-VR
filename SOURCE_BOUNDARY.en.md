@@ -71,6 +71,6 @@ The standard `GF2 Game/GF2_Exilium.exe` layout keeps `vrmod` in its existing par
 
 ## Terms of use
 
-A distribution license for the project source has not yet been specified. The repository being public does not by itself grant permission to freely redistribute it or distribute modified versions.
+The [GNU General Public License v3.0](LICENSE) (GPL-3.0-only) applies to the original GF2VR code. Game materials, third-party components and third-party assets retain their respective terms.
 
 OpenXR, MinHook and Microsoft .NET are subject to their respective licenses and notices. See the corresponding notices in the installation ZIP and source, along with the [Microsoft .NET notices](DOTNET-NOTICES.txt). These documents do not replace the terms of use for GF2VR as a whole. Game-related trademarks and copyrighted works belong to their respective owners.

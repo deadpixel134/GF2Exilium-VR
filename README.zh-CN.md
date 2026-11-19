@@ -156,8 +156,8 @@ PC设置窗口和VR面板支持**韩语、英语、日语、简体中文**。按
 
 ## 许可与权利说明
 
-GF2VR项目源码的分发许可证**尚未指定**。仓库公开本身不代表允许再分发或分发修改版。参见[源码使用条款](SOURCE_BOUNDARY.zh-CN.md)。
+GF2VR原创项目代码采用 [GNU General Public License v3.0](LICENSE) (GPL-3.0-only)。请参阅[源码使用条款](SOURCE_BOUNDARY.zh-CN.md)。
 
-OpenXR、MinHook及Microsoft .NET遵循各自的许可证和声明，请查看包内第三方声明和[Microsoft .NET声明](DOTNET-NOTICES.txt)。公开源码不含游戏文件、参考项目资源、用户设置、日志或回滚数据。
+OpenXR、MinHook及Microsoft .NET遵循各自的许可证和声明，请查看包内第三方声明和[Microsoft .NET声明](DOTNET-NOTICES.txt) · [第三方组件及版本](THIRD_PARTY_NOTICES.md)。公开源码不含游戏文件、参考项目资源、用户设置、日志或回滚数据。
 
 > GF2VR是与游戏开发商、发行商无关的非官方粉丝项目，需要合法安装的游戏。游戏商标及相关作品的权利归各权利人所有。

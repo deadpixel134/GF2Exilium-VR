@@ -156,8 +156,8 @@ Contributor: [rgbtl1248](https://github.com/rgbtl1248) — 3DMigoto compatibilit
 
 ## License and rights
 
-A distribution license for GF2VR's project source has **not yet been specified**. A public repository alone does not grant permission to redistribute or distribute modified versions. See [source terms](SOURCE_BOUNDARY.en.md).
+GF2VR's original project code is licensed under the [GNU General Public License v3.0](LICENSE) (GPL-3.0-only). See the [source terms](SOURCE_BOUNDARY.en.md).
 
-OpenXR, MinHook and Microsoft .NET retain their own licenses/notices; see the package's third-party notices and [Microsoft .NET notices](DOTNET-NOTICES.txt). Game files, reference-project assets, user settings, logs and rollback data are excluded from the published source.
+OpenXR, MinHook and Microsoft .NET retain their own licenses/notices; see the package's third-party notices and [Microsoft .NET notices](DOTNET-NOTICES.txt) · [Third-party components and versions](THIRD_PARTY_NOTICES.md). Game files, reference-project assets, user settings, logs and rollback data are excluded from the published source.
 
 > GF2VR is an unofficial fan project, unaffiliated with the game's developer or publisher. A legitimate game installation is required. Game trademarks and copyrighted works belong to their respective owners.

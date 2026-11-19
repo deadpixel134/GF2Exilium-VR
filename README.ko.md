@@ -156,8 +156,8 @@ PC 설정 창과 VR 패널은 **한국어·영어·일본어·중국어 간체**
 
 ## 라이선스와 권리 안내
 
-GF2VR 프로젝트 소스의 배포 라이선스는 **아직 지정되지 않았습니다**. 저장소가 공개되어 있다는 이유만으로 재배포나 수정 버전 배포가 허용되는 것은 아닙니다. [소스 이용 조건](SOURCE_BOUNDARY.md)을 참고하세요.
+GF2VR 자체 코드는 [GNU General Public License v3.0](LICENSE) (GPL-3.0-only)을 따릅니다. [소스 이용 조건](SOURCE_BOUNDARY.md)을 참고하세요.
 
-OpenXR·MinHook·Microsoft .NET에는 각자의 라이선스·고지가 적용됩니다. 패키지의 외부 구성 요소 고지와 [Microsoft .NET 고지](DOTNET-NOTICES.txt)를 참고하세요. 공개 소스에는 게임 파일·참조 프로젝트 에셋·사용자 설정·로그·롤백 데이터를 포함하지 않습니다.
+OpenXR·MinHook·Microsoft .NET에는 각자의 라이선스·고지가 적용됩니다. 패키지의 외부 구성 요소 고지와 [Microsoft .NET 고지](DOTNET-NOTICES.txt) · [타사 구성 요소와 버전](THIRD_PARTY_NOTICES.md)를 참고하세요. 공개 소스에는 게임 파일·참조 프로젝트 에셋·사용자 설정·로그·롤백 데이터를 포함하지 않습니다.
 
 > GF2VR은 게임 개발사·배급사와 관련 없는 비공식 팬 프로젝트입니다. 정식으로 설치한 게임이 필요하며, 게임의 상표·저작물은 각 권리자에게 있습니다.

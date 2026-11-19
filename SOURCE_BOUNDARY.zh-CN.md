@@ -71,6 +71,6 @@ native 006 通过逐字节复现、重试策略主机测试和现有 24 套原�
 
 ## 使用条件
 
-项目源码的分发许可证尚未确定。仓库公开并不等于允许自由再分发或分发修改版本。
+GF2VR 原创代码采用 [GNU General Public License v3.0](LICENSE) (GPL-3.0-only)。游戏材料和第三方代码、资源分别适用各自权利人的条款。
 
 OpenXR、MinHook 和 Microsoft .NET 分别适用其自身的许可证与声明。请查看安装 ZIP 及源码内的相关声明，以及 [Microsoft .NET 声明](DOTNET-NOTICES.txt)。这些文件不能替代 GF2VR 整体的使用条件。游戏相关商标及作品的权利归各自权利人所有。
